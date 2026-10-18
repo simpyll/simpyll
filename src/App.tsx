@@ -1,121 +1,82 @@
+
 import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { Button } from './components/Button'
+import { Container } from './components/Container'
+import { Card } from './components/Card'
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [clicks, setClicks] = useState(0)
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
+    <main className="flex min-h-screen items-center bg-canvas py-16 text-foreground">
+      <Container>
+        <div className="rounded-2xl border border-outline bg-surface p-8 text-center sm:p-12">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-2">
+            <span className="h-2 w-2 rounded-full bg-accent" />
+            <span className="text-sm font-medium text-accent">
+              Design system active
+            </span>
+          </div>
+
+          <h1 className="font-display text-4xl font-semibold tracking-[-0.04em] sm:text-5xl lg:text-6xl">
+            Simpyll<span className="text-accent">.</span>
+          </h1>
+
+          <p className="mt-5 text-lg text-muted">
+            Simple by design. Powerful by nature.
           </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
 
-      <div className="ticks"></div>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <Button onClick={() => setClicks((count) => count + 1)}>
+              Click me
+            </Button>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+            <Button variant="secondary" onClick={() => setClicks(0)}>
+              Reset
+            </Button>
+          </div>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+          <p className="mt-5 text-sm text-muted">
+            Button clicks: <span className="text-accent">{clicks}</span>
+          </p>
+
+<div className="mt-10 grid gap-4 text-left sm:grid-cols-2">
+  <Card hoverable>
+    <p className="mb-3 text-xs font-medium uppercase tracking-widest text-accent">
+      Featured Project
+    </p>
+    <h2 className="text-xl font-semibold tracking-tight">
+      Something remarkable.
+    </h2>
+    <p className="mt-3 text-sm leading-relaxed text-muted">
+      A flexible card with a subtle hover animation.
+      Move your cursor over it to see the effect.
+    </p>
+  </Card>
+
+  <Card>
+    <p className="mb-3 text-xs font-medium uppercase tracking-widest text-accent">
+      Latest Writing
+    </p>
+    <h2 className="text-xl font-semibold tracking-tight">
+      Ideas worth sharing.
+    </h2>
+    <p className="mt-3 text-sm leading-relaxed text-muted">
+      This card uses the same design system without
+      the optional hover animation.
+    </p>
+  </Card>
+</div>
+
+          <div className="mt-8 border-t border-outline pt-6">
+            <p className="text-sm text-subtle">
+              React · TypeScript · Vite · Tailwind CSS
+            </p>
+          </div>
+        </div>
+      </Container>
+    </main>
   )
 }
 
