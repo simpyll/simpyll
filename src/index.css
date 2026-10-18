@@ -48,3 +48,14 @@ body {
   background-color: var(--color-accent);
   color: var(--color-canvas);
 }
+
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
