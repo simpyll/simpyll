@@ -1,10 +1,15 @@
+
 import { Container } from './Container'
+
+const navigation = [
+  { label: 'Work', href: '#work' },
+  { label: 'Writing', href: '#writing' },
+  { label: 'About', href: '#about' },
+]
 
 export function Header() {
   return (
-    
-<header className="sticky top-0 z-50 border-b border-outline/60 bg-canvas/85 backdrop-blur-xl">
-
+    <header className="sticky top-0 z-50 border-b border-outline/60 bg-canvas/85 backdrop-blur-xl">
       <Container>
         <nav
           aria-label="Main navigation"
@@ -18,26 +23,20 @@ export function Header() {
           </a>
 
           <div className="flex items-center gap-6 sm:gap-8">
-            <a
-              href="#work"
-              className="text-sm text-muted transition-colors hover:text-foreground"
-            >
-              Work
-            </a>
+            {navigation.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                className="group relative py-2 text-sm text-muted transition-colors duration-300 hover:text-foreground"
+              >
+                {item.label}
 
-            <a
-              href="#writing"
-              className="text-sm text-muted transition-colors hover:text-foreground"
-            >
-              Writing
-            </a>
-
-            <a
-              href="#about"
-              className="text-sm text-muted transition-colors hover:text-foreground"
-            >
-              About
-            </a>
+                <span
+                  aria-hidden="true"
+                  className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 rounded-full bg-accent transition-transform duration-300 ease-out group-hover:scale-x-100 group-focus-visible:scale-x-100"
+                />
+              </a>
+            ))}
           </div>
         </nav>
       </Container>

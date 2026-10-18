@@ -1,5 +1,6 @@
 
 import { Container } from './Container'
+import { Reveal } from './Reveal'
 
 const articles = [
   {
@@ -46,33 +47,32 @@ export function LatestWriting() {
         </div>
 
         <div className="divide-y divide-outline border-y border-outline">
-          {articles.map((article) => (
-            <article
-              key={article.title}
-              className="group grid gap-4 py-8 transition-colors sm:grid-cols-[140px_1fr_auto] sm:items-center sm:gap-8"
-            >
-              <div className="text-xs tracking-widest text-subtle">
-                {article.date}
-              </div>
+          {articles.map((article, index) => (
+            <Reveal key={article.title} delay={index * 0.1}>
+              <article className="group grid gap-4 py-8 transition-colors sm:grid-cols-[140px_1fr_auto] sm:items-center sm:gap-8">
+                <div className="text-xs tracking-widest text-subtle">
+                  {article.date}
+                </div>
 
-              <div>
-                <p className="mb-2 text-xs font-medium tracking-widest text-accent">
-                  {article.category}
-                </p>
+                <div>
+                  <p className="mb-2 text-xs font-medium tracking-widest text-accent">
+                    {article.category}
+                  </p>
 
-                <h3 className="text-xl font-semibold tracking-tight transition-colors group-hover:text-accent sm:text-2xl">
-                  {article.title}
-                </h3>
+                  <h3 className="text-xl font-semibold tracking-tight transition-colors group-hover:text-accent sm:text-2xl">
+                    {article.title}
+                  </h3>
 
-                <p className="mt-2 text-sm leading-relaxed text-muted">
-                  {article.description}
-                </p>
-              </div>
+                  <p className="mt-2 text-sm leading-relaxed text-muted">
+                    {article.description}
+                  </p>
+                </div>
 
-              <span className="text-xs text-subtle">
-                {article.readingTime}
-              </span>
-            </article>
+                <span className="text-xs text-subtle">
+                  {article.readingTime}
+                </span>
+              </article>
+            </Reveal>
           ))}
         </div>
       </Container>
