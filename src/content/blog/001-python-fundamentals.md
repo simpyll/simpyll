@@ -1,21 +1,11 @@
----
-
-title: "Learning Python #001: Functions, Variables, and My First CLI Tool"
-description: "Starting my journey into software and AI engineering with Harvard's CS50P, Python fundamentals, and a command-line application."
-date: "2026-10-20"
-author: "David Becker"
-tags:
-
-- Python
-- CS50P
-- Software Engineering
-- Build in Public
-- AI Engineering
-  series: "Zero to AI Engineer"
-  lesson: 1
-  readingTime: 5
-
----
+export const metadata = {
+  title: 'Learning Python #001: Functions, Variables, and My First CLI Tool',
+  description: 'Starting my journey into software and AI engineering with Harvard CS50P.',
+  date: '2026-10-20',
+  category: 'Python',
+  author: 'David Becker',
+  tags: ['Python', 'CS50P', 'AI Engineering'],
+}
 
 Learning Python #001: Functions, Variables, and My First CLI Tool
 
