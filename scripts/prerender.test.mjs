@@ -61,14 +61,31 @@ test('404 document is noindex and has no article metadata', async () => {
   }
 })
 
+
 test('sitemap and robots reference the canonical public pages', async () => {
+  const { readdir } = await import('node:fs/promises')
+
   const sitemap = await readFile('dist/sitemap.xml', 'utf8')
   const robots = await readFile('dist/robots.txt', 'utf8')
-  const locations = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1])
-  assert.deepEqual(locations.sort(), pages.map(([route]) => `https://simpyll.com${route}`).sort())
+
+  const blogFiles = await readdir('src/content/blog')
+  const blogRoutes = blogFiles
+    .filter((file) => file.endsWith('.mdx'))
+    .map((file) => `/blog/${file.replace(/\.mdx$/, '')}`)
+
+  const expectedRoutes = ['/', '/blog', ...blogRoutes]
+  const expectedUrls = expectedRoutes.map(
+    (route) => `https://simpyll.com${route}`
+  )
+
+  const locations = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)]
+    .map((match) => match[1])
+
+  assert.deepEqual(locations.sort(), expectedUrls.sort())
   assert.match(robots, /User-agent: \*\s+Allow: \//)
   assert.match(robots, /Sitemap: https:\/\/simpyll.com\/sitemap.xml/)
 })
+
 
 test('Pages artifact includes the custom domain and root-relative assets', async () => {
   assert.equal((await readFile('dist/CNAME', 'utf8')).trim(), 'simpyll.com')
