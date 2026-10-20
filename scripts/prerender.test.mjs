@@ -69,3 +69,13 @@ test('sitemap and robots reference the canonical public pages', async () => {
   assert.match(robots, /User-agent: \*\s+Allow: \//)
   assert.match(robots, /Sitemap: https:\/\/simpyll.com\/sitemap.xml/)
 })
+
+test('Pages artifact includes the custom domain and root-relative assets', async () => {
+  assert.equal((await readFile('dist/CNAME', 'utf8')).trim(), 'simpyll.com')
+  const html = await readFile('dist/index.html', 'utf8')
+  const assets = [...html.matchAll(/(?:src|href)="(\/assets\/[^"?#]+)"/g)].map(match => match[1])
+  assert.ok(assets.length >= 2, 'Expected the production JS and CSS assets')
+  for (const asset of assets) {
+    assert.ok((await readFile(`dist${asset}`)).length > 0, `Missing asset: ${asset}`)
+  }
+})

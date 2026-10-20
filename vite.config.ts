@@ -33,6 +33,8 @@ function prerenderedRoutes(): Plugin {
 }
 
 export default defineConfig({
+  // The custom domain serves this site at its origin, not under /simpyll/.
+  base: '/',
   define: {
     // Keep cached HTML and its client bundle consistent across New Year.
     'import.meta.env.BUILD_YEAR': JSON.stringify(new Date().getUTCFullYear()),
