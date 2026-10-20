@@ -7,6 +7,7 @@ export const metadata = {
   tags: ['Python', 'CS50P', 'AI Engineering'],
 }
 
+
 Learning Python #001: Functions, Variables, and My First CLI Tool
 
 I'm starting something new: a long-term journey to become a proficient software engineer, with the ultimate goal of specializing in artificial intelligence and machine learning.
