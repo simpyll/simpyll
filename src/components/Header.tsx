@@ -2,9 +2,9 @@
 import { Container } from './Container'
 
 const navigation = [
-  { label: 'Work', href: '#work' },
-  { label: 'Writing', href: '#writing' },
-  { label: 'About', href: '#about' },
+  { label: 'Projects', href: '/#work' },
+  { label: 'Journal', href: '/#writing' },
+  { label: 'About', href: '/#about' },
 ]
 
 export function Header() {

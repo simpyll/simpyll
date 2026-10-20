@@ -1,75 +1,57 @@
-# React + TypeScript + Vite
+# Simpyll
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A personal website and public learning journal about the journey from critical
+care nursing into software engineering and AI. The site brings together a
+learning journal, projects and experiments, and questions at the intersection
+of healthcare and technology.
 
-Currently, two official plugins are available:
+Built with React, TypeScript, Vite, MDX, and Motion. Blog content lives in
+`src/content/blog`; page metadata lives alongside the page content and in
+`src/config/site.ts`.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- `npm run dev`: local development.
+- `npm run build`: TypeScript checks, sitemap generation, client and server
+  builds, and static prerendering.
+- `npm run preview`: preview the production output.
+- `npm run lint`: lint the codebase.
+- `node --test scripts/prerender.test.mjs`: validate the generated HTML and SEO.
 
-## React Compiler
+## Prerendering and hydration
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+`npm run build` generates HTML for `/`, `/blog`, and each MDX post. React renders
+an entire document so React 19 can place metadata in the head; JSON-LD stays in
+the hydrated body tree. Do not extract arbitrary tags from rendered app HTML.
+Run the full build before rerunning prerender (the script rejects an already
+prerendered index to prevent nesting an old page inside a new one).
 
-## Expanding the ESLint configuration
+`npm run preview` serves each generated directory index at URLs with or without
+a trailing slash. Production hosting must likewise resolve `/blog` to
+`dist/blog/index.html` and `/blog/hello-world` to its own index **before** any SPA
+fallback. Serving the homepage at these URLs causes a hydration mismatch and
+incorrect static SEO content. The Vite preview middleware does not configure
+an external hosting provider.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+After building, run `node --test scripts/prerender.test.mjs` to check static
+content, metadata, and JSON-LD placement. With preview running, use
+`PREVIEW_URL=http://localhost:4173 node --test scripts/prerender.test.mjs` to also
+check HTTP responses for clean URLs, trailing slashes, and query strings.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Phase 6 audit notes
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+The build also produces `dist/404.html`. Configure production hosting to serve
+that document with HTTP 404 for unknown routes, rather than returning the
+homepage with HTTP 200. Preview applies this behavior for extensionless URLs.
+The preview plugin is not a production server configuration.
 
-```
+Reveal animations retain their normal appearance. Reduced-motion CSS makes
+reveals immediately visible and removes their translation; a noscript rule
+makes the same content visible when JavaScript is disabled. Keyboard users can
+skip the header and receive a visible focus outline. Article body headings
+should start at H2 because the page supplies its H1. The existing repeated
+sample title has presentation semantics to preserve its appearance.
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+The footer year is bundled at build time to avoid cached HTML disagreeing with
+client time after New Year. Rebuild to update it. The introductory MDX post still contains a sample author (`Your Name`) and
+generic starter prose. Replace these with the intended public author name and
+an authored introduction before publication.

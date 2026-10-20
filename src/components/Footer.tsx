@@ -14,11 +14,11 @@ export function Footer() {
           </a>
 
           <p className="text-sm text-subtle">
-            Built with curiosity. Powered by Simpyll.
+            Clinical roots. A learning mindset.
           </p>
 
           <p className="text-xs text-subtle">
-            © {new Date().getFullYear()} Simpyll
+            © {import.meta.env.BUILD_YEAR} Simpyll
           </p>
         </div>
       </Container>

@@ -6,19 +6,19 @@ import { Reveal } from './Reveal'
 const projects = [
   {
     number: '01',
-    category: 'OPEN SOURCE',
-    title: 'Built to be shared.',
+    category: 'IN PROGRESS',
+    title: 'This site, in progress.',
     description:
-      'A thoughtful foundation for building personal websites that feel distinctly your own.',
-    tags: ['React', 'TypeScript', 'Design'],
+      'Simpyll is my personal website and learning journal: a working project where I can practice building for the web and share what I learn.',
+    tags: ['React', 'TypeScript', 'MDX'],
   },
   {
     number: '02',
-    category: 'EXPERIMENTS',
-    title: 'Curiosity in motion.',
+    category: 'EXPLORATION',
+    title: 'Start with the bedside.',
     description:
-      'Exploring the intersection of interaction, typography, and creative development.',
-    tags: ['Interaction', 'Motion', 'Web'],
+      'The questions I bring from critical care will guide future software and AI experiments. I’ll document those ideas here as they take shape.',
+    tags: ['Healthcare', 'Software', 'AI'],
   },
 ]
 
@@ -31,17 +31,17 @@ export function FeaturedWork() {
         <div className="mb-12 flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <div>
             <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-accent">
-              Selected projects
+              Learning through practice
             </p>
 
             <h2 className="font-display text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">
-              Featured work<span className="text-accent">.</span>
+              Projects & experiments<span className="text-accent">.</span>
             </h2>
           </div>
 
           <p className="max-w-xs text-sm leading-relaxed text-muted">
-            A collection of things built with curiosity, care,
-            and a little experimentation.
+            This site is a working project. I’ll share more
+            experiments here as I learn.
           </p>
         </div>
 

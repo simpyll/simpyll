@@ -1,3 +1,4 @@
+
 {
   "name": "simpyll",
   "private": true,
@@ -5,20 +6,29 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "generate:sitemap": "node scripts/generate-sitemap.mjs",
+    "build:client": "tsc -b && vite build",
+    "build:server": "vite build --ssr src/entry-server.tsx --outDir dist-server",
+    "prerender": "node scripts/prerender.mjs",
+    "build": "npm run generate:sitemap && npm run build:client && npm run build:server && npm run prerender",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",
+    "@mdx-js/react": "^3.1.1",
     "@tailwindcss/vite": "^4.3.3",
     "motion": "^14.3.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "react-helmet-async": "^3.0.0",
+    "react-router-dom": "^6.30.6",
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@mdx-js/rollup": "^3.1.1",
+    "@tailwindcss/typography": "^0.5.20",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
