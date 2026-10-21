@@ -105,12 +105,17 @@ test('smallest supported viewport fits navigation and reduced motion removes hov
   await page.goto('/')
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
   const nav = page.getByRole('navigation', { name: 'Main navigation' })
-  await nav.getByRole('button', { name: 'More' }).click()
+  await nav.getByRole('button', { name: 'More' }).focus()
+  await page.keyboard.press('Enter')
   for (const name of ['Projects', 'Journal', 'About']) {
     await expect(page.locator('#navigation-overflow').getByRole('link', { name, exact: true })).toBeInViewport()
   }
   const link = page.locator('#navigation-overflow').getByRole('link', { name: 'Projects' })
-  await link.focus()
+  // Traverse theme control and Home to Projects using real keyboard input.
+  await page.keyboard.press('Tab')
+  await page.keyboard.press('Tab')
+  await page.keyboard.press('Tab')
+  await expect(link).toBeFocused()
   await expect(link).toHaveCSS('outline-style', 'solid')
   await expect(link).toHaveCSS('transition-duration', '0s')
   await expect(page.locator('[data-reveal]').first()).toHaveCSS('transform', 'none')
