@@ -35,7 +35,7 @@ function contrast(a: string, b: string) {
 for (const theme of ['light', 'dark']) {
 test(`semantic text, action and focus roles meet contrast: ${theme}`, async ({ page }) => {
   await page.goto('/')
-  await page.getByRole('combobox', { name: 'Theme' }).selectOption(theme)
+  if (await page.locator('html').getAttribute('data-theme') !== theme) await page.getByRole('button', { name: `Switch to ${theme} theme` }).click()
   const tokens = await page.evaluate(() => {
     const styles = getComputedStyle(document.documentElement)
     return Object.fromEntries(['canvas', 'surface', 'surface-hover', 'foreground', 'muted', 'subtle', 'accent', 'accent-hover', 'on-accent', 'focus', 'control-outline']

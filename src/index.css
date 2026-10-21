@@ -330,3 +330,21 @@ html {
 @media print {
   [data-reveal] { opacity: 1 !important; transform: none !important; }
 }
+
+/* Scoped to deliberate theme changes; future route transitions keep their defaults. */
+html[data-theme-transition]::view-transition-old(root),
+html[data-theme-transition]::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+html[data-theme-transition]::view-transition-old(root) { z-index: 1; }
+html[data-theme-transition]::view-transition-new(root) { z-index: 2; }
+.theme-toggle { transition: background-color var(--ui-duration-fast) var(--ui-ease-standard), transform var(--ui-duration-fast) var(--ui-ease-standard); }
+.theme-toggle:active { transform: scale(var(--ui-motion-press)); }
+.theme-sun, .theme-moon {
+  transform-origin: center;
+  transition: opacity var(--ui-duration-normal) var(--ui-ease-standard), transform var(--ui-duration-normal) var(--ui-ease-standard);
+}
+.theme-moon { opacity: 0; transform: rotate(-30deg) scale(.6); }
+html[data-theme="dark"] .theme-sun { opacity: 0; transform: rotate(45deg) scale(.6); }
+html[data-theme="dark"] .theme-moon { opacity: 1; transform: none; }
