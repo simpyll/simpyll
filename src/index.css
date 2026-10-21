@@ -17,9 +17,23 @@
   --ui-accent-hover: #b5f5dc;
   --ui-on-accent: #090b10;
   --ui-focus: #9be8cb;
-  --ui-duration-fast: 200ms;
-  --ui-duration-normal: 300ms;
-  --ui-ease: ease;
+  --ui-duration-instant: 0ms;
+  --ui-duration-fast: 160ms;
+  --ui-duration-normal: 240ms;
+  --ui-duration-deliberate: 360ms;
+  --ui-duration-expressive: 600ms;
+  --ui-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ui-ease-emphasized: cubic-bezier(0.65, 0, 0.35, 1);
+  --ui-ease-entrance: cubic-bezier(0.22, 1, 0.36, 1);
+  --ui-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ui-ease-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  /* Restrained spring approximation; safe fallback without linear() support. */
+  --ui-ease-spring: cubic-bezier(0.2, 0.9, 0.25, 1.05);
+  --ui-ease: var(--ui-ease-standard);
+  --ui-motion-lift: -4px;
+  --ui-motion-press: 0.98;
+  --ui-motion-reveal: 24px;
+  --ui-motion-stagger: 120ms;
   --ui-focus-width: 2px;
   --ui-focus-offset: 4px;
 }
@@ -62,6 +76,13 @@
 
 /* Inline aliases keep utilities responsive to future semantic-role overrides. */
 @theme inline {
+  --ease-standard: var(--ui-ease-standard);
+  --ease-emphasized: var(--ui-ease-emphasized);
+  --ease-entrance: var(--ui-ease-entrance);
+  --ease-exit: var(--ui-ease-exit);
+  --ease-spring: var(--ui-ease-spring);
+  --default-transition-duration: var(--ui-duration-fast);
+  --default-transition-timing-function: var(--ui-ease-standard);
   --color-canvas: var(--ui-canvas);
   --color-surface: var(--ui-surface);
   --color-surface-hover: var(--ui-surface-hover);
@@ -204,7 +225,11 @@ html {
     @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-medium;
     transition: color var(--ui-duration-fast) var(--ui-ease),
       background-color var(--ui-duration-fast) var(--ui-ease),
-      border-color var(--ui-duration-fast) var(--ui-ease);
+      border-color var(--ui-duration-fast) var(--ui-ease),
+      scale var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  .ui-button:active:not(:disabled) {
+    scale: var(--ui-motion-press);
   }
   .ui-button:disabled {
     cursor: not-allowed;
@@ -229,20 +254,23 @@ html {
     @apply p-8 sm:p-10;
   }
   .ui-card--hoverable {
-    transition: transform var(--ui-duration-normal) var(--ui-ease),
-      translate var(--ui-duration-normal) var(--ui-ease),
-      border-color var(--ui-duration-normal) var(--ui-ease),
-      background-color var(--ui-duration-normal) var(--ui-ease);
+    transition: transform var(--ui-duration-deliberate) var(--ui-ease-standard),
+      translate var(--ui-duration-deliberate) var(--ui-ease-standard),
+      border-color var(--ui-duration-deliberate) var(--ui-ease-standard),
+      background-color var(--ui-duration-deliberate) var(--ui-ease-standard);
   }
-  .ui-card--hoverable:hover {
-    @apply -translate-y-1 border-accent/40 bg-surface-hover;
+  @media (hover: hover) and (pointer: fine) {
+    .ui-card--hoverable:hover {
+      translate: 0 var(--ui-motion-lift);
+      @apply border-accent/40 bg-surface-hover;
+    }
   }
   .ui-badge {
     @apply rounded-full border border-outline px-3 py-1 text-xs text-subtle;
   }
   .ui-nav-link {
     @apply relative py-2 text-sm text-muted;
-    transition: color var(--ui-duration-normal) var(--ui-ease);
+    transition: color var(--ui-duration-deliberate) var(--ui-ease-standard);
   }
   .ui-nav-link:hover,
   .ui-nav-link:focus-visible {
@@ -251,8 +279,9 @@ html {
   .ui-nav-link::after {
     content: '';
     @apply absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 rounded-full bg-accent;
-    transition: transform var(--ui-duration-normal) ease-out;
+    transition: transform var(--ui-duration-deliberate) var(--ui-ease-spring);
   }
+  .ui-nav-link[aria-current="page"]::after,
   .ui-nav-link:hover::after,
   .ui-nav-link:focus-visible::after {
     transform: scaleX(1);
@@ -261,7 +290,43 @@ html {
 
 @media (prefers-reduced-motion: reduce) {
   .ui-card--hoverable:hover {
-    --tw-translate-x: 0px;
-    --tw-translate-y: 0px;
+    translate: 0px;
   }
+}
+
+/* Small, opt-in recipes; no persistent layers or JavaScript hover loops. */
+.ui-hero-word { transition: transform var(--ui-duration-deliberate) var(--ui-ease-spring); }
+@media (hover: hover) and (pointer: fine) {
+  .ui-hero-word:hover { transform: translateY(var(--ui-motion-lift)) rotate(-3deg) scale(1.04); }
+}
+.ui-link-feedback { transition: color var(--ui-duration-fast) var(--ui-ease-standard); }
+.ui-link-feedback:hover { color: var(--ui-accent-hover); }
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ui-duration-fast: 0ms;
+    --ui-duration-normal: 0ms;
+    --ui-duration-deliberate: 0ms;
+    --ui-duration-expressive: 0ms;
+    --ui-motion-lift: 0px;
+    --ui-motion-press: 1;
+    --ui-motion-reveal: 0px;
+    --ui-motion-stagger: 0ms;
+  }
+  .ui-button:active:not(:disabled) { scale: 1; }
+  .ui-hero-word:hover { transform: none; }
+}
+
+.ui-motion-arrow {
+  transition: translate var(--ui-duration-deliberate) var(--ui-ease-standard),
+    color var(--ui-duration-fast) var(--ui-ease-standard);
+}
+.group:focus-visible .ui-motion-arrow { color: var(--ui-accent); }
+@media (hover: hover) and (pointer: fine) {
+  .group:hover .ui-motion-arrow {
+    translate: calc(-1 * var(--ui-motion-lift)) var(--ui-motion-lift);
+    color: var(--ui-accent);
+  }
+}
+@media print {
+  [data-reveal] { opacity: 1 !important; transform: none !important; }
 }

@@ -1,5 +1,3 @@
-
-import { motion, useReducedMotion } from 'motion/react'
 import { Container } from '../components/Container'
 import { FeaturedWork } from '../components/FeaturedWork'
 import { LatestWriting } from '../components/LatestWriting'
@@ -8,8 +6,6 @@ import { Reveal } from '../components/Reveal'
 import { SEO } from '../components/SEO'
 
 export function Home() {
-  const reduceMotion = useReducedMotion()
-
   return (
     <>
       <SEO
@@ -34,21 +30,9 @@ export function Home() {
                 <br />
                 bedside to
                 <br />
-                <motion.span
-                  className="inline-block origin-bottom-left italic text-accent"
-                  whileHover={
-                    reduceMotion
-                      ? undefined
-                      : { y: -6, rotate: -3, scale: 1.04 }
-                  }
-                  transition={{
-                    type: 'spring',
-                    stiffness: 300,
-                    damping: 18,
-                  }}
-                >
+                <span className="ui-hero-word inline-block origin-bottom-left italic text-accent">
                   build.
-                </motion.span>
+                </span>
               </h1>
             </Reveal>
 
@@ -63,22 +47,9 @@ export function Home() {
 
               Scroll to explore
 
-              <motion.span
-                aria-hidden="true"
-                className="inline-block"
-                animate={
-                  reduceMotion
-                    ? undefined
-                    : { y: [0, 5, 0] }
-                }
-                transition={{
-                  duration: 1.8,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-              >
+              <span aria-hidden="true" className="inline-block">
                 ↓
-              </motion.span>
+              </span>
             </div>
           </section>
         </Container>

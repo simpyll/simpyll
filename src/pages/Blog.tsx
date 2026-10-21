@@ -41,7 +41,7 @@ export function Blog() {
             ) : (
               <div className="divide-y divide-outline border-y border-outline">
                 {posts.map((post, index) => (
-                  <Reveal key={post.slug} delay={index * 0.08}>
+                  <Reveal key={post.slug} staggerIndex={index}>
                     <Link
                       to={`/blog/${post.slug}`}
                       className="group grid gap-4 py-10 transition-colors sm:grid-cols-[140px_1fr_auto] sm:items-start sm:gap-8"
@@ -81,7 +81,7 @@ export function Blog() {
 
                       <span
                         aria-hidden="true"
-                        className="text-xl text-subtle transition-all group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-accent motion-reduce:translate-none"
+                        className="text-xl text-subtle ui-motion-arrow"
                       >
                         ↗
                       </span>

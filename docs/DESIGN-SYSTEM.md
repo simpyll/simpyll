@@ -144,3 +144,5 @@ Local browser validation used temporary Chromium 153 and system ffmpeg because
 the pinned Playwright Chromium 156 download returned an invalid archive in the
 execution environment. No browser workaround or dependency was added to the
 repository; CI retains its pinned Playwright install and configuration.
+
+Motion tokens, progressive entrances and future transition conventions are documented in [MOTION.md](MOTION.md).

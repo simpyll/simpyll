@@ -23,7 +23,7 @@ export function About() {
             </div>
           </Reveal>
 
-          <Reveal delay={0.15}>
+          <Reveal staggerIndex={1}>
             <div>
               <p className="max-w-2xl font-display text-2xl font-medium leading-relaxed tracking-tight text-foreground sm:text-3xl">
                 I know the bedside. I’m learning the tools to build
@@ -41,7 +41,7 @@ export function About() {
 
               <Link
                 to="/blog"
-                className="mt-10 inline-flex items-center gap-3 text-sm font-medium text-accent transition-all hover:gap-5"
+                className="mt-10 inline-flex items-center gap-3 text-sm font-medium text-accent ui-link-feedback"
               >
                 Follow the learning journey
                 <span aria-hidden="true">↗</span>
