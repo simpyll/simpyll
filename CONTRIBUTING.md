@@ -19,11 +19,12 @@ Review [open issues](https://github.com/simpyll/simpyll/issues) and open a focus
 
 ```bash
 npm run lint
-npm run build
-node --test scripts/prerender.test.mjs
+npx playwright install chromium
+npm test
 ```
 
-For publishing pipeline changes, also run `npm run test:notion` and `npm run test:notion:build`.
+`npm test` includes the publisher unit tests, content validation tests, Notion fixture
+build integration, prerender checks, and Playwright browser tests.
 
 Do not commit credentials, private Notion content, or personal access tokens. See [architecture](docs/ARCHITECTURE.md), [deployment](docs/DEPLOYMENT.md) and [Notion publishing](docs/NOTION.md).
 
@@ -64,3 +65,32 @@ spreads cannot be statically verified. MDX compilation checks syntax, while the
 subsequent Vite build/prerender still checks imports and rendering. The validator
 does not execute or sandbox MDX and does not change the Notion publisher, its
 ownership manifest, or article contents.
+
+## Browser tests
+
+Install Chromium once with `npx playwright install chromium` (on Linux CI use
+`npx playwright install --with-deps chromium`). Run `npm run test:e2e` to build
+and test, or `npm run test:e2e:built` after a successful production build.
+Playwright owns a fresh Vite preview server at `http://127.0.0.1:4173`; keep that
+port free. It deliberately does not reuse a development server or rebuild in CI.
+The existing preview middleware serves route-specific HTML and `404.html` with
+HTTP 404, matching the custom-domain GitHub Pages layout at the origin root.
+
+Both desktop Chromium and Pixel 7 Chromium emulation run the same journeys:
+homepage anchors, blog links/history, every checked-in article, missing pages,
+keyboard controls, and viewport overflow. JavaScript-disabled checks verify
+that direct URLs (including trailing slashes and query strings) contain useful
+prerendered content. Dedicated assertions cover Python MDX formatting and the
+Notion-published article's durable image. Tests use committed content, fixed
+locale/timezone, reduced motion and isolated contexts; external requests fail
+instead of reaching live services. No Notion credentials are needed. The site
+currently has a fixed dark palette and no theme switcher; add a switching and
+persistence test when that control is implemented.
+
+PR validation and the reusable Pages build run browser tests before uploading
+the deployable artifact, including deployments requested by Notion publishing.
+CI retries failures twice with two workers. Failed tests retain screenshots,
+video and traces; failed jobs upload these and the HTML report for 14 days.
+Use `npm run test:e2e:report` locally or download the `playwright-results`
+Actions artifact to inspect failures. Avoid sleeps and snapshots of whole pages;
+prefer accessible roles, observable navigation, and focused content assertions.
