@@ -40,6 +40,13 @@ export default defineConfig({
     'import.meta.env.BUILD_YEAR': JSON.stringify(new Date().getUTCFullYear()),
   },
   plugins: [
+    {
+      name: 'theme-before-paint',
+      transformIndexHtml: {
+        order: 'pre',
+        handler: html => html.replace('<!--theme-bootstrap-->', `<script>${readFileSync(new URL('./src/theme/bootstrap.js', import.meta.url), 'utf8')}</script>`),
+      },
+    },
     prerenderedRoutes(),
     { enforce: 'pre', ...mdx() },
     react(),

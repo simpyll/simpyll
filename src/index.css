@@ -2,7 +2,7 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* Semantic roles: fixed dark defaults. Theme selection belongs to issue #7. */
+/* Dark identity is preserved; resolved theme overrides only semantic roles. */
 :root {
   color-scheme: dark;
   --ui-canvas: #090b10;
@@ -22,6 +22,42 @@
   --ui-ease: ease;
   --ui-focus-width: 2px;
   --ui-focus-offset: 4px;
+}
+
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --ui-canvas: #fafbf9;
+  --ui-surface: #f0f3f0;
+  --ui-surface-hover: #e4eae6;
+  --ui-foreground: #18251f;
+  --ui-muted: #45564d;
+  --ui-subtle: #506057;
+  --ui-outline: #c5d0c8;
+  --ui-control-outline: #6b7b71;
+  --ui-accent: #176344;
+  --ui-accent-hover: #104c34;
+  --ui-on-accent: #ffffff;
+  --ui-focus: #176344;
+}
+
+@media (prefers-color-scheme: light) {
+
+:root:not([data-theme]) {
+  color-scheme: light;
+  --ui-canvas: #fafbf9;
+  --ui-surface: #f0f3f0;
+  --ui-surface-hover: #e4eae6;
+  --ui-foreground: #18251f;
+  --ui-muted: #45564d;
+  --ui-subtle: #506057;
+  --ui-outline: #c5d0c8;
+  --ui-control-outline: #6b7b71;
+  --ui-accent: #176344;
+  --ui-accent-hover: #104c34;
+  --ui-on-accent: #ffffff;
+  --ui-focus: #176344;
+}
 }
 
 /* Inline aliases keep utilities responsive to future semantic-role overrides. */

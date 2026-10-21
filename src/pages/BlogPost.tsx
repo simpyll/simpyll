@@ -65,7 +65,7 @@ export function BlogPost() {
               </div>
             </Reveal>
 
-            <div className="prose prose-invert mt-12 max-w-none">
+            <div className="prose mt-12 max-w-none">
               <Content />
             </div>
 
