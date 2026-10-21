@@ -70,6 +70,10 @@ Open the local URL printed by Vite (normally `http://localhost:5173`).
 | `npm run build` | Type-check, build, generate sitemap and prerender |
 | `npm run preview` | Preview production output |
 | `npm run lint` | Run lint checks |
+| `npm test` | Build, run all Node tests and desktop/mobile browser tests |
+| `npm run test:e2e` | Build and run Playwright against production preview |
+| `npm run test:e2e:built` | Run Playwright against an already-built `dist` |
+| `npm run test:e2e:report` | Open the last browser test report |
 | `node --test scripts/prerender.test.mjs` | Check generated routes and SEO |
 
 ## Project layout

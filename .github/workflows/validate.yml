@@ -22,3 +22,20 @@ jobs:
       - run: npm run build
       - run: npm run lint
       - run: node --test scripts/prerender.test.mjs
+
+      - name: Install Chromium for browser tests
+        run: npx playwright install --with-deps chromium
+
+      - name: Test production site in desktop and mobile browsers
+        run: npm run test:e2e:built
+
+      - name: Upload browser test diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+          if-no-files-found: ignore
