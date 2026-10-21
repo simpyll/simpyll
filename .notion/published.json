@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "sourceId": "3ffb3577d26a80f8a0ba000b24df60a9",
+  "articles": {
+    "3ffb3577d26a80e9b57fc08460c29516": {
+      "slug": "publishing-test",
+      "date": "2026-10-20"
+    }
+  },
+  "files": {
+    "public/images/notion/3ffb3577d26a80e9b57fc08460c29516/ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25.png": "ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25",
+    "src/content/blog/publishing-test.mdx": "87a250fb5615947fe0986a160b8be09d9903263630ce20974389e38793443095"
+  }
+}
