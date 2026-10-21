@@ -1,10 +1,7 @@
 import { Badge } from './Badge'
-import { motion, useReducedMotion } from 'motion/react'
 import { Card } from './Card'
 import { Container } from './Container'
 import { Reveal } from './Reveal'
-
-const MotionCard = motion.create(Card)
 
 const projects = [
   {
@@ -26,8 +23,6 @@ const projects = [
 ]
 
 export function FeaturedWork() {
-  const reduceMotion = useReducedMotion()
-
   return (
     <section id="work" className="scroll-mt-24 py-24 sm:py-32">
       <Container>
@@ -50,18 +45,11 @@ export function FeaturedWork() {
 
         <div className="grid gap-5 md:grid-cols-2">
           {projects.map((project, index) => (
-            <Reveal key={project.number} delay={index * 0.12}>
-              <MotionCard
+            <Reveal key={project.number} staggerIndex={index}>
+              <Card
                 padding="roomy"
-                className="group h-full transition-colors hover:border-accent/50"
-                whileHover={
-                  reduceMotion ? undefined : { y: -6 }
-                }
-                transition={{
-                  type: 'spring',
-                  stiffness: 300,
-                  damping: 22,
-                }}
+                className="group h-full hover:border-accent/50"
+                hoverable
               >
                 <div className="mb-16 flex items-center justify-between">
                   <span className="text-xs tracking-widest text-subtle">
@@ -90,12 +78,12 @@ export function FeaturedWork() {
                 <div className="mt-8 flex justify-end">
                   <span
                     aria-hidden="true"
-                    className="text-xl text-subtle transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-accent motion-reduce:translate-none"
+                    className="text-xl text-subtle ui-motion-arrow"
                   >
                     ↗
                   </span>
                 </div>
-              </MotionCard>
+              </Card>
             </Reveal>
           ))}
         </div>

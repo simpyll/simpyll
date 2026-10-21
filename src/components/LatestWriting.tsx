@@ -26,7 +26,7 @@ export function LatestWriting() {
 
           <Link
             to="/blog"
-            className="group inline-flex items-center gap-3 text-sm font-medium text-accent transition-all hover:gap-5"
+            className="group inline-flex items-center gap-3 text-sm font-medium text-accent ui-link-feedback"
           >
             Read the journal
             <span aria-hidden="true">↗</span>
@@ -40,7 +40,7 @@ export function LatestWriting() {
         ) : (
           <div className="divide-y divide-outline border-y border-outline">
             {latestPosts.map((post, index) => (
-              <Reveal key={post.slug} delay={index * 0.1}>
+              <Reveal key={post.slug} staggerIndex={index}>
                 <Link
                   to={`/blog/${post.slug}`}
                   className="group grid gap-4 py-8 transition-colors sm:grid-cols-[140px_1fr_auto] sm:items-center sm:gap-8"
@@ -74,7 +74,7 @@ export function LatestWriting() {
 
                   <span
                     aria-hidden="true"
-                    className="text-xl text-subtle transition-all group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-accent motion-reduce:translate-none"
+                    className="text-xl text-subtle ui-motion-arrow"
                   >
                     ↗
                   </span>
