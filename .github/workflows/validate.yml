@@ -1,0 +1,23 @@
+name: Validate Simpyll
+on:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run test:notion
+      - run: npm run test:notion:build
+      - run: npm run build
+      - run: npm run lint
+      - run: node --test scripts/prerender.test.mjs
