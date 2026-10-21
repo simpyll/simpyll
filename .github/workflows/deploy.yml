@@ -46,6 +46,9 @@ jobs:
       - name: Test Notion publisher
         run: npm run test:notion
 
+      - name: Test content validation
+        run: npm run test:content
+
       - name: Build and prerender site
         run: npm run build
 
