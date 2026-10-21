@@ -95,7 +95,7 @@ test('semantic overrides reach utilities and prose without a theme controller', 
     document.documentElement.style.setProperty('--ui-accent', '#ffffff')
   })
   await expect(page.getByRole('main')).toHaveCSS('background-color', 'rgb(16, 16, 16)')
-  await expect(page.locator('header .text-accent')).toHaveCSS('color', 'rgb(255, 255, 255)')
+  await expect(page.locator('.nav-indicator')).toHaveCSS('background-color', 'rgb(255, 255, 255)')
   await expect(page.locator('.prose a').first()).toHaveCSS('color', 'rgb(255, 255, 255)')
 })
 
@@ -105,13 +105,21 @@ test('smallest supported viewport fits navigation and reduced motion removes hov
   await page.goto('/')
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
   const nav = page.getByRole('navigation', { name: 'Main navigation' })
+  await nav.getByRole('button', { name: 'More' }).focus()
+  await page.keyboard.press('Enter')
   for (const name of ['Projects', 'Journal', 'About']) {
-    await expect(nav.getByRole('link', { name, exact: true })).toBeInViewport()
+    await expect(page.locator('#navigation-overflow').getByRole('link', { name, exact: true })).toBeInViewport()
   }
-  const link = nav.getByRole('link', { name: 'Projects' })
-  await link.focus()
+  const link = page.locator('#navigation-overflow').getByRole('link', { name: 'Projects' })
+  // Traverse theme control and Home to Projects using real keyboard input.
+  await page.keyboard.press('Tab')
+  await page.keyboard.press('Tab')
+  await page.keyboard.press('Tab')
+  await expect(link).toBeFocused()
   await expect(link).toHaveCSS('outline-style', 'solid')
   await expect(link).toHaveCSS('transition-duration', '0s')
+  await page.keyboard.press('Escape')
+  await expect(nav.getByRole('button', { name: 'More' })).toHaveAttribute('aria-expanded', 'false')
   await expect(page.locator('[data-reveal]').first()).toHaveCSS('transform', 'none')
   const markup = renderToStaticMarkup(createElement(Card, { hoverable: true, children: 'Hover card' }))
   await page.evaluate(html => document.querySelector('main')!.insertAdjacentHTML('afterbegin', html), markup)

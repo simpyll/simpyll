@@ -31,8 +31,11 @@ test('prerendered reveal content stays visible without JavaScript and with full 
 })
 
 test('existing card elevation does not move surrounding layout; reduced motion removes travel', async ({ page, isMobile }) => {
-  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  // Isolate hover from entrance transforms, which temporarily change offsetParent.
+  await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
+  await expect(page.locator('.nav-indicator')).toHaveCSS('opacity', '1')
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
   const card = page.locator('#work .ui-card').first()
   await card.scrollIntoViewIfNeeded()
   await expect.poll(() => page.locator('#work [data-reveal]').first().evaluate(el => el.getAnimations().length)).toBe(0)

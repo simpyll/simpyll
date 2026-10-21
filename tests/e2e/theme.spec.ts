@@ -127,17 +127,35 @@ test('native reveal uses button center, covers corners, serializes clicks and cl
   const box = (await button.boundingBox())!
   await button.click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
-  const frames = await page.evaluate(() => {
+  // Wait for transition.ready, then hold the reveal while inspecting its geometry.
+  // Browser CSS serialization rounds fractional coordinates; compare numerically.
+  await page.waitForFunction(() => {
     const animation = document.documentElement.getAnimations({ subtree: true }).find(a =>
       (a.effect as KeyframeEffect)?.pseudoElement === '::view-transition-new(root)')
-    return (animation?.effect as KeyframeEffect)?.getKeyframes().map(k => k.clipPath)
+    if (!animation) return false
+    animation.pause()
+    return true
   })
-  expect(frames?.[0]).toBe(`circle(0px at ${box.x + box.width / 2}px ${box.y + box.height / 2}px)`)
+  const frames = await page.evaluate(() => {
+    const animation = document.documentElement.getAnimations({ subtree: true }).find(a =>
+      (a.effect as KeyframeEffect)?.pseudoElement === '::view-transition-new(root)')!
+    animation.pause()
+    return (animation.effect as KeyframeEffect).getKeyframes().map(k => k.clipPath)
+  })
+  const origin = String(frames[0]).match(/^circle\(0px at ([\d.]+)px ([\d.]+)px\)$/)
+  expect(origin).not.toBeNull()
+  expect(Number(origin![1])).toBeCloseTo(box.x + box.width / 2, 2)
+  expect(Number(origin![2])).toBeCloseTo(box.y + box.height / 2, 2)
   const radius = Number(String(frames?.[1]).match(/circle\((\d+)px/)?.[1])
   const viewport = page.viewportSize()!
   expect(radius).toBeGreaterThanOrEqual(Math.hypot(Math.max(box.x + box.width / 2, viewport.width - box.x - box.width / 2), Math.max(box.y + box.height / 2, viewport.height - box.y - box.height / 2)))
   await button.evaluate(el => { for (let i = 0; i < 4; i++) (el as HTMLButtonElement).click() })
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  await page.evaluate(() => {
+    const animation = document.documentElement.getAnimations({ subtree: true }).find(a =>
+      (a.effect as KeyframeEffect)?.pseudoElement === '::view-transition-new(root)')
+    animation?.finish()
+  })
   await expect(page.locator('html')).not.toHaveAttribute('data-theme-transition')
   await button.click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
