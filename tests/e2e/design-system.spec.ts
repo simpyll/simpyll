@@ -95,7 +95,7 @@ test('semantic overrides reach utilities and prose without a theme controller', 
     document.documentElement.style.setProperty('--ui-accent', '#ffffff')
   })
   await expect(page.getByRole('main')).toHaveCSS('background-color', 'rgb(16, 16, 16)')
-  await expect(page.locator('header .text-accent')).toHaveCSS('color', 'rgb(255, 255, 255)')
+  await expect(page.locator('.nav-indicator')).toHaveCSS('background-color', 'rgb(255, 255, 255)')
   await expect(page.locator('.prose a').first()).toHaveCSS('color', 'rgb(255, 255, 255)')
 })
 
@@ -107,7 +107,7 @@ test('smallest supported viewport fits navigation and reduced motion removes hov
   const nav = page.getByRole('navigation', { name: 'Main navigation' })
   await nav.getByRole('button', { name: 'More' }).click()
   for (const name of ['Projects', 'Journal', 'About']) {
-    await expect(nav.getByRole('link', { name, exact: true }).filter({ visible: true })).toBeInViewport()
+    await expect(page.locator('#navigation-overflow').getByRole('link', { name, exact: true })).toBeInViewport()
   }
   const link = page.locator('#navigation-overflow').getByRole('link', { name: 'Projects' })
   await link.focus()
