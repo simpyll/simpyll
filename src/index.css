@@ -2,27 +2,64 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* Semantic roles: fixed dark defaults. Theme selection belongs to issue #7. */
+:root {
+  color-scheme: dark;
+  --ui-canvas: #090b10;
+  --ui-surface: #12151c;
+  --ui-surface-hover: #1b1f28;
+  --ui-foreground: #f5f5f4;
+  --ui-muted: #a1a1aa;
+  --ui-subtle: #8b8b95;
+  --ui-outline: #292d36;
+  --ui-control-outline: #71717a;
+  --ui-accent: #9be8cb;
+  --ui-accent-hover: #b5f5dc;
+  --ui-on-accent: #090b10;
+  --ui-focus: #9be8cb;
+  --ui-duration-fast: 200ms;
+  --ui-duration-normal: 300ms;
+  --ui-ease: ease;
+  --ui-focus-width: 2px;
+  --ui-focus-offset: 4px;
+}
+
+/* Inline aliases keep utilities responsive to future semantic-role overrides. */
+@theme inline {
+  --color-canvas: var(--ui-canvas);
+  --color-surface: var(--ui-surface);
+  --color-surface-hover: var(--ui-surface-hover);
+  --color-foreground: var(--ui-foreground);
+  --color-muted: var(--ui-muted);
+  --color-subtle: var(--ui-subtle);
+  --color-outline: var(--ui-outline);
+  --color-control-outline: var(--ui-control-outline);
+  --color-accent: var(--ui-accent);
+  --color-accent-hover: var(--ui-accent-hover);
+  --color-on-accent: var(--ui-on-accent);
+  --color-focus: var(--ui-focus);
+}
+
 @theme {
-  --color-accent: #9be8cb;
-  --color-accent-hover: #b5f5dc;
-
-  --color-canvas: #090b10;
-  --color-surface: #12151c;
-  --color-surface-hover: #1b1f28;
-
-  --color-foreground: #f5f5f4;
-  --color-muted: #a1a1aa;
-  --color-subtle: #71717a;
-  --color-outline: #292d36;
-
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --spacing: 0.25rem;
+  --tracking-display: -0.05em;
+  --tracking-heading: -0.04em;
+  --tracking-eyebrow: 0.2em;
+  --leading-hero: 1.05;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
 }
 
 :root {
   font-family: var(--font-sans);
-  color: var(--color-foreground);
-  background-color: var(--color-canvas);
+  color: var(--ui-foreground);
+  background-color: var(--ui-canvas);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -47,29 +84,29 @@ html {
 /* Blog typography */
 
 .prose {
-  --tw-prose-body: var(--color-muted);
-  --tw-prose-headings: var(--color-foreground);
-  --tw-prose-lead: var(--color-muted);
-  --tw-prose-links: var(--color-accent);
-  --tw-prose-bold: var(--color-foreground);
-  --tw-prose-counters: var(--color-subtle);
-  --tw-prose-bullets: var(--color-accent);
-  --tw-prose-hr: var(--color-outline);
-  --tw-prose-quotes: var(--color-foreground);
-  --tw-prose-quote-borders: var(--color-accent);
-  --tw-prose-captions: var(--color-subtle);
-  --tw-prose-code: var(--color-accent);
-  --tw-prose-pre-code: var(--color-foreground);
-  --tw-prose-pre-bg: var(--color-surface);
-  --tw-prose-th-borders: var(--color-outline);
-  --tw-prose-td-borders: var(--color-outline);
+  --tw-prose-body: var(--ui-muted);
+  --tw-prose-headings: var(--ui-foreground);
+  --tw-prose-lead: var(--ui-muted);
+  --tw-prose-links: var(--ui-accent);
+  --tw-prose-bold: var(--ui-foreground);
+  --tw-prose-counters: var(--ui-subtle);
+  --tw-prose-bullets: var(--ui-accent);
+  --tw-prose-hr: var(--ui-outline);
+  --tw-prose-quotes: var(--ui-foreground);
+  --tw-prose-quote-borders: var(--ui-accent);
+  --tw-prose-captions: var(--ui-subtle);
+  --tw-prose-code: var(--ui-accent);
+  --tw-prose-pre-code: var(--ui-foreground);
+  --tw-prose-pre-bg: var(--ui-surface);
+  --tw-prose-th-borders: var(--ui-outline);
+  --tw-prose-td-borders: var(--ui-outline);
 
-  --tw-prose-invert-body: var(--color-muted);
-  --tw-prose-invert-headings: var(--color-foreground);
-  --tw-prose-invert-links: var(--color-accent);
-  --tw-prose-invert-bold: var(--color-foreground);
-  --tw-prose-invert-code: var(--color-accent);
-  --tw-prose-invert-pre-bg: var(--color-surface);
+  --tw-prose-invert-body: var(--ui-muted);
+  --tw-prose-invert-headings: var(--ui-foreground);
+  --tw-prose-invert-links: var(--ui-accent);
+  --tw-prose-invert-bold: var(--ui-foreground);
+  --tw-prose-invert-code: var(--ui-accent);
+  --tw-prose-invert-pre-bg: var(--ui-surface);
 }
 
 .prose h2,
@@ -80,18 +117,18 @@ html {
 }
 
 .prose a {
-  text-decoration-color: var(--color-accent);
+  text-decoration-color: var(--ui-accent);
   text-underline-offset: 4px;
-  transition: color 200ms ease;
+  transition: color var(--ui-duration-fast) var(--ui-ease);
 }
 
 .prose a:hover {
-  color: var(--color-accent-hover);
+  color: var(--ui-accent-hover);
 }
 
 .prose pre {
-  border: 1px solid var(--color-outline);
-  border-radius: 12px;
+  border: 1px solid var(--ui-outline);
+  border-radius: var(--radius-xl);
 }
 
 /* Keep prerendered content available without motion, including before hydration. */
@@ -107,8 +144,8 @@ html {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 4px;
+  outline: var(--ui-focus-width) solid var(--ui-focus);
+  outline-offset: var(--ui-focus-offset);
 }
 
 .skip-link {
@@ -117,10 +154,78 @@ html {
   left: 0.5rem;
   z-index: 100;
   padding: 0.75rem 1rem;
-  background: var(--color-canvas);
-  color: var(--color-foreground);
+  background: var(--ui-canvas);
+  color: var(--ui-foreground);
   transform: translateY(-200%);
 }
 .skip-link:focus {
   transform: none;
+}
+
+/* Shared recipes remain in the components layer so layout utilities can extend them. */
+@layer components {
+  .ui-button {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-medium;
+    transition: color var(--ui-duration-fast) var(--ui-ease),
+      background-color var(--ui-duration-fast) var(--ui-ease),
+      border-color var(--ui-duration-fast) var(--ui-ease);
+  }
+  .ui-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  .ui-button--primary {
+    @apply bg-accent text-on-accent;
+  }
+  .ui-button--primary:hover:not(:disabled) {
+    @apply bg-accent-hover;
+  }
+  .ui-button--secondary {
+    @apply border border-control-outline bg-surface text-foreground;
+  }
+  .ui-button--secondary:hover:not(:disabled) {
+    @apply bg-surface-hover;
+  }
+  .ui-card {
+    @apply rounded-2xl border border-outline bg-surface p-6 sm:p-8;
+  }
+  .ui-card--roomy {
+    @apply p-8 sm:p-10;
+  }
+  .ui-card--hoverable {
+    transition: transform var(--ui-duration-normal) var(--ui-ease),
+      translate var(--ui-duration-normal) var(--ui-ease),
+      border-color var(--ui-duration-normal) var(--ui-ease),
+      background-color var(--ui-duration-normal) var(--ui-ease);
+  }
+  .ui-card--hoverable:hover {
+    @apply -translate-y-1 border-accent/40 bg-surface-hover;
+  }
+  .ui-badge {
+    @apply rounded-full border border-outline px-3 py-1 text-xs text-subtle;
+  }
+  .ui-nav-link {
+    @apply relative py-2 text-sm text-muted;
+    transition: color var(--ui-duration-normal) var(--ui-ease);
+  }
+  .ui-nav-link:hover,
+  .ui-nav-link:focus-visible {
+    @apply text-foreground;
+  }
+  .ui-nav-link::after {
+    content: '';
+    @apply absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 rounded-full bg-accent;
+    transition: transform var(--ui-duration-normal) ease-out;
+  }
+  .ui-nav-link:hover::after,
+  .ui-nav-link:focus-visible::after {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-card--hoverable:hover {
+    --tw-translate-x: 0px;
+    --tw-translate-y: 0px;
+  }
 }

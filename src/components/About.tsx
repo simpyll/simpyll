@@ -13,11 +13,11 @@ export function About() {
         <div className="grid gap-12 md:grid-cols-[1fr_2fr] md:gap-20">
           <Reveal>
             <div>
-              <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-accent">
+              <p className="mb-4 text-xs font-medium uppercase tracking-eyebrow text-accent">
                 Healthcare × technology
               </p>
 
-              <h2 className="font-display text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">
+              <h2 className="font-display text-4xl font-semibold tracking-heading sm:text-5xl">
                 About<span className="text-accent">.</span>
               </h2>
             </div>

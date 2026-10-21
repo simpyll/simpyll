@@ -1,4 +1,5 @@
 
+import { NavigationLink } from './NavigationLink'
 import { Container } from './Container'
 
 const navigation = [
@@ -17,25 +18,16 @@ export function Header() {
         >
           <a
             href="/"
-            className="font-display text-2xl font-semibold tracking-[-0.05em] text-foreground"
+            className="font-display text-2xl font-semibold tracking-display text-foreground"
           >
             simpyll<span className="text-accent">.</span>
           </a>
 
-          <div className="flex items-center gap-6 sm:gap-8">
+          <div className="flex items-center gap-4 min-[360px]:gap-6 sm:gap-8">
             {navigation.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="group relative py-2 text-sm text-muted transition-colors duration-300 hover:text-foreground"
-              >
+              <NavigationLink key={item.label} href={item.href}>
                 {item.label}
-
-                <span
-                  aria-hidden="true"
-                  className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 rounded-full bg-accent transition-transform duration-300 ease-out group-hover:scale-x-100 group-focus-visible:scale-x-100"
-                />
-              </a>
+              </NavigationLink>
             ))}
           </div>
         </nav>

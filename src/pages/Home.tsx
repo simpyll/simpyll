@@ -23,13 +23,13 @@ export function Home() {
           <section className="flex min-h-[85vh] flex-col justify-center py-24">
             <div className="mb-8 flex items-center gap-3">
               <span className="h-2 w-2 rounded-full bg-accent" />
-              <span className="text-xs font-medium uppercase tracking-[0.2em] text-accent">
+              <span className="text-xs font-medium uppercase tracking-eyebrow text-accent">
                 A nurse learning to build
               </span>
             </div>
 
             <Reveal>
-              <h1 className="max-w-4xl font-display text-5xl font-semibold leading-[1.05] tracking-[-0.05em] sm:text-7xl lg:text-8xl">
+              <h1 className="max-w-4xl font-display text-5xl font-semibold leading-hero tracking-display sm:text-7xl lg:text-8xl">
                 From
                 <br />
                 bedside to

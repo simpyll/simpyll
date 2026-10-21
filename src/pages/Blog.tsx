@@ -1,4 +1,4 @@
-
+import { Badge } from '../components/Badge'
 import { Link } from 'react-router-dom'
 import { Container } from '../components/Container'
 import { Reveal } from '../components/Reveal'
@@ -18,11 +18,11 @@ export function Blog() {
         <Container>
           <section className="pb-16 pt-24 sm:pt-32">
             <Reveal>
-              <p className="mb-6 text-xs font-medium uppercase tracking-[0.2em] text-accent">
+              <p className="mb-6 text-xs font-medium uppercase tracking-eyebrow text-accent">
                 Learning in public
               </p>
 
-              <h1 className="font-display text-5xl font-semibold tracking-[-0.05em] sm:text-7xl">
+              <h1 className="font-display text-5xl font-semibold tracking-display sm:text-7xl">
                 Learning journal<span className="text-accent">.</span>
               </h1>
 
@@ -74,19 +74,14 @@ export function Blog() {
 
                         <div className="mt-5 flex flex-wrap gap-2">
                           {post.metadata.tags.map((tag) => (
-                            <span
-                              key={tag}
-                              className="rounded-full border border-outline px-3 py-1 text-xs text-subtle"
-                            >
-                              {tag}
-                            </span>
+                            <Badge key={tag}>{tag}</Badge>
                           ))}
                         </div>
                       </div>
 
                       <span
                         aria-hidden="true"
-                        className="text-xl text-subtle transition-all group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-accent"
+                        className="text-xl text-subtle transition-all group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-accent motion-reduce:translate-none"
                       >
                         ↗
                       </span>

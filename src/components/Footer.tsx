@@ -8,7 +8,7 @@ export function Footer() {
         <div className="flex flex-col gap-6 py-10 sm:flex-row sm:items-center sm:justify-between">
           <a
             href="/"
-            className="font-display text-xl font-semibold tracking-[-0.05em] text-foreground"
+            className="font-display text-xl font-semibold tracking-display text-foreground"
           >
             simpyll<span className="text-accent">.</span>
           </a>
