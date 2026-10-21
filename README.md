@@ -101,3 +101,5 @@ Simpyll is evolving. Browse the [feature roadmap](docs/ROADMAP.md) and [open Git
 ---
 
 <div align="center"><sub>Built to learn, experiment, and share.</sub></div>
+
+See the [design system](docs/DESIGN-SYSTEM.md) for tokens, component conventions, and examples.

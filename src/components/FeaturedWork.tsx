@@ -1,7 +1,10 @@
-
+import { Badge } from './Badge'
 import { motion, useReducedMotion } from 'motion/react'
+import { Card } from './Card'
 import { Container } from './Container'
 import { Reveal } from './Reveal'
+
+const MotionCard = motion.create(Card)
 
 const projects = [
   {
@@ -30,11 +33,11 @@ export function FeaturedWork() {
       <Container>
         <div className="mb-12 flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <div>
-            <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-accent">
+            <p className="mb-4 text-xs font-medium uppercase tracking-eyebrow text-accent">
               Learning through practice
             </p>
 
-            <h2 className="font-display text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">
+            <h2 className="font-display text-4xl font-semibold tracking-heading sm:text-5xl">
               Projects & experiments<span className="text-accent">.</span>
             </h2>
           </div>
@@ -48,8 +51,9 @@ export function FeaturedWork() {
         <div className="grid gap-5 md:grid-cols-2">
           {projects.map((project, index) => (
             <Reveal key={project.number} delay={index * 0.12}>
-              <motion.div
-                className="group h-full rounded-2xl border border-outline bg-surface p-8 transition-colors hover:border-accent/50 sm:p-10"
+              <MotionCard
+                padding="roomy"
+                className="group h-full transition-colors hover:border-accent/50"
                 whileHover={
                   reduceMotion ? undefined : { y: -6 }
                 }
@@ -79,24 +83,19 @@ export function FeaturedWork() {
 
                 <div className="mt-8 flex flex-wrap gap-2">
                   {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full border border-outline px-3 py-1 text-xs text-subtle"
-                    >
-                      {tag}
-                    </span>
+                    <Badge key={tag}>{tag}</Badge>
                   ))}
                 </div>
 
                 <div className="mt-8 flex justify-end">
                   <span
                     aria-hidden="true"
-                    className="text-xl text-subtle transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-accent"
+                    className="text-xl text-subtle transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-accent motion-reduce:translate-none"
                   >
                     ↗
                   </span>
                 </div>
-              </motion.div>
+              </MotionCard>
             </Reveal>
           ))}
         </div>

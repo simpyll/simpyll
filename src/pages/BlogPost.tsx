@@ -1,4 +1,4 @@
-
+import { Badge } from '../components/Badge'
 import { Link, useParams } from 'react-router-dom'
 import { Container } from '../components/Container'
 import { Reveal } from '../components/Reveal'
@@ -37,11 +37,11 @@ export function BlogPost() {
                 ← Back to journal
               </Link>
 
-              <p className="mb-6 text-xs font-medium uppercase tracking-[0.2em] text-accent">
+              <p className="mb-6 text-xs font-medium uppercase tracking-eyebrow text-accent">
                 {metadata.category}
               </p>
 
-              <h1 className="font-display text-4xl font-semibold leading-tight tracking-[-0.04em] sm:text-6xl">
+              <h1 className="font-display text-4xl font-semibold leading-tight tracking-heading sm:text-6xl">
                 {metadata.title}
               </h1>
 
@@ -71,12 +71,7 @@ export function BlogPost() {
 
             <div className="mt-16 flex flex-wrap gap-2 border-t border-outline pt-8">
               {metadata.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full border border-outline px-3 py-1 text-xs text-subtle"
-                >
-                  {tag}
-                </span>
+                <Badge key={tag}>{tag}</Badge>
               ))}
             </div>
           </article>

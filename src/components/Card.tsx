@@ -1,23 +1,26 @@
 
-import type { HTMLAttributes, ReactNode } from 'react'
+import type { ComponentPropsWithRef, ReactNode } from 'react'
 
-type CardProps = HTMLAttributes<HTMLDivElement> & {
+type CardProps = ComponentPropsWithRef<'div'> & {
   children: ReactNode
   hoverable?: boolean
+  padding?: 'default' | 'roomy'
 }
 
 export function Card({
   children,
   hoverable = false,
+  padding = 'default',
   className = '',
   ...props
 }: CardProps) {
   return (
     <div
       className={[
-        'rounded-2xl border border-outline bg-surface p-6 sm:p-8',
+        'ui-card',
+        padding === 'roomy' ? 'ui-card--roomy' : '',
         hoverable
-          ? 'transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:bg-surface-hover'
+          ? 'ui-card--hoverable'
           : '',
         className,
       ].join(' ')}

@@ -15,11 +15,11 @@ export function LatestWriting() {
       <Container>
         <div className="mb-12 flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <div>
-            <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-accent">
+            <p className="mb-4 text-xs font-medium uppercase tracking-eyebrow text-accent">
               Notes from the learning process
             </p>
 
-            <h2 className="font-display text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">
+            <h2 className="font-display text-4xl font-semibold tracking-heading sm:text-5xl">
               Learning journal<span className="text-accent">.</span>
             </h2>
           </div>
@@ -74,7 +74,7 @@ export function LatestWriting() {
 
                   <span
                     aria-hidden="true"
-                    className="text-xl text-subtle transition-all group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-accent"
+                    className="text-xl text-subtle transition-all group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-accent motion-reduce:translate-none"
                   >
                     ↗
                   </span>
