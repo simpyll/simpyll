@@ -118,6 +118,8 @@ test('smallest supported viewport fits navigation and reduced motion removes hov
   await expect(link).toBeFocused()
   await expect(link).toHaveCSS('outline-style', 'solid')
   await expect(link).toHaveCSS('transition-duration', '0s')
+  await page.keyboard.press('Escape')
+  await expect(nav.getByRole('button', { name: 'More' })).toHaveAttribute('aria-expanded', 'false')
   await expect(page.locator('[data-reveal]').first()).toHaveCSS('transform', 'none')
   const markup = renderToStaticMarkup(createElement(Card, { hoverable: true, children: 'Hover card' }))
   await page.evaluate(html => document.querySelector('main')!.insertAdjacentHTML('afterbegin', html), markup)
