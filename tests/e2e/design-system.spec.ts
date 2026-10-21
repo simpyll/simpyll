@@ -19,6 +19,7 @@ async function fixtureMarkup() {
 }
 
 function luminance(hex: string) {
+  if (/^#[a-f\d]{3}$/i.test(hex)) hex = '#' + [...hex.slice(1)].map(c => c + c).join('')
   const values = hex.match(/[a-f\d]{2}/gi)!.map(value => {
     const channel = parseInt(value, 16) / 255
     return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
@@ -31,8 +32,10 @@ function contrast(a: string, b: string) {
   return (values[0] + 0.05) / (values[1] + 0.05)
 }
 
-test('semantic text, action and focus roles meet contrast on supported surfaces', async ({ page }) => {
+for (const theme of ['light', 'dark']) {
+test(`semantic text, action and focus roles meet contrast: ${theme}`, async ({ page }) => {
   await page.goto('/')
+  await page.getByRole('combobox', { name: 'Theme' }).selectOption(theme)
   const tokens = await page.evaluate(() => {
     const styles = getComputedStyle(document.documentElement)
     return Object.fromEntries(['canvas', 'surface', 'surface-hover', 'foreground', 'muted', 'subtle', 'accent', 'accent-hover', 'on-accent', 'focus', 'control-outline']
@@ -49,6 +52,8 @@ test('semantic text, action and focus roles meet contrast on supported surfaces'
     expect(contrast(tokens['on-accent'], tokens[background])).toBeGreaterThanOrEqual(4.5)
   }
 })
+
+}
 
 test('button recipes preserve native keyboard, disabled and form semantics', async ({ page }) => {
   await page.goto('/')

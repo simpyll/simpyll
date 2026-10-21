@@ -83,9 +83,9 @@ that direct URLs (including trailing slashes and query strings) contain useful
 prerendered content. Dedicated assertions cover Python MDX formatting and the
 Notion-published article's durable image. Tests use committed content, fixed
 locale/timezone, reduced motion and isolated contexts; external requests fail
-instead of reaching live services. No Notion credentials are needed. The site
-currently has a fixed dark palette and no theme switcher; add a switching and
-persistence test when that control is implemented.
+instead of reaching live services. No Notion credentials are needed. Theme regression tests cover Light/Dark/System, persistence, live OS changes,
+cross-tab synchronization, blocked storage, pre-hydration article colors, keyboard
+selection, mobile fit and contrast in both palettes. See [theme architecture](docs/THEMES.md).
 
 PR validation and the reusable Pages build run browser tests before uploading
 the deployable artifact, including deployments requested by Notion publishing.

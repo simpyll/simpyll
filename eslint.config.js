@@ -8,6 +8,11 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 export default defineConfig([
   globalIgnores(['dist']),
   {
+    files: ['src/theme/bootstrap.js'],
+    extends: [js.configs.recommended],
+    languageOptions: { globals: globals.browser },
+  },
+  {
     files: ['scripts/validate-content*.mjs'],
     extends: [js.configs.recommended],
     languageOptions: { globals: globals.node },

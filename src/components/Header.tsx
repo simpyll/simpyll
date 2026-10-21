@@ -1,5 +1,6 @@
 
 import { NavigationLink } from './NavigationLink'
+import { ThemeSelect } from './ThemeSelect'
 import { Container } from './Container'
 
 const navigation = [
@@ -14,7 +15,7 @@ export function Header() {
       <Container>
         <nav
           aria-label="Main navigation"
-          className="flex h-20 items-center justify-between"
+          className="flex min-h-20 flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3"
         >
           <a
             href="/"
@@ -29,6 +30,9 @@ export function Header() {
                 {item.label}
               </NavigationLink>
             ))}
+          </div>
+          <div className="flex w-full justify-end sm:w-auto">
+            <ThemeSelect />
           </div>
         </nav>
       </Container>

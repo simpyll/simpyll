@@ -60,15 +60,10 @@ Motion animations keep numeric seconds/spring settings in their components.
 Reduced-motion rules disable transitions/animations and reveal transforms;
 hover translation utilities explicitly opt out with `motion-reduce:translate-none`.
 
-### Future themes (issue #7, not implemented here)
+### Theme preferences (issue #7)
 
-Only dark values and `color-scheme: dark` are shipped. There is no theme
-switcher, localStorage read, system preference listener, alternate palette, or
-pre-hydration script. A future theme implementation can override the `--ui-*`
-roles and `color-scheme` without rewriting component utilities. It must decide
-initial document theme before paint and keep server/client markup deterministic;
-it must test contrast, persistence, system changes, and flash prevention itself.
-This foundation introduces no client-time theme decision or hydration branch.
+See [theme architecture, testing and screenshots](THEMES.md). The existing dark
+roles remain unchanged; light overrides reuse the same utilities and prose roles.
 
 ## Component conventions
 
