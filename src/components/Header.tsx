@@ -1,6 +1,6 @@
 
 import { NavigationLink } from './NavigationLink'
-import { ThemeSelect } from './ThemeSelect'
+import { ThemeToggle } from './ThemeToggle'
 import { Container } from './Container'
 
 const navigation = [
@@ -32,7 +32,7 @@ export function Header() {
             ))}
           </div>
           <div className="flex w-full justify-end sm:w-auto">
-            <ThemeSelect />
+            <ThemeToggle />
           </div>
         </nav>
       </Container>

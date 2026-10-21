@@ -1,9 +1,8 @@
 # Theme support
 
-The header offers Light, Dark and System using a labeled native select with
-44px touch height, visible keyboard focus and platform keyboard behavior. On
-small screens the control occupies a second header row to preserve the existing
-navigation links. Its width is stable across preferences.
+The header offers a 44px one-click sun/moon toggle. The footer's **Use system
+theme** button restores OS tracking. See [circular toggle](THEME-TOGGLE.md) for
+animation architecture, reference findings, fallbacks and validation.
 
 ## Architecture
 
@@ -20,16 +19,17 @@ navigation links. Its width is stable across preferences.
   writes tolerate blocked storage and keep selections in memory for the session.
 - `src/theme/store.ts` exposes `useTheme` through React's external-store API.
   A deterministic System server snapshot matches the first hydration render;
-  React reconciles the selector after hydration. Colors initialize independently
+  React reconciles the controls after hydration. Colors initialize independently
   outside the hydrated root. Browser APIs are never called by server rendering.
 - `src/index.css` owns both palettes. The original dark/mint values are retained;
   the light theme uses pale neutral surfaces and a darker green accent. All live
   components already use semantic tokens. Prose no longer forces inverted roles.
   Current code blocks have no syntax-highlighting engine; code inherits semantic
   foreground/surface colors, preserving readability without adding a dependency.
-- No whole-page transition is added, so initialization and switches do not fade
-  through incorrect colors. Existing small hover transitions retain their reduced
-  motion opt-out. No images or photographs are filtered or inverted.
+- Deliberate toggle activations progressively enhance with a circular native view
+  transition. Initialization, OS changes and cross-tab updates remain immediate.
+  Reduced motion, WebKit and missing APIs also switch immediately.
+
 
 Without JavaScript, CSS follows the operating system; saved preferences and the
 selector require JavaScript. Future charts, dialogs or third-party embeds must
