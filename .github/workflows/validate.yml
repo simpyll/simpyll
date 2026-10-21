@@ -29,8 +29,8 @@ jobs:
       - name: Test production site in desktop and mobile browsers
         run: npm run test:e2e:built
 
-      - name: Upload browser test diagnostics
-        if: failure()
+      - name: Upload browser test diagnostics and navigation screenshots
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-results

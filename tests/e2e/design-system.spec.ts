@@ -105,10 +105,11 @@ test('smallest supported viewport fits navigation and reduced motion removes hov
   await page.goto('/')
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
   const nav = page.getByRole('navigation', { name: 'Main navigation' })
+  await nav.getByRole('button', { name: 'More' }).click()
   for (const name of ['Projects', 'Journal', 'About']) {
-    await expect(nav.getByRole('link', { name, exact: true })).toBeInViewport()
+    await expect(nav.getByRole('link', { name, exact: true }).filter({ visible: true })).toBeInViewport()
   }
-  const link = nav.getByRole('link', { name: 'Projects' })
+  const link = page.locator('#navigation-overflow').getByRole('link', { name: 'Projects' })
   await link.focus()
   await expect(link).toHaveCSS('outline-style', 'solid')
   await expect(link).toHaveCSS('transition-duration', '0s')

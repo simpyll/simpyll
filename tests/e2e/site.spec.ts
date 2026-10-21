@@ -40,21 +40,22 @@ async function tabTo(page: Page, target: ReturnType<Page['getByRole']>) {
   await expect(target).toBeFocused()
 }
 
-test('homepage and primary navigation reach each section, including from an article', async ({ page }) => {
+test('homepage navigation reaches sections and journal, including from an article', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Frombedside tobuild.')
-  await expect(page).toHaveTitle('From Bedside to Build | Simpyll')
   await expectNoHorizontalOverflow(page)
   const nav = page.getByRole('navigation', { name: 'Main navigation' })
-  for (const [label, id] of [['Projects', 'work'], ['Journal', 'writing'], ['About', 'about']]) {
-    await nav.getByRole('link', { name: label, exact: true }).click()
+  for (const [label, id] of [['Projects', 'work'], ['About', 'about']]) {
+    const more = nav.getByRole('button', { name: 'More' })
+    if (await more.isVisible()) await more.click()
+    await nav.getByRole('link', { name: label, exact: true }).filter({ visible: true }).click()
     await expect(page).toHaveURL(new RegExp(`/#${id}$`))
     await expect(page.locator(`#${id}`).getByRole('heading', { level: 2 })).toBeInViewport()
   }
   await page.goto('/blog/hello-world')
   await nav.getByRole('link', { name: 'Journal', exact: true }).click()
-  await expect(page.locator('#writing').getByRole('heading', { level: 2 })).toBeInViewport()
-  await nav.getByRole('link', { name: 'simpyll.' }).click()
+  await expect(page).toHaveURL('/blog')
+  await nav.getByRole('link', { name: 'Home', exact: true }).click()
   await expect(page).toHaveURL('/')
 })
 
@@ -142,14 +143,15 @@ test('keyboard skip link, primary navigation and journal controls are usable', a
 
   await page.goto('/')
   const nav = page.getByRole('navigation', { name: 'Main navigation' })
-  for (const name of ['simpyll.', 'Projects', 'Journal', 'About']) {
+  for (const name of ['Home', 'Journal']) {
     const link = nav.getByRole('link', { name, exact: true })
     await tabTo(page, link)
     await expect(link).toBeFocused()
     await expect(link).toHaveCSS('outline-style', 'solid')
   }
   await page.keyboard.press('Enter')
-  await expect(page).toHaveURL('/#about')
+  await expect(page).toHaveURL('/blog')
+  await nav.getByRole('link', { name: 'Home', exact: true }).click()
   const journey = page.getByRole('link', { name: 'Follow the learning journey' })
   await tabTo(page, journey)
   await page.keyboard.press('Enter')

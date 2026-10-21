@@ -27,7 +27,7 @@ for (const [route, title] of pages) {
     assert.equal((body.match(/<header/g) || []).length, 1)
     assert.match(body, /<main id="main-content"/)
     assert.equal((body.match(/<h1(?![^>]*role="presentation")/g) || []).length, 1)
-    assert.match(body, /href="\/#writing"/)
+    assert.match(body, /href="\/blog"/)
     assert.match(body, /href="\/#about"/)
     assert.match(body, /href="\/#work"/)
     assert.match(head, /type="module"[^>]*src="\/assets\//)
