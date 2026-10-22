@@ -4,6 +4,7 @@ import { extname, resolve, sep } from 'node:path'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import mdx from '@mdx-js/rollup'
+import { remarkHeadingIds } from './scripts/remark-heading-ids.mjs'
 
 // Vite's SPA fallback otherwise serves the prerendered homepage at /blog.
 function prerenderedRoutes(): Plugin {
@@ -48,7 +49,7 @@ export default defineConfig({
       },
     },
     prerenderedRoutes(),
-    { enforce: 'pre', ...mdx() },
+    { enforce: 'pre', ...mdx({ remarkPlugins: [remarkHeadingIds] }) },
     react(),
     tailwindcss(),
   ],
