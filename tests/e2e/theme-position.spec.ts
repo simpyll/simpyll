@@ -71,13 +71,14 @@ for (const position of ['top', 'scrolled', 'fragment']) {
           animation.currentTime = Number(animation.effect!.getTiming().duration) * progress
           await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
         }, progress)
+        if (progress < 1) await expect(page.locator('html')).toHaveAttribute('data-theme-transition')
         const png = await page.screenshot({ path: testInfo.outputPath(`frame-${progress}.png`), scale: 'css' })
         samples.push({ progress, geometry: await geometry(), painted: await outline(page, png) })
       }
       await page.evaluate(() => {
         const animation = document.documentElement.getAnimations({ subtree: true }).find(a =>
           (a.effect as KeyframeEffect)?.pseudoElement === '::view-transition-new(root)')!
-        animation.finish()
+        animation?.finish()
       })
       await expect(page.locator('html')).not.toHaveAttribute('data-theme-transition')
       const after = await geometry()
