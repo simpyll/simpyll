@@ -352,7 +352,9 @@ html[data-theme="dark"] .theme-moon { opacity: 1; transform: none; }
 /* One glass layer; opaque base is also the unsupported-filter fallback. */
 .floating-header {
   position: sticky;
-  top: max(.75rem, env(safe-area-inset-top));
+  /* Keep sticky placement at the viewport origin; the capsule owns its inset. */
+  top: 0;
+  --ui-nav-inset: max(.75rem, env(safe-area-inset-top));
   z-index: 50;
   display: flex;
   justify-content: center;
@@ -361,6 +363,7 @@ html[data-theme="dark"] .theme-moon { opacity: 1; transform: none; }
 }
 .floating-nav {
   position: relative;
+  top: var(--ui-nav-inset);
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
