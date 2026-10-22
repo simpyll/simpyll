@@ -36,6 +36,7 @@ export function Header() {
     const measure = () => {
       // Reserve exactly the floating header's height, including wrapped/large text.
       if (slot.current) slot.current.style.height = `${header.getBoundingClientRect().height}px`
+      document.documentElement.style.setProperty('--navigation-clearance', `${header.getBoundingClientRect().bottom + 16}px`)
       const outer = getComputedStyle(header)
       const style = getComputedStyle(nav)
       const px = (value: string) => parseFloat(value) || 0
@@ -127,20 +128,10 @@ export function Header() {
     return () => { document.removeEventListener('pointerdown', dismiss); document.removeEventListener('keydown', keyboard) }
   }, [expanded])
 
-  const navigate = (event: MouseEvent<HTMLAnchorElement>, href: string) => {
+  const navigate = (event: MouseEvent<HTMLAnchorElement>) => {
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
     setExpanded(false)
-    // Router retains link semantics; focus/scroll only after the new DOM commits.
-    requestAnimationFrame(() => {
-      const id = href.split('#')[1]
-      const target = document.getElementById(id || 'main-content')
-      if (target) {
-        target.setAttribute('tabindex', '-1')
-        target.focus({ preventScroll: true })
-        if (id) target.scrollIntoView()
-        else window.scrollTo({ top: 0, behavior: 'instant' })
-      }
-    })
+
   }
 
   return (
@@ -160,7 +151,7 @@ export function Header() {
             <Link key={item.href} to={item.href} data-nav-href={item.href}
               className="ui-nav-link floating-link"
               aria-current={active === item.href ? (item.href.includes('#') ? 'location' : 'page') : undefined}
-              onClick={event => navigate(event, item.href)}>{item.label}</Link>
+              onClick={event => navigate(event)}>{item.label}</Link>
           ))}
         </div>
         {count < navigation.length && <button ref={trigger} type="button" className="nav-overflow floating-link"
@@ -170,7 +161,7 @@ export function Header() {
         <div id="navigation-overflow" className="nav-panel" data-open={expanded && count < navigation.length}>
           {navigation.slice(count).map(item => <Link key={item.href} to={item.href} data-nav-href={item.href} className="floating-link"
             aria-current={active === item.href ? (item.href.includes('#') ? 'location' : 'page') : undefined}
-            onClick={event => navigate(event, item.href)}>{item.label}</Link>)}
+            onClick={event => navigate(event)}>{item.label}</Link>)}
         </div>
       </nav>
     </header>
