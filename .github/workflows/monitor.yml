@@ -1,0 +1,35 @@
+name: Production availability
+on:
+  schedule:
+    - cron: '23 */6 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+# Never consume Pages' pending deployment slot.
+concurrency:
+  group: production-availability
+  cancel-in-progress: true
+jobs:
+  monitor:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Probe current public release
+        run: npm run smoke:http
+      - name: Preserve diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-availability
+          path: artifacts/production/
+          retention-days: 7
+          if-no-files-found: ignore

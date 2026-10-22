@@ -27,7 +27,7 @@ test('rich MDX fixture compiles, prerenders and hydrates through both publishing
   ], async () => '/images/rich-fixture.svg')
   await writeFile(join(root, 'src/content/blog/rich-content-fixture.mdx'), await readFile('tests/fixtures/rich-content.mdx', 'utf8') + '\n' + generated)
   await writeFile(join(root, 'public/images/rich-fixture.svg'), '<svg xmlns="http://www.w3.org/2000/svg" width="960" height="320" viewBox="0 0 960 320"><rect width="960" height="320" fill="#176344"/><text x="60" y="175" fill="white" font-size="32">Markdown + Notion → shared renderer</text></svg>')
-  try { await exec('npm', ['run', 'build'], { cwd: root, maxBuffer: 3e6 }) } catch (error) { throw new Error(error.stdout + error.stderr) }
+  try { await exec('npm', ['run', 'build'], { cwd: root, env: { ...process.env, SMOKE_BUILD_SHA: (await exec('git', ['rev-parse', 'HEAD'])).stdout.trim() }, maxBuffer: 3e6 }) } catch (error) { throw new Error(error.stdout + error.stderr) }
   const html = await readFile(join(root, 'dist/blog/rich-content-fixture/index.html'), 'utf8')
   assert.match(html, /class="hljs-keyword"/)
   assert.match(html, /scope="row"/)

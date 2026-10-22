@@ -13,7 +13,7 @@ export default defineConfig([
     languageOptions: { globals: globals.browser },
   },
   {
-    files: ['scripts/validate-content*.mjs'],
+    files: ['scripts/validate-content*.mjs', 'scripts/smoke/*.mjs'],
     extends: [js.configs.recommended],
     languageOptions: { globals: globals.node },
   },

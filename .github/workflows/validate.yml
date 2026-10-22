@@ -19,6 +19,7 @@ jobs:
       - run: npm run test:notion
       - run: npm run test:content
       - run: npm run test:search
+      - run: npm run test:smoke
       - run: npm run test:notion:build
       - run: npm run build
       - run: npm run lint
