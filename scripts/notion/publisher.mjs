@@ -1,3 +1,5 @@
+import sharp from 'sharp'
+import { imageName } from '../images/names.mjs'
 import { createHash } from 'node:crypto'
 import { readFile, writeFile, mkdir, unlink } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
@@ -210,7 +212,13 @@ export async function downloadImage(value, fetcher = fetch, wait = sleep) {
     chunks.push(chunk)
   }
   if (!size) throw new Error('Empty image download')
-  return { bytes: Buffer.concat(chunks), extension }
+  const bytes = Buffer.concat(chunks)
+  try {
+    const metadata = await sharp(bytes, { limitInputPixels: 40_000_000, animated: true }).metadata()
+    const actual = { png: 'png', jpeg: 'jpg', gif: 'gif', webp: 'webp', heif: 'avif', avif: 'avif' }[metadata.format]
+    if (actual !== extension) throw new Error('type mismatch')
+  } catch { throw new Error('Invalid image content or dimensions') }
+  return { bytes, extension }
 }
 
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
@@ -230,7 +238,7 @@ async function readOptional(path) {
   try { return await readFile(path) } catch (error) { if (error.code === 'ENOENT') return null; throw error }
 }
 function ownedPath(path) {
-  return /^src\/content\/blog\/[a-z0-9]+(?:-[a-z0-9]+)*\.mdx$/.test(path) || /^public\/images\/notion\/[a-f0-9]{32}\/[a-f0-9]{64}\.(png|jpg|gif|webp|avif)$/.test(path)
+  return /^src\/content\/blog\/[a-z0-9]+(?:-[a-z0-9]+)*\.mdx$/.test(path) || /^public\/images\/notion\/[a-f0-9]{32}\/(?:[a-f0-9]{64}|[a-z0-9]+(?:-[a-z0-9]+)*-[a-f0-9]{12})\.(png|jpg|gif|webp|avif)$/.test(path)
 }
 
 // Build a complete plan before touching disk. Any API/conversion/collision error aborts it.
@@ -256,13 +264,25 @@ export async function synchronize({ root, api, pageId, imageDownloader = downloa
     const metadata = metadataFor(page, old.articles[pageKey], blocks)
     if (slugs.has(metadata.slug)) throw new Error('Duplicate published slug; assign distinct Slug values')
     slugs.add(metadata.slug)
+    const assets = {}
+    let imageSequence = 0
     const content = await convertBlocks(blocks, async block => {
+      imageSequence++
       const image = block.image
       if (!['external', 'file'].includes(image.type)) throw new Error('Unsupported image type')
       const url = safeUrl(image[image.type].url, true)
       if (image.type === 'external' && !notionImageHost(new URL(url).hostname)) return url
+      const assetKey = block.id ? id(block.id) : String(imageSequence)
+      const previous = old.articles[pageKey]?.assets?.[assetKey]
+      const identity = new URL(url).origin + new URL(url).pathname
+      if (previous && block.last_edited_time && previous.revision === block.last_edited_time && previous.identity === identity && old.files[previous.path]) {
+        const stored = await readOptional(join(root, previous.path))
+        if (stored) { files.set(previous.path, stored); assets[assetKey] = previous; return '/' + previous.path.slice(7) }
+      }
       const { bytes, extension } = await imageDownloader(url)
-      const path = `public/images/notion/${pageKey}/${hash(bytes)}.${extension}`
+      const name = imageName({ caption: plain(image.caption), article: metadata.slug, sequence: imageSequence })
+      const path = `public/images/notion/${pageKey}/${name}-${hash(bytes).slice(0, 12)}.${extension}`
+      assets[assetKey] = { path, identity, revision: block.last_edited_time ?? null }
       files.set(path, bytes)
       return `/${path.slice('public/'.length)}`
     })
@@ -273,7 +293,11 @@ export async function synchronize({ root, api, pageId, imageDownloader = downloa
     const mdx = `export const metadata = {\n${fields}\n}\n\n${content}\n`
     await validate(mdx)
     files.set(`src/content/blog/${metadata.slug}.mdx`, Buffer.from(mdx))
-    next.articles[pageKey] = { slug: metadata.slug, date: metadata.date }
+    next.articles[pageKey] = { slug: metadata.slug, date: metadata.date, assets }
+  }
+  // Published media URLs are permanent compatibility assets, even after unpublish.
+  for (const path of Object.keys(old.files).filter(p => p.startsWith('public/images/'))) {
+    if (!files.has(path)) { const bytes = await readOptional(join(root, path)); if (bytes) files.set(path, bytes) }
   }
   // Refuse collisions even when the generated content happens to match a manual file.
   for (const [path, bytes] of files) {

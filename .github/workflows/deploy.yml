@@ -61,6 +61,16 @@ jobs:
       - name: Test production monitoring
         run: npm run test:smoke
 
+      - name: Restore image transformations
+        uses: actions/cache@v4
+        with:
+          path: public/images/optimized
+          key: images-${{ runner.os }}-${{ hashFiles('package-lock.json', 'scripts/images/**', 'public/images/**', 'src/content/blog/**') }}
+          restore-keys: images-${{ runner.os }}-
+
+      - name: Test image transformations
+        run: npm run test:images
+
       - name: Build and prerender site
         run: npm run build
 

@@ -24,7 +24,7 @@ export const blocks = [
   block('quote', 'A quotation'), block('code', 'const value = `<tag>{notCode}</tag>`;\nexport default value;'),
   { id: CHILD, type: 'image', has_children: false, image: { type: 'file', file: { url: 'https://prod-files-secure.s3.us-west-2.amazonaws.com/fixture.png?signature=one' }, caption: [rt('Fixture image')] } },
 ]
-export const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=', 'base64')
+export const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAADUlEQVQImWMwTpv5HwAENAIyeXoBdAAAAABJRU5ErkJggg==', 'base64')
 export function fixture({ pages = [page()], content = blocks, statusType = 'status', nested = false, latest, queryPages = false } = {}) {
   const calls = []
   const result = (results, cursor = null) => ({ object: 'list', results: structuredClone(results), has_more: Boolean(cursor), next_cursor: cursor })

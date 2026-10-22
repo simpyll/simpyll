@@ -1,5 +1,6 @@
 import { useId, useRef, useState, isValidElement, type ComponentProps, type ReactNode } from 'react'
 import { safeContentUrl } from './urls'
+import imageData from '../../generated/images.json'
 import { Link } from 'react-router-dom'
 
 export function ArticleLink({ href, target, rel, children, ...props }: ComponentProps<'a'>) {
@@ -41,14 +42,22 @@ export function InlineCode({ className, ...props }: ComponentProps<'code'>) {
   const language = className?.match(/language-([\w+-]+)/)?.[1]
   return <code {...props} className={className} data-language={language} />
 }
-export function ArticleImage({ src, alt = '', ...props }: ComponentProps<'img'>) {
+type ImageVariant = { src: string; format: string; width: number; height: number }
+type ImageEntry = { width: number; height: number; variants: ImageVariant[] }
+const images: Record<string, ImageEntry> = imageData
+export function ArticleImage({ src, alt = '', loading = 'lazy', decoding = 'async', sizes = '(max-width: 800px) calc(100vw - 32px), 768px', ...props }: ComponentProps<'img'>) {
   const safe = safeContentUrl(src, true)
-  return safe ? <img {...props} src={safe} alt={alt} loading="lazy" decoding="async" /> : <span>{alt || 'Image unavailable'}</span>
+  if (!safe) return <span>{alt || 'Image unavailable'}</span>
+  const entry = images[safe.split(/[?#]/)[0]]
+  if (!entry?.variants.length) return <img width={entry?.width} height={entry?.height} {...props} src={safe} alt={alt} loading={loading} decoding={decoding} />
+  const set = (format: string) => entry.variants.filter(v => v.format === format).map(v => `${v.src} ${v.width}w`).join(', ')
+  const fallback = entry.variants.filter(v => v.format === 'png').at(-1)!
+  return <picture>{['avif', 'webp'].map(format => set(format) ? <source key={format} type={`image/${format}`} srcSet={set(format)} sizes={sizes} /> : null)}<img {...props} src={fallback.src} srcSet={set('png')} sizes={sizes} width={entry.width} height={entry.height} alt={alt} loading={loading} decoding={decoding} /></picture>
 }
 export function SemanticFigure(props: ComponentProps<'figure'>) { return <figure {...props} /> }
 export function Caption(props: ComponentProps<'figcaption'>) { return <figcaption {...props} /> }
-export function Figure({ src, alt, caption, width, height }: { src: string; alt: string; caption?: ReactNode; width?: number; height?: number }) {
-  return <figure><ArticleImage src={src} alt={alt} width={width} height={height} />{caption && <figcaption>{caption}</figcaption>}</figure>
+export function Figure({ src, alt, caption, width, height, loading, fetchPriority }: { loading?: ComponentProps<'img'>['loading']; fetchPriority?: ComponentProps<'img'>['fetchPriority']; imageName?: string; src: string; alt: string; caption?: ReactNode; width?: number; height?: number }) {
+  return <figure><ArticleImage src={src} alt={alt} width={width} height={height} loading={loading} fetchPriority={fetchPriority} />{caption && <figcaption>{caption}</figcaption>}</figure>
 }
 export function Details(props: ComponentProps<'details'>) { return <details {...props} /> }
 export function Summary(props: ComponentProps<'summary'>) { return <summary {...props} /> }

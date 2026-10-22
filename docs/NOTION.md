@@ -142,3 +142,6 @@ References: [Notion data-source migration](https://developers.notion.com/guides/
 [Notion 2026-03-11 changes](https://developers.notion.com/guides/get-started/upgrade-guide-2026-03-11),
 [data-source queries](https://developers.notion.com/reference/query-a-data-source),
 and [GitHub workflow triggering](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow).
+
+Image naming now uses captions/article context with stable local copies. See
+[image lifecycle and compatibility policy](IMAGES.md); old public media is retained.

@@ -32,3 +32,6 @@ dist-server
 artifacts/
 
 /public/search-index.json
+
+/public/images/optimized/
+/src/generated/images.json

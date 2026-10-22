@@ -17,6 +17,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run test:notion
+      - run: npm run test:images
       - run: npm run test:content
       - run: npm run test:search
       - run: npm run test:smoke
