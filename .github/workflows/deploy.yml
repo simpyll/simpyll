@@ -49,6 +49,9 @@ jobs:
       - name: Test content validation
         run: npm run test:content
 
+      - name: Test static blog search
+        run: npm run test:search
+
       - name: Build and prerender site
         run: npm run build
 

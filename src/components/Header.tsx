@@ -1,6 +1,7 @@
-import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, useCallback, type SetStateAction, type MouseEvent } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { visibleCount } from '../navigation/capacity'
+import { NavSearch } from './NavSearch'
 import { ThemeToggle } from './ThemeToggle'
 
 const navigation = [
@@ -13,6 +14,8 @@ const navigation = [
 export function Header() {
   const location = useLocation()
   const [expanded, setExpanded] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const changeSearch = useCallback((value: SetStateAction<boolean>) => { setExpanded(false); setSearchOpen(value) }, [])
   // Conservative identical SSR/hydration layout: More contains all destinations.
   const [count, setCount] = useState(0)
   const countRef = useRef(0)
@@ -44,7 +47,8 @@ export function Header() {
       const widths = [...ruler.querySelectorAll<HTMLElement>('[data-measure-link]')].map(el => el.getBoundingClientRect().width)
       const more = ruler.querySelector<HTMLElement>('[data-measure-more]')!.getBoundingClientRect().width
       const inset = px(style.paddingLeft) + px(style.paddingRight) + px(style.borderLeftWidth) + px(style.borderRightWidth)
-      const next = visibleCount(widths, available, theme.getBoundingClientRect().width, more, px(style.columnGap), inset)
+      const searchWidth = nav.querySelector<HTMLElement>('.nav-search-control')!.getBoundingClientRect().width
+      const next = visibleCount(widths, available - searchWidth - px(style.columnGap), theme.getBoundingClientRect().width, more, px(style.columnGap), inset)
       header.dataset.navReady = 'true'
       if (next === countRef.current) return
       const focused = document.activeElement as HTMLElement | null
@@ -138,13 +142,15 @@ export function Header() {
     <>
     <div ref={slot} className="navigation-slot" aria-hidden="true" />
     <header className="floating-header" ref={root}>
-      <noscript><style>{'.navigation-slot { display: none; } .floating-header { position: relative; } .floating-nav { border-radius: 1.5rem; flex-wrap: wrap; justify-content: center; } .nav-overflow, .nav-measures, .floating-nav .theme-toggle { display: none; } #navigation-overflow[data-open] { display: flex; position: static; flex-wrap: wrap; justify-content: center; min-width: 0; border: 0; box-shadow: none; padding: 0; background: transparent; }'}</style></noscript>
+      <noscript><style>{'.navigation-slot { display: none; } .floating-header { position: relative; } .floating-nav { border-radius: 1.5rem; flex-wrap: wrap; justify-content: center; } .nav-overflow, .nav-measures, .floating-nav .theme-toggle, .nav-search-control, .nav-search-field, .search-panel { display: none; } #navigation-overflow[data-open] { display: flex; position: static; flex-wrap: wrap; justify-content: center; min-width: 0; border: 0; box-shadow: none; padding: 0; background: transparent; }'}</style></noscript>
       <div ref={measures} className="nav-measures" aria-hidden="true" inert>
         {navigation.map(item => <span key={item.href} data-measure-link className="floating-link">{item.label}</span>)}
         <span data-measure-more className="floating-link">More<span aria-hidden="true"> ▾</span></span>
       </div>
-      <nav aria-label="Main navigation" className="floating-nav"
+      <nav aria-label="Main navigation" className="floating-nav" data-search-open={searchOpen}
         onBlur={event => { if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget)) setExpanded(false) }}>
+        <ThemeToggle />
+        <div className="nav-destinations" inert={searchOpen} aria-hidden={searchOpen}>
         <div ref={links} className="floating-links" hidden={count === 0}>
           <span ref={indicator} className="nav-indicator" aria-hidden="true" />
           {navigation.slice(0, count).map(item => (
@@ -157,7 +163,8 @@ export function Header() {
         {count < navigation.length && <button ref={trigger} type="button" className="nav-overflow floating-link"
           aria-expanded={expanded} aria-controls="navigation-overflow"
           onClick={() => setExpanded(value => !value)}>More<span aria-hidden="true"> ▾</span></button>}
-        <ThemeToggle />
+        </div>
+        <NavSearch open={searchOpen} onOpenChange={changeSearch} />
         <div id="navigation-overflow" className="nav-panel" data-open={expanded && count < navigation.length}>
           {navigation.slice(count).map(item => <Link key={item.href} to={item.href} data-nav-href={item.href} className="floating-link"
             aria-current={active === item.href ? (item.href.includes('#') ? 'location' : 'page') : undefined}

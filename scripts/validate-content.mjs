@@ -4,7 +4,7 @@ import { pathToFileURL } from 'node:url'
 import { compile } from '@mdx-js/mdx'
 
 // Read only literal data from the MDX parser's ESTree; never evaluate article code.
-function literal(node) {
+export function literal(node) {
   if (node?.type === 'Literal') return node.value
   if (node?.type === 'ArrayExpression') return node.elements.map(literal)
   if (node?.type === 'ObjectExpression') {
