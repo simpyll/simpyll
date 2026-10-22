@@ -89,7 +89,7 @@ export function Header() {
     }
   }, [count])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const list = links.current
     const pill = indicator.current
     if (!list || !pill) return
@@ -101,6 +101,7 @@ export function Header() {
       pill.style.height = `${target.offsetHeight}px`
       pill.style.transform = `translate(${target.offsetLeft}px, ${target.offsetTop}px)`
     }
+    if (pill.style.opacity !== '1') delete pill.dataset.ready
     update()
     const frame = requestAnimationFrame(() => { pill.dataset.ready = 'true' })
     const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(update) : null
@@ -141,7 +142,7 @@ export function Header() {
 
   return (
     <header className="floating-header" ref={root}>
-      <noscript><style>{'.floating-nav { border-radius: 1.5rem; flex-wrap: wrap; justify-content: center; } .nav-overflow, .nav-measures { display: none; } #navigation-overflow[hidden] { display: flex; position: static; flex-wrap: wrap; justify-content: center; min-width: 0; border: 0; box-shadow: none; padding: 0; background: transparent; }'}</style></noscript>
+      <noscript><style>{'.floating-nav { border-radius: 1.5rem; flex-wrap: wrap; justify-content: center; } .nav-overflow, .nav-measures, .floating-nav .theme-toggle { display: none; } #navigation-overflow[hidden] { display: flex !important; position: static; flex-wrap: wrap; justify-content: center; min-width: 0; border: 0; box-shadow: none; padding: 0; background: transparent; }'}</style></noscript>
       <div ref={measures} className="nav-measures" aria-hidden="true" inert>
         {navigation.map(item => <span key={item.href} data-measure-link className="floating-link">{item.label}</span>)}
         <span data-measure-more className="floating-link">More<span aria-hidden="true"> ▾</span></span>

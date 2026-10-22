@@ -1,4 +1,4 @@
-import { destination } from './helpers/navigation'
+import { destination, navigationReady } from './helpers/navigation'
 import { test as base, expect, type Page } from '@playwright/test'
 import { readdirSync } from 'node:fs'
 
@@ -46,6 +46,7 @@ test('homepage navigation reaches sections and journal, including from an articl
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Frombedside tobuild.')
   await expectNoHorizontalOverflow(page)
   const nav = page.getByRole('navigation', { name: 'Main navigation' })
+  await navigationReady(page)
   for (const [label, id] of [['Projects', 'work'], ['About', 'about']]) {
     await (await destination(page, label)).click()
     await expect(page).toHaveURL(new RegExp(`/#${id}$`))
@@ -142,6 +143,7 @@ test('keyboard skip link, primary navigation and journal controls are usable', a
 
   await page.goto('/')
   const nav = page.getByRole('navigation', { name: 'Main navigation' })
+  await navigationReady(page)
   for (const name of ['Home', 'Journal']) {
     const link = nav.getByRole('link', { name, exact: true })
     if (!await link.isVisible()) {

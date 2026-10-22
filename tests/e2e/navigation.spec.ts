@@ -63,6 +63,8 @@ test('indicator responds to resize and reduced motion with theme screenshots', a
         const b = await pill.boundingBox()
         return Math.abs(a!.x - b!.x) + Math.abs(a!.width - b!.width)
       }).toBeLessThan(2)
+      const more = page.getByRole('button', { name: 'More' })
+      if (await more.isVisible() && await more.getAttribute('aria-expanded') !== 'true') await more.click()
       await page.screenshot({ path: testInfo.outputPath(`navigation-${width}-${theme}.png`) })
     }
   }
