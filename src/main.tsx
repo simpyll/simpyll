@@ -1,3 +1,4 @@
+import { ErrorBoundary } from './recovery/ErrorBoundary'
 
 import React from 'react'
 import { createRoot, hydrateRoot } from 'react-dom/client'
@@ -11,11 +12,13 @@ const container = document.getElementById('root')!
 
 const app = (
   <React.StrictMode>
-    <HelmetProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </HelmetProvider>
+    <ErrorBoundary scope="application">
+      <HelmetProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </HelmetProvider>
+    </ErrorBoundary>
   </React.StrictMode>
 )
 
