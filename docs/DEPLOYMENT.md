@@ -31,3 +31,13 @@ the Pages API reports `https://simpyll.github.io/simpyll/`; this build intention
 uses root-relative assets for the custom domain, so the repository-subpath URL
 is not a substitute for the intended production URL. No DNS changes are made
 by the workflow.
+
+## Public release verification
+
+A successful Pages action is followed by read-only HTTP and Chromium checks of
+the custom domain. Builds publish `deployment.json` and verification waits for
+the checked-out SHA, including Notion-generated commits. See
+[production verification and recovery](PRODUCTION-VERIFICATION.md) for checks,
+retry limits, scheduled monitoring, diagnostics, limitations and the DNS/HTTPS
+runbook. Verification failures fail the Actions run without automatically
+rolling back a successfully published deployment.

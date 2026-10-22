@@ -19,7 +19,7 @@ test('Notion fixture reaches built HTML, metadata, sitemap and durable image thr
   await symlink(resolve('node_modules'), join(root, 'node_modules'), 'dir')
   const options = { root, pageId: ROOT, api: fixture().api, imageDownloader: async () => ({ bytes: png, extension: 'png' }), validate: compile }
   await synchronize(options)
-  try { await exec('npm', ['run', 'build'], { cwd: root, maxBuffer: 2 * 1024 * 1024 }) } catch (error) { throw new Error(error.stdout + error.stderr) }
+  try { await exec('npm', ['run', 'build'], { cwd: root, env: { ...process.env, SMOKE_BUILD_SHA: (await exec('git', ['rev-parse', 'HEAD'])).stdout.trim() }, maxBuffer: 2 * 1024 * 1024 }) } catch (error) { throw new Error(error.stdout + error.stderr) }
   const html = await readFile(join(root, 'dist/blog/notion-fixture/index.html'), 'utf8')
   assert.match(html, /<title>Notion fixture article \| Simpyll<\/title>/)
   assert.match(html, /rel="canonical" href="https:\/\/simpyll.com\/blog\/notion-fixture"/)

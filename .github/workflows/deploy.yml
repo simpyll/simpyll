@@ -21,6 +21,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      revision: ${{ steps.revision.outputs.sha }}
     permissions:
       contents: read
       pages: read
@@ -29,6 +31,10 @@ jobs:
         uses: actions/checkout@v7
         with:
           ref: ${{ inputs.ref || github.sha }}
+
+      - name: Record checked-out deployment identity
+        id: revision
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
@@ -51,6 +57,9 @@ jobs:
 
       - name: Test static blog search
         run: npm run test:search
+
+      - name: Test production monitoring
+        run: npm run test:smoke
 
       - name: Build and prerender site
         run: npm run build
@@ -82,6 +91,13 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
 
+      - name: Preserve expected release manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-manifest
+          path: dist/deployment.json
+          retention-days: 7
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5
         with:
@@ -102,3 +118,49 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v5
 
+
+  verify:
+    needs: [build, deploy]
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    env:
+      SMOKE_BASE_URL: https://simpyll.com
+      SMOKE_EXPECTED_SHA: ${{ needs.build.outputs.revision }}
+      SMOKE_MANIFEST: expected-release/deployment.json
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.build.outputs.revision }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: production-manifest
+          path: expected-release
+      - name: Verify public HTTP content after Pages deployment
+        run: npm run smoke:http
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Verify hydrated production in Chromium
+        id: browser
+        run: npm run smoke:browser
+      - name: Report separate deployment and verification outcomes
+        if: always()
+        env:
+          BROWSER_RESULT: ${{ steps.browser.outcome }}
+        run: |
+          echo "Pages deployment: succeeded. Browser verification: $BROWSER_RESULT. See HTTP summary and production diagnostics for route results." >> "$GITHUB_STEP_SUMMARY"
+      - name: Preserve production diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-verification
+          path: artifacts/production/
+          retention-days: 7
+          if-no-files-found: ignore
