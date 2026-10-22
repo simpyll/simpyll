@@ -8,7 +8,7 @@ The unchanged-main diagnostic baseline (CI run #20) passed real native-transitio
 
 ## Positioning correction
 
-Replace the sticky header with a viewport-fixed anchor (`position: fixed; inset-inline: 0`) using the original safe-area-aware top offset and capsule padding. The capsule no longer has a sticky threshold or a nonzero sticky compositor displacement that could be lost during scrolling/snapshotting. No scroll listeners or guessed compensating translations are used. The capsule stays at the same intended viewport coordinates.
+Replace the sticky header with a viewport-fixed anchor (`position: fixed`) using the original safe-area-aware top offset and capsule padding. The capsule no longer has a sticky threshold or a nonzero sticky compositor displacement that could be lost during scrolling/snapshotting. No scroll listeners or guessed compensating translations are used. The capsule stays at the same intended viewport coordinates. An explicit viewport width, bounded by the containing width, prevents mobile fixed auto-sizing from expanding the capacity box when enlarged text overflows the document.
 
 A noninteractive `navigation-slot` reserves document-flow height. Its CSS fallback matches the default 82px header at normal text size; the existing ResizeObserver measurement synchronizes it to actual header height, including wrapped controls and enlarged text. No new observer is needed, and changes to the slot cannot change the fixed header's width. Without JavaScript, the slot is hidden and the header returns to document flow with all links accessible.
 
