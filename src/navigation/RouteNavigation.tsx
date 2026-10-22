@@ -3,6 +3,8 @@ import { useLocation, useNavigate, useNavigationType } from 'react-router-dom'
 
 type Position = { x: number; y: number }
 const storageKey = 'simpyll-scroll-v1'
+const entryKey = (entry: { key: string; pathname: string; search: string; hash: string }) =>
+  JSON.stringify([entry.key, entry.pathname, entry.search, entry.hash])
 
 function readPositions(): Map<string, Position> {
   try {
@@ -39,7 +41,7 @@ export function RouteNavigation() {
     history.scrollRestoration = 'manual'
     const save = () => {
       const entries = positions.current!
-      entries.set(current.current.key, { x: scrollX, y: scrollY })
+      entries.set(entryKey(current.current), { x: scrollX, y: scrollY })
       if (entries.size > 100) entries.delete(entries.keys().next().value!)
     }
     const persist = () => {
@@ -84,7 +86,7 @@ export function RouteNavigation() {
     previous.current = location
     current.current = location
     const routeChanged = !!from && from.pathname !== location.pathname
-    const saved = action === 'POP' ? positions.current?.get(location.key) : undefined
+    const saved = action === 'POP' && (from || !location.hash) ? positions.current?.get(entryKey(location)) : undefined
     const hashChanged = !!from && from.hash !== location.hash
     const needsHash = !!location.hash && (!from || routeChanged || hashChanged)
     // Queries and repeated links to the current route preserve focus and scroll.
