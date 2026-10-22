@@ -113,3 +113,5 @@ This implements the basic copy/highlighting needed by #58 without closing #13/#1
 further language themes/copy refinements can build on it. GFM footnotes render,
 while bibliography, clinical reference authoring and Notion citations remain #63.
 No screen-reader user study, real-device testing, or complete WCAG audit is claimed.
+
+Image authoring and automatic delivery: [IMAGES.md](IMAGES.md).

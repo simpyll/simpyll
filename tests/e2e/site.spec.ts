@@ -112,7 +112,7 @@ test('Notion-published MDX includes a working durable image', async ({ page }) =
   await expect(page.locator('.prose p')).toContainText('my first blog post written in Notion')
   const image = page.locator('article figure img')
   await image.scrollIntoViewIfNeeded()
-  await expect(image).toHaveAttribute('src', /^\/images\/notion\/.+\.png$/)
+  await expect(image).toHaveAttribute('src', /^\/images\/optimized\/.+\.png$/)
   await expect.poll(() => image.evaluate((element: HTMLImageElement) => element.complete && element.naturalWidth > 0)).toBe(true)
   await expectNoHorizontalOverflow(page)
 })

@@ -27,8 +27,10 @@ test('Notion fixture reaches built HTML, metadata, sitemap and durable image thr
   assert.match(html, /<strong>Bold<\/strong>/)
   assert.match(html, /&lt;script&gt;/)
   assert.doesNotMatch(html, /signature=one|prod-files-secure/)
-  const image = html.match(/src="(\/images\/notion\/[^" ]+)"/)[1]
-  assert.deepEqual(await readFile(join(root, 'dist', image)), png)
+  const image = html.match(/src="(\/images\/optimized\/[^" ]+)"/)[1]
+  assert.ok((await readFile(join(root, 'dist', image))).length > 0)
+  assert.match(html, /srcSet=/i)
+  assert.match(html, /<picture>/)
   const schema = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1])
   assert.equal(schema.headline, 'Notion fixture article')
   assert.equal(schema.datePublished, '2026-10-20')

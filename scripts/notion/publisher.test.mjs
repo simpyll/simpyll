@@ -172,3 +172,19 @@ test('Notion-hosted external images are localized, ordinary HTTPS images stay ex
   assert.match(text, /example.com\/public.png/)
   assert.doesNotMatch(text, /signed=secret/)
 })
+
+test('revision cache reuses local bytes and preserves old public image URLs', async t => {
+  const { root, sync } = await setup(t)
+  const content = structuredClone(blocks)
+  content.at(-1).last_edited_time = '2026-01-01T00:00:00Z'
+  let downloads = 0
+  const options = { api: fixture({ content }).api, imageDownloader: async () => { downloads++; return { bytes: png, extension: 'png' } } }
+  await sync(options)
+  const before = JSON.parse(await readFile(join(root, '.notion/published.json'), 'utf8'))
+  const imagePath = Object.keys(before.files).find(p => p.startsWith('public/images/'))
+  assert.match(imagePath, /fixture-image-[a-f0-9]{12}\.png$/)
+  await sync({ ...options, api: fixture({ content }).api })
+  assert.equal(downloads, 1)
+  await sync({ api: fixture({ pages: [] }).api })
+  assert.deepEqual(await readFile(join(root, imagePath)), png)
+})
