@@ -350,8 +350,14 @@ html[data-theme="dark"] .theme-sun { opacity: 0; transform: rotate(45deg) scale(
 html[data-theme="dark"] .theme-moon { opacity: 1; transform: none; }
 
 /* One glass layer; opaque base is also the unsupported-filter fallback. */
+/* Space is retained independently of the viewport anchor (including before hydration). */
+.navigation-slot { height: calc(5rem + 2px); }
 .floating-header {
-  position: sticky;
+  position: fixed;
+  inset-inline-start: 0;
+  /* Fixed auto widths can expand with mobile overflow at large text sizes. */
+  width: 100vw;
+  max-width: 100%;
   top: max(.75rem, env(safe-area-inset-top));
   z-index: 50;
   display: flex;

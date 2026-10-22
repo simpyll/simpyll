@@ -148,6 +148,8 @@ test('text sizing and container width produce More-only layout and restore focus
   await assertPartition(page)
   await typography.evaluate(el => el.remove())
   await page.locator('html').evaluate(el => el.style.fontSize = '64px')
+  // Mobile overflow must not enlarge the fixed header's capacity box.
+  await expect.poll(async () => (await page.locator('.floating-header').boundingBox())!.width).toBeLessThanOrEqual(420)
   await expect(page.locator('.floating-links a')).toHaveCount(0)
   expect(await page.locator('.floating-nav').evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true)
 })

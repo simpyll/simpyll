@@ -19,6 +19,7 @@ export function Header() {
   const measures = useRef<HTMLDivElement>(null)
   const pendingFocus = useRef<{ href?: string; trigger: boolean } | null>(null)
   const root = useRef<HTMLElement>(null)
+  const slot = useRef<HTMLDivElement>(null)
   const trigger = useRef<HTMLButtonElement>(null)
   const links = useRef<HTMLDivElement>(null)
   const indicator = useRef<HTMLSpanElement>(null)
@@ -33,6 +34,8 @@ export function Header() {
     let frame = 0
     let disposed = false
     const measure = () => {
+      // Reserve exactly the floating header's height, including wrapped/large text.
+      if (slot.current) slot.current.style.height = `${header.getBoundingClientRect().height}px`
       const outer = getComputedStyle(header)
       const style = getComputedStyle(nav)
       const px = (value: string) => parseFloat(value) || 0
@@ -141,8 +144,10 @@ export function Header() {
   }
 
   return (
+    <>
+    <div ref={slot} className="navigation-slot" aria-hidden="true" />
     <header className="floating-header" ref={root}>
-      <noscript><style>{'.floating-nav { border-radius: 1.5rem; flex-wrap: wrap; justify-content: center; } .nav-overflow, .nav-measures, .floating-nav .theme-toggle { display: none; } #navigation-overflow[data-open] { display: flex; position: static; flex-wrap: wrap; justify-content: center; min-width: 0; border: 0; box-shadow: none; padding: 0; background: transparent; }'}</style></noscript>
+      <noscript><style>{'.navigation-slot { display: none; } .floating-header { position: relative; } .floating-nav { border-radius: 1.5rem; flex-wrap: wrap; justify-content: center; } .nav-overflow, .nav-measures, .floating-nav .theme-toggle { display: none; } #navigation-overflow[data-open] { display: flex; position: static; flex-wrap: wrap; justify-content: center; min-width: 0; border: 0; box-shadow: none; padding: 0; background: transparent; }'}</style></noscript>
       <div ref={measures} className="nav-measures" aria-hidden="true" inert>
         {navigation.map(item => <span key={item.href} data-measure-link className="floating-link">{item.label}</span>)}
         <span data-measure-more className="floating-link">More<span aria-hidden="true"> ▾</span></span>
@@ -169,5 +174,6 @@ export function Header() {
         </div>
       </nav>
     </header>
+    </>
   )
 }
