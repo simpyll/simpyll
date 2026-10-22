@@ -4,9 +4,13 @@
 
 A top-centered sticky capsule preserves its space in document flow, stays clear of mobile bottom toolbars/virtual keyboards and uses safe-area offsets. Existing sections remain Projects (`/#work`) and About (`/#about`); Journal links to the existing `/blog` route and stays active on articles. Home links to `/`. No new pages or dependencies.
 
-At widths below 40rem, Home, Journal, More and the existing theme toggle remain visible. More is a nonmodal disclosure with normal link/tab semantics, Escape with trigger focus restoration, outside-pointer dismissal, and dismissal when focus leaves. Navigation closes it and focuses the destination section/main. No focus trap or scroll lock: surrounding content remains usable. This implements the issue's later floating-pill enhancement rather than its original hamburger/modal drawer proposal.
+Navigation capacity is measured rather than breakpoint-driven. The configured order (Home, Projects, Journal, About) defines a stable prefix priority. Measure intrinsic label widths using inert, aria-hidden spans with the same typography/padding; subtract header safe-area padding and capsule border/padding; include measured theme control and actual gap widths. First test every destination without More. If that fails, reserve More and take the largest prefix that fits. The remaining suffix alone renders in the disclosure. Each destination has one real anchor.
 
-The indicator measures link offsets after route changes and with one ResizeObserver. CSS uses #92's spring and duration tokens; reduced-motion duration becomes zero. Initial SSR uses a static active background, progressively replaced by the measured capsule. Unsupported measurement/animation leaves real links functional. Narrow layouts hide section links in the main row but keep them in overflow. With JavaScript disabled a noscript style exposes every destination without a disclosure.
+ResizeObserver watches the stable available header box, intrinsic measuring spans and theme control. Resize/font readiness notifications batch into one scheduled measurement; no scroll or persistent animation loop. The measured available box is independent of the capsule's shrink-to-fit width, preventing feedback oscillation. Actual fractional widths are compared without rounding. Font changes, longer labels, new destinations and zoom naturally change measurements. Zero visible links leaves More plus theme. Measuring content is noninteractive, inert, hidden and excluded from accessibility.
+
+More is a nonmodal disclosure with normal Tab/link semantics, Escape with trigger focus restoration, outside-pointer dismissal and dismissal when focus leaves the nav. Route selection closes it and focuses the destination. On resize, a focused moved link is refocused at its new visible location; if demoted into closed overflow, focus returns to More. If More disappears, focus moves to the active/first primary destination. Theme focus is left untouched. No scroll lock or focus trap.
+
+SSR and initial hydration use the same conservative More-plus-theme layout. Without JavaScript, noscript CSS exposes all links as a wrapping row. Initial post-hydration measurement expands the capsule in its reserved header row. The indicator measures primary link offsets after capacity/route changes; overflow active state uses the same semantic accent background. #92 tokens and reduced motion remain intact.
 
 #93 is present in base commit 3676159 (merge #97). ThemeToggle is reused unchanged, so its reveal origin comes from its current bounding rectangle and its provider remains authoritative. Footer System selection remains intact.
 
@@ -18,11 +22,9 @@ Did not adopt drag-to-select, refractive SVG filters, custom view store, equal-w
 
 ## Verification
 
-Lint, TypeScript, client/server production build and prerender pass. All 64 Node tests pass after updating the Journal destination assertion.
+Issue #99 adds capacity boundary/fractional-width tests, generic future-destination and longer-label cases, unique/complete visible link assertions, resizing both directions, constrained container/More-only mode, increased typography, focus migration and a narrow no-JavaScript navigation test. Existing route/keyboard tests now open the disclosure only when their destination is absent from the primary row. Light/dark screenshots cover narrow, intermediate and wide layouts.
 
-Playwright tests added for direct routes/history, theme integration, 320px controls, Escape/return focus, section focus, outside dismissal, reduced motion, resize alignment and screenshots at 320/1280 in light/dark. Existing navigation tests updated for the new destinations/disclosure. Local execution is blocked: Chromium and headless-shell downloads return invalid/truncated ZIPs; no browser is installed. CI runs the complete suite. Screenshot outputs are retained in the validation artifact on every run.
-
-Before marking ready, inspect CI screenshots and verify keyboard navigation, both themes, 200%/400% browser zoom, portrait/landscape, real mobile browser/virtual keyboard, screen reader, and unsupported backdrop-filter rendering. These manual checks have not been claimed as complete. No screenshot or animation demonstration has yet been captured locally.
+Local lint, TypeScript, client/server build, prerender and Node checks are run before publishing. Chromium installation in this environment previously returned truncated ZIPs; GitHub Actions runs the complete desktop/mobile browser suite and retains screenshots/reports. See the linked PR for final CI results and visual inspection. Physical-device screen reader and real mobile browser keyboard checks remain manual limitations.
 
 ## Performance and compatibility
 

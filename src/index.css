@@ -379,7 +379,10 @@ html[data-theme="dark"] .theme-moon { opacity: 1; transform: none; }
     -webkit-backdrop-filter: blur(12px);
   }
 }
-.floating-links { position: relative; display: flex; gap: .25rem; }
+.floating-links { position: relative; display: flex; gap: inherit; }
+.floating-links[hidden] { display: none; }
+.nav-measures { position: fixed; top: 0; left: 0; display: flex; width: max-content; visibility: hidden; pointer-events: none; }
+.nav-measures > *, .floating-links > a, .nav-overflow { flex: none; white-space: nowrap; }
 .floating-link {
   position: relative;
   display: inline-flex;
@@ -411,28 +414,24 @@ html[data-theme="dark"] .theme-moon { opacity: 1; transform: none; }
 .nav-indicator[data-ready] {
   transition: transform var(--ui-duration-deliberate) var(--ui-ease-spring), width var(--ui-duration-deliberate) var(--ui-ease-spring);
 }
-.nav-overflow { display: none; border: 0; background: transparent; cursor: pointer; }
+.nav-overflow { display: inline-flex; border: 0; background: transparent; cursor: pointer; }
 .nav-panel {
   position: absolute;
   top: calc(100% + .5rem);
   right: 0;
-  min-width: 12rem;
+  min-width: min(12rem, calc(100vw - 1rem));
   max-width: calc(100vw - 1rem);
+  max-height: calc(100dvh - 8rem);
+  overflow: auto;
   padding: .5rem;
   border: 1px solid var(--ui-control-outline);
   border-radius: 1.25rem;
   background: var(--ui-surface);
   box-shadow: 0 8px 28px #0002;
 }
-.nav-panel .floating-link { display: flex; justify-content: flex-start; }
+.nav-panel .floating-link { display: flex; justify-content: flex-start; overflow-wrap: anywhere; }
 .nav-panel[hidden] { display: none; }
 [id] { scroll-margin-top: 7rem; }
-@media (max-width: 39.999rem) {
-  .nav-secondary { display: none; }
-  .nav-overflow { display: inline-flex; }
-  .floating-link { padding-inline: .625rem; }
-}
-@media (min-width: 40rem) { .nav-panel { display: none; } }
 @media (prefers-reduced-transparency: reduce) {
   .floating-nav { background: var(--ui-surface); backdrop-filter: none; -webkit-backdrop-filter: none; }
 }
