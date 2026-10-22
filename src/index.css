@@ -362,6 +362,8 @@ html[data-theme="dark"] .theme-moon { opacity: 1; transform: none; }
 .floating-nav {
   position: relative;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
   gap: .25rem;
   padding: .375rem;

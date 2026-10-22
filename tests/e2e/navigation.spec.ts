@@ -143,9 +143,13 @@ test('text sizing and container width produce More-only layout and restore focus
   await page.locator('.floating-header').evaluate(el => el.style.width = '')
   await expect(page.locator('.floating-links a')).toHaveCount(4)
   await page.setViewportSize({ width: 420, height: 800 })
-  await page.addStyleTag({ content: '.floating-link { font-size: 2rem; letter-spacing: .1em; }' })
+  const typography = await page.addStyleTag({ content: '.floating-link { font-size: 2rem; letter-spacing: .1em; }' })
   await expect(page.locator('.floating-links a')).not.toHaveCount(4)
   await assertPartition(page)
+  await typography.evaluate(el => el.remove())
+  await page.locator('html').evaluate(el => el.style.fontSize = '64px')
+  await expect(page.locator('.floating-links a')).toHaveCount(0)
+  expect(await page.locator('.floating-nav').evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true)
 })
 
 test('all destinations remain available without JavaScript at 320px', async ({ browser, baseURL }) => {
