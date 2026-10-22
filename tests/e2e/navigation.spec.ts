@@ -110,7 +110,7 @@ test('capacity partitions all destinations uniquely and maximally across resize 
       const inset = ['paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth'].reduce((sum, key) => sum + parseFloat(style[key as keyof CSSStyleDeclaration] as string), 0)
       const available = header.getBoundingClientRect().width - parseFloat(outer.paddingLeft) - parseFloat(outer.paddingRight)
       const widths = [...document.querySelectorAll<HTMLElement>('[data-measure-link]')].map(el => el.getBoundingClientRect().width)
-      const theme = document.querySelector('.theme-toggle')!.getBoundingClientRect().width
+      const theme = document.querySelector('.theme-toggle')!.getBoundingClientRect().width + document.querySelector('.nav-search-control')!.getBoundingClientRect().width + gap
       const more = document.querySelector('[data-measure-more]')!.getBoundingClientRect().width
       const count = document.querySelectorAll('.floating-links a').length
       const used = (n: number) => widths.slice(0, n).reduce((sum, w) => sum + w, 0) + theme + (n < widths.length ? more : 0) + gap * (n + Number(n < widths.length)) + inset

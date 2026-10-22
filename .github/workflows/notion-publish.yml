@@ -39,6 +39,7 @@ jobs:
       - run: npm ci
       - run: npm run test:notion
       - run: npm run test:content
+      - run: npm run test:search
       - name: Read Published articles and validate MDX
         env:
           NOTION_API_TOKEN: ${{ secrets.NOTION_API_TOKEN }}
