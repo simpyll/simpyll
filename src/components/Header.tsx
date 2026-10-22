@@ -80,7 +80,7 @@ export function Header() {
     if (!pending) return
     const nav = root.current!
     const destination = [...nav.querySelectorAll<HTMLAnchorElement>('[data-nav-href]')]
-      .find(el => el.dataset.navHref === pending.href && !el.closest('[hidden]'))
+      .find(el => el.dataset.navHref === pending.href && !el.closest('[hidden], [data-open="false"]'))
     if (destination) destination.focus({ preventScroll: true })
     else if (trigger.current) trigger.current.focus({ preventScroll: true })
     else if (pending.trigger) {
@@ -142,7 +142,7 @@ export function Header() {
 
   return (
     <header className="floating-header" ref={root}>
-      <noscript><style>{'.floating-nav { border-radius: 1.5rem; flex-wrap: wrap; justify-content: center; } .nav-overflow, .nav-measures, .floating-nav .theme-toggle { display: none; } #navigation-overflow[hidden] { display: flex !important; position: static; flex-wrap: wrap; justify-content: center; min-width: 0; border: 0; box-shadow: none; padding: 0; background: transparent; }'}</style></noscript>
+      <noscript><style>{'.floating-nav { border-radius: 1.5rem; flex-wrap: wrap; justify-content: center; } .nav-overflow, .nav-measures, .floating-nav .theme-toggle { display: none; } #navigation-overflow[data-open] { display: flex; position: static; flex-wrap: wrap; justify-content: center; min-width: 0; border: 0; box-shadow: none; padding: 0; background: transparent; }'}</style></noscript>
       <div ref={measures} className="nav-measures" aria-hidden="true" inert>
         {navigation.map(item => <span key={item.href} data-measure-link className="floating-link">{item.label}</span>)}
         <span data-measure-more className="floating-link">More<span aria-hidden="true"> ▾</span></span>
@@ -162,7 +162,7 @@ export function Header() {
           aria-expanded={expanded} aria-controls="navigation-overflow"
           onClick={() => setExpanded(value => !value)}>More<span aria-hidden="true"> ▾</span></button>}
         <ThemeToggle />
-        <div id="navigation-overflow" className="nav-panel" hidden={!expanded || count === navigation.length}>
+        <div id="navigation-overflow" className="nav-panel" data-open={expanded && count < navigation.length}>
           {navigation.slice(count).map(item => <Link key={item.href} to={item.href} data-nav-href={item.href} className="floating-link"
             aria-current={active === item.href ? (item.href.includes('#') ? 'location' : 'page') : undefined}
             onClick={event => navigate(event, item.href)}>{item.label}</Link>)}

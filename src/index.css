@@ -432,7 +432,7 @@ html[data-theme="dark"] .theme-moon { opacity: 1; transform: none; }
   box-shadow: 0 8px 28px #0002;
 }
 .nav-panel .floating-link { display: flex; justify-content: flex-start; overflow-wrap: anywhere; }
-.nav-panel[hidden] { display: none; }
+.nav-panel[data-open="false"] { display: none; }
 [id] { scroll-margin-top: 7rem; }
 @media (prefers-reduced-transparency: reduce) {
   .floating-nav { background: var(--ui-surface); backdrop-filter: none; -webkit-backdrop-filter: none; }
