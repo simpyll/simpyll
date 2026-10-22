@@ -1,30 +1,30 @@
-# Theme reveal navigation position (#101)
+# Floating navigation scroll and theme stability (#101)
 
 ## Report and evidence limits
 
-Android Chrome screenshots show the floating capsule higher during the circular reveal than after it, while the hero text appears unchanged. The displacement is consistent with the nonzero sticky inset, but that is a hypothesis, not a confirmed device root cause.
+Android Chrome screenshots report the capsule rising during theme changes and becoming partly clipped under the browser toolbar after a small ordinary scroll on /blog. This expands the investigation beyond the theme animation alone.
 
-The initial unchanged-main capture run used real Chromium View Transitions in desktop and Pixel 7 emulation. At the top, scrolled sticky positions and /#work, both theme directions kept the marked capsule border at CSS y=24..81 in all five captured frames. Thus it did **not** reproduce the reported displacement. That first run's test cleanup incorrectly attempted to finish an animation that had already naturally finished at its last sampled frame; this was corrected without removing position assertions. Subsequent baseline runs retain all geometry and painted-bound checks. A compact 360px mobile viewport also exercises the overflow layout in the report.
+The unchanged-main diagnostic baseline (CI run #20) passed real native-transition frame tests at top, scrolled positions and /#work in desktop and compact 360px Chromium emulation. The marked border had zero measured displacement. This did not reproduce the physical-device defect. Emulation does not recreate Android browser chrome or compositor behavior, so the device-specific cause remains unconfirmed.
 
-No physical Android device/browser toolbar is available here. Mobile emulation does not reproduce browser chrome, toolbar collapse or compositor/device differences. Passing emulated captures cannot prove that the physical-device report is fixed. Keep the proposed fix in draft until that behavior is verified.
+## Positioning correction
 
-## Candidate correction
+Replace the sticky header with a viewport-fixed anchor (`position: fixed; inset-inline: 0`) using the original safe-area-aware top offset and capsule padding. The capsule no longer has a sticky threshold or a nonzero sticky compositor displacement that could be lost during scrolling/snapshotting. No scroll listeners or guessed compensating translations are used. The capsule stays at the same intended viewport coordinates.
 
-The header previously supplied its visual spacing through `position: sticky; top: max(.75rem, env(safe-area-inset-top))`. The capsule is already relatively positioned. Move the same inset to that capsule's relative `top`, and stick the header at `top: 0`.
+A noninteractive `navigation-slot` reserves document-flow height. Its CSS fallback matches the default 82px header at normal text size; the existing ResizeObserver measurement synchronizes it to actual header height, including wrapped controls and enlarged text. No new observer is needed, and changes to the slot cannot change the fixed header's width. Without JavaScript, the slot is hidden and the header returns to document flow with all links accessible.
 
-This preserves the capsule's viewport position and its reserved document-flow height both at the page top and when scrolled. It eliminates reliance on a nonzero sticky displacement in snapshots. It uses the exact existing inset rather than an estimated compensation. The safe area, theme toggle center, glass surface, reveal implementation, navigation measurement and motion tokens are unchanged. No new animation owner, observers, listeners or dependencies are introduced.
+This supersedes the earlier draft proposal to move the sticky inset to a relatively positioned child. The circular reveal implementation, measured capacity partition, active links, focus handling, theme provider and motion tokens stay unchanged. No dependencies added.
 
-This is a narrowly scoped mitigation for the suspected snapshot/sticky interaction; a device-specific root cause remains unconfirmed.
+## Validation strategy
 
-## Real-rendering regression
+`navigation-scroll.spec.ts` exercises 1/4/8/12/16/24/48/96/260px scrolling in both directions on Home, Journal and an article, checks full capsule visibility and actual control hit testing, verifies stable viewport coordinates and unchanged reserved height, and repeats after viewport-height changes. It also checks wrapped text and a larger top inset.
 
-`tests/e2e/theme-position.spec.ts` marks the capsule border with an invariant color (no layout changes), starts the actual theme reveal and pauses the native animation at 0%, 20%, 50%, 85% and 100%. Screenshots use CSS-pixel scale. An off-DOM canvas reads the painted border bounds, independently of `getBoundingClientRect`, so a snapshot-only displacement can fail even when DOM geometry is stable. Each case also records live position/size, scroll and focus, then compares settled geometry. Intermediate samples must still have a live transition. Existing tests retain origin, full coverage, cancellation and fallback checks.
+`theme-position.spec.ts` uses real document.startViewTransition, marks only the capsule border with an invariant diagnostic color, and pauses the actual animation at five progress points. Off-DOM canvas decoding measures screenshot pixels independently of live DOM geometry. Both theme directions, compact mobile/desktop and top/scrolled/fragment states are covered, alongside scroll/focus and overflow checks. Existing reveal-origin, coverage, cancellation, persistence, reduced-motion and unsupported-browser tests remain enabled.
 
-The matrix covers desktop and compact mobile, both theme directions, page top, a scrolled sticky state and /#work. Artifacts include before/after PNGs, intermediate PNGs and geometry.json. Baseline/candidate CI links and final results are recorded in the PR.
+CI links and intermediate-frame artifacts are recorded in the PR. Physical Android toolbar and visual-viewport behavior remains a required manual verification limit; do not claim that passing emulation proves the exact device defect resolved.
 
 ## Primary references
 
-- [W3C View Transitions: snapshot containing block](https://www.w3.org/TR/css-view-transitions-1/#snapshot-containing-block-concept): transition pseudo-elements paint in their own snapshot coordinate space.
-- [Chrome: debugging view transitions](https://developer.chrome.com/blog/view-transitions-in-2025): pause and inspect actual transition animations/pseudo-elements.
+- [W3C View Transitions: snapshot containing block](https://www.w3.org/TR/css-view-transitions-1/#snapshot-containing-block-concept)
+- [Chrome: debugging actual view transition animations](https://developer.chrome.com/blog/view-transitions-in-2025)
 
-These describe the rendering model and debugging technique; they do not establish this report's root cause.
+These describe the rendering model and technique, not a confirmed root cause of this device report.

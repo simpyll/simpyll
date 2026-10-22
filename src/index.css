@@ -350,11 +350,12 @@ html[data-theme="dark"] .theme-sun { opacity: 0; transform: rotate(45deg) scale(
 html[data-theme="dark"] .theme-moon { opacity: 1; transform: none; }
 
 /* One glass layer; opaque base is also the unsupported-filter fallback. */
+/* Space is retained independently of the viewport anchor (including before hydration). */
+.navigation-slot { height: calc(5rem + 2px); }
 .floating-header {
-  position: sticky;
-  /* Keep sticky placement at the viewport origin; the capsule owns its inset. */
-  top: 0;
-  --ui-nav-inset: max(.75rem, env(safe-area-inset-top));
+  position: fixed;
+  inset-inline: 0;
+  top: max(.75rem, env(safe-area-inset-top));
   z-index: 50;
   display: flex;
   justify-content: center;
@@ -363,7 +364,6 @@ html[data-theme="dark"] .theme-moon { opacity: 1; transform: none; }
 }
 .floating-nav {
   position: relative;
-  top: var(--ui-nav-inset);
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
