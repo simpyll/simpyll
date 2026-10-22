@@ -1,3 +1,4 @@
+import { destination, navigationReady } from './helpers/navigation'
 import { test as base, expect, type Page } from '@playwright/test'
 import { readdirSync } from 'node:fs'
 
@@ -45,15 +46,14 @@ test('homepage navigation reaches sections and journal, including from an articl
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Frombedside tobuild.')
   await expectNoHorizontalOverflow(page)
   const nav = page.getByRole('navigation', { name: 'Main navigation' })
+  await navigationReady(page)
   for (const [label, id] of [['Projects', 'work'], ['About', 'about']]) {
-    const more = nav.getByRole('button', { name: 'More' })
-    if (await more.isVisible()) await more.click()
-    await nav.getByRole('link', { name: label, exact: true }).filter({ visible: true }).click()
+    await (await destination(page, label)).click()
     await expect(page).toHaveURL(new RegExp(`/#${id}$`))
     await expect(page.locator(`#${id}`).getByRole('heading', { level: 2 })).toBeInViewport()
   }
   await page.goto('/blog/hello-world')
-  await nav.getByRole('link', { name: 'Journal', exact: true }).click()
+  await (await destination(page, 'Journal')).click()
   await expect(page).toHaveURL('/blog')
   await nav.getByRole('link', { name: 'Home', exact: true }).click()
   await expect(page).toHaveURL('/')
@@ -143,8 +143,13 @@ test('keyboard skip link, primary navigation and journal controls are usable', a
 
   await page.goto('/')
   const nav = page.getByRole('navigation', { name: 'Main navigation' })
+  await navigationReady(page)
   for (const name of ['Home', 'Journal']) {
     const link = nav.getByRole('link', { name, exact: true })
+    if (!await link.isVisible()) {
+      await tabTo(page, nav.getByRole('button', { name: 'More' }))
+      await page.keyboard.press('Enter')
+    }
     await tabTo(page, link)
     await expect(link).toBeFocused()
     await expect(link).toHaveCSS('outline-style', 'solid')

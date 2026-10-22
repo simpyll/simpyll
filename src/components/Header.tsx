@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { visibleCount } from '../navigation/capacity'
 import { ThemeToggle } from './ThemeToggle'
 
 const navigation = [
@@ -12,6 +13,11 @@ const navigation = [
 export function Header() {
   const location = useLocation()
   const [expanded, setExpanded] = useState(false)
+  // Conservative identical SSR/hydration layout: More contains all destinations.
+  const [count, setCount] = useState(0)
+  const countRef = useRef(0)
+  const measures = useRef<HTMLDivElement>(null)
+  const pendingFocus = useRef<{ href?: string; trigger: boolean } | null>(null)
   const root = useRef<HTMLElement>(null)
   const trigger = useRef<HTMLButtonElement>(null)
   const links = useRef<HTMLDivElement>(null)
@@ -20,6 +26,70 @@ export function Header() {
     : location.pathname === '/' ? `/${location.hash === '#work' || location.hash === '#about' ? location.hash : ''}` : null
 
   useEffect(() => {
+    const header = root.current!
+    const ruler = measures.current!
+    const nav = header.querySelector<HTMLElement>('.floating-nav')!
+    const theme = header.querySelector<HTMLElement>('.theme-toggle')!
+    let frame = 0
+    let disposed = false
+    const measure = () => {
+      const outer = getComputedStyle(header)
+      const style = getComputedStyle(nav)
+      const px = (value: string) => parseFloat(value) || 0
+      const available = header.getBoundingClientRect().width - px(outer.paddingLeft) - px(outer.paddingRight)
+      const widths = [...ruler.querySelectorAll<HTMLElement>('[data-measure-link]')].map(el => el.getBoundingClientRect().width)
+      const more = ruler.querySelector<HTMLElement>('[data-measure-more]')!.getBoundingClientRect().width
+      const inset = px(style.paddingLeft) + px(style.paddingRight) + px(style.borderLeftWidth) + px(style.borderRightWidth)
+      const next = visibleCount(widths, available, theme.getBoundingClientRect().width, more, px(style.columnGap), inset)
+      header.dataset.navReady = 'true'
+      if (next === countRef.current) return
+      const focused = document.activeElement as HTMLElement | null
+      if (focused && nav.contains(focused) && (focused.dataset.navHref || focused === trigger.current)) {
+        pendingFocus.current = { href: focused.dataset.navHref, trigger: focused === trigger.current }
+      }
+      countRef.current = next
+      setCount(next)
+      if (next === navigation.length) setExpanded(false)
+    }
+    // Batch observer notifications, but never measure on scroll or in an animation loop.
+    const schedule = () => {
+      if (disposed) return
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(measure)
+    }
+    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(schedule) : null
+    observer?.observe(header)
+    observer?.observe(theme)
+    for (const child of ruler.children) observer?.observe(child)
+    window.addEventListener('resize', schedule)
+    document.fonts?.addEventListener('loadingdone', schedule)
+    void document.fonts?.ready.then(schedule)
+    schedule()
+    return () => {
+      disposed = true
+      cancelAnimationFrame(frame)
+      observer?.disconnect()
+      window.removeEventListener('resize', schedule)
+      document.fonts?.removeEventListener('loadingdone', schedule)
+    }
+  }, [])
+
+  useLayoutEffect(() => {
+    const pending = pendingFocus.current
+    pendingFocus.current = null
+    if (!pending) return
+    const nav = root.current!
+    const destination = [...nav.querySelectorAll<HTMLAnchorElement>('[data-nav-href]')]
+      .find(el => el.dataset.navHref === pending.href && !el.closest('[hidden], [data-open="false"]'))
+    if (destination) destination.focus({ preventScroll: true })
+    else if (trigger.current) trigger.current.focus({ preventScroll: true })
+    else if (pending.trigger) {
+      (nav.querySelector<HTMLElement>('.floating-links [aria-current]')
+        ?? nav.querySelector<HTMLElement>('.floating-links a, .theme-toggle'))?.focus({ preventScroll: true })
+    }
+  }, [count])
+
+  useLayoutEffect(() => {
     const list = links.current
     const pill = indicator.current
     if (!list || !pill) return
@@ -31,6 +101,7 @@ export function Header() {
       pill.style.height = `${target.offsetHeight}px`
       pill.style.transform = `translate(${target.offsetLeft}px, ${target.offsetTop}px)`
     }
+    if (pill.style.opacity !== '1') delete pill.dataset.ready
     update()
     const frame = requestAnimationFrame(() => { pill.dataset.ready = 'true' })
     const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(update) : null
@@ -38,7 +109,7 @@ export function Header() {
     for (const child of list.querySelectorAll('a')) observer?.observe(child)
     window.addEventListener('resize', update)
     return () => { cancelAnimationFrame(frame); observer?.disconnect(); window.removeEventListener('resize', update) }
-  }, [active])
+  }, [active, count])
 
   useEffect(() => {
     if (!expanded) return
@@ -53,7 +124,8 @@ export function Header() {
     return () => { document.removeEventListener('pointerdown', dismiss); document.removeEventListener('keydown', keyboard) }
   }, [expanded])
 
-  const navigate = (href: string) => {
+  const navigate = (event: MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
     setExpanded(false)
     // Router retains link semantics; focus/scroll only after the new DOM commits.
     requestAnimationFrame(() => {
@@ -70,26 +142,30 @@ export function Header() {
 
   return (
     <header className="floating-header" ref={root}>
-      <noscript><style>{'.floating-links { flex-wrap: wrap; justify-content: center; } .floating-links .nav-secondary { display: inline-flex; } .floating-nav { border-radius: 1.5rem; flex-wrap: wrap; justify-content: center; } .nav-overflow { display: none; }'}</style></noscript>
-      <nav aria-label="Main navigation" className="floating-nav">
-        <div ref={links} className="floating-links">
+      <noscript><style>{'.floating-nav { border-radius: 1.5rem; flex-wrap: wrap; justify-content: center; } .nav-overflow, .nav-measures, .floating-nav .theme-toggle { display: none; } #navigation-overflow[data-open] { display: flex; position: static; flex-wrap: wrap; justify-content: center; min-width: 0; border: 0; box-shadow: none; padding: 0; background: transparent; }'}</style></noscript>
+      <div ref={measures} className="nav-measures" aria-hidden="true" inert>
+        {navigation.map(item => <span key={item.href} data-measure-link className="floating-link">{item.label}</span>)}
+        <span data-measure-more className="floating-link">More<span aria-hidden="true"> ▾</span></span>
+      </div>
+      <nav aria-label="Main navigation" className="floating-nav"
+        onBlur={event => { if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget)) setExpanded(false) }}>
+        <div ref={links} className="floating-links" hidden={count === 0}>
           <span ref={indicator} className="nav-indicator" aria-hidden="true" />
-          {navigation.map(item => (
-            <Link key={item.label} to={item.href}
-              className={`ui-nav-link floating-link ${item.label === 'Projects' || item.label === 'About' ? 'nav-secondary' : ''}`}
+          {navigation.slice(0, count).map(item => (
+            <Link key={item.href} to={item.href} data-nav-href={item.href}
+              className="ui-nav-link floating-link"
               aria-current={active === item.href ? (item.href.includes('#') ? 'location' : 'page') : undefined}
-              onClick={() => navigate(item.href)}>{item.label}</Link>
+              onClick={event => navigate(event, item.href)}>{item.label}</Link>
           ))}
         </div>
-        <button ref={trigger} type="button" className="nav-overflow floating-link"
+        {count < navigation.length && <button ref={trigger} type="button" className="nav-overflow floating-link"
           aria-expanded={expanded} aria-controls="navigation-overflow"
-          onClick={() => setExpanded(value => !value)}>More<span aria-hidden="true"> ▾</span></button>
+          onClick={() => setExpanded(value => !value)}>More<span aria-hidden="true"> ▾</span></button>}
         <ThemeToggle />
-        <div id="navigation-overflow" className="nav-panel" hidden={!expanded}
-          onBlur={event => { if (!root.current?.contains(event.relatedTarget)) setExpanded(false) }}>
-          {navigation.map(item => <Link key={item.label} to={item.href} className="floating-link"
+        <div id="navigation-overflow" className="nav-panel" data-open={expanded && count < navigation.length}>
+          {navigation.slice(count).map(item => <Link key={item.href} to={item.href} data-nav-href={item.href} className="floating-link"
             aria-current={active === item.href ? (item.href.includes('#') ? 'location' : 'page') : undefined}
-            onClick={() => navigate(item.href)}>{item.label}</Link>)}
+            onClick={event => navigate(event, item.href)}>{item.label}</Link>)}
         </div>
       </nav>
     </header>
