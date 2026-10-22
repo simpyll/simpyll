@@ -28,7 +28,9 @@ async function outline(page: Page, png: Buffer) {
 
 for (const position of ['top', 'scrolled', 'fragment']) {
   for (const direction of ['light', 'dark'] as const) {
-    test(`theme reveal preserves painted and live nav geometry: ${position}, from ${direction}`, async ({ page }, testInfo) => {
+    test(`theme reveal preserves painted and live nav geometry: ${position}, from ${direction}`, async ({ page, isMobile }, testInfo) => {
+      // Match the reported compact layout (More is present), not a wide phone.
+      if (isMobile) await page.setViewportSize({ width: 360, height: 780 })
       await page.emulateMedia({ reducedMotion: 'no-preference', colorScheme: direction })
       await page.goto(position === 'fragment' ? '/#work' : '/')
       await navigationReady(page)
