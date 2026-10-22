@@ -43,3 +43,5 @@ generic starter prose. Replace these with the intended public author name and
 an authored introduction before publication.
 
 undefined
+See [error recovery](ERROR-RECOVERY.md) for route isolation, bounded retry,
+application fallback, privacy, and the current loading/network feature audit.
