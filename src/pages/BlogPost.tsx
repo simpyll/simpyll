@@ -1,3 +1,5 @@
+import { MDXProvider } from '@mdx-js/react'
+import { mdxComponents } from '../components/mdx/mapping'
 import { Badge } from '../components/Badge'
 import { Link, useParams } from 'react-router-dom'
 import { Container } from '../components/Container'
@@ -65,8 +67,8 @@ export function BlogPost() {
               </div>
             </Reveal>
 
-            <div className="prose mt-12 max-w-none">
-              <Content />
+            <div className="prose article-content mt-12 max-w-none">
+              <MDXProvider components={mdxComponents}><Content /></MDXProvider>
             </div>
 
             <div className="mt-16 flex flex-wrap gap-2 border-t border-outline pt-8">

@@ -1,0 +1,79 @@
+export const metadata = { title: 'Rich content fixture', description: 'A technical reading regression fixture.', date: '2026-10-22', author: 'David Becker', category: 'Testing', tags: ['MDX'] }
+
+## Writing for clarity
+
+Technical reading with **strong emphasis**, *quiet emphasis*, and `inline_code_with_a_very_long_identifier_that_should_wrap_safely_on_small_screens`. Visit the [journal](/blog) or [external documentation](https://example.com/docs).
+
+<a href="https://example.com/new" target="_blank">Optional new-tab resource</a>
+
+### Nested explanations
+
+- First principle
+  - Supporting explanation
+  - Another detail
+- Second principle
+
+1. Inspect the system.
+2. Preserve the useful parts.
+
+> Clarity comes from consistent structure, useful examples, and comfortable spacing.
+
+<Callout variant="information" title="Shared renderer">
+
+Both publishing paths use the same component mapping, semantic tokens, and spacing.
+
+</Callout>
+
+<Callout variant="warning">Review production configuration before deploying.</Callout>
+<Callout variant="tip">Prefer small examples.</Callout>
+<Callout variant="important">Keep content readable without JavaScript.</Callout>
+<Callout>Supplemental context.</Callout>
+
+## Technical comparison
+
+| Component | Semantics | Keyboard support | Publishing compatibility | Notes |
+| --- | --- | --- | --- | --- |
+| Table | Native table with headers | Focusable horizontal scroll | Markdown and Notion | `extraordinarily_long_configuration_identifier` |
+| Disclosure | Native details and summary | Enter and Space | Markdown and Notion | No JavaScript required |
+
+## Working examples
+
+```typescript
+const configuration = {
+  enabled: true,
+  label: 'Keep whitespace intact',
+}
+console.log(configuration)
+```
+
+```python
+def greeting(name):
+    return f"Hello, {name}"
+```
+
+```unknown-language
+unknown syntax remains readable <script>never executed</script>
+```
+
+<Figure src="/images/rich-fixture.svg" alt="Publishing flows converge on one article renderer" width={960} height={320} caption="One visual language for two authoring paths." />
+
+<Disclosure title="Why use native disclosures?">
+
+They preserve keyboard controls and remain useful without JavaScript.
+
+### A nested explanation
+
+The browser supplies the interaction.
+
+</Disclosure>
+
+<Embed url="https://github.com/simpyll/simpyll" title="Project source" />
+<Embed url="javascript:alert(1)" title="Unsafe example" />
+
+A reference with a stable anchor.[^reading]
+
+[^reading]: A local footnote demonstrates citation-compatible markup.
+
+---
+
+## Notion output

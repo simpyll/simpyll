@@ -58,7 +58,7 @@ test('publish, re-run unchanged with rotated image URL, update, rename, and unpu
   assert.equal(module.metadata.title, 'Notion fixture article')
   assert.equal(module.metadata.author, 'David Becker')
   const html = renderToStaticMarkup(createElement(module.default))
-  for (const text of ['<strong>', '<em>', '<a href=', '<ul>', '<ol>', '<blockquote>', '<pre><code>', '<img', 'Nested paragraph', '&lt;script&gt;', '{process.env.TOKEN}']) assert.ok(html.includes(text), text)
+  for (const text of ['<strong>', '<em>', '<a href=', '<ul>', '<ol>', '<blockquote>', '<pre><code class="language-plaintext">', '<img', 'Nested paragraph', '&lt;script&gt;', '{process.env.TOKEN}']) assert.ok(html.includes(text), text)
   const updated = page(); updated.properties.Name.title = [rt('Updated title')]
   await sync({ api: fixture({ pages: [updated], content: [block('paragraph', 'Updated body')] }).api })
   assert.match(await readFile(join(root, 'src/content/blog/notion-fixture.mdx'), 'utf8'), /Updated body/)

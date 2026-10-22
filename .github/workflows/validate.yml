@@ -26,6 +26,9 @@ jobs:
       - name: Install Chromium for browser tests
         run: npx playwright install --with-deps chromium
 
+      - name: Test rich MDX and Notion rendering
+        run: npm run test:mdx
+
       - name: Test production site in desktop and mobile browsers
         run: npm run test:e2e:built
 
@@ -37,5 +40,6 @@ jobs:
           path: |
             playwright-report/
             test-results/
+            artifacts/rich-content/
           retention-days: 14
           if-no-files-found: ignore

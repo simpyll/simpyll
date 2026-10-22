@@ -27,3 +27,6 @@ dist-server
 # Playwright artifacts
 /playwright-report/
 /test-results/
+
+# Isolated rich-content fixture screenshots and diagnostics
+artifacts/

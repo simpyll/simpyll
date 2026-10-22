@@ -126,7 +126,7 @@ export async function readBlocks(api, parent, depth = 0) {
     if (block.in_trash) continue
     // Never traverse subpages, databases, or synced blocks: they can contain private content.
     if (block.has_children) {
-      if (!['paragraph', 'heading_1', 'heading_2', 'heading_3', 'bulleted_list_item', 'numbered_list_item', 'quote', 'callout', 'toggle'].includes(block.type)) throw new Error('Unsupported nested block')
+      if (!['paragraph', 'heading_1', 'heading_2', 'heading_3', 'bulleted_list_item', 'numbered_list_item', 'quote', 'callout', 'toggle', 'table'].includes(block.type)) throw new Error('Unsupported nested block')
       block.children = await readBlocks(api, block.id, depth + 1)
     }
   }
@@ -144,6 +144,19 @@ export async function convertBlocks(blocks, image) {
       if (current) output.push(`<${current}>`)
       list = current
     }
+    if (type === 'table') {
+      const rows = block.children ?? []
+      const width = data.table_width
+      if (!Number.isInteger(width) || width < 1 || rows.some(row => row.type !== 'table_row' || row.table_row?.cells?.length !== width)) throw new Error('Invalid Notion table')
+      const renderRow = (row, rowIndex) => `<tr>${row.table_row.cells.map((cell, colIndex) => {
+        const header = data.has_column_header && rowIndex === 0 || data.has_row_header && colIndex === 0
+        const tag = header ? 'th' : 'td'
+        const scope = header ? ` scope="${data.has_column_header && rowIndex === 0 ? 'col' : 'row'}"` : ''
+        return `<${tag}${scope}>${richText(cell)}</${tag}>`
+      }).join('')}</tr>`
+      output.push(`<table>${data.has_column_header && rows.length ? `<thead>${renderRow(rows[0], 0)}</thead>` : ''}<tbody>${rows.slice(data.has_column_header ? 1 : 0).map((row, i) => renderRow(row, i + (data.has_column_header ? 1 : 0))).join('')}</tbody></table>`)
+      continue
+    }
     const text = richText(data.rich_text)
     const children = block.children?.length ? await convertBlocks(block.children, image) : ''
     if (current) output.push(`<li>${text}${children}</li>`)
@@ -151,9 +164,13 @@ export async function convertBlocks(blocks, image) {
     else if (/^heading_[123]$/.test(type)) {
       const level = Number(type.at(-1)) + 1 // Page template owns H1.
       output.push(`<h${level}>${text}</h${level}>${children}`)
-    } else if (['quote', 'callout'].includes(type)) output.push(`<blockquote><p>${text}</p>${children}</blockquote>`)
+    } else if (type === 'callout') output.push(`<Callout variant="note"><p>${text}</p>${children}</Callout>`)
+    else if (type === 'quote') output.push(`<blockquote><p>${text}</p>${children}</blockquote>`)
     else if (type === 'toggle') output.push(`<details><summary>${text}</summary>${children}</details>`)
-    else if (type === 'code') output.push(`<pre><code>{${json(plain(data.rich_text))}}</code></pre>`)
+    else if (type === 'code') {
+      const language = /^[a-z0-9_+-]+$/i.test(data.language ?? '') ? data.language.toLowerCase() : 'plaintext'
+      output.push(`<pre><code className="language-${language}">{${json(plain(data.rich_text))}}</code></pre>`)
+    }
     else if (type === 'divider') output.push('<hr />')
     else if (type === 'image') {
       const url = await image(block)

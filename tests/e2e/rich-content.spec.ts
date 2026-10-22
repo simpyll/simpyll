@@ -1,0 +1,67 @@
+import { expect, test } from '@playwright/test'
+import process from 'node:process'
+
+test.skip(!process.env.RICH_FIXTURE, 'Fixture exists only in the isolated integration build')
+
+test('rich manual and Notion content hydrates, scrolls and works by keyboard', async ({ page, context }, testInfo) => {
+  const errors: string[] = []
+  page.on('pageerror', error => errors.push(error.message))
+  page.on('console', message => { if (message.type() === 'error') errors.push(message.text()) })
+  await context.route('https://example.com/**', route => route.abort())
+  await page.goto('/blog/rich-content-fixture')
+  await expect(page.getByRole('heading', { name: 'Writing for clarity' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Notion heading' })).toHaveAttribute('id', 'notion-heading')
+  await expect(page.getByRole('complementary', { name: 'Information: Shared renderer' })).toBeVisible()
+  for (const variant of ['note', 'tip', 'information', 'warning', 'important']) await expect(page.locator(`.article-callout[data-variant="${variant}"]`).first()).toBeAttached()
+  await expect(page.locator('code.hljs .hljs-keyword').first()).toBeAttached()
+  await expect(page.locator('.code-toolbar').first()).toContainText('typescript')
+  await expect(page.locator('.code-toolbar').filter({ hasText: 'python' })).toHaveCount(2)
+  await expect(page.locator('figcaption')).toContainText(['One visual language', 'Notion caption'])
+  await expect(page.getByAltText('Publishing flows converge on one article renderer')).toHaveAttribute('width', '960')
+  await expect(page.getByRole('link', { name: 'external documentation' })).not.toHaveAttribute('target')
+  await expect(page.getByRole('link', { name: 'journal', exact: true })).toHaveAttribute('href', '/blog')
+  await expect(page.getByRole('link', { name: 'Optional new-tab resource' })).toHaveAttribute('rel', /noopener noreferrer/)
+  await expect(page.getByRole('link', { name: 'Optional new-tab resource' })).toContainText('opens in a new tab')
+  await expect(page.locator('iframe, .article-content script')).toHaveCount(0)
+  await expect(page.getByText('Embed unavailable.')).toBeVisible()
+  const disclosure = page.locator('details').filter({ hasText: 'Why use native disclosures?' })
+  await disclosure.locator('summary').focus()
+  await page.keyboard.press('Enter')
+  await expect(disclosure).toHaveAttribute('open', '')
+  for (const theme of ['light', 'dark']) {
+    await page.evaluate(theme => document.documentElement.dataset.theme = theme, theme)
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true)
+    await page.evaluate(() => window.scrollTo(0, 0))
+    const screenshot = testInfo.outputPath(`rich-${theme}.jpg`)
+    await page.screenshot({ path: screenshot, fullPage: true, type: 'jpeg', quality: 75, scale: 'css' })
+    await testInfo.attach(`rich-${theme}`, { path: screenshot, contentType: 'image/jpeg' })
+  }
+  const scroll = page.getByRole('region', { name: 'Article table' }).first()
+  await scroll.focus()
+  if (testInfo.project.name.includes('mobile')) {
+    expect(await scroll.evaluate(el => el.scrollWidth > el.clientWidth)).toBe(true)
+    await page.keyboard.press('ArrowRight')
+    await expect.poll(() => scroll.evaluate(el => el.scrollLeft)).toBeGreaterThan(0)
+  }
+  await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: async (value: string) => { document.body.dataset.copied = value } } }))
+  await page.getByRole('button', { name: 'Copy code', exact: true }).first().click()
+  await expect(page.getByRole('status').first()).toHaveText('Copied code.')
+  expect(await page.locator('body').getAttribute('data-copied')).toBe(await page.locator('.code-block pre').first().textContent())
+  await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: async () => { throw new Error('denied') } } }))
+  await page.getByRole('button', { name: 'Copy code', exact: true }).first().click()
+  await expect(page.getByRole('status').first()).toContainText('Copy unavailable')
+  expect(errors).toEqual([])
+})
+
+test('static content and disclosures work without JavaScript', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } })
+  const page = await context.newPage()
+  await page.goto('http://127.0.0.1:4173/blog/rich-content-fixture/')
+  await expect(page.locator('.article-content table')).toHaveCount(2)
+  await expect(page.locator('code.hljs').first()).toBeAttached()
+  const disclosure = page.locator('details').first()
+  await disclosure.locator('summary').click()
+  await expect(disclosure).toHaveAttribute('open', '')
+  await expect(page.getByText('Both publishing paths use the same component mapping')).toBeVisible()
+  await context.close()
+})
