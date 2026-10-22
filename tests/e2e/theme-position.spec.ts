@@ -53,6 +53,7 @@ for (const position of ['top', 'scrolled', 'fragment']) {
         return { top: rect.top, left: rect.left, width: rect.width, height: rect.height, scroll: scrollY,
           focused: document.activeElement?.classList.contains('theme-toggle') }
       })
+      const primaryCount = await page.locator('.floating-links a').count()
       const before = await geometry()
       const initialPng = await page.screenshot({ path: testInfo.outputPath('before.png'), scale: 'css' })
       const paintedBefore = await outline(page, initialPng)
@@ -65,11 +66,12 @@ for (const position of ['top', 'scrolled', 'fragment']) {
         animation.pause()
         return true
       })
+      // Retain the actual Animation: getAnimations() may omit a paused end frame.
+      const reveal = await page.evaluateHandle(() => document.documentElement.getAnimations({ subtree: true }).find(a =>
+        (a.effect as KeyframeEffect)?.pseudoElement === '::view-transition-new(root)')!)
       const samples = []
       for (const progress of [0, .2, .5, .85, 1]) {
-        await page.evaluate(async progress => {
-          const animation = document.documentElement.getAnimations({ subtree: true }).find(a =>
-            (a.effect as KeyframeEffect)?.pseudoElement === '::view-transition-new(root)')!
+        await reveal.evaluate(async (animation, progress) => {
           animation.currentTime = Number(animation.effect!.getTiming().duration) * progress
           await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
         }, progress)
@@ -77,11 +79,8 @@ for (const position of ['top', 'scrolled', 'fragment']) {
         const png = await page.screenshot({ path: testInfo.outputPath(`frame-${progress}.png`), scale: 'css' })
         samples.push({ progress, geometry: await geometry(), painted: await outline(page, png) })
       }
-      await page.evaluate(() => {
-        const animation = document.documentElement.getAnimations({ subtree: true }).find(a =>
-          (a.effect as KeyframeEffect)?.pseudoElement === '::view-transition-new(root)')!
-        animation?.finish()
-      })
+      await reveal.evaluate(animation => animation.finish())
+      await reveal.dispose()
       await expect(page.locator('html')).not.toHaveAttribute('data-theme-transition')
       const after = await geometry()
       const finalPng = await page.screenshot({ path: testInfo.outputPath('after.png'), scale: 'css' })
@@ -95,6 +94,17 @@ for (const position of ['top', 'scrolled', 'fragment']) {
       }
       expect(after).toEqual(before)
       expect(paintedAfter).toEqual(paintedBefore)
+      await expect(page.locator('.floating-links a')).toHaveCount(primaryCount)
+      const more = page.getByRole('button', { name: 'More' })
+      if (await more.isVisible()) {
+        await more.click()
+        const nav = page.getByRole('navigation', { name: 'Main navigation' })
+        for (const name of ['Home', 'Projects', 'Journal', 'About']) {
+          await expect(nav.getByRole('link', { name, exact: true })).toHaveCount(1)
+        }
+        await page.keyboard.press('Escape')
+        await expect(more).toBeFocused()
+      }
     })
   }
 }
