@@ -4,6 +4,9 @@ import { extname, resolve, sep } from 'node:path'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import mdx from '@mdx-js/rollup'
+import remarkGfm from 'remark-gfm'
+import rehypeHighlight from 'rehype-highlight'
+import { remarkRichContent } from './scripts/remark-rich-content.mjs'
 import { remarkHeadingIds } from './scripts/remark-heading-ids.mjs'
 
 // Vite's SPA fallback otherwise serves the prerendered homepage at /blog.
@@ -49,7 +52,7 @@ export default defineConfig({
       },
     },
     prerenderedRoutes(),
-    { enforce: 'pre', ...mdx({ remarkPlugins: [remarkHeadingIds] }) },
+    { enforce: 'pre', ...mdx({ providerImportSource: '@mdx-js/react', remarkPlugins: [remarkGfm, remarkHeadingIds, remarkRichContent], rehypePlugins: [[rehypeHighlight, { detect: false, ignoreMissing: true }]] }) },
     react(),
     tailwindcss(),
   ],
