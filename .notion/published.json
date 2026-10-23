@@ -5,6 +5,9 @@
     "3ffb3577d26a80e9b57fc08460c29516": {
       "slug": "publishing-test",
       "date": "2026-10-20",
+      "history": [],
+      "redirectFrom": [],
+      "status": "published",
       "assets": {
         "400b3577d26a80a8be3de910cb7209b2": {
           "path": "public/images/notion/3ffb3577d26a80e9b57fc08460c29516/publishing-test-image-01-ff804a5635dd.png",
@@ -16,7 +19,7 @@
   },
   "files": {
     "public/images/notion/3ffb3577d26a80e9b57fc08460c29516/publishing-test-image-01-ff804a5635dd.png": "ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25",
-    "src/content/blog/publishing-test.mdx": "571697f5b5a37c4ec980dda9e4c3ec872eac25657227d7d1e3cdf568cede604f",
+    "src/content/blog/publishing-test.mdx": "413696e3b2cb8e60f421f995b5b8ae82bbcda6224b9eff210ceddf501e5a6555",
     "public/images/notion/3ffb3577d26a80e9b57fc08460c29516/ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25.png": "ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25"
   }
 }
