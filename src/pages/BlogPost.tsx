@@ -1,3 +1,4 @@
+import { ArticlePath } from '../components/mdx/article-path'
 import { MDXProvider } from '@mdx-js/react'
 import { mdxComponents } from '../components/mdx/mapping'
 import { ArticleToc } from '../components/ArticleToc'
@@ -75,7 +76,7 @@ export function BlogPost() {
 
             {post.headings.length > 1 && <div className="toc-mobile-slot"><ArticleToc key={post.slug} headings={post.headings} /></div>}
             <div className="prose article-content mt-12 max-w-none">
-              <MDXProvider components={mdxComponents}><Content /></MDXProvider>
+              <ArticlePath.Provider value={`/blog/${post.slug}`}><MDXProvider components={mdxComponents}><Content /></MDXProvider></ArticlePath.Provider>
             </div>
 
             <div className="mt-16 flex flex-wrap gap-2 border-t border-outline pt-8">

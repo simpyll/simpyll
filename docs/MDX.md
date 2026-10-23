@@ -115,3 +115,33 @@ while bibliography, clinical reference authoring and Notion citations remain #63
 No screen-reader user study, real-device testing, or complete WCAG audit is claimed.
 
 Image authoring and automatic delivery: [IMAGES.md](IMAGES.md).
+
+## Section permalinks
+
+H2–H4 headings use `ArticleHeading` through the shared MDX mapping, including
+explicit Notion JSX normalized by `remarkRichContent`. The article title is
+unchanged. The heading compiler remains authoritative for IDs, deduplication,
+explicit IDs, Unicode, and TOC metadata; controls do not generate IDs.
+
+Each heading offers a native fragment anchor and a separate copy button with
+an explicit accessible name. Both are permanently discoverable, including touch
+and keyboard use. Controls are positioned outside heading text, with a desktop
+gutter and a compact upper toolbar on smaller screens. They never appear by
+inserting layout after hydration. Without JavaScript the anchor works and the
+copy button is hidden. The existing navigation focus/clearance logic still owns
+fragment scrolling; copying neither scrolls nor updates history.
+
+`ArticlePath` receives the resolved current post slug, so aliases and incidental
+query strings never enter copied URLs. `getSiteUrl` supplies the configured public
+origin; URL/hash encoding handles fragments. Clipboard writes occur only from
+button activation. Denied/unavailable APIs announce failure and reveal a readonly
+URL field that selects its text on focus; focus is not moved automatically.
+No deprecated clipboard command, permissions request, or external service is used.
+Feedback uses a polite status and is positioned without changing heading geometry.
+
+Run `npm run build`, `npm run lint`, `node --test scripts/mdx.test.mjs
+scripts/remark-heading-ids.test.mjs scripts/prerender.test.mjs`, and
+`npx playwright test heading-permalinks` (desktop/mobile Chromium). The rich MDX
+integration also exercises the publisher mapping; the full E2E suite covers TOC,
+fragment navigation, themes and accessibility. Review generated HTML and both
+themes at narrow widths; automated checks do not replace screen-reader/device QA.

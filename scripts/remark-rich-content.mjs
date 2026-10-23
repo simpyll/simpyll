@@ -18,7 +18,7 @@ export function remarkRichContent() {
         }
       }
       if (node.type === 'mdxJsxFlowElement' || node.type === 'mdxJsxTextElement') {
-        const names = { table: 'MdxTable', th: 'MdxTh', a: 'MdxLink', img: 'MdxImage', figure: 'MdxFigure', figcaption: 'MdxCaption', details: 'MdxDetails', summary: 'MdxSummary', pre: 'MdxPre', code: 'MdxCode' }
+        const names = { h2: 'MdxH2', h3: 'MdxH3', h4: 'MdxH4', table: 'MdxTable', th: 'MdxTh', a: 'MdxLink', img: 'MdxImage', figure: 'MdxFigure', figcaption: 'MdxCaption', details: 'MdxDetails', summary: 'MdxSummary', pre: 'MdxPre', code: 'MdxCode' }
         if (names[node.name]) node.name = names[node.name]
       }
       node.children?.forEach(walk)
