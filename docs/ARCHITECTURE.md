@@ -4,7 +4,7 @@
 
 ## Prerendering and hydration
 
-`npm run build` generates HTML for `/`, `/blog`, and each MDX post. React renders
+`npm run build` generates HTML for `/`, `/about`, `/blog`, and each MDX post. React renders
 an entire document so React 19 can place metadata in the head; JSON-LD stays in
 the hydrated body tree. Do not extract arbitrary tags from rendered app HTML.
 Run the full build before rerunning prerender (the script rejects an already
@@ -48,3 +48,15 @@ application fallback, privacy, and the current loading/network feature audit.
 
 See [article URL safety and slug history](REDIRECTS.md) for the identity model,
 full-history build requirement, static redirects and removal policy.
+
+## Public profile
+
+`src/content/profile.ts` is the typed source for owner-approved public biography,
+roles (including overlapping assignments), education, training, interests, and
+social links. Both the homepage About teaser and `/about` consume it. The page
+also derives its metadata and ProfilePage/Person JSON-LD from this source.
+Update facts there; no CMS or runtime network request is involved. Training is
+not a claim of verified current renewal status. The existing `/#about` section
+remains a bookmark target, while the navigation points to `/about`. The project
+CTA uses the existing `/#work` section; no unimplemented project route is linked.
+Issue #41 printable CV remains separate. Starter articles remain unchanged.

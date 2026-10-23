@@ -6,6 +6,7 @@ import { RouteNavigation } from './navigation/RouteNavigation'
 import { Header } from './components/Header'
 import { Footer } from './components/Footer'
 
+import { AboutPage } from './pages/About'
 import { Home } from './pages/Home'
 import { Blog } from './pages/Blog'
 import { NotFound } from './pages/NotFound'
@@ -22,6 +23,7 @@ export function AppContent() {
       <ErrorBoundary key={pathname} scope="route">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/about" element={<AboutPage />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="*" element={<NotFound />} />

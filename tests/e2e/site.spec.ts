@@ -47,7 +47,7 @@ test('homepage navigation reaches sections and journal, including from an articl
   await expectNoHorizontalOverflow(page)
   const nav = page.getByRole('navigation', { name: 'Main navigation' })
   await navigationReady(page)
-  for (const [label, id] of [['Projects', 'work'], ['About', 'about']]) {
+  for (const [label, id] of [['Projects', 'work']]) {
     await (await destination(page, label)).click()
     await expect(page).toHaveURL(new RegExp(`/#${id}$`))
     await expect(page.locator(`#${id}`).getByRole('heading', { level: 2 })).toBeInViewport()
@@ -157,8 +157,11 @@ test('keyboard skip link, primary navigation and journal controls are usable', a
   await page.keyboard.press('Enter')
   await expect(page).toHaveURL('/blog')
   await nav.getByRole('link', { name: 'Home', exact: true }).click()
-  const journey = page.getByRole('link', { name: 'Follow the learning journey' })
+  const journey = page.getByRole('link', { name: 'More about me' })
   await tabTo(page, journey)
+  await page.keyboard.press('Enter')
+  await expect(page).toHaveURL('/about')
+  await tabTo(page, page.getByRole('link', { name: 'Read the learning journal' }))
   await page.keyboard.press('Enter')
   await expect(page).toHaveURL('/blog')
   const article = page.getByRole('link', { name: /Hello, World/ })

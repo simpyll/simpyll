@@ -8,7 +8,7 @@ const navigation = [
   { label: 'Home', href: '/' },
   { label: 'Projects', href: '/#work' },
   { label: 'Journal', href: '/blog' },
-  { label: 'About', href: '/#about' },
+  { label: 'About', href: '/about' },
 ]
 
 export function Header() {
@@ -27,6 +27,7 @@ export function Header() {
   const links = useRef<HTMLDivElement>(null)
   const indicator = useRef<HTMLSpanElement>(null)
   const active = location.pathname.startsWith('/blog') ? '/blog'
+    : location.pathname === '/about' ? '/about'
     : location.pathname === '/' ? `/${location.hash === '#work' || location.hash === '#about' ? location.hash : ''}` : null
 
   useEffect(() => {

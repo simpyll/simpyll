@@ -34,8 +34,8 @@ test('320px disclosure supports keyboard, dismissal, section focus and touch tar
   await expect(more).toHaveAttribute('aria-expanded', 'false')
   await more.click()
   await page.locator('#navigation-overflow').getByRole('link', { name: 'About' }).click()
-  await expect(page).toHaveURL('/#about')
-  await expect(page.locator('#about')).toBeFocused()
+  await expect(page).toHaveURL('/about')
+  await expect(page.locator('h1')).toBeFocused()
   await expect(more).toHaveAttribute('aria-expanded', 'false')
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
   for (const control of await nav.locator('a:visible, button:visible').all()) {

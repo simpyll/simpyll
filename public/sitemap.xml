@@ -7,7 +7,22 @@
     <loc>https://simpyll.com/blog</loc>
   </url>
   <url>
+    <loc>https://simpyll.com/about</loc>
+  </url>
+  <url>
+    <loc>https://simpyll.com/blog/001-python-fundamentals</loc>
+    <lastmod>2026-10-20</lastmod>
+  </url>
+  <url>
     <loc>https://simpyll.com/blog/hello-world</loc>
     <lastmod>2026-10-19</lastmod>
+  </url>
+  <url>
+    <loc>https://simpyll.com/blog/publishing-test</loc>
+    <lastmod>2026-10-20</lastmod>
+  </url>
+  <url>
+    <loc>https://simpyll.com/blog/the-art-of-reading-code</loc>
+    <lastmod>2026-10-22</lastmod>
   </url>
 </urlset>
