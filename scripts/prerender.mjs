@@ -1,5 +1,6 @@
 
 import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises'
+import { removeInactiveMedia } from './publishing-media.mjs'
 import { redirectHtml } from './redirects.mjs'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
@@ -10,6 +11,7 @@ const blogDirectory = join(root, 'src/content/blog')
 const serverEntry = join(root, 'dist-server/entry-server.js')
 
 async function prerender() {
+  await removeInactiveMedia(root)
   const { render, getSiteUrl, siteConfig } = await import(pathToFileURL(serverEntry).href)
   const template = await readFile(
     join(distDirectory, 'index.html'),

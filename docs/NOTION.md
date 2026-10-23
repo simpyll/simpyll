@@ -144,4 +144,5 @@ References: [Notion data-source migration](https://developers.notion.com/guides/
 and [GitHub workflow triggering](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow).
 
 Image naming now uses captions/article context with stable local copies. See
-[image lifecycle and compatibility policy](IMAGES.md); old public media is retained.
+[image lifecycle and compatibility policy](IMAGES.md); old public media is retained in source; media belonging to unpublished articles
+is excluded from deployment artifacts (see [URL safety](REDIRECTS.md)).

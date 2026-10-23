@@ -117,3 +117,10 @@ assets fail image generation with a source path. For a missing generated URL,
 remove the cache directory and rebuild, then verify dist/images/optimized and
 prerendered picture markup. Check a failed Notion job before retrying; the
 last deployed version stays available. Never log a signed source URL to debug.
+
+### Unpublished article media
+
+The URL-safety removal policy takes precedence over compatibility retention for
+unpublished Notion pages: their source media can remain in Git, but it is omitted
+from the public image manifest and deployment artifact. Stale transformation
+cache files are also removed from the artifact. See [slug history](REDIRECTS.md).

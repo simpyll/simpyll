@@ -103,3 +103,18 @@ test('missing published target fails while inactive Notion records emit no priva
   assert.equal(output, '{}')
   assert.doesNotMatch(output, /secret|abc|PRIVATE/)
 })
+
+test('unpublished hosted media and stale optimized caches are absent from public artifacts', async t => {
+  const { removeInactiveMedia } = await import('./publishing-media.mjs')
+  const root = await mkdtemp(join(tmpdir(), 'redirect-media-'))
+  t.after(() => rm(root, { recursive: true, force: true }))
+  const id = 'a'.repeat(32)
+  for (const path of ['.notion', 'src/generated', `dist/images/notion/${id}`, 'dist/images/optimized']) await mkdir(join(root, path), { recursive: true })
+  await writeFile(join(root, '.notion/published.json'), JSON.stringify({ articles: { [id]: { status: 'unpublished' } } }))
+  await writeFile(join(root, 'src/generated/images.json'), JSON.stringify({ '/images/public.png': { variants: [{ src: '/images/optimized/public.webp' }] } }))
+  for (const file of [`dist/images/notion/${id}/private.png`, 'dist/images/optimized/stale.webp', 'dist/images/optimized/public.webp']) await writeFile(join(root, file), 'image')
+  await removeInactiveMedia(root)
+  await assert.rejects(readFile(join(root, `dist/images/notion/${id}/private.png`)), { code: 'ENOENT' })
+  await assert.rejects(readFile(join(root, 'dist/images/optimized/stale.webp')), { code: 'ENOENT' })
+  assert.equal(await readFile(join(root, 'dist/images/optimized/public.webp'), 'utf8'), 'image')
+})

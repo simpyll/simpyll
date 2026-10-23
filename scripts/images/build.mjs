@@ -1,3 +1,4 @@
+import { inactiveNotionPages } from '../publishing-media.mjs'
 import sharp from 'sharp'
 import { createHash } from 'node:crypto'
 import { readdir, readFile, writeFile, mkdir, realpath, stat } from 'node:fs/promises'
@@ -10,6 +11,7 @@ export const widths = [320, 480, 768, 1200, 1600]
 const digest = bytes => createHash('sha256').update(bytes).digest('hex')
 const config = `v1:${sharp.versions.sharp}:${sharp.versions.vips}:${widths}:lossless-webp:avif80`
 export async function buildImages(root = process.cwd()) {
+  const inactive = await inactiveNotionPages(root)
   const publicRoot = await realpath(resolve(root, 'public'))
   const out = resolve(publicRoot, 'images/optimized')
   await mkdir(out, { recursive: true })
@@ -20,6 +22,8 @@ export async function buildImages(root = process.cwd()) {
     const path = await realpath(resolve(file.parentPath, file.name))
     if (!path.startsWith(publicRoot + sep)) throw new Error('Image path escapes public directory')
     const source = '/' + path.slice(publicRoot.length + 1).split(sep).join('/')
+    const pageId = source.match(/^\/images\/notion\/([a-f0-9]{32})\//)?.[1]
+    if (inactive.has(pageId)) continue
     const bytes = await readFile(path)
     if (bytes.length > 20 * 1024 * 1024) throw new Error(`Image exceeds 20 MiB: ${source}`)
     // SVG stays a trusted, external vector resource; never inline arbitrary SVG.

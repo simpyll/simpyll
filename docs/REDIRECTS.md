@@ -27,7 +27,9 @@ The manifest retains minimal inactive records (ID, last slug, date, historical
 slugs, unpublished status) when a page is Draft/Ready, deleted, archived, private,
 or absent from a complete successful query. It does not retain private titles or
 body text in those records. No public redirects are emitted for inactive
-records. Republishing that same page restores its history. A failed API request
+records. Their hosted images and cached image variants are excluded from the
+public build artifact and public image manifest; repository source copies remain
+for compatibility if the article is republished. Republishing that same page restores its history. A failed API request
 aborts synchronization rather than interpreting the failure as deletion.
 
 ## Rename a manual article
