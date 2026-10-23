@@ -1,19 +1,9 @@
 import { useEffect, useId, useMemo, useRef, useState, type Dispatch, type SetStateAction } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { loadIndex, hasIndex } from '../lib/search-index'
+import { discoveryUrl, parseDiscovery } from '../lib/discovery'
 import { normalize, prepareSearch, type SearchDocument } from '../lib/search'
 
-let cached: SearchDocument[] | undefined
-let pending: Promise<SearchDocument[]> | undefined
-function loadIndex() {
-  if (cached) return Promise.resolve(cached)
-  return pending ??= fetch(`${import.meta.env.BASE_URL}search-index.json`, { cache: 'no-cache' }).then(async response => {
-    if (!response.ok) throw new Error('Search unavailable')
-    const data: unknown = await response.json()
-    if (!Array.isArray(data) || !data.every(item => typeof item.slug === 'string' && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(item.slug)
-      && ['title', 'description', 'category', 'body'].every(key => typeof item[key] === 'string') && Array.isArray(item.tags) && item.tags.every((tag: unknown) => typeof tag === 'string'))) throw new Error('Invalid index')
-    return cached = data
-  }).finally(() => { pending = undefined })
-}
 
 function Match({ text, query }: { text: string; query: string }) {
   const terms = normalize(query).split(' ').filter(Boolean)
@@ -101,7 +91,7 @@ export function NavSearch({ open, onOpenChange }: { open: boolean; onOpenChange:
     <button ref={control} type="button" className="nav-search-control" aria-label={open ? 'Close search' : 'Open search'}
       aria-expanded={open} aria-controls={`${id}-panel`} onClick={() => {
         if (open) { setQuery(''); setSelected(-1); control.current?.focus({ preventScroll: true }) }
-        else setStatus(cached ? 'ready' : 'loading')
+        else setStatus(hasIndex() ? 'ready' : 'loading')
         onOpenChange(value => !value)
       }}>
       <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
@@ -119,6 +109,7 @@ export function NavSearch({ open, onOpenChange }: { open: boolean; onOpenChange:
           {result.tags.length > 0 && <small>{result.tags.slice(0, 3).join(' · ')}</small>}
         </li>)}
       </ul>
+      <Link className="discovery-search-link" to={discoveryUrl({ ...(location.pathname === '/explore' ? parseDiscovery(new URLSearchParams(location.search)) : {}), q: query, sort: query.trim() ? 'relevance' : 'newest' })}>Explore all articles and filters →</Link>
     </section>
   </>
 }

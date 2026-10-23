@@ -3,6 +3,8 @@ import { StaticRouter } from 'react-router-dom/server'
 import { renderToString } from 'react-dom/server'
 import { siteConfig } from './config/site'
 import App from './App'
+import index from '../public/search-index.json'
+import { DiscoveryData } from './lib/discovery-data'
 
 export function render(url: string) {
   // Rendering the document lets React 19 hoist metadata into <head> while
@@ -14,7 +16,7 @@ export function render(url: string) {
         <div id="root">
           <HelmetProvider>
             <StaticRouter location={url}>
-              <App />
+              <DiscoveryData.Provider value={index}><App /></DiscoveryData.Provider>
             </StaticRouter>
           </HelmetProvider>
         </div>

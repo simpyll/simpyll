@@ -61,6 +61,7 @@ async function generateSitemap() {
     { path: '/' },
     { path: '/blog' },
     { path: '/about' },
+    { path: '/explore' },
     ...posts,
   ]
 

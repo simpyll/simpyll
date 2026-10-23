@@ -44,7 +44,8 @@ Pages artifact by Vite. Production builds run validation then index generation;
 The generated file is ignored in Git. Both manually authored and Notion-generated
 MDX pass through the same extractor, after the publisher's Published-only sync.
 
-Only titles, descriptions, categories, tags and readable body text are stored.
+Titles, descriptions, categories, tags and readable body text are stored, along
+with discovery identity, canonical URL, content type and publication date.
 ESM/metadata declarations, fenced/inline code, pre/code/script/style subtrees and
 executable expressions are omitted. JSON string expressions emitted by Notion
 are read as data. Text children plus literal title/caption/alt props retain
@@ -64,7 +65,8 @@ also deduplicate by slug.
 
 ## Client engine
 
-The index is requested on first open, validated and cached in memory with one
+Outside a directly loaded Explore page, the index is requested on first open,
+validated and cached in memory with one
 shared in-flight request; failures can retry on reopen. HTTP revalidation avoids
 stale browser cache on a new page load. Updates appear after rebuild/deployment
 and reload; an already-open tab retains its session index. No query logging,
@@ -138,3 +140,5 @@ layout: [mobile light](search/mobile-light.png), [mobile dark](search/mobile-dar
 [desktop light](search/desktop-light.png), [desktop dark](search/desktop-dark.png),
 and [native mobile reveal](search/mobile-reveal.png). These show emulation, not
 physical Android or Safari. CI retains its pinned Chromium and normal artifacts.
+
+See [unified discovery](DISCOVERY.md) for combined URL search, taxonomy filters, sorting and prerender behavior.

@@ -4,7 +4,7 @@
 
 ## Prerendering and hydration
 
-`npm run build` generates HTML for `/`, `/about`, `/blog`, and each MDX post. React renders
+`npm run build` generates HTML for `/`, `/about`, `/blog`, `/explore`, and each MDX post. React renders
 an entire document so React 19 can place metadata in the head; JSON-LD stays in
 the hydrated body tree. Do not extract arbitrary tags from rendered app HTML.
 Run the full build before rerunning prerender (the script rejects an already
@@ -60,3 +60,5 @@ not a claim of verified current renewal status. The existing `/#about` section
 remains a bookmark target, while the navigation points to `/about`. The project
 CTA uses the existing `/#work` section; no unimplemented project route is linked.
 Issue #41 printable CV remains separate. Starter articles remain unchanged.
+
+See [unified discovery](DISCOVERY.md) for combined URL search, taxonomy filters, sorting and prerender behavior.

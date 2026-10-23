@@ -15,8 +15,10 @@ export async function searchDocument(source, slug) {
       }
     }
   }
-  if (!metadata || metadata.draft === true || metadata.published === false || metadata.test === true
-    || metadata.status && metadata.status.toLowerCase() !== 'published') return null
+  if (!metadata || typeof metadata.title !== 'string' || !metadata.title.trim() ||
+    metadata.tags !== undefined && (!Array.isArray(metadata.tags) || metadata.tags.some(tag => typeof tag !== 'string')) || metadata.draft === true || metadata.published === false || metadata.test === true
+    || ['description', 'category', 'date'].some(key => metadata[key] !== undefined && typeof metadata[key] !== 'string')
+    || metadata.status !== undefined && (typeof metadata.status !== 'string' || metadata.status.toLowerCase() !== 'published')) return null
   const prose = []
   function visit(node) {
     if (['mdxjsEsm', 'code', 'inlineCode'].includes(node.type)) return
@@ -38,7 +40,7 @@ export async function searchDocument(source, slug) {
   }
   visit(tree)
   return { slug, title: metadata.title, description: metadata.description ?? '', category: metadata.category ?? '',
-    tags: metadata.tags ?? [], body: prose.join(' ').replace(/\s+/gu, ' ').trim() }
+    tags: metadata.tags ?? [], date: metadata.date ?? '', id: typeof metadata.articleId === 'string' && metadata.articleId ? metadata.articleId : `blog:${slug}`, type: 'blog', url: `/blog/${slug}`, body: prose.join(' ').replace(/\s+/gu, ' ').trim() }
 }
 
 export async function generateSearch(root = process.cwd()) {

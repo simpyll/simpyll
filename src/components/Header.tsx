@@ -26,7 +26,7 @@ export function Header() {
   const trigger = useRef<HTMLButtonElement>(null)
   const links = useRef<HTMLDivElement>(null)
   const indicator = useRef<HTMLSpanElement>(null)
-  const active = location.pathname.startsWith('/blog') ? '/blog'
+  const active = (location.pathname.startsWith('/blog') || location.pathname === '/explore') ? '/blog'
     : location.pathname === '/about' ? '/about'
     : location.pathname === '/' ? `/${location.hash === '#work' || location.hash === '#about' ? location.hash : ''}` : null
 

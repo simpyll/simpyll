@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 
 import App from './App'
+import { DiscoveryData, readDiscoveryData } from './lib/discovery-data'
 import './index.css'
 
 const container = document.getElementById('root')!
@@ -15,7 +16,7 @@ const app = (
     <ErrorBoundary scope="application">
       <HelmetProvider>
         <BrowserRouter>
-          <App />
+          <DiscoveryData.Provider value={readDiscoveryData()}><App /></DiscoveryData.Provider>
         </BrowserRouter>
       </HelmetProvider>
     </ErrorBoundary>

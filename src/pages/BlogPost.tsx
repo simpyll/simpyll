@@ -2,7 +2,7 @@ import { ArticlePath } from '../components/mdx/article-path'
 import { MDXProvider } from '@mdx-js/react'
 import { mdxComponents } from '../components/mdx/mapping'
 import { ArticleToc } from '../components/ArticleToc'
-import { Badge } from '../components/Badge'
+import { TaxonomyLink } from '../components/TaxonomyLink'
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
 import { Container } from '../components/Container'
 import { Reveal } from '../components/Reveal'
@@ -47,7 +47,7 @@ export function BlogPost() {
               </Link>
 
               <p className="mb-6 text-xs font-medium uppercase tracking-eyebrow text-accent">
-                {metadata.category}
+                <TaxonomyLink kind="category" label={metadata.category} />
               </p>
 
               <h1 className="font-display text-4xl font-semibold leading-tight tracking-heading sm:text-6xl">
@@ -81,7 +81,7 @@ export function BlogPost() {
 
             <div className="mt-16 flex flex-wrap gap-2 border-t border-outline pt-8">
               {metadata.tags.map((tag) => (
-                <Badge key={tag}>{tag}</Badge>
+                <TaxonomyLink key={tag} kind="tag" label={tag} />
               ))}
             </div>
           </article>

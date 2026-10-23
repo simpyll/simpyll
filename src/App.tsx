@@ -1,3 +1,4 @@
+import { Explore } from './pages/Explore'
 import { ErrorBoundary } from './recovery/ErrorBoundary'
 
 import { Routes, Route, useLocation } from 'react-router-dom'
@@ -24,6 +25,7 @@ export function AppContent() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/explore" element={<Explore />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="*" element={<NotFound />} />
