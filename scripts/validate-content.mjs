@@ -62,7 +62,7 @@ export async function validateContent({ root = process.cwd() } = {}) {
   await scan(directory)
   let redirects = {}
   try { redirects = JSON.parse(await readFile(join(root, 'src/generated/redirects.json'), 'utf8')) } catch (error) { if (error.code !== 'ENOENT') throw error }
-  const routes = new Set(['/', '/blog', ...articles.map(article => `/blog/${article.slug}`)])
+  const routes = new Set(['/', '/blog', '/about', ...articles.map(article => `/blog/${article.slug}`)])
   for (const article of articles) {
     const report = (message, node, target = errors) => {
       const position = node?.position?.start

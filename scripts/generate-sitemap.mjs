@@ -60,6 +60,7 @@ async function generateSitemap() {
   const pages = [
     { path: '/' },
     { path: '/blog' },
+    { path: '/about' },
     ...posts,
   ]
 

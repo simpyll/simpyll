@@ -2,7 +2,7 @@ import { readFile, writeFile, readdir } from 'node:fs/promises'
 import { execFileSync } from 'node:child_process'
 import { inspectHtml, normalize, requireCheck } from './core.mjs'
 const routes = []
-for (const path of ['/', '/blog', ...(await readdir('src/content/blog')).filter(x => x.endsWith('.mdx')).map(x => `/blog/${x.slice(0, -4)}`)]) {
+for (const path of ['/', '/blog', '/about', ...(await readdir('src/content/blog')).filter(x => x.endsWith('.mdx')).map(x => `/blog/${x.slice(0, -4)}`)]) {
   const doc = inspectHtml(await readFile(`dist${path === '/' ? '' : path}/index.html`, 'utf8'))
   const body = normalize(doc.querySelector('article .prose')?.textContent ?? '')
   if (path.startsWith('/blog/')) requireCheck(body.length > 0, `${path} rendered article body`, 'empty')

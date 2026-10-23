@@ -1,4 +1,5 @@
 
+import { profile } from '../content/profile'
 import { Link } from 'react-router-dom'
 import { Container } from './Container'
 import { Reveal } from './Reveal'
@@ -26,24 +27,18 @@ export function About() {
           <Reveal staggerIndex={1}>
             <div>
               <p className="max-w-2xl font-display text-2xl font-medium leading-relaxed tracking-tight text-foreground sm:text-3xl">
-                I know the bedside. I’m learning the tools to build
-                beyond it.
+                {profile.homeHeadline}
               </p>
 
               <p className="mt-8 max-w-xl text-base leading-relaxed text-muted">
-                I’m an experienced critical care registered nurse, currently
-                pursuing advanced practice nursing education while learning
-                software engineering and artificial intelligence. My long-term
-                goal is to bring clinical experience and technical skills
-                together to help bridge the gap between healthcare and
-                technology.
+                {profile.homeSummary}
               </p>
 
               <Link
-                to="/blog"
+                to="/about"
                 className="mt-10 inline-flex items-center gap-3 text-sm font-medium text-accent ui-link-feedback"
               >
-                Follow the learning journey
+                More about me
                 <span aria-hidden="true">↗</span>
               </Link>
             </div>
