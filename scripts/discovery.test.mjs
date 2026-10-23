@@ -64,3 +64,9 @@ test('production records have stable canonical identity, dates, no fixtures/alia
   assert.equal(await searchDocument("export const metadata = { tags: [] }", 'invalid'), null)
   assert.equal((await searchDocument("export const metadata = { title: 'Minimal' }", 'minimal')).date, '')
 })
+
+test('malformed optional metadata is excluded rather than breaking the public index', async () => {
+  for (const extra of ['status: 17', 'category: {}', 'description: false', 'tags: [null]', 'date: 22']) {
+    assert.equal(await searchDocument(`export const metadata = { title: 'Invalid', ${extra} }`, 'invalid'), null)
+  }
+})

@@ -591,3 +591,9 @@ main { overflow-wrap: anywhere; }
   .discovery-query { flex-wrap: wrap; }
   .discovery-query input { flex-basis: 100%; }
 }
+.discovery-filter summary { height: 2.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: .875rem; }
+@media (max-width: 600px) {
+  .discovery-query { position: relative; }
+  .discovery-query input { padding-right: 6.5rem; }
+  .discovery-query button { position: absolute; right: .25rem; top: .125rem; min-height: 2.75rem; }
+}
