@@ -55,8 +55,8 @@ pull requests.
    `https://simpyll.com/blog/<slug>/`. The cron is `*/15 * * * *`; GitHub may
    delay or skip scheduled jobs, so this is approximate, not a 15-minute SLA.
 6. Edit the same Notion page to update the same post. A blank Slug keeps the
-   previous URL; an explicit slug change removes the old generated route and
-   creates the new one (no redirect). Changing Status to Draft/Ready or
+   previous URL; an explicit slug change preserves the old URL with an immediate static
+   redirect to the new one (see [slug history](REDIRECTS.md)). Changing Status to Draft/Ready or
    trashing the page removes its generated article and unused local images
    on the next successful sync. Previously published content remains in Git
    history and may remain in browser/search caches; unpublishing is not a
@@ -144,4 +144,5 @@ References: [Notion data-source migration](https://developers.notion.com/guides/
 and [GitHub workflow triggering](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow).
 
 Image naming now uses captions/article context with stable local copies. See
-[image lifecycle and compatibility policy](IMAGES.md); old public media is retained.
+[image lifecycle and compatibility policy](IMAGES.md); old public media is retained in source; media belonging to unpublished articles
+is excluded from deployment artifacts (see [URL safety](REDIRECTS.md)).

@@ -1,16 +1,20 @@
 import { MDXProvider } from '@mdx-js/react'
 import { mdxComponents } from '../components/mdx/mapping'
 import { Badge } from '../components/Badge'
-import { Link, useParams } from 'react-router-dom'
+import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
 import { Container } from '../components/Container'
 import { Reveal } from '../components/Reveal'
 import { SEO } from '../components/SEO'
 import { ArticleSchema } from '../components/ArticleSchema'
 import { NotFound } from './NotFound'
+import redirects from '../generated/redirects.json' with { type: 'json' }
 import { getPostBySlug } from '../lib/blog'
 
 export function BlogPost() {
   const { slug } = useParams<{ slug: string }>()
+  const location = useLocation()
+  const target = slug && Object.hasOwn(redirects, slug) ? (redirects as Record<string, string>)[slug] : undefined
+  if (target) return <Navigate replace to={`/blog/${target}${location.search}${location.hash}`} />
   const post = slug ? getPostBySlug(slug) : undefined
 
   if (!post) return <NotFound />

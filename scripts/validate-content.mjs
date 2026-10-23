@@ -60,6 +60,8 @@ export async function validateContent({ root = process.cwd() } = {}) {
     }
   }
   await scan(directory)
+  let redirects = {}
+  try { redirects = JSON.parse(await readFile(join(root, 'src/generated/redirects.json'), 'utf8')) } catch (error) { if (error.code !== 'ENOENT') throw error }
   const routes = new Set(['/', '/blog', ...articles.map(article => `/blog/${article.slug}`)])
   for (const article of articles) {
     const report = (message, node, target = errors) => {
@@ -86,6 +88,7 @@ export async function validateContent({ root = process.cwd() } = {}) {
       }
       if (typeof metadata.date === 'string' && (!/^\d{4}-\d{2}-\d{2}$/.test(metadata.date) || !Number.isFinite(Date.parse(metadata.date)) || new Date(metadata.date).toISOString().slice(0, 10) !== metadata.date)) report('metadata.date must be a real calendar date in YYYY-MM-DD format')
       if (!Array.isArray(metadata.tags) || metadata.tags.some(tag => typeof tag !== 'string' || !tag.trim())) report('metadata.tags must be an array of non-empty strings (an empty array is allowed)')
+      if (metadata.status !== undefined && metadata.status !== 'published' || metadata.draft === true || metadata.published === false) report('Private manual MDX must be moved outside src/content/blog; this directory is public-only')
       if (metadata.slug !== undefined && metadata.slug !== article.slug) report(`metadata.slug must match filename slug "${article.slug}"`)
     } catch (error) { report(error.message) }
 
@@ -128,6 +131,8 @@ export async function validateContent({ root = process.cwd() } = {}) {
         }
         decoded = decodeURIComponent(url.pathname)
         const route = decoded.replace(/\/$/, '') || '/'
+        const alias = route.match(/^\/blog\/([^/]+)$/)?.[1]
+        if (!image && Object.hasOwn(redirects, alias)) throw new Error(`Stale internal link; use /blog/${redirects[alias]} instead of ${route}`)
         if (!image && routes.has(route)) continue
         if (!await localFile(root, decoded)) throw new Error(`${image ? 'Missing local image/asset' : 'Broken internal link'} "${value}"; expected ${image ? 'a file under public/' : 'an existing site route or file under public/'}`)
       } catch (error) { report(`${error.message} (destination: ${JSON.stringify(value)})`, node) }

@@ -35,3 +35,5 @@ artifacts/
 
 /public/images/optimized/
 /src/generated/images.json
+
+/src/generated/redirects.json

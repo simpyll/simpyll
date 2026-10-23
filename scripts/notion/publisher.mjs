@@ -1,3 +1,5 @@
+import { advanceHistory, normalizeSlug, resolveRegistry, readMetadata, manualHistory } from '../redirects.mjs'
+import { readdir, lstat } from 'node:fs/promises'
 import sharp from 'sharp'
 import { imageName } from '../images/names.mjs'
 import { createHash } from 'node:crypto'
@@ -255,15 +257,20 @@ export async function synchronize({ root, api, pageId, imageDownloader = downloa
   const sourceId = id(source.id)
   if (old.sourceId && old.sourceId !== sourceId) throw new Error('Blog data source changed; review manifest before migrating')
   const pages = await paginate(api, `data_sources/${sourceId}/query`, { filter: { property: 'Status', [source.properties.Status.type]: { equals: 'Published' } } })
-  const next = { version: 1, sourceId, articles: {}, files: {} }, files = new Map(), slugs = new Set()
+  const next = { version: 1, sourceId, articles: Object.fromEntries(Object.entries(old.articles).map(([key, article]) => [key, { slug: article.slug, date: article.date, history: article.history ?? [], status: 'unpublished' }])), files: {} }, files = new Map(), slugs = new Set(), seenPages = new Set()
   for (const page of pages.sort((a, b) => id(a.id).localeCompare(id(b.id)))) {
     if (page.in_trash || page.archived || (page.properties?.Status?.status?.name ?? page.properties?.Status?.select?.name) !== 'Published') continue
     const pageKey = id(page.id)
-    if (next.articles[pageKey]) throw new Error('Duplicate Notion page in query')
+    if (seenPages.has(pageKey)) throw new Error('Duplicate Notion page in query')
+    seenPages.add(pageKey)
     const blocks = await readBlocks(api, pageKey)
     const metadata = metadataFor(page, old.articles[pageKey], blocks)
     if (slugs.has(metadata.slug)) throw new Error('Duplicate published slug; assign distinct Slug values')
     slugs.add(metadata.slug)
+    metadata.articleId = `notion:${pageKey}`
+    const history = advanceHistory(old.articles[pageKey], metadata.slug)
+    const aliasesText = plain(page.properties?.['Redirect From']?.rich_text).trim()
+    const redirectFrom = aliasesText ? aliasesText.split(',').map(value => normalizeSlug(value.trim())) : []
     const assets = {}
     let imageSequence = 0
     const content = await convertBlocks(blocks, async block => {
@@ -293,8 +300,19 @@ export async function synchronize({ root, api, pageId, imageDownloader = downloa
     const mdx = `export const metadata = {\n${fields}\n}\n\n${content}\n`
     await validate(mdx)
     files.set(`src/content/blog/${metadata.slug}.mdx`, Buffer.from(mdx))
-    next.articles[pageKey] = { slug: metadata.slug, date: metadata.date, assets }
+    next.articles[pageKey] = { slug: metadata.slug, date: metadata.date, history, redirectFrom, status: 'published', assets }
   }
+  const hasGit = await lstat(join(root, '.git')).then(() => true).catch(error => { if (error.code === 'ENOENT') return false; throw error })
+  const gitHistory = hasGit ? await manualHistory(root) : new Map()
+  const claims = Object.entries(next.articles).map(([key, article]) => ({ id: `notion:${key}`, slug: article.slug, status: article.status, aliases: [...(article.history ?? []), ...(article.redirectFrom ?? [])] }))
+  for (const file of await readdir(join(root, 'src/content/blog'))) {
+    const path = `src/content/blog/${file}`
+    if (!file.endsWith('.mdx') || path in old.files) continue
+    const source = await readFile(join(root, path), 'utf8')
+    const metadata = source.includes('export const metadata') ? await readMetadata(source) : {}
+    claims.push({ id: metadata.articleId ?? `manual:${file.slice(0, -4)}`, slug: file.slice(0, -4), status: metadata.status ?? 'published', aliases: [...(gitHistory.get(metadata.articleId) ?? [])].filter(slug => slug !== file.slice(0, -4)).concat(metadata.redirectFrom ?? []) })
+  }
+  resolveRegistry(claims)
   // Published media URLs are permanent compatibility assets, even after unpublish.
   for (const path of Object.keys(old.files).filter(p => p.startsWith('public/images/'))) {
     if (!files.has(path)) { const bytes = await readOptional(join(root, path)); if (bytes) files.set(path, bytes) }
@@ -313,8 +331,18 @@ export async function synchronize({ root, api, pageId, imageDownloader = downloa
     if (!existing?.equals(bytes)) writes.push([path, bytes])
   }
   if (!dryRun) {
-    for (const [path, bytes] of writes) { await mkdir(dirname(join(root, path)), { recursive: true }); await writeFile(join(root, path), bytes) }
-    for (const path of deletes) { try { await unlink(join(root, path)) } catch (error) { if (error.code !== 'ENOENT') throw error } }
+    const backups = new Map()
+    for (const path of [...writes.map(([path]) => path), ...deletes]) backups.set(path, await readOptional(join(root, path)))
+    try {
+      for (const [path, bytes] of writes) { await mkdir(dirname(join(root, path)), { recursive: true }); await writeFile(join(root, path), bytes) }
+      for (const path of deletes) { try { await unlink(join(root, path)) } catch (error) { if (error.code !== 'ENOENT') throw error } }
+    } catch (error) {
+      for (const [path, bytes] of backups) {
+        if (bytes) await writeFile(join(root, path), bytes)
+        else await unlink(join(root, path)).catch(e => { if (e.code !== 'ENOENT') throw e })
+      }
+      throw error
+    }
   }
-  return { changed: Boolean(writes.length || deletes.length), articles: Object.keys(next.articles).length, writes: writes.length, deletes: deletes.length }
+  return { changed: Boolean(writes.length || deletes.length), articles: Object.values(next.articles).filter(article => article.status === 'published').length, writes: writes.length, deletes: deletes.length }
 }
