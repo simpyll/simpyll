@@ -70,7 +70,7 @@ export function Explore() {
         </form>
         <DiscoveryFilters state={state} categories={categories} tags={tags} change={next => change({ ...next, q: input })} />
         <p className="mt-3 text-xs text-muted">Match any selected category and any selected tag, together with your search.</p>
-        <div className="discovery-chips" aria-label="Active filters">
+        <div className="discovery-chips" role="group" aria-label="Active filters">
           {state.q && <button onClick={() => change({ ...state, q: '', sort: state.sort === 'relevance' ? 'newest' : state.sort })} aria-label={`Remove search: ${state.q}`}>Search: {state.q} ×</button>}
           {(['categories', 'tags'] as const).flatMap(field => state[field].map(value => <button key={`${field}:${value}`} aria-label={`Remove ${field === 'tags' ? 'tag' : 'category'}: ${label(value, field === 'tags' ? tags : categories)}`}
             onClick={() => change({ ...state, [field]: state[field].filter(id => id !== value) })}>{field === 'tags' ? 'Tag' : 'Category'}: {label(value, field === 'tags' ? tags : categories)} ×</button>))}
