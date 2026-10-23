@@ -597,3 +597,6 @@ main { overflow-wrap: anywhere; }
   .discovery-query input { padding-right: 6.5rem; }
   .discovery-query button { position: absolute; right: .25rem; top: .125rem; min-height: 2.75rem; }
 }
+
+.discovery-control-heading { display: flex; align-items: center; justify-content: space-between; min-height: 2.75rem; gap: 1rem; }
+.discovery-control-heading button { min-height: 2.75rem; font-size: .875rem; }

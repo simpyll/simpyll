@@ -62,7 +62,8 @@ export function Explore() {
       </section>
       <section aria-label="Discover articles" className="discovery-controls">
         <form role="search" onSubmit={event => { event.preventDefault(); change({ ...state, q: input, sort: state.q ? state.sort : 'relevance' }) }}>
-          <label htmlFor="discovery-query" className="text-sm text-muted">Search the journal</label>
+          <div className="discovery-control-heading"><label htmlFor="discovery-query" className="text-sm text-muted">Search the journal</label>
+            <button type="button" className="discovery-reset" style={{ visibility: active ? 'visible' : 'hidden' }} disabled={!active} onClick={() => change(defaultState)}>Clear filters</button></div>
           <div className="discovery-query"><input id="discovery-query" type="search" maxLength={160} placeholder="Search articles, topics, and technologies…" value={input}
             onChange={event => setDraft({ text: event.target.value, source: current })} />
             <button type="button" disabled={!input} onClick={() => change({ ...state, q: '', sort: state.sort === 'relevance' ? 'newest' : state.sort })}>Clear search</button></div>
@@ -73,7 +74,6 @@ export function Explore() {
           {state.q && <button onClick={() => change({ ...state, q: '', sort: state.sort === 'relevance' ? 'newest' : state.sort })} aria-label={`Remove search: ${state.q}`}>Search: {state.q} ×</button>}
           {(['categories', 'tags'] as const).flatMap(field => state[field].map(value => <button key={`${field}:${value}`} aria-label={`Remove ${field === 'tags' ? 'tag' : 'category'}: ${label(value, field === 'tags' ? tags : categories)}`}
             onClick={() => change({ ...state, [field]: state[field].filter(id => id !== value) })}>{field === 'tags' ? 'Tag' : 'Category'}: {label(value, field === 'tags' ? tags : categories)} ×</button>))}
-          {active && <button className="discovery-reset" onClick={() => change(defaultState)}>Clear filters</button>}
         </div>
       </section>
       <section aria-label="Article results" className="pb-24">
