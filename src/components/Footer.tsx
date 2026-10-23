@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 
 import { useTheme } from '../theme/store'
 import { Container } from './Container'
@@ -15,6 +16,7 @@ export function Footer() {
             simpyll<span className="text-accent">.</span>
           </a>
 
+          <Link to="/projects" className="min-h-11 inline-flex items-center text-sm text-muted hover:text-accent">Projects</Link>
           <p className="text-sm text-subtle">
             Clinical roots. A learning mindset.
           </p>

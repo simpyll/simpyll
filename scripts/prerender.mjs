@@ -29,7 +29,7 @@ async function prerender() {
     .filter((file) => file.endsWith('.mdx'))
     .map((file) => `/blog/${file.replace(/\.mdx$/, '')}`)
 
-  const routes = ['/', '/blog', '/about', '/explore', ...blogRoutes]
+  const routes = ['/', '/blog', '/about', '/explore', '/projects', ...blogRoutes]
 
   for (const route of routes) {
     const pageHtml = render(route).replace('<head>', `<head>${templateHead}`)

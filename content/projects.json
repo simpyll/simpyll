@@ -1,14 +1,384 @@
 [
   {
-    "id": "simpyll", "slug": "simpyll", "title": "This site, in progress.",
-    "summary": "Simpyll is my personal website and learning journal: a working project where I can practice building for the web and share what I learn.",
-    "status": "in-progress", "visibility": "public", "technologies": ["react", "typescript", "mdx"],
-    "links": [], "featured": { "enabled": true, "order": 1 }, "order": 1
+    "id": "simpyll",
+    "slug": "simpyll",
+    "title": "Simpyll",
+    "summary": "A personal website, technical blog, and evolving software engineering portfolio documenting my work, experiments, and transition into software development.",
+    "projectType": "Website / Publishing Platform",
+    "workflowStage": "in-progress",
+    "lifecycleStatus": "active",
+    "visibility": "public",
+    "technologies": [
+      "react",
+      "typescript",
+      "vite",
+      "tailwind",
+      "mdx",
+      "github-actions",
+      "notion-api"
+    ],
+    "links": [
+      {
+        "kind": "live",
+        "label": "Visit Simpyll",
+        "url": "https://simpyll.com"
+      },
+      {
+        "kind": "repository",
+        "label": "GitHub",
+        "url": "https://github.com/simpyll/simpyll"
+      }
+    ],
+    "featured": {
+      "enabled": true,
+      "order": 1
+    },
+    "order": 1
   },
   {
-    "id": "bedside-exploration", "slug": "bedside-exploration", "title": "Start with the bedside.",
-    "summary": "The questions I bring from critical care will guide future software and AI experiments. I’ll document those ideas here as they take shape.",
-    "status": "exploration", "visibility": "public", "technologies": [], "tags": ["Healthcare", "Software", "AI"],
-    "links": [], "featured": { "enabled": true, "order": 2 }, "order": 2
+    "id": "ai-engineering",
+    "slug": "ai-engineering",
+    "title": "AI Engineering",
+    "summary": "An ongoing exploration of AI engineering, software development, automation, intelligent applications, and practical engineering workflows. An active learning initiative.",
+    "projectType": "Learning / Engineering",
+    "workflowStage": "in-progress",
+    "lifecycleStatus": "active",
+    "visibility": "public",
+    "technologies": [],
+    "links": [],
+    "featured": {
+      "enabled": true,
+      "order": 2
+    },
+    "order": 2
+  },
+  {
+    "id": "rntonp-database",
+    "slug": "rntonp-database",
+    "title": "RNtoNP \u2014 NP School Database",
+    "summary": "A planned searchable, continuously maintained database to compare nurse practitioner programs, tuition, degree pathways, and program characteristics.",
+    "projectType": "Data Platform / Healthcare Education",
+    "workflowStage": "on-deck",
+    "lifecycleStatus": "planned",
+    "visibility": "public",
+    "technologies": [],
+    "links": [
+      {
+        "kind": "resource",
+        "label": "Existing RNtoNP website (database planned)",
+        "url": "https://rntonp.com"
+      }
+    ],
+    "featured": {
+      "enabled": true,
+      "order": 3
+    },
+    "order": 3
+  },
+  {
+    "id": "medical-calculators",
+    "slug": "medical-calculators",
+    "title": "Medical Calculators Collection",
+    "summary": "A planned collection of medical and healthcare education calculators, career tools, and educational scoring utilities. No released or clinically validated suite.",
+    "projectType": "Healthcare / Interactive Tools",
+    "workflowStage": "on-deck",
+    "lifecycleStatus": "planned",
+    "visibility": "public",
+    "technologies": [],
+    "links": [],
+    "featured": {
+      "enabled": true,
+      "order": 4
+    },
+    "order": 4
+  },
+  {
+    "id": "nihss-assessment-trainer",
+    "slug": "nihss-assessment-trainer",
+    "title": "NIHSS Assessment Trainer",
+    "summary": "Guided scoring and simulated assessments for learning and practicing the National Institutes of Health Stroke Scale.",
+    "projectType": "Healthcare Education",
+    "workflowStage": "ideas",
+    "lifecycleStatus": "planned",
+    "visibility": "public",
+    "technologies": [],
+    "links": [],
+    "featured": {
+      "enabled": false,
+      "order": 5
+    },
+    "order": 5
+  },
+  {
+    "id": "critical-care-scenario-simulator",
+    "slug": "critical-care-scenario-simulator",
+    "title": "Critical Care Scenario Simulator",
+    "summary": "Branching educational scenarios exploring critical care reasoning and responses to changing patient conditions.",
+    "projectType": "Healthcare Education",
+    "workflowStage": "ideas",
+    "lifecycleStatus": "planned",
+    "visibility": "public",
+    "technologies": [],
+    "links": [],
+    "featured": {
+      "enabled": false,
+      "order": 6
+    },
+    "order": 6
+  },
+  {
+    "id": "hemodynamic-monitoring-explorer",
+    "slug": "hemodynamic-monitoring-explorer",
+    "title": "Hemodynamic Monitoring Explorer",
+    "summary": "An educational resource explaining invasive monitoring, hemodynamic variables, and cardiovascular physiology.",
+    "projectType": "Healthcare Education",
+    "workflowStage": "ideas",
+    "lifecycleStatus": "planned",
+    "visibility": "public",
+    "technologies": [],
+    "links": [],
+    "featured": {
+      "enabled": false,
+      "order": 7
+    },
+    "order": 7
+  },
+  {
+    "id": "abg-interpretation-trainer",
+    "slug": "abg-interpretation-trainer",
+    "title": "ABG Interpretation Trainer",
+    "summary": "Guided practice identifying acid-base disturbances and understanding compensation.",
+    "projectType": "Healthcare Education",
+    "workflowStage": "ideas",
+    "lifecycleStatus": "planned",
+    "visibility": "public",
+    "technologies": [],
+    "links": [],
+    "featured": {
+      "enabled": false,
+      "order": 8
+    },
+    "order": 8
+  },
+  {
+    "id": "ecg-rhythm-recognition-trainer",
+    "slug": "ecg-rhythm-recognition-trainer",
+    "title": "ECG Rhythm Recognition Trainer",
+    "summary": "Practice recognizing cardiac rhythms and reviewing the reasoning behind interpretations.",
+    "projectType": "Healthcare Education",
+    "workflowStage": "ideas",
+    "lifecycleStatus": "planned",
+    "visibility": "public",
+    "technologies": [],
+    "links": [],
+    "featured": {
+      "enabled": false,
+      "order": 9
+    },
+    "order": 9
+  },
+  {
+    "id": "ventilator-waveform-explorer",
+    "slug": "ventilator-waveform-explorer",
+    "title": "Ventilator Waveform Explorer",
+    "summary": "Educational visualizations of ventilator waveforms, respiratory mechanics, and common patterns.",
+    "projectType": "Healthcare Education",
+    "workflowStage": "ideas",
+    "lifecycleStatus": "planned",
+    "visibility": "public",
+    "technologies": [],
+    "links": [],
+    "featured": {
+      "enabled": false,
+      "order": 10
+    },
+    "order": 10
+  },
+  {
+    "id": "hospital-systems-explorer",
+    "slug": "hospital-systems-explorer",
+    "title": "Hospital Systems Explorer",
+    "summary": "Explore connections between hospital departments, workflows, records, devices, and information systems.",
+    "projectType": "Healthcare Education",
+    "workflowStage": "ideas",
+    "lifecycleStatus": "planned",
+    "visibility": "public",
+    "technologies": [],
+    "links": [],
+    "featured": {
+      "enabled": false,
+      "order": 11
+    },
+    "order": 11
+  },
+  {
+    "id": "np-board-question-bank",
+    "slug": "np-board-question-bank",
+    "title": "NP Board Question Bank",
+    "summary": "Practice questions with explanations, topic tracking, and potential adaptive study features.",
+    "projectType": "Nursing Education / Career",
+    "workflowStage": "ideas",
+    "lifecycleStatus": "planned",
+    "visibility": "public",
+    "technologies": [],
+    "links": [],
+    "featured": {
+      "enabled": false,
+      "order": 12
+    },
+    "order": 12
+  },
+  {
+    "id": "np-boards-wiki",
+    "slug": "np-boards-wiki",
+    "title": "NP Boards Wiki",
+    "summary": "A structured, searchable knowledge base concept for nurse practitioner board preparation.",
+    "projectType": "Nursing Education / Career",
+    "workflowStage": "ideas",
+    "lifecycleStatus": "planned",
+    "visibility": "public",
+    "technologies": [],
+    "links": [],
+    "featured": {
+      "enabled": false,
+      "order": 13
+    },
+    "order": 13
+  },
+  {
+    "id": "agacnp-org",
+    "slug": "agacnp-org",
+    "title": "AGACNP.org",
+    "summary": "A potential platform for adult-gerontology acute care nurse practitioner education and professional development.",
+    "projectType": "Nursing Education / Career",
+    "workflowStage": "ideas",
+    "lifecycleStatus": "planned",
+    "visibility": "public",
+    "technologies": [],
+    "links": [],
+    "featured": {
+      "enabled": false,
+      "order": 14
+    },
+    "order": 14
+  },
+  {
+    "id": "rn-to-np-career-pathway-planner",
+    "slug": "rn-to-np-career-pathway-planner",
+    "title": "RN-to-NP Career Pathway Planner",
+    "summary": "Explore educational pathways, program options, and career transitions.",
+    "projectType": "Nursing Education / Career",
+    "workflowStage": "ideas",
+    "lifecycleStatus": "planned",
+    "visibility": "public",
+    "technologies": [],
+    "links": [],
+    "featured": {
+      "enabled": false,
+      "order": 15
+    },
+    "order": 15
+  },
+  {
+    "id": "nursing-specialty-explorer",
+    "slug": "nursing-specialty-explorer",
+    "title": "Nursing Specialty Explorer",
+    "summary": "A searchable guide concept covering specialties, qualifications, environments, and career pathways.",
+    "projectType": "Nursing Education / Career",
+    "workflowStage": "ideas",
+    "lifecycleStatus": "planned",
+    "visibility": "public",
+    "technologies": [],
+    "links": [],
+    "featured": {
+      "enabled": false,
+      "order": 16
+    },
+    "order": 16
+  },
+  {
+    "id": "np-clinical-hours-tracker",
+    "slug": "np-clinical-hours-tracker",
+    "title": "NP Clinical Hours Tracker",
+    "summary": "Organize educational clinical-hour requirements, rotations, and learning milestones.",
+    "projectType": "Nursing Education / Career",
+    "workflowStage": "ideas",
+    "lifecycleStatus": "planned",
+    "visibility": "public",
+    "technologies": [],
+    "links": [],
+    "featured": {
+      "enabled": false,
+      "order": 17
+    },
+    "order": 17
+  },
+  {
+    "id": "ai-assisted-research-organizer",
+    "slug": "ai-assisted-research-organizer",
+    "title": "AI-Assisted Research Organizer",
+    "summary": "Organize literature, extract structured information, and maintain traceable source references.",
+    "projectType": "Software / Automation",
+    "workflowStage": "ideas",
+    "lifecycleStatus": "planned",
+    "visibility": "public",
+    "technologies": [],
+    "links": [],
+    "featured": {
+      "enabled": false,
+      "order": 18
+    },
+    "order": 18
+  },
+  {
+    "id": "automated-np-program-data-updater",
+    "slug": "automated-np-program-data-updater",
+    "title": "Automated NP Program Data Updater",
+    "summary": "A pipeline concept for identifying, reviewing, and updating nurse practitioner program information.",
+    "projectType": "Software / Automation",
+    "workflowStage": "ideas",
+    "lifecycleStatus": "planned",
+    "visibility": "public",
+    "technologies": [],
+    "links": [],
+    "featured": {
+      "enabled": false,
+      "order": 19
+    },
+    "order": 19
+  },
+  {
+    "id": "personal-knowledge-graph",
+    "slug": "personal-knowledge-graph",
+    "title": "Personal Knowledge Graph",
+    "summary": "Visualize relationships between projects, writing, technologies, and learning topics.",
+    "projectType": "Software / Automation",
+    "workflowStage": "ideas",
+    "lifecycleStatus": "planned",
+    "visibility": "public",
+    "technologies": [],
+    "links": [],
+    "featured": {
+      "enabled": false,
+      "order": 20
+    },
+    "order": 20
+  },
+  {
+    "id": "interactive-developer-learning-roadmap",
+    "slug": "interactive-developer-learning-roadmap",
+    "title": "Interactive Developer Learning Roadmap",
+    "summary": "Track software engineering topics, experiments, and technical milestones visually.",
+    "projectType": "Software / Automation",
+    "workflowStage": "ideas",
+    "lifecycleStatus": "planned",
+    "visibility": "public",
+    "technologies": [],
+    "links": [],
+    "featured": {
+      "enabled": false,
+      "order": 21
+    },
+    "order": 21
   }
 ]

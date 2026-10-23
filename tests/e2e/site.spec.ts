@@ -47,11 +47,9 @@ test('homepage navigation reaches sections and journal, including from an articl
   await expectNoHorizontalOverflow(page)
   const nav = page.getByRole('navigation', { name: 'Main navigation' })
   await navigationReady(page)
-  for (const [label, id] of [['Projects', 'work']]) {
-    await (await destination(page, label)).click()
-    await expect(page).toHaveURL(new RegExp(`/#${id}$`))
-    await expect(page.locator(`#${id}`).getByRole('heading', { level: 2 })).toBeInViewport()
-  }
+  await (await destination(page, 'Projects')).click()
+  await expect(page).toHaveURL('/projects')
+  await expect(page.getByRole('heading', {level:1})).toHaveText('Projects.')
   await page.goto('/blog/hello-world')
   await (await destination(page, 'Journal')).click()
   await expect(page).toHaveURL('/blog')

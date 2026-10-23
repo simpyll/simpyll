@@ -6,7 +6,7 @@ import { ThemeToggle } from './ThemeToggle'
 
 const navigation = [
   { label: 'Home', href: '/' },
-  { label: 'Projects', href: '/#work' },
+  { label: 'Projects', href: '/projects' },
   { label: 'Journal', href: '/blog' },
   { label: 'About', href: '/about' },
 ]
@@ -27,6 +27,7 @@ export function Header() {
   const links = useRef<HTMLDivElement>(null)
   const indicator = useRef<HTMLSpanElement>(null)
   const active = (location.pathname.startsWith('/blog') || location.pathname === '/explore') ? '/blog'
+    : location.pathname === '/projects' ? '/projects'
     : location.pathname === '/about' ? '/about'
     : location.pathname === '/' ? `/${location.hash === '#work' || location.hash === '#about' ? location.hash : ''}` : null
 

@@ -4,7 +4,7 @@ import { Card } from './Card'
 import { Container } from './Container'
 import { Reveal } from './Reveal'
 
-import { getFeaturedProjects, projectStatuses, technologies } from '../projects'
+import { getFeaturedProjects, workflowStages, technologies } from '../projects'
 
 export function FeaturedWork() {
   const projects = getFeaturedProjects()
@@ -42,7 +42,7 @@ export function FeaturedWork() {
                   </span>
 
                   <span className="text-xs tracking-widest text-accent">
-                    {projectStatuses[project.status].toUpperCase()}
+                    {workflowStages[project.workflowStage].toUpperCase()}
                   </span>
                 </div>
 
@@ -80,6 +80,7 @@ export function FeaturedWork() {
             </Reveal>
           ))}
         </div>
+      <Link to="/projects" className="mt-10 inline-flex min-h-11 items-center text-sm text-accent">View all projects →</Link>
       </Container>
     </section>
   )
