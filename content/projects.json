@@ -33,7 +33,12 @@
       "enabled": true,
       "order": 1
     },
-    "order": 1
+    "order": 1,
+    "caseStudy": {
+      "contentKey": "simpyll"
+    },
+    "subtitle": "A personal corner of the internet, built one system at a time.",
+    "seoDescription": "How Simpyll combines a personal website, technical journal, and living project portfolio with static publishing and automated checks."
   },
   {
     "id": "ai-engineering",

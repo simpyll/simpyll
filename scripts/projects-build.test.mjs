@@ -22,7 +22,7 @@ test('real production build excludes unpublished metadata and fails on invalid r
     const html=await readFile(join(root,'dist/index.html'),'utf8')
     assert.match(html, /<h3[^>]*>Simpyll<\/h3>/)
     assert.ok(html.indexOf('>Simpyll</h3>') < html.indexOf('>AI Engineering</h3>'))
-    assert.doesNotMatch(await readFile(join(root,'dist/sitemap.xml'),'utf8'),/\/projects\//)
+    assert.match(await readFile(join(root,'dist/sitemap.xml'),'utf8'),/\/projects\/simpyll<\/loc>/)
     data.push(data[0]);await writeFile(join(root,'content/projects.json'),JSON.stringify(data))
     await assert.rejects(exec('npm',['run','build'],options), error=>error.code===1 && /Project "simpyll": slug duplicates/.test(error.stderr))
   } finally { await rm(root,{recursive:true,force:true}) }

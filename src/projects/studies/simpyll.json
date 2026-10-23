@@ -1,0 +1,100 @@
+{
+  "sections": [
+    {
+      "id": "overview",
+      "title": "A place to build in public",
+      "paragraphs": [
+        "Simpyll began with a straightforward goal: build a personal website from scratch while developing practical software engineering skills. It has become a personal website, technical journal, portfolio, and ongoing engineering experiment.",
+        "The platform brings writing, learning notes, software projects, frontend experiments, and publishing automation into one place. The website is operational; the work of improving it continues."
+      ]
+    },
+    {
+      "id": "problem",
+      "title": "More than a collection of links",
+      "paragraphs": [
+        "A static r\u00e9sum\u00e9 can describe finished work. It leaves less room for the questions, experiments, and decisions that come before it. Simpyll provides a place to publish ideas and show projects as they evolve.",
+        "The constraint is keeping a personal project maintainable while asking it to do several jobs well. Design quality, readable content, accessibility, performance, and reliable publishing all compete for attention. A small static architecture keeps the hosting simple, but moves important work into the build pipeline."
+      ]
+    },
+    {
+      "id": "architecture",
+      "title": "Static delivery. Interactive reading.",
+      "paragraphs": [
+        "React and TypeScript define the interface; Vite builds the browser bundle and a server rendering entry. Tailwind CSS supplies shared styling tokens. React Router handles navigation, and Motion supports existing interface transitions.",
+        "MDX articles use shared rendering components. Notion publishing runs through GitHub Actions, converting published content into repository-managed MDX. Build scripts validate content, generate responsive images and search data, and create the sitemap before prerendering individual routes.",
+        "GitHub Pages serves the generated documents and assets. React hydrates those documents for navigation, search, themes, and filtering. No application backend is needed to read the site. This trades server operations for careful coordination between generated HTML, content, and client code."
+      ]
+    },
+    {
+      "id": "design",
+      "title": "Restraint is a design decision",
+      "paragraphs": [
+        "Content comes first: a comfortable reading measure and clear headings give the writing room. Generous spacing, restrained mint accents, and shared light and dark theme tokens create continuity without filling every gap with a card.",
+        "Motion has a specific job in existing reveals and theme transitions. Reduced-motion styles and static fallbacks keep reading available without those effects. Semantic links, route focus handling, and automated accessibility checks are a baseline, not a claim of complete accessibility conformance.",
+        "Performance-conscious choices include static HTML and generated responsive image sources. These are implementation decisions, not proof of a particular field performance score. Progressive enhancement is practical here: the document should remain useful before interactive controls become available."
+      ]
+    },
+    {
+      "id": "features",
+      "title": "Systems that work together",
+      "paragraphs": [
+        "Reading and discovery \u2014 Rich MDX components, full-text blog search, heading permalinks, and an article table of contents support reading and finding published material. The Project Lab adds a searchable board and grid over the shared project metadata.",
+        "Interface continuity \u2014 Responsive floating navigation, light and dark themes, circular theme transitions, and route scroll/focus handling share the existing design and motion systems.",
+        "Publishing and verification \u2014 Notion synchronization, image generation, content validation, Playwright browser tests, automated accessibility checks, and public deployment verification are implemented in the repository. Automated checks cover specified behaviors; they do not establish every device or publishing lifecycle outcome."
+      ]
+    },
+    {
+      "id": "challenges",
+      "title": "Engineering beyond the happy path",
+      "paragraphs": [
+        "Static rendering and hydration \u2014 A React route must receive its own generated document. Serving homepage HTML at an article URL can disagree with the client tree. The rendering architecture creates whole documents, preserves metadata placement, and tests route-specific static output. The lesson: HTML delivery is part of application correctness, not just a hosting detail.",
+        "Floating navigation stability \u2014 Responsive capacity, sticky positioning, and theme transitions interact in the same small surface. Dedicated navigation code and browser regressions cover this behavior. Issues #57 and #101 document related work; automated emulation does not settle every physical Android compositor behavior. Stable navigation needs explicit constraints and device evidence.",
+        "Publishing automation \u2014 Notion content must become valid, renderable MDX without exposing unsupported or unpublished content. The importer, content validation, and generated manifests make that boundary explicit. PR #119 corrected article-discovery tests that assumed a fixed content inventory. A growing publication needs tests of behavior rather than assumptions about today\u2019s articles.",
+        "Build versus delivery \u2014 A successful compilation cannot prove a working public website. The production smoke pipeline separately checks HTTP output and hydrated browser journeys against a release identity. Issue #75 captures this distinction. Verification should happen at the boundary where readers encounter the result."
+      ]
+    },
+    {
+      "id": "lessons",
+      "title": "What the work makes clear",
+      "paragraphs": [
+        "Small architectural decisions compound. One project registry can serve the homepage, board, and case studies; parallel copies would make every edit harder to trust.",
+        "Static websites still have engineering complexity. Prerendering, hydration, route delivery, metadata, and generated content have to agree. Tests become more valuable as those connections grow.",
+        "Accessibility and performance shape the design rather than arriving only at the end. Automation also needs observable failures and recovery paths. Iteration makes it possible to improve one system while keeping the rest understandable."
+      ]
+    },
+    {
+      "id": "next",
+      "title": "An ongoing project",
+      "paragraphs": [
+        "The next case studies will be added individually, using this foundation and real project evidence. Publishing reliability, broader browser coverage, and selected discovery and visual refinements remain areas of development.",
+        "The living GitHub roadmap is the current source for priorities. This page deliberately avoids a copied backlog or a percentage-complete estimate. Publishing a case study does not move Simpyll out of In Progress."
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "date": "2026-10-18",
+      "title": "The foundation",
+      "text": "React/TypeScript scaffolding, Tailwind, homepage, and initial motion.",
+      "commit": "610060e"
+    },
+    {
+      "date": "2026-10-20",
+      "title": "Writing meets static delivery",
+      "text": "MDX blog and the prerendered GitHub Pages deployment workflow.",
+      "commit": "8f90620"
+    },
+    {
+      "date": "2026-10-22",
+      "title": "Publishing and verification",
+      "text": "Rich MDX, search, responsive images, and public deployment verification merged.",
+      "commit": "8bcfe03"
+    },
+    {
+      "date": "2026-10-23",
+      "title": "A living project archive",
+      "text": "Typed project metadata and Project Lab merged in PRs #117 and #118.",
+      "commit": "e74f3d4"
+    }
+  ]
+}

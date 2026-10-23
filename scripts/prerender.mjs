@@ -1,3 +1,4 @@
+import { caseStudyRoutes } from './project-routes.mjs'
 
 import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises'
 import { removeInactiveMedia } from './publishing-media.mjs'
@@ -29,7 +30,7 @@ async function prerender() {
     .filter((file) => file.endsWith('.mdx'))
     .map((file) => `/blog/${file.replace(/\.mdx$/, '')}`)
 
-  const routes = ['/', '/blog', '/about', '/explore', '/projects', ...blogRoutes]
+  const routes = ['/', '/blog', '/about', '/explore', '/projects', ...blogRoutes, ...await caseStudyRoutes()]
 
   for (const route of routes) {
     const pageHtml = render(route).replace('<head>', `<head>${templateHead}`)

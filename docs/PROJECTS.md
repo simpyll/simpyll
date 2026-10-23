@@ -197,3 +197,43 @@ break ties. Draft/private records are excluded from the generated client manifes
 Lifecycle describes maintenance independently: Planned has not started; Active
 receives ongoing work; Maintained receives upkeep; Paused is temporarily stopped;
 Retired is no longer maintained. Editing workflow never changes lifecycle implicitly.
+
+## Case studies (#27)
+
+Set `caseStudy.contentKey` on a public project only when a complete editorial file
+exists in `src/projects/studies/<contentKey>.json`. The typed
+`caseStudies` map in `src/projects/case-studies.ts` discovers these files. Do not copy title, status,
+stack or canonical links into editorial content. The layout reads them from the
+validated metadata. Only Simpyll is published in this increment.
+
+Each study supplies `sections` (unique hyphenated `id`, `title`, nonempty
+`paragraphs`). `timeline` is optional; entries use verified ISO date, title, text
+and source commit. Optional metadata `screenshots` render through the existing
+responsive Figure component; omit empty galleries. The diagram and challenge
+source annotations currently apply to Simpyll only; new projects should introduce
+content-driven visuals when real content justifies them. No interactive gallery
+or new scroll-spy system is introduced.
+
+`project-routes.mjs` validates editorial sections and derives both prerender and
+sitemap routes from the public manifest. Missing associated files fail the build.
+The renderer discovers the same editorial files through Vite’s eager JSON glob. Unknown/unpublished slugs use NotFound. Published slug changes require
+an explicit migration plan; article redirect history remains unchanged.
+
+Verify with build, lint, `npm run test:projects`,
+`node --test scripts/case-study.test.mjs`, and
+`npx playwright test project-detail`. Check source claims against current main,
+use bounded accessibility claims, and leave project workflow/lifecycle untouched
+when publishing a case study. Case study publication is not project completion.
+
+### Simpyll editorial evidence (October 23, 2026)
+
+- Initial scaffold: `610060e` (October 18); MDX and deployment: `0338051`,
+  `8f90620` (October 20). Workflow creation is not asserted as the first successful deployment.
+- Rich publishing/search/images/verification: merged PRs #105–#108 (October 22).
+- Article navigation: #114/#115; project metadata/board: #117/#118 (October 23).
+- Content-inventory regression: merged PR #119. Architecture claims use
+  `docs/ARCHITECTURE.md`, `src/entry-server.tsx`, `scripts/prerender.mjs`,
+  `scripts/notion/`, image tooling, and `.github/workflows/`.
+- Timeline dates are commit dates. Installed lockfile versions inspected include
+  React 19.2.8, Vite 8.3.4, Tailwind 4.3.3 and Motion 14.3.0; public prose uses
+  technology names to avoid stale patch-version claims.

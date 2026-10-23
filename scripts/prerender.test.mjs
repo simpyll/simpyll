@@ -76,7 +76,7 @@ test('sitemap and robots reference the canonical public pages', async () => {
     .filter((file) => file.endsWith('.mdx'))
     .map((file) => `/blog/${file.replace(/\.mdx$/, '')}`)
 
-  const expectedRoutes = ['/', '/blog', '/about', '/explore', '/projects', ...blogRoutes]
+  const expectedRoutes = ['/', '/blog', '/about', '/explore', '/projects', '/projects/simpyll', ...blogRoutes]
   const expectedUrls = expectedRoutes.map(
     (route) => `https://simpyll.com${route}`
   )
