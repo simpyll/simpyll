@@ -37,3 +37,5 @@ artifacts/
 /src/generated/images.json
 
 /src/generated/redirects.json
+
+/src/generated/projects.json
