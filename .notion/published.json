@@ -4,11 +4,19 @@
   "articles": {
     "3ffb3577d26a80e9b57fc08460c29516": {
       "slug": "publishing-test",
-      "date": "2026-10-20"
+      "date": "2026-10-20",
+      "assets": {
+        "400b3577d26a80a8be3de910cb7209b2": {
+          "path": "public/images/notion/3ffb3577d26a80e9b57fc08460c29516/publishing-test-image-01-ff804a5635dd.png",
+          "identity": "https://prod-files-secure.s3.us-west-2.amazonaws.com/6d99360a-fad2-4772-ab5b-c484d52f4581/9b1c2e00-bf29-4229-b5e2-b2dbe1985a19/android-icon-192x192.png",
+          "revision": "2026-10-21T00:33:00.000Z"
+        }
+      }
     }
   },
   "files": {
-    "public/images/notion/3ffb3577d26a80e9b57fc08460c29516/ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25.png": "ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25",
-    "src/content/blog/publishing-test.mdx": "87a250fb5615947fe0986a160b8be09d9903263630ce20974389e38793443095"
+    "public/images/notion/3ffb3577d26a80e9b57fc08460c29516/publishing-test-image-01-ff804a5635dd.png": "ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25",
+    "src/content/blog/publishing-test.mdx": "571697f5b5a37c4ec980dda9e4c3ec872eac25657227d7d1e3cdf568cede604f",
+    "public/images/notion/3ffb3577d26a80e9b57fc08460c29516/ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25.png": "ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25"
   }
 }
