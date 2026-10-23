@@ -1,4 +1,4 @@
-import { Badge } from '../components/Badge'
+import { TaxonomyLink } from '../components/TaxonomyLink'
 import { Link } from 'react-router-dom'
 import { Container } from '../components/Container'
 import { Reveal } from '../components/Reveal'
@@ -34,6 +34,7 @@ export function Blog() {
           </section>
 
           <section className="pb-24 sm:pb-32">
+            <Link className="mb-8 inline-block text-accent" to="/explore">Search and explore all articles →</Link>
             {posts.length === 0 ? (
               <p className="text-muted">
                 No articles yet. Check back soon.
@@ -42,8 +43,7 @@ export function Blog() {
               <div className="divide-y divide-outline border-y border-outline">
                 {posts.map((post, index) => (
                   <Reveal key={post.slug} staggerIndex={index}>
-                    <Link
-                      to={`/blog/${post.slug}`}
+                    <article
                       className="group grid gap-4 py-10 transition-colors sm:grid-cols-[140px_1fr_auto] sm:items-start sm:gap-8"
                     >
                       <time
@@ -61,11 +61,11 @@ export function Blog() {
 
                       <div>
                         <p className="mb-3 text-xs font-medium uppercase tracking-widest text-accent">
-                          {post.metadata.category}
+                          <TaxonomyLink kind="category" label={post.metadata.category} />
                         </p>
 
                         <h2 className="text-2xl font-semibold tracking-tight transition-colors group-hover:text-accent sm:text-3xl">
-                          {post.metadata.title}
+                          <Link to={`/blog/${post.slug}`}>{post.metadata.title}</Link>
                         </h2>
 
                         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">
@@ -74,7 +74,7 @@ export function Blog() {
 
                         <div className="mt-5 flex flex-wrap gap-2">
                           {post.metadata.tags.map((tag) => (
-                            <Badge key={tag}>{tag}</Badge>
+                            <TaxonomyLink key={tag} kind="tag" label={tag} />
                           ))}
                         </div>
                       </div>
@@ -85,7 +85,7 @@ export function Blog() {
                       >
                         ↗
                       </span>
-                    </Link>
+                    </article>
                   </Reveal>
                 ))}
               </div>

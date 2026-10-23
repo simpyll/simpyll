@@ -1,0 +1,103 @@
+import { test, expect } from '@playwright/test'
+import { ready, scan, tabTo } from './helpers/accessibility'
+
+test('taxonomy links, combined URL state, chips, reset and browser history', async ({ page }) => {
+  const errors: string[] = []
+  page.on('pageerror', error => errors.push(error.message))
+  page.on('console', message => { if (message.type() === 'error') errors.push(message.text()) })
+  await page.goto('/blog/001-python-fundamentals')
+  await ready(page)
+  await page.locator('article').getByRole('link', { name: 'Python', exact: true }).first().click()
+  await expect(page).toHaveURL('/explore?category=python')
+  await expect(page.getByRole('button', { name: 'Remove category: Python', exact: true })).toBeVisible()
+  await page.getByRole('searchbox', { name: 'Search the journal' }).fill('functions')
+  await expect(page).toHaveURL(/q=functions&category=python/)
+  await page.getByText('Tags', { exact: true }).click()
+  await page.getByRole('checkbox', { name: 'CS50P', exact: true }).check()
+  await expect(page).toHaveURL(/tag=cs50p/)
+  await page.getByText('Tags (1)', { exact: true }).click()
+  await page.getByLabel('Sort articles').selectOption('oldest')
+  const selectedURL = page.url()
+  await expect(page.getByRole('status')).toHaveText('1 article found.')
+  await page.reload()
+  await ready(page)
+  await expect(page.getByRole('searchbox', { name: 'Search the journal' })).toHaveValue('functions')
+  await expect(page.getByLabel('Sort articles')).toHaveValue('oldest')
+  await expect(page.getByRole('button', { name: 'Remove tag: CS50P', exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Remove tag: CS50P', exact: true }).click()
+  await expect(page).not.toHaveURL(/tag=/)
+  await page.goBack()
+  await expect(page).toHaveURL(selectedURL)
+  await expect(page.getByRole('button', { name: 'Remove tag: CS50P', exact: true })).toBeVisible()
+  await page.goForward()
+  await expect(page).not.toHaveURL(/tag=/)
+  await page.getByRole('button', { name: 'Clear filters', exact: true }).click()
+  await expect(page).toHaveURL('/explore')
+  await expect(page.getByLabel('Sort articles')).toHaveValue('newest')
+  await page.getByRole('heading', { level: 2, name: /Learning Python/ }).getByRole('link').click()
+  await page.locator('article').getByRole('link', { name: 'CS50P', exact: true }).click()
+  await expect(page).toHaveURL('/explore?tag=cs50p')
+  expect(errors).toEqual([])
+})
+
+for (const theme of ['light', 'dark']) test(`discovery accessibility, keyboard, empty state and fixed geometry (${theme})`, async ({ page }, info) => {
+  await page.addInitScript(value => localStorage.setItem('simpyll-theme', value), theme)
+  await page.goto('/explore?q=functions&category=python&tag=cs50p')
+  await ready(page)
+  await page.evaluate(value => window.dispatchEvent(new CustomEvent('simpyll-theme-select', { detail: value })), theme)
+  await expect(page.getByRole('status')).toHaveText('1 article found.')
+  const nav = page.locator('.floating-nav')
+  const before = (await nav.boundingBox())!
+  const controls = await page.locator('.discovery-controls').boundingBox()
+  await scan(page, info, `discovery-${theme}`)
+  await page.screenshot({ path: `docs/discovery/${info.project.name}-${theme}.png`, fullPage: true })
+  const search = page.getByRole('searchbox', { name: 'Search the journal' })
+  await tabTo(page, search)
+  await search.fill('doesnotmatchanything')
+  await expect(page.getByRole('status')).toHaveText('0 articles found.')
+  await expect(search).toBeFocused()
+  await expect(page.getByRole('heading', { name: 'No articles matched your search and filters.' })).toBeVisible()
+  await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href', 'https://simpyll.com/explore')
+  await expect(page.locator('meta[name=robots]')).toHaveAttribute('content', 'noindex,follow')
+  await page.getByRole('button', { name: 'Clear filters', exact: true }).click()
+  await expect(page.getByRole('status')).toHaveText('3 articles found.')
+  for (const y of [0, 8, 180, 400]) {
+    await page.evaluate(top => window.scrollTo({ top, behavior: 'instant' }), y)
+    const after = (await nav.boundingBox())!
+    for (const key of ['x', 'y', 'width', 'height'] as const) expect(Math.abs(before[key] - after[key])).toBeLessThanOrEqual(.5)
+  }
+  const afterControls = (await page.locator('.discovery-controls').boundingBox())!
+  expect(afterControls.height).toBe(controls!.height)
+  await page.getByText('Categories', { exact: true }).click()
+  await scan(page, info, `discovery-filters-${theme}`)
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+})
+
+test('deep links use the embedded index without requests and global search enters discovery', async ({ page }) => {
+  const requests: string[] = []
+  page.on('request', request => { if (request.url().includes('search-index.json')) requests.push(request.url()) })
+  await page.goto('/explore?tag=does-not-exist&sort=unsafe&category=Python&category=python')
+  await ready(page)
+  await expect(page).toHaveURL('/explore?category=python&tag=does-not-exist')
+  await expect(page.getByRole('status')).toHaveText('0 articles found.')
+  await page.getByRole('button', { name: 'Clear filters', exact: true }).click()
+  await page.getByRole('button', { name: 'Open search' }).click()
+  await page.getByRole('combobox', { name: 'Search articles' }).fill('python')
+  await page.getByRole('link', { name: 'Explore all articles and filters' }).click()
+  await expect(page).toHaveURL('/explore?q=python')
+  await expect(page.getByRole('searchbox', { name: 'Search the journal' })).toHaveValue('python')
+  expect(requests).toEqual([])
+})
+
+test('client entry reports index failure, retry and empty index without fabricated cards', async ({ page }) => {
+  let fail = true
+  await page.route('**/search-index.json', route => fail ? route.fulfill({ status: 503 }) : route.fulfill({ json: [] }))
+  await page.goto('/blog')
+  await ready(page)
+  await page.getByRole('link', { name: 'Search and explore all articles' }).click()
+  await expect(page.getByRole('heading', { name: 'Articles are temporarily unavailable.' })).toBeVisible()
+  fail = false
+  await page.getByRole('button', { name: 'Retry loading articles' }).click()
+  await expect(page.getByRole('heading', { name: 'No published articles yet.' })).toBeVisible()
+  await expect(page.locator('.discovery-card')).toHaveCount(0)
+})

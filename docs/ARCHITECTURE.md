@@ -60,3 +60,5 @@ not a claim of verified current renewal status. The existing `/#about` section
 remains a bookmark target, while the navigation points to `/about`. The project
 CTA uses the existing `/#work` section; no unimplemented project route is linked.
 Issue #41 printable CV remains separate. Starter articles remain unchanged.
+
+See [unified discovery](DISCOVERY.md) for combined URL search, taxonomy filters, sorting and prerender behavior.

@@ -5,6 +5,7 @@ import { test } from 'node:test'
 const pages = [
   ['/', 'From Bedside to Build | Simpyll'],
   ['/blog', 'Learning Journal | Simpyll'],
+  ['/explore', 'Explore articles | Simpyll'],
   ['/about', 'About David Becker — Critical Care Nurse &amp; Curious Builder | Simpyll'],
   ['/blog/hello-world', 'Hello, World. | Simpyll'],
 ]
@@ -74,7 +75,7 @@ test('sitemap and robots reference the canonical public pages', async () => {
     .filter((file) => file.endsWith('.mdx'))
     .map((file) => `/blog/${file.replace(/\.mdx$/, '')}`)
 
-  const expectedRoutes = ['/', '/blog', '/about', ...blogRoutes]
+  const expectedRoutes = ['/', '/blog', '/about', '/explore', ...blogRoutes]
   const expectedUrls = expectedRoutes.map(
     (route) => `https://simpyll.com${route}`
   )
@@ -105,4 +106,15 @@ test('article heading permalinks are native prerendered anchors with separate co
   assert.match(html, /href="#why-i-built-this" aria-label="Link to Why I Built This section"/)
   assert.match(html, /aria-label="Copy link to Why I Built This section"/)
   assert.match(html, /href="#whats-next"/)
+})
+
+
+test('discovery embeds the same public index once, with useful no-JS results and no query sitemap entries', async () => {
+  const html = await readFile('dist/explore/index.html', 'utf8')
+  const data = JSON.parse(html.match(/<script id="discovery-index" type="application\/json">([\s\S]*?)<\/script>/)[1])
+  assert.deepEqual(data, JSON.parse(await readFile('dist/search-index.json', 'utf8')))
+  assert.equal((html.match(/id="discovery-index"/g) || []).length, 1)
+  assert.equal((html.match(/class="discovery-card"/g) || []).length, data.length)
+  assert.match(html, /Search the journal/)
+  assert.doesNotMatch(await readFile('dist/sitemap.xml', 'utf8'), /explore\?/) 
 })

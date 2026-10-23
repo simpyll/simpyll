@@ -22,6 +22,7 @@ jobs:
       - run: npm run test:images
       - run: npm run test:content
       - run: npm run test:search
+      - run: node --test scripts/discovery.test.mjs
       - run: npm run test:smoke
       - run: npm run build
       - run: npm run lint
@@ -48,5 +49,6 @@ jobs:
             test-results/
             artifacts/rich-content/
             artifacts/toc/
+            docs/discovery/
           retention-days: 14
           if-no-files-found: ignore

@@ -1,6 +1,6 @@
-export type SearchDocument = { slug: string; title: string; description: string; category: string; tags: string[]; body: string }
+export type SearchDocument = { slug: string; title: string; description: string; category: string; tags: string[]; body: string; id?: string; type?: string; url?: string; date?: string }
 export const normalize = (text: string) => text.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim()
-export function prepareSearch(documents: SearchDocument[]) {
+export function prepareSearch<T extends SearchDocument>(documents: T[], limit = 8) {
   const unique = [...new Map(documents.map(document => [document.slug, document])).values()]
   const entries = unique.map(document => ({ document, fields: [document.title, [document.category, ...document.tags].join(' '), document.description, document.body].map(normalize) })).map(entry => ({ ...entry, words: entry.fields.map(field => field.split(' ')) }))
   return (query: string) => {
@@ -17,6 +17,6 @@ export function prepareSearch(documents: SearchDocument[]) {
       if (fields[0] === normalized) score += 10000
       else if (fields[0].startsWith(normalized)) score += 5000
       return { document, score }
-    }).filter(result => result.score > 0).sort((a, b) => b.score - a.score || a.document.slug.localeCompare(b.document.slug)).slice(0, 8).map(result => result.document)
+    }).filter(result => result.score > 0).sort((a, b) => b.score - a.score || a.document.slug.localeCompare(b.document.slug)).slice(0, limit).map(result => result.document)
   }
 }

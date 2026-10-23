@@ -138,3 +138,5 @@ layout: [mobile light](search/mobile-light.png), [mobile dark](search/mobile-dar
 [desktop light](search/desktop-light.png), [desktop dark](search/desktop-dark.png),
 and [native mobile reveal](search/mobile-reveal.png). These show emulation, not
 physical Android or Safari. CI retains its pinned Chromium and normal artifacts.
+
+See [unified discovery](DISCOVERY.md) for combined URL search, taxonomy filters, sorting and prerender behavior.
