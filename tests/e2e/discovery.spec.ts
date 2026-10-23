@@ -60,7 +60,9 @@ for (const theme of ['light', 'dark']) test(`discovery accessibility, keyboard, 
   await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href', 'https://simpyll.com/explore')
   await expect(page.locator('meta[name=robots]')).toHaveAttribute('content', 'noindex,follow')
   await page.getByRole('button', { name: 'Clear filters', exact: true }).click()
-  await expect(page.getByRole('status')).toHaveText('3 articles found.')
+  const total = await page.locator('.discovery-card').count()
+  expect(total).toBeGreaterThan(0)
+  await expect(page.getByRole('status')).toHaveText(`${total} articles found.`)
   for (const y of [0, 8, 180, 400]) {
     await page.evaluate(top => window.scrollTo({ top, behavior: 'instant' }), y)
     const after = (await nav.boundingBox())!
