@@ -17,6 +17,7 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
+      - run: npm run test:projects
       - run: npm run test:redirects
       - run: npm run test:notion
       - run: npm run test:images

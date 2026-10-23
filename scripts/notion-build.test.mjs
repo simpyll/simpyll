@@ -13,7 +13,7 @@ const exec = promisify(execFile)
 test('Notion fixture reaches built HTML, metadata, sitemap and durable image through real pipeline', { timeout: 120_000 }, async t => {
   const root = await mkdtemp(join(tmpdir(), 'notion-build-'))
   t.after(() => rm(root, { recursive: true, force: true }))
-  for (const path of ['src', 'public', 'scripts', 'tests', 'playwright.config.ts', 'package.json', 'package-lock.json', 'index.html', 'vite.config.ts', 'tsconfig.json', 'tsconfig.app.json', 'tsconfig.node.json']) {
+  for (const path of ['content', 'src', 'public', 'scripts', 'tests', 'playwright.config.ts', 'package.json', 'package-lock.json', 'index.html', 'vite.config.ts', 'tsconfig.json', 'tsconfig.app.json', 'tsconfig.node.json']) {
     await cp(path, join(root, path), { recursive: true })
   }
   await symlink(resolve('.git'), join(root, '.git'), 'dir')

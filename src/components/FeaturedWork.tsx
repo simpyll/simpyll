@@ -1,28 +1,13 @@
+import { Link } from 'react-router-dom'
 import { Badge } from './Badge'
 import { Card } from './Card'
 import { Container } from './Container'
 import { Reveal } from './Reveal'
 
-const projects = [
-  {
-    number: '01',
-    category: 'IN PROGRESS',
-    title: 'This site, in progress.',
-    description:
-      'Simpyll is my personal website and learning journal: a working project where I can practice building for the web and share what I learn.',
-    tags: ['React', 'TypeScript', 'MDX'],
-  },
-  {
-    number: '02',
-    category: 'EXPLORATION',
-    title: 'Start with the bedside.',
-    description:
-      'The questions I bring from critical care will guide future software and AI experiments. I’ll document those ideas here as they take shape.',
-    tags: ['Healthcare', 'Software', 'AI'],
-  },
-]
+import { getFeaturedProjects, projectStatuses, technologies } from '../projects'
 
 export function FeaturedWork() {
+  const projects = getFeaturedProjects()
   return (
     <section id="work" className="scroll-mt-24 py-24 sm:py-32">
       <Container>
@@ -45,7 +30,7 @@ export function FeaturedWork() {
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           {projects.map((project, index) => (
-            <Reveal key={project.number} staggerIndex={index}>
+            <Reveal key={project.id} staggerIndex={index}>
               <Card
                 padding="roomy"
                 className="group h-full hover:border-accent/50"
@@ -53,11 +38,11 @@ export function FeaturedWork() {
               >
                 <div className="mb-16 flex flex-wrap items-center justify-between gap-2">
                   <span className="text-xs tracking-widest text-subtle">
-                    {project.number} / 02
+                    {String(index + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}
                   </span>
 
                   <span className="text-xs tracking-widest text-accent">
-                    {project.category}
+                    {projectStatuses[project.status].toUpperCase()}
                   </span>
                 </div>
 
@@ -66,14 +51,22 @@ export function FeaturedWork() {
                 </h3>
 
                 <p className="mt-3 text-sm leading-relaxed text-muted">
-                  {project.description}
+                  {project.summary}
                 </p>
 
                 <div className="mt-8 flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
+                  {[...project.technologies.map(technology => technologies[technology]), ...(project.tags ?? [])].map((tag) => (
                     <Badge key={tag}>{tag}</Badge>
                   ))}
                 </div>
+
+                {project.links.length > 0 && (
+                  <div className="mt-8 flex flex-wrap gap-4 text-sm text-accent">
+                    {project.links.map(link => link.external
+                      ? <a key={link.url} href={link.url}>{link.label}</a>
+                      : <Link key={link.url} to={link.url}>{link.label}</Link>)}
+                  </div>
+                )}
 
                 <div className="mt-8 flex justify-end">
                   <span

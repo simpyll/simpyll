@@ -50,6 +50,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - run: npm run test:projects
       - run: npm run test:redirects
 
       - name: Test Notion publisher

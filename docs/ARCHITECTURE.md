@@ -62,3 +62,5 @@ CTA uses the existing `/#work` section; no unimplemented project route is linked
 Issue #41 printable CV remains separate. Starter articles remain unchanged.
 
 See [unified discovery](DISCOVERY.md) for combined URL search, taxonomy filters, sorting and prerender behavior.
+
+Project metadata and publication contract: [PROJECTS.md](PROJECTS.md).
