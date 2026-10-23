@@ -22,9 +22,9 @@ jobs:
       - run: npm run test:images
       - run: npm run test:content
       - run: npm run test:search
-      - run: node --test scripts/discovery.test.mjs
       - run: npm run test:smoke
       - run: npm run build
+      - run: node --test scripts/discovery.test.mjs
       - run: npm run lint
       - run: node --test scripts/prerender.test.mjs scripts/remark-heading-ids.test.mjs scripts/article-toc.test.mjs scripts/motion.test.mjs scripts/navigation.test.mjs
 
