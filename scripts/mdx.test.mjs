@@ -41,3 +41,13 @@ test('Notion tables preserve row and column headers, rich text and reject malfor
   await assert.rejects(convertBlocks([{ ...table, table: { table_width: 3 } }], async () => ''), /Invalid Notion table/)
   await assert.rejects(convertBlocks([block('embed', 'private input')], async () => ''), /Unsupported Notion block type: embed/)
 })
+
+test('publisher headings use the shared heading controls after ID generation', async () => {
+  const source = '## **Rich** `code` [link](https://example.com)\n\n<h2 id="qué/manual">Explicit <em>title</em></h2>\n\n<h4>{"Notion detail"}</h4>'
+  const result = String(await compile(source, { remarkPlugins: [remarkHeadingIds, remarkRichContent] }))
+  assert.match(result, /MdxH2/)
+  assert.match(result, /MdxH4/)
+  assert.match(result, /qué\/manual/)
+  assert.match(result, /rich-code-link/)
+  assert.match(result, /notion-detail/)
+})

@@ -52,11 +52,11 @@ test('rich manual and Notion content hydrates, scrolls and works by keyboard', a
   }
   await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: async (value: string) => { document.body.dataset.copied = value } } }))
   await page.getByRole('button', { name: 'Copy code', exact: true }).first().click()
-  await expect(page.getByRole('status').first()).toHaveText('Copied code.')
+  await expect(page.locator('.code-block [role="status"]').first()).toHaveText('Copied code.')
   expect(await page.locator('body').getAttribute('data-copied')).toBe(await page.locator('.code-block pre').first().textContent())
   await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: async () => { throw new Error('denied') } } }))
   await page.getByRole('button', { name: 'Copy code', exact: true }).first().click()
-  await expect(page.getByRole('status').first()).toContainText('Copy unavailable')
+  await expect(page.locator('.code-block [role="status"]').first()).toContainText('Copy unavailable')
   expect(errors).toEqual([])
 })
 
