@@ -1,0 +1,123 @@
+import { test, expect } from '@playwright/test'
+import AxeBuilder from '@axe-core/playwright'
+
+const article = '/blog/001-python-fundamentals'
+test('TOC navigation, scroll spy, geometry, history and accessibility', async ({ page }, testInfo) => {
+  const errors: string[] = []
+  page.on('pageerror', error => errors.push(error.message))
+  const desktop = testInfo.project.name.startsWith('desktop')
+  if (desktop) await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(article)
+  await page.locator('.floating-header[data-nav-ready="true"]').waitFor()
+  await page.evaluate(() => document.fonts.ready)
+  const nav = page.getByRole('navigation', { name: 'On this page', exact: true }).filter({ visible: true })
+  const summary = page.locator('.toc-mobile summary')
+  const content = page.locator('.article-content')
+  const before = await content.boundingBox()
+  const header = await page.locator('.floating-header').boundingBox()
+  if (!desktop) {
+    await summary.click()
+    expect((await content.boundingBox())?.y).toBe(before?.y)
+  }
+  await expect(nav).toBeVisible()
+  const links = nav.getByRole('link')
+  expect(await links.count()).toBeGreaterThan(8)
+  const destination = '#what-i-built-np-program-collector'
+  await nav.locator(`a[href="${destination}"]`).focus()
+  const startingScroll = await page.evaluate(() => scrollY)
+  await page.keyboard.press('Enter')
+  await expect(page).toHaveURL(new RegExp(`${destination}$`))
+  const heading = page.locator(destination)
+  await expect(heading).toBeFocused()
+  await expect.poll(async () => (await heading.boundingBox())!.y).toBeGreaterThan(header!.y + header!.height)
+  if (!desktop) await expect(page.locator('.toc-mobile')).not.toHaveAttribute('open')
+  if (desktop) await expect(nav.locator('[aria-current]')).toHaveAttribute('href', destination)
+  await page.goBack()
+  await expect(page).toHaveURL(new RegExp(`${article}$`))
+  await expect.poll(() => page.evaluate(() => scrollY)).toBe(startingScroll)
+  await page.goForward()
+  await expect(page).toHaveURL(new RegExp(`${destination}$`))
+  await expect.poll(async () => (await heading.boundingBox())!.y).toBeLessThan(140)
+  await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight))
+  if (desktop) await expect(nav.locator('[aria-current]')).toHaveAttribute('href', '#resources')
+  await page.evaluate(() => scrollTo(0, 0))
+  if (desktop) await expect(nav.locator('[aria-current]')).toHaveAttribute('href', '#lesson-001-functions-and-variables')
+  const after = await page.locator('.floating-header').boundingBox()
+  expect(Math.abs(after!.y - header!.y)).toBeLessThan(1)
+  expect((await content.boundingBox())!.width).toBe(before!.width)
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+  if (!desktop) {
+    await summary.evaluate(element => {
+      const clearance = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--navigation-clearance')) || 112
+      scrollTo(0, scrollY + element.getBoundingClientRect().top - clearance - 16)
+    })
+    await summary.click()
+  }
+  expect((await new AxeBuilder({ page }).include('.article-toc').analyze()).violations).toEqual([])
+  await page.screenshot({ path: `artifacts/toc/${testInfo.project.name}.png`, fullPage: false })
+  expect(errors).toEqual([])
+})
+
+test('cold fragment load and static no-JS TOC use identical IDs', async ({ browser, page }, testInfo) => {
+  const target = '#what-i-built-np-program-collector'
+  await page.goto(article + target)
+  await expect(page.locator(target)).toBeFocused()
+  await expect.poll(async () => (await page.locator(target).boundingBox())!.y).toBeGreaterThan(60)
+  const desktop = testInfo.project.name.startsWith('desktop')
+  const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: desktop ? 1440 : 412, height: 900 } })
+  const staticPage = await context.newPage()
+  await staticPage.goto(`${testInfo.project.use.baseURL ?? 'http://127.0.0.1:4173'}${article}`)
+  if (!desktop) await staticPage.locator('.toc-mobile summary').click()
+  const links = staticPage.locator(desktop ? '.toc-desktop a' : '.toc-panel a')
+  expect(await links.count()).toBeGreaterThan(8)
+  for (const href of await links.evaluateAll(nodes => nodes.map(node => node.getAttribute('href')!))) {
+    expect(await staticPage.locator(`[id="${decodeURIComponent(href.slice(1))}"]`).count()).toBe(1)
+  }
+  await links.filter({ hasText: 'What I Built: NP Program Collector' }).click()
+  await expect(staticPage).toHaveURL(new RegExp(`${target}$`))
+  expect((await staticPage.locator(target).boundingBox())!.y).toBeGreaterThanOrEqual(0)
+  await context.close()
+})
+
+test('hydration preserves article geometry and theme changes preserve navigation', async ({ browser, baseURL }, testInfo) => {
+  const desktop = testInfo.project.name.startsWith('desktop')
+  const context = await browser.newContext({ viewport: desktop ? { width: 1440, height: 900 } : { width: 412, height: 915 }, reducedMotion: 'reduce' })
+  const page = await context.newPage()
+  let release!: () => void
+  const gate = new Promise<void>(resolve => { release = resolve })
+  await page.route('**/assets/*.js', async route => { await gate; await route.continue() })
+  await page.goto(`${baseURL}${article}`, { waitUntil: 'commit' })
+  await page.locator('.article-content').waitFor()
+  await page.evaluate(() => document.fonts.ready)
+  const before = await page.locator('.article-content').boundingBox()
+  release()
+  await page.locator('[data-nav-ready="true"]').waitFor()
+  const after = await page.locator('.article-content').boundingBox()
+  expect(after!.width).toBe(before!.width)
+  expect(after!.x).toBe(before!.x)
+  expect(after!.y).toBe(before!.y)
+  const header = await page.locator('.floating-header').boundingBox()
+  await page.getByRole('button', { name: /switch to dark/i }).click()
+  expect((await page.locator('.floating-header').boundingBox())!.y).toBe(header!.y)
+  expect((await new AxeBuilder({ page }).include('.article-toc').analyze()).violations).toEqual([])
+  await context.close()
+})
+
+test('sidebar sticks within article; tablet and enlarged text reflow', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(article)
+  await page.locator('[data-nav-ready="true"]').waitFor()
+  await page.evaluate(() => document.fonts.ready)
+  await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight / 2))
+  await expect.poll(async () => (await page.locator('.toc-desktop').boundingBox())!.y).toBeLessThan(140)
+  await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight))
+  const toc = await page.locator('.toc-desktop').boundingBox()
+  const footer = await page.locator('footer').boundingBox()
+  expect(toc!.y + toc!.height).toBeLessThanOrEqual(footer!.y)
+  await page.setViewportSize({ width: 1024, height: 900 })
+  await expect(page.locator('.toc-desktop')).toBeHidden()
+  await page.evaluate(() => { document.documentElement.style.fontSize = '200%'; scrollTo(0, 0) })
+  await page.locator('.toc-mobile summary').click()
+  await expect(page.locator('.toc-panel')).toBeVisible()
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+})

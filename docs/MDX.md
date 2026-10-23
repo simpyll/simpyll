@@ -107,8 +107,8 @@ The reference site's reading patterns informed restrained line spacing, rounded
 media/code surfaces and subtle borders; no implementation was copied. Unlike its
 client-only code rendering, highlighting here stays static and readable without JS.
 
-#6 TOC and #9 reading progress remain open and are not implemented here. Existing
-heading IDs and navigation behavior are retained for their future integration.
+The [article TOC](ARTICLE-TOC.md) uses the shared heading compiler and navigation
+clearance. #9 reading progress remains separate.
 This implements the basic copy/highlighting needed by #58 without closing #13/#16;
 further language themes/copy refinements can build on it. GFM footnotes render,
 while bibliography, clinical reference authoring and Notion citations remain #63.
