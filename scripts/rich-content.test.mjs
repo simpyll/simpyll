@@ -37,6 +37,7 @@ test('rich MDX fixture compiles, prerenders and hydrates through both publishing
     await exec(resolve('node_modules/.bin/playwright'), ['test', 'rich-content.spec.ts', '--workers=2'], { cwd: root, env: { ...process.env, RICH_FIXTURE: '1' }, maxBuffer: 3e6 })
   } catch (error) {
     await cp(join(root, 'test-results'), 'artifacts/rich-content', { recursive: true }).catch(() => {})
+    await cp(join(root, 'playwright-report'), 'artifacts/rich-content/report', { recursive: true }).catch(() => {})
     throw new Error(error.stdout + error.stderr)
   }
   // Keep review screenshots outside the temporary build, never production assets.

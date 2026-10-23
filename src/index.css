@@ -371,8 +371,9 @@ html[data-theme="dark"] .theme-moon { opacity: 1; transform: none; }
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: .25rem;
-  padding: .375rem;
+  /* Keep spacing fixed as text grows so enlarged controls still fit one row. */
+  gap: 4px;
+  padding: 6px;
   max-width: 100%;
   border: 1px solid var(--ui-control-outline);
   border-radius: 999px;
@@ -502,7 +503,7 @@ html[data-theme="dark"] .theme-moon { opacity: 1; transform: none; }
 .floating-nav[data-search-open="true"] .nav-destinations { opacity: 0; transform: translateY(4px); pointer-events: none; }
 .nav-search-control { display: grid; place-items: center; flex: none; width: 2.75rem; height: 2.75rem; border: 1px solid var(--ui-control-outline); border-radius: 999px; background: var(--ui-surface); color: var(--ui-foreground); cursor: pointer; }
 .nav-search-control:hover { background: var(--ui-surface-hover); }
-.nav-search-field { position: absolute; inset-block: .375rem; inset-inline: calc(.375rem + 2.75rem + .25rem); opacity: 0; transform: scaleX(.95); transform-origin: right; pointer-events: none; transition: opacity var(--ui-duration-fast) var(--ui-ease-standard), transform var(--ui-duration-fast) var(--ui-ease-standard); }
+.nav-search-field { position: absolute; inset-block: 6px; inset-inline: calc(6px + 2.75rem + 4px); opacity: 0; transform: scaleX(.95); transform-origin: right; pointer-events: none; transition: opacity var(--ui-duration-fast) var(--ui-ease-standard), transform var(--ui-duration-fast) var(--ui-ease-standard); }
 .nav-search-field[data-open="true"] { opacity: 1; transform: none; pointer-events: auto; }
 .nav-search-field input { width: 100%; height: 100%; min-width: 0; padding: .4rem; border: 0; border-radius: .5rem; background: var(--ui-surface); color: var(--ui-foreground); font-size: 1rem; }
 .nav-search-field input::placeholder { color: var(--ui-muted); }
@@ -518,3 +519,6 @@ html[data-theme="dark"] .theme-moon { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .nav-destinations, .nav-search-field { transition: none; transform: none; } .search-panel:not([hidden]) { animation: none; } }
 
 .search-result mark { background: transparent; color: var(--ui-accent); font-weight: 600; }
+
+/* Allow enlarged text to reflow without clipping long headings or card text. */
+main { overflow-wrap: anywhere; }

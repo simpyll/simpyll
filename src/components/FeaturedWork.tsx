@@ -43,7 +43,7 @@ export function FeaturedWork() {
           </p>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           {projects.map((project, index) => (
             <Reveal key={project.number} staggerIndex={index}>
               <Card
@@ -51,7 +51,7 @@ export function FeaturedWork() {
                 className="group h-full hover:border-accent/50"
                 hoverable
               >
-                <div className="mb-16 flex items-center justify-between">
+                <div className="mb-16 flex flex-wrap items-center justify-between gap-2">
                   <span className="text-xs tracking-widest text-subtle">
                     {project.number} / 02
                   </span>

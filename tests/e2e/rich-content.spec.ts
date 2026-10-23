@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import process from 'node:process'
+import { scan, visibleFocus } from './helpers/accessibility'
 
 test.skip(!process.env.RICH_FIXTURE, 'Fixture exists only in the isolated integration build')
 
@@ -11,7 +12,7 @@ test('rich manual and Notion content hydrates, scrolls and works by keyboard', a
   await page.goto('/blog/rich-content-fixture')
   await expect(page.getByRole('heading', { name: 'Writing for clarity' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Notion heading' })).toHaveAttribute('id', 'notion-heading')
-  await expect(page.getByRole('complementary', { name: 'Information: Shared renderer' })).toBeVisible()
+  await expect(page.getByRole('note', { name: 'Information: Shared renderer' })).toBeVisible()
   for (const variant of ['note', 'tip', 'information', 'warning', 'important']) await expect(page.locator(`.article-callout[data-variant="${variant}"]`).first()).toBeAttached()
   await expect(page.locator('code.hljs .hljs-keyword').first()).toBeAttached()
   await expect(page.locator('.code-toolbar').first()).toContainText('typescript')
@@ -28,8 +29,14 @@ test('rich manual and Notion content hydrates, scrolls and works by keyboard', a
   await disclosure.locator('summary').focus()
   await page.keyboard.press('Enter')
   await expect(disclosure).toHaveAttribute('open', '')
+  await visibleFocus(disclosure.locator('summary'))
+  await page.keyboard.press('Space')
+  await expect(disclosure).not.toHaveAttribute('open')
+  await scan(page, testInfo, 'rich-disclosure-closed')
+  await page.keyboard.press('Enter')
   for (const theme of ['light', 'dark']) {
     await page.evaluate(theme => document.documentElement.dataset.theme = theme, theme)
+    await scan(page, testInfo, `rich-disclosure-open-${theme}`)
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true)
     await page.evaluate(() => window.scrollTo(0, 0))
     const screenshot = testInfo.outputPath(`rich-${theme}.jpg`)
