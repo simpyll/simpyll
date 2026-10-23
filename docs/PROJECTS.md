@@ -201,22 +201,24 @@ Retired is no longer maintained. Editing workflow never changes lifecycle implic
 ## Case studies (#27)
 
 Set `caseStudy.contentKey` on a public project only when a complete editorial file
-exists in `src/projects/studies/<contentKey>.json`. The typed
-`caseStudies` map in `src/projects/case-studies.ts` discovers these files. Do not copy title, status,
+exists in `content/case-studies/<contentKey>.json`. The project generator validates and publishes only associated public editorial
+content into an ignored generated manifest. Do not copy title, status,
 stack or canonical links into editorial content. The layout reads them from the
 validated metadata. Only Simpyll is published in this increment.
 
 Each study supplies `sections` (unique hyphenated `id`, `title`, nonempty
 `paragraphs`). `timeline` is optional; entries use verified ISO date, title, text
-and source commit. Optional metadata `screenshots` render through the existing
-responsive Figure component; omit empty galleries. The diagram and challenge
-source annotations currently apply to Simpyll only; new projects should introduce
-content-driven visuals when real content justifies them. No interactive gallery
+and source URL. Optional metadata `screenshots` render through the existing
+responsive Figure component; omit empty galleries. Optional section `flow` supplies a caption, textual steps and explanation;
+optional section `links` supplies labeled source URLs. Neither assumes a
+particular project or repository. No interactive gallery
 or new scroll-spy system is introduced.
 
-`project-routes.mjs` validates editorial sections and derives both prerender and
-sitemap routes from the public manifest. Missing associated files fail the build.
-The renderer discovers the same editorial files through Vite’s eager JSON glob. Unknown/unpublished slugs use NotFound. Published slug changes require
+`generate-projects.mjs` validates sections, optional diagrams, safe source URLs
+and timeline dates. `project-routes.mjs` derives both prerender and sitemap
+routes from the public manifest. Missing associated files fail the build.
+The renderer reads the public generated editorial manifest; unassociated and
+unpublished content stays outside the application bundle. Unknown/unpublished slugs use NotFound. Published slug changes require
 an explicit migration plan; article redirect history remains unchanged.
 
 Verify with build, lint, `npm run test:projects`,

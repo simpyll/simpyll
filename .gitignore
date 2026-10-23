@@ -39,3 +39,5 @@ artifacts/
 /src/generated/redirects.json
 
 /src/generated/projects.json
+
+/src/generated/case-studies.json

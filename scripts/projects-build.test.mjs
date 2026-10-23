@@ -14,6 +14,7 @@ test('real production build excludes unpublished metadata and fails on invalid r
     await symlink(resolve('.git'),join(root,'.git'),'dir')
     const data = JSON.parse(await readFile(join(root,'content/projects.json'),'utf8'))
     for (const visibility of ['draft','private']) data.push({...data[0],id:`hidden-${visibility}`,slug:`hidden-${visibility}`,title:`UNPUBLISHED_SENTINEL_${visibility}`,visibility})
+    await writeFile(join(root,'content/case-studies/unassociated.json'),JSON.stringify({sections:[{id:'private',title:'UNPUBLISHED_SENTINEL_editorial',paragraphs:['Not public'] }]}))
     await writeFile(join(root,'content/projects.json'),JSON.stringify(data))
     const options={cwd:root,maxBuffer:4e6,env:{...process.env,SMOKE_BUILD_SHA:(await exec('git',['rev-parse','HEAD'])).stdout.trim()}}
     await exec('npm',['run','build'],options)

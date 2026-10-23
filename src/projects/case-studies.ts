@@ -1,7 +1,7 @@
+import publishedStudies from '../generated/case-studies.json'
 export interface CaseStudy {
-  sections: { id: string; title: string; paragraphs: string[] }[]
-  timeline?: { date: string; title: string; text: string; commit: string }[]
+  sections: { id: string; title: string; paragraphs: string[]; links?: { label: string; url: string }[]; flow?: { title: string; description: string; steps: { title: string; text: string }[] } }[]
+  timeline?: { date: string; title: string; text: string; url: string }[]
 }
-// Editorial content only. Identity, status, technologies and links belong to projects.json.
-const files = import.meta.glob<CaseStudy>('./studies/*.json', { eager: true, import: 'default' })
-export const caseStudies: Record<string, CaseStudy> = Object.fromEntries(Object.entries(files).map(([path, study]) => [path.split('/').pop()!.replace(/\.json$/, ''), study]))
+// Only validated public editorial content enters the browser bundle.
+export const caseStudies: Record<string, CaseStudy> = publishedStudies

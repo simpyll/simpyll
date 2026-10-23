@@ -24,3 +24,9 @@ test('optional timeline and gallery are omitted by the shared layout',async()=>{
   assert.ok(!html.includes('case-gallery'))
  } finally {await server.close()}
 })
+test('editorial validation rejects missing sections, duplicate IDs, unsafe links and false dates',async()=>{
+ const {validateCaseStudy}=await import('./case-study-schema.mjs')
+ const valid={sections:[{id:'overview',title:'Overview',paragraphs:['Text']}]}
+ assert.deepEqual(validateCaseStudy(valid),valid)
+ for (const invalid of [{sections:[]},{sections:[...valid.sections,...valid.sections]},{sections:[{...valid.sections[0],paragraphs:[]}]},{sections:[{...valid.sections[0],links:[{label:'Source',url:'javascript:alert(1)'}]}]},{...valid,timeline:[{date:'2026-02-30',title:'False',text:'False',url:'/'}]}]) assert.throws(()=>validateCaseStudy(invalid))
+})
