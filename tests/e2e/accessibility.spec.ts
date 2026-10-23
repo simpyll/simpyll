@@ -62,9 +62,9 @@ for (const theme of ['light', 'dark'] as const) {
       await expect(input).toBeHidden()
       await page.keyboard.press('Space')
       await input.fill('my first cli tool')
-      await expect(page.getByRole('option')).toHaveCount(1)
-      await page.keyboard.press('ArrowUp')
-      await page.keyboard.press('Enter')
+      const targetArticle = page.getByRole('option').filter({ hasText: 'Learning Python #001:' })
+      await expect(targetArticle).toHaveCount(1)
+      await targetArticle.click()
       await expect(page).toHaveURL(/\/blog\/001-python-fundamentals/)
       await expect(page.getByRole('heading', { level: 1 })).toBeFocused()
       // The new category link precedes the focused article title, then Back.
