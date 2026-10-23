@@ -1,4 +1,4 @@
-import { useId, useRef, useState, isValidElement, type ComponentProps, type ReactNode } from 'react'
+import { useId, useRef, useState, isValidElement, Children, type ComponentProps, type ReactNode } from 'react'
 import { safeContentUrl } from './urls'
 import imageData from '../../generated/images.json'
 import { Link } from 'react-router-dom'
@@ -12,9 +12,15 @@ export function ArticleLink({ href, target, rel, children, ...props }: Component
   return <a {...props} href={safe} target={target} rel={target === '_blank' ? `${rel ?? ''} noopener noreferrer`.trim() : rel}>{content}</a>
 }
 
+function contentText(node: ReactNode): string {
+  return Children.toArray(node).map(child => isValidElement<{ children?: ReactNode }>(child) ? contentText(child.props.children) : typeof child === 'string' || typeof child === 'number' ? String(child) : '').join(' ').replace(/\s+/g, ' ').trim()
+}
+
 export function RichTable({ children, ...props }: ComponentProps<'table'>) {
   const hint = useId()
-  return <div className="rich-table"><p id={hint} className="table-hint">Scroll horizontally to read all columns.</p><div role="region" aria-label="Article table" aria-describedby={hint} tabIndex={0} className="table-scroll"><table {...props}>{children}</table></div></div>
+  const heading = Children.toArray(children).find(child => isValidElement(child) && child.type === 'thead')
+  const name = props['aria-label'] || `Article table${heading ? `: ${contentText(heading)}` : ''}`
+  return <div className="rich-table"><p id={hint} className="table-hint">Scroll horizontally to read all columns.</p><div role="region" aria-label={name} aria-describedby={hint} tabIndex={0} className="table-scroll"><table {...props}>{children}</table></div></div>
 }
 export function TableHeader(props: ComponentProps<'th'>) { return <th scope="col" {...props} /> }
 
@@ -23,7 +29,7 @@ export type CalloutProps = { variant?: keyof typeof variants; title?: string; ch
 export function Callout({ variant = 'note', title, children }: CalloutProps) {
   const label = useId()
   const name = variants[variant] ?? variants.note
-  return <aside className="article-callout" data-variant={variant} aria-labelledby={label}><p className="callout-title" id={label}>{title ? `${name}: ${title}` : name}</p><div>{children}</div></aside>
+  return <aside role="note" className="article-callout" data-variant={variant} aria-labelledby={label}><p className="callout-title" id={label}>{title ? `${name}: ${title}` : name}</p><div>{children}</div></aside>
 }
 
 export function CodeBlock({ children, ...props }: ComponentProps<'pre'>) {

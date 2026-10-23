@@ -94,3 +94,10 @@ video and traces; failed jobs upload these and the HTML report for 14 days.
 Use `npm run test:e2e:report` locally or download the `playwright-results`
 Actions artifact to inspect failures. Avoid sleeps and snapshots of whole pages;
 prefer accessible roles, observable navigation, and focused content assertions.
+
+## Accessibility gate
+
+See [accessibility testing and manual audit](docs/ACCESSIBILITY.md) for axe rule
+configuration, keyboard contracts, failure diagnostics, and adding coverage.
+Accessibility tests are part of the existing required browser validation; automated
+results do not establish complete WCAG conformance.

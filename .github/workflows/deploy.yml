@@ -86,7 +86,7 @@ jobs:
       - name: Test rich MDX and Notion rendering
         run: npm run test:mdx
 
-      - name: Test production site in desktop and mobile browsers
+      - name: Enforce accessibility and browser regressions (desktop and mobile)
         run: npm run test:e2e:built
 
       - name: Upload browser test diagnostics

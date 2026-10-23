@@ -108,7 +108,7 @@ export function NavSearch({ open, onOpenChange }: { open: boolean; onOpenChange:
         {open ? <path d="m6 6 12 12M6 18 18 6" /> : <><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5" /></>}
       </svg>
     </button>
-    <section ref={panel} id={`${id}-panel`} className="search-panel" hidden={!open} aria-label="Article search results"
+    <section ref={panel} id={`${id}-panel`} className="search-panel" tabIndex={0} hidden={!open} aria-label="Article search results"
       onKeyDown={event => { if (event.key === 'Escape') { event.preventDefault(); close() } }}>
       <p role="status" className="search-status">{message}</p>
       <ul id={`${id}-results`} role="listbox" aria-label="Matching articles">
