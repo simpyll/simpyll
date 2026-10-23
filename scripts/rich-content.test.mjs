@@ -13,6 +13,8 @@ test('rich MDX fixture compiles, prerenders and hydrates through both publishing
   const root = await mkdtemp(join(tmpdir(), 'rich-mdx-'))
   t.after(() => rm(root, { recursive: true, force: true }))
   for (const path of ['src', 'public', 'scripts', 'tests', 'playwright.config.ts', 'package.json', 'package-lock.json', 'index.html', 'vite.config.ts', 'tsconfig.json', 'tsconfig.app.json', 'tsconfig.node.json']) await cp(path, join(root, path), { recursive: true })
+  await symlink(resolve('.git'), join(root, '.git'), 'dir')
+  await rm(join(root, 'src/content/blog/publishing-test.mdx'), { force: true })
   await symlink(resolve('node_modules'), join(root, 'node_modules'), 'dir')
   const generated = await convertBlocks([
     block('heading_1', 'Notion heading'),

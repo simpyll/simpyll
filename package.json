@@ -4,12 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "npm run generate:images && npm run generate:search && vite",
+    "dev": "npm run generate:redirects && npm run generate:images && npm run generate:search && vite",
     "generate:sitemap": "node scripts/generate-sitemap.mjs",
     "build:client": "tsc -b && vite build",
     "build:server": "vite build --ssr src/entry-server.tsx --outDir dist-server",
     "prerender": "node scripts/prerender.mjs",
-    "build": "npm run validate:content && npm run generate:images && npm run generate:search && npm run generate:sitemap && npm run build:client && npm run build:server && npm run prerender && node scripts/smoke/generate.mjs",
+    "build": "npm run generate:redirects && npm run validate:content && npm run generate:images && npm run generate:search && npm run generate:sitemap && npm run build:client && npm run build:server && npm run prerender && node scripts/smoke/generate.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "sync:notion": "node scripts/sync-notion.mjs",
@@ -29,7 +29,9 @@
     "test:smoke": "node --test scripts/smoke/*.test.mjs",
     "generate:images": "node scripts/images/build.mjs",
     "test:images": "node --test scripts/images/*.test.mjs",
-    "test:a11y": "playwright test accessibility"
+    "test:a11y": "playwright test accessibility",
+    "generate:redirects": "node scripts/generate-redirects.mjs",
+    "test:redirects": "node --test scripts/redirects.test.mjs"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",

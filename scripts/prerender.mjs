@@ -1,5 +1,6 @@
 
 import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises'
+import { redirectHtml } from './redirects.mjs'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
@@ -9,7 +10,7 @@ const blogDirectory = join(root, 'src/content/blog')
 const serverEntry = join(root, 'dist-server/entry-server.js')
 
 async function prerender() {
-  const { render } = await import(pathToFileURL(serverEntry).href)
+  const { render, getSiteUrl, siteConfig } = await import(pathToFileURL(serverEntry).href)
   const template = await readFile(
     join(distDirectory, 'index.html'),
     'utf8'
@@ -45,6 +46,14 @@ async function prerender() {
     )
 
     console.log(`Prerendered: ${route}`)
+  }
+
+  const redirects = JSON.parse(await readFile(join(root, 'src/generated/redirects.json'), 'utf8'))
+  for (const [alias, target] of Object.entries(redirects)) {
+    if (routes.includes(`/blog/${alias}`) || !routes.includes(`/blog/${target}`)) throw new Error(`Invalid redirect output: ${alias}`)
+    const directory = join(distDirectory, 'blog', alias)
+    await mkdir(directory, { recursive: true })
+    await writeFile(join(directory, 'index.html'), redirectHtml(getSiteUrl(`/blog/${target}`), siteConfig.language, siteConfig.url))
   }
 
   await writeFile(join(distDirectory, '404.html'), render('/404').replace('<head>', `<head>${templateHead}`), 'utf8')

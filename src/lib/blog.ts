@@ -2,6 +2,9 @@
 import type { ComponentType } from 'react'
 
 export type BlogPostMetadata = {
+  articleId?: string
+  redirectFrom?: string[]
+  status?: 'published'
   title: string
   description: string
   date: string

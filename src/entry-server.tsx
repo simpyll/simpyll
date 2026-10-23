@@ -22,3 +22,5 @@ export function render(url: string) {
     </html>
   )
 }
+
+export { getSiteUrl, siteConfig } from './config/site'

@@ -89,7 +89,7 @@ test('duplicate/invalid/manual slugs fail without partially writing', async t =>
   await assert.rejects(sync({ api: fixture({ pages: [page(), second], queryPages: true }).api }), /Duplicate published slug/)
   for (const slug of ['../escape', 'Upper Case', 'hello-world', 'a'.repeat(101)]) {
     const p = page(); p.properties.Slug.rich_text = [rt(slug)]
-    await assert.rejects(sync({ api: fixture({ pages: [p] }).api }), /Slug|collides/)
+    await assert.rejects(sync({ api: fixture({ pages: [p] }).api }), /Slug|collides|Redirect collision/)
   }
   assert.deepEqual(await snapshot(root), before)
 })

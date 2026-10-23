@@ -45,3 +45,6 @@ an authored introduction before publication.
 undefined
 See [error recovery](ERROR-RECOVERY.md) for route isolation, bounded retry,
 application fallback, privacy, and the current loading/network feature audit.
+
+See [article URL safety and slug history](REDIRECTS.md) for the identity model,
+full-history build requirement, static redirects and removal policy.
