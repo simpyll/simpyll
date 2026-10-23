@@ -23,7 +23,9 @@ This is an **illustrative example**, not an actual portfolio entry:
   "slug": "example-reading-notes",
   "title": "Reading notes experiment",
   "summary": "An illustrative local tool for organizing reading notes.",
-  "status": "in-progress",
+  "workflowStage": "in-progress",
+  "lifecycleStatus": "active",
+  "projectType": "Learning",
   "visibility": "draft",
   "technologies": ["react", "typescript"],
   "tags": ["Learning"],
@@ -40,9 +42,7 @@ This is an **illustrative example**, not an actual portfolio entry:
 
 All fields shown before `startDate` are required, except `tags`. Arrays may be
 empty, including technologies/links. Never guess a stack, public URL, metric or
-completion date. The existing bedside entry is an exploration, not a shipped
-application; Healthcare/Software/AI remain topic tags, not invented technologies.
-The Simpyll entry preserves the existing documented React/TypeScript/MDX tags.
+completion date. The approved initial inventory includes 21 projects; only Simpyll has a verified software stack.
 
 Keep `id` stable when changing the public slug. IDs and slugs are unique across
 **all** visibility states, 1–100 lowercase alphanumeric characters in single
@@ -58,19 +58,9 @@ collection, but must explicitly apply publication filtering before output.
 
 ## Status and order
 
-Status is development state, independent of visibility. The shared
-`projectStatuses` object supplies human labels; #34 owns future badge styling.
-
-| Status | Meaning |
-| --- | --- |
-| exploration | Questions or ideas being explored; no implemented software implied |
-| planned | Intended work, not yet started |
-| in-progress | Currently being developed |
-| active | In use and evolving |
-| maintained | Primarily upkeep rather than new development |
-| completed | Intended scope finished |
-| paused | Work temporarily stopped |
-| archived | Retained for history; no ongoing upkeep implied |
+Workflow and lifecycle are independent of each other and visibility.
+The canonical registries are `workflowStages` and `lifecycleStatuses`; see the
+Project Lab section below. #34 owns broader reusable badge styling.
 
 Use nonnegative integer `order` for archive ranking. Set `featured.enabled` and
 `featured.order` for homepage selection. The homepage keeps its two-card limit.
@@ -94,7 +84,7 @@ existing internal Router link patterns; explicit new-tab links need
 `noopener noreferrer` and accessible context. There is no implicit new tab.
 Availability/internal-route existence is not promised by structural validation:
 authors must link only to implemented destinations. Case-study association does
-not create a card URL. There are currently no project links to migrate.
+not create a card URL. The Simpyll links and explicitly labeled existing RNtoNP website are owner-verified.
 
 Optional text fields: `subtitle`, `description`, `category`, `role`,
 `seoDescription`. Optional arrays: `tags`, `relatedArticles` (article slugs).
@@ -143,18 +133,67 @@ Import from `src/projects`:
 - `getPublicProjects()` / `getAllProjects()` — ordered public records in the app.
 - `getFeaturedProjects(limit = 2)` — public featured records, explicitly ordered.
 - `getProjectBySlug(slug)` / `getProjectById(id)` — public record or `undefined`.
-- `Project`, `ProjectImage`, `ProjectLink`, `ProjectStatus`, `Technology` types.
-- `projectStatuses` and `technologies` for canonical display labels.
+- `Project`, `ProjectImage`, `ProjectLink`, `WorkflowStage`, `LifecycleStatus`, `Technology` types.
+- `workflowStages`, `lifecycleStatuses` and `technologies` for canonical display labels.
 
 The schema also exports `ProjectInput` for typed tooling before link normalization.
 No network fetching or runtime validation is needed in the homepage. Client and
 SSR share the same generated public manifest, preventing hydration drift.
 
-#53 will build the archive from `getPublicProjects()`; no archive exists yet.
+The Project Lab archive uses `getPublicProjects()` for both Board and Grid.
 #27 can associate an MDX narrative by stable project ID and optional
-`caseStudy.contentKey`, deriving title/summary/status/SEO from this metadata rather
+`caseStudy.contentKey`, deriving title/summary/workflow/lifecycle/SEO from this metadata rather
 than repeating it in frontmatter. That association asserts available content, not
 an implemented route: its renderer must validate content existence and public
 visibility before creating routes/canonicals/structured data/sitemap entries.
-No project detail URLs or sitemap entries are generated now. #34 owns status
+No project detail URLs are generated; `/projects` is in the sitemap. #34 owns status
 presentation using the shared labels above. No GitHub metrics/API is introduced.
+
+## Project Lab (`/projects`)
+
+The shared `workflowStage` is required: `ideas`, `on-deck`, `in-progress`,
+`shipped`, `archived`, in that display order. Move a card by editing that field
+in its one authoritative JSON record. `lifecycleStatus` is separately required:
+`planned`, `active`, `maintained`, `paused`, `retired`. A live site can remain
+In Progress. The old mixed `status` field has been removed; do not reintroduce it.
+`projectType` is required; `nextMilestone` (nonempty text) and `priority`
+(nonnegative integer, currently informational) are optional. Edit the milestone
+in the same record. No dates, progress metrics or release availability are inferred.
+
+The default read-only Board groups public records into five columns. Desktop
+uses a keyboard-focusable horizontal scroll region with readable minimum column
+widths. Mobile selects a single stage (initially In Progress); all columns remain
+in server HTML. No-JavaScript CSS shows every stage and the remaining Ideas.
+Ideas initially shows four cards with explicit expansion; Grid shows the complete
+filtered collection. Empty stages have compact messages. No destinations means
+no link or clickable-card affordance. Optional descriptions use native details.
+No case-study route is generated: #27 must add real pages before linking them.
+
+Search matches title, summary, description, type, topic tags and technology labels.
+Type, technology, stage and lifecycle selectors use AND composition. Search uses
+a case-insensitive literal substring; there are no API requests or search library.
+URL parameters: `q`, `type`, `technology` (canonical ID), `stage`, `lifecycle`,
+`view=grid`. Board omits `view`. Switching views preserves filters; Reset preserves
+view. Search replaces the history entry while selector/view changes push entries;
+back/forward and refresh restore them. Unknown filter values fall back to All.
+Mobile viewing-stage selection is local unless an explicit stage filter is active.
+Query variants canonicalize to `/projects` and set noindex after hydration; the
+static host serves the canonical prerendered page for query URLs. First hydration
+matches that static HTML before applying query state, as in Explore.
+
+Featured Work still selects the first two public enabled records by featured order
+and preserves its existing two-card layout. Change `featured.enabled` and
+`featured.order` in JSON to control inclusion and ranking; `order` then stable ID
+break ties. Draft/private records are excluded from the generated client manifest.
+
+| Workflow | Meaning |
+| --- | --- |
+| Ideas | Candidate concepts being considered |
+| On Deck | Selected for upcoming development |
+| In Progress | Currently receiving active work |
+| Shipped | A released, publicly accessible deliverable |
+| Archived | Retired, discontinued, or intentionally set aside |
+
+Lifecycle describes maintenance independently: Planned has not started; Active
+receives ongoing work; Maintained receives upkeep; Paused is temporarily stopped;
+Retired is no longer maintained. Editing workflow never changes lifecycle implicitly.

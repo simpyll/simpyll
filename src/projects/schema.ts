@@ -1,20 +1,20 @@
 // This module is shared by Node 24 build tooling and TypeScript consumers.
-export const projectStatuses = {
-  'in-progress': 'In progress', exploration: 'Exploration', planned: 'Planned',
-  active: 'Active', maintained: 'Maintained', completed: 'Completed', paused: 'Paused', archived: 'Archived',
-} as const
+export const workflowStages = { ideas: 'Ideas', 'on-deck': 'On Deck', 'in-progress': 'In Progress', shipped: 'Shipped', archived: 'Archived' } as const
+export const lifecycleStatuses = { planned: 'Planned', active: 'Active', maintained: 'Maintained', paused: 'Paused', retired: 'Retired' } as const
+export type WorkflowStage = keyof typeof workflowStages
+export type LifecycleStatus = keyof typeof lifecycleStatuses
 export const technologies = {
   react: 'React', typescript: 'TypeScript', mdx: 'MDX', vite: 'Vite',
   tailwind: 'Tailwind CSS', python: 'Python', 'github-actions': 'GitHub Actions', 'notion-api': 'Notion API',
 } as const
-export type ProjectStatus = keyof typeof projectStatuses
 export type Technology = keyof typeof technologies
 export type ProjectLink = { kind: 'live' | 'repository' | 'documentation' | 'demo' | 'article' | 'resource'; label: string; url: string; external: boolean }
 export type ProjectImage = { src: string; alt: string; decorative?: boolean; caption?: string; width?: number; height?: number; order: number; focalPoint?: { x: number; y: number } }
 export interface Project {
-  id: string; slug: string; title: string; summary: string; status: ProjectStatus
+  id: string; slug: string; title: string; summary: string
   visibility: 'public' | 'draft' | 'private'; technologies: Technology[]; links: ProjectLink[]
   featured: { enabled: boolean; order: number }; order: number
+  workflowStage: WorkflowStage; lifecycleStatus: LifecycleStatus; projectType: string; nextMilestone?: string; priority?: number
   subtitle?: string; description?: string; category?: string; tags?: string[]; role?: string
   startDate?: string; completionDate?: string; updatedDate?: string; seoDescription?: string
   cover?: ProjectImage; screenshots?: ProjectImage[]; relatedArticles?: string[]
@@ -48,9 +48,9 @@ export function validateProjects(input: unknown, assetExists?: (src: string) => 
     const error = (field: string, message: string) => errors.push(`${context}: ${field} ${message}`)
     if (!record(value)) { error('', 'must be an object'); return }
     const p = structuredClone(value)
-    const allowed = ['id','slug','title','summary','status','visibility','technologies','links','featured','order','subtitle','description','category','tags','role','startDate','completionDate','updatedDate','seoDescription','cover','screenshots','relatedArticles','caseStudy']
+    const allowed = ['workflowStage','lifecycleStatus','projectType','nextMilestone','priority','id','slug','title','summary','visibility','technologies','links','featured','order','subtitle','description','category','tags','role','startDate','completionDate','updatedDate','seoDescription','cover','screenshots','relatedArticles','caseStudy']
     Object.keys(p).filter(k => !allowed.includes(k)).forEach(k => error(k, 'is not a supported field'))
-    for (const key of ['id','slug','title','summary']) if (!nonempty(p[key])) error(key, 'must be a nonempty string')
+    for (const key of ['id','slug','title','summary','projectType']) if (!nonempty(p[key])) error(key, 'must be a nonempty string')
     for (const [key, seen] of [['id', ids], ['slug', slugs]] as const) {
       const v = p[key]
       if (typeof v === 'string') {
@@ -60,8 +60,9 @@ export function validateProjects(input: unknown, assetExists?: (src: string) => 
       }
     }
     if (['new','edit','index','about','blog','explore','projects','404'].includes(String(p.slug))) error('slug', 'is reserved')
-    if ((typeof p.status !== 'string' || !Object.hasOwn(projectStatuses, p.status))) error('status', 'must use a canonical project status')
     if ((typeof p.visibility !== 'string' || !['public','private','draft'].includes(p.visibility))) error('visibility', 'must be public, draft, or private')
+    for (const [key, values] of [['workflowStage', workflowStages], ['lifecycleStatus', lifecycleStatuses]] as const) if ((typeof p[key] !== 'string' || !Object.hasOwn(values, p[key]))) error(key, 'must use a canonical value')
+    if (p.priority !== undefined && !rank(p.priority)) error('priority', 'must be a nonnegative integer')
     if (!rank(p.order)) error('order', 'must be a nonnegative safe integer')
     if (!record(p.featured) || typeof p.featured.enabled !== 'boolean' || !rank(p.featured.order) || Object.keys(p.featured).some(k => !['enabled','order'].includes(k))) error('featured', 'requires enabled:boolean and order:nonnegative integer')
     const strings = (key: string, list: unknown, valid: (s: string) => boolean) => {
@@ -70,7 +71,7 @@ export function validateProjects(input: unknown, assetExists?: (src: string) => 
     }
     strings('technologies', p.technologies, s => Object.hasOwn(technologies, s))
     for (const key of ['tags','relatedArticles']) if (p[key] !== undefined) strings(key, p[key], s => key !== 'relatedArticles' || slugPattern.test(s))
-    for (const key of ['subtitle','description','category','role','seoDescription']) if (p[key] !== undefined && !nonempty(p[key])) error(key, 'must be a nonempty string')
+    for (const key of ['projectType','nextMilestone','subtitle','description','category','role','seoDescription']) if (p[key] !== undefined && !nonempty(p[key])) error(key, 'must be a nonempty string')
     for (const key of ['startDate','completionDate','updatedDate']) {
       const date = p[key]
       if (date !== undefined && (typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date) || !Number.isFinite(Date.parse(date)) || new Date(date).toISOString().slice(0,10) !== date)) error(key, 'must be a real YYYY-MM-DD date')

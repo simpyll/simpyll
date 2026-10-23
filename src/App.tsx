@@ -1,3 +1,4 @@
+import { Projects } from './pages/Projects'
 import { Explore } from './pages/Explore'
 import { ErrorBoundary } from './recovery/ErrorBoundary'
 
@@ -24,6 +25,7 @@ export function AppContent() {
       <ErrorBoundary key={pathname} scope="route">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/projects" element={<Projects />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/blog" element={<Blog />} />

@@ -6,7 +6,7 @@ import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { validateProjects, createProjectSelectors, normalizeProjectUrl } from '../src/projects/schema.ts'
 import { generateProjects } from './generate-projects.mjs'
-const minimal = () => ({ id:'sample', slug:'sample', title:'Sample', summary:'An illustrative test project.', status:'active', visibility:'public', technologies:[], links:[], featured:{enabled:true,order:1}, order:1 })
+const minimal = () => ({ id:'sample', slug:'sample', title:'Sample', summary:'An illustrative test project.', workflowStage:'shipped', lifecycleStatus:'active', projectType:'Software', visibility:'public', technologies:[], links:[], featured:{enabled:true,order:1}, order:1 })
 test('minimal and fully populated metadata normalize without optional defaults', () => {
   assert.deepEqual(validateProjects([minimal()]).errors, [])
   const full = {...minimal(), subtitle:'Subtitle', description:'Description', category:'Software', tags:['Learning'], role:'Developer', startDate:'2026-01-01', completionDate:'2026-02-01', updatedDate:'2026-03-01', seoDescription:'Example', technologies:['react','typescript'], links:[{kind:'repository',label:'Source',url:'https://github.com/example/example'}], cover:{src:'/images/sample.png',alt:'Example screen',width:800,height:600,order:0,focalPoint:{x:0.5,y:0.5}}, screenshots:[{src:'/images/other.png',alt:'',decorative:true,order:1}], relatedArticles:['hello-world'], caseStudy:{contentKey:'sample-story'}}
@@ -19,7 +19,7 @@ const invalid = {
   'missing required title': p => delete p.title,
   'invalid slug': p => p.slug='Bad--slug',
   'reserved slug': p => p.slug='new',
-  'invalid status': p => p.status='shipped',
+  'invalid status': p => p.workflowStage='unknown',
   'unsafe URL': p => p.links=[{kind:'live',label:'Run',url:'javascript:alert(1)'}],
   'bad date': p => p.startDate='2026-02-30',
   'date relationship': p => { p.startDate='2026-03-01'; p.completionDate='2026-02-01' },

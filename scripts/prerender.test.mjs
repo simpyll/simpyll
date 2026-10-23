@@ -6,6 +6,7 @@ const pages = [
   ['/', 'From Bedside to Build | Simpyll'],
   ['/blog', 'Learning Journal | Simpyll'],
   ['/explore', 'Explore articles | Simpyll'],
+  ['/projects', 'Projects | Simpyll'],
   ['/about', 'About David Becker — Critical Care Nurse &amp; Curious Builder | Simpyll'],
   ['/blog/hello-world', 'Hello, World. | Simpyll'],
 ]
@@ -26,12 +27,12 @@ for (const [route, title] of pages) {
     assert.match(head, /<meta name="description"/)
     assert.doesNotMatch(head, /<header|<main|application\/ld\+json/)
     assert.match(body, /^<div id="root"><a[^>]+class="skip-link"/)
-    assert.equal((body.match(/<header/g) || []).length, 1)
+    assert.equal((body.match(/<header/g) || []).length, route === '/projects' ? 2 : 1)
     assert.match(body, /<main id="main-content"/)
     assert.equal((body.match(/<h1(?![^>]*role="presentation")/g) || []).length, 1)
     assert.match(body, /href="\/blog"/)
     assert.match(body, /href="\/about"/)
-    assert.match(body, /href="\/#work"/)
+    assert.match(body, /href="\/projects"/)
     assert.match(head, /type="module"[^>]*src="\/assets\//)
     if (route === '/blog/hello-world') {
       assert.match(body, /<script type="application\/ld\+json">/)
@@ -75,7 +76,7 @@ test('sitemap and robots reference the canonical public pages', async () => {
     .filter((file) => file.endsWith('.mdx'))
     .map((file) => `/blog/${file.replace(/\.mdx$/, '')}`)
 
-  const expectedRoutes = ['/', '/blog', '/about', '/explore', ...blogRoutes]
+  const expectedRoutes = ['/', '/blog', '/about', '/explore', '/projects', ...blogRoutes]
   const expectedUrls = expectedRoutes.map(
     (route) => `https://simpyll.com${route}`
   )
