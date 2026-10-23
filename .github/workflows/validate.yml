@@ -25,7 +25,7 @@ jobs:
       - run: npm run test:smoke
       - run: npm run build
       - run: npm run lint
-      - run: node --test scripts/prerender.test.mjs scripts/motion.test.mjs scripts/navigation.test.mjs
+      - run: node --test scripts/prerender.test.mjs scripts/remark-heading-ids.test.mjs scripts/article-toc.test.mjs scripts/motion.test.mjs scripts/navigation.test.mjs
 
       - name: Install Chromium for browser tests
         run: npx playwright install --with-deps chromium
@@ -47,5 +47,6 @@ jobs:
             playwright-report/
             test-results/
             artifacts/rich-content/
+            artifacts/toc/
           retention-days: 14
           if-no-files-found: ignore

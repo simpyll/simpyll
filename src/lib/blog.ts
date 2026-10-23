@@ -13,13 +13,17 @@ export type BlogPostMetadata = {
   tags: string[]
 }
 
+export type ArticleHeading = { id: string; title: string; depth: 2 | 3 }
+
 export type BlogPost = {
   slug: string
   metadata: BlogPostMetadata
+  headings: ArticleHeading[]
   Content: ComponentType
 }
 
 type MDXModule = {
+  headings: ArticleHeading[]
   default: ComponentType
   metadata: BlogPostMetadata
 }
@@ -40,6 +44,7 @@ export const posts: BlogPost[] = Object.entries(modules)
       slug,
       metadata: module.metadata,
       Content: module.default,
+      headings: module.headings,
     }
   })
   .sort(

@@ -67,7 +67,10 @@ for (const theme of ['light', 'dark'] as const) {
       await page.keyboard.press('Enter')
       await expect(page).toHaveURL(/\/blog\/001-python-fundamentals/)
       await expect(page.getByRole('heading', { level: 1 })).toBeFocused()
-      await tabTo(page, page.getByRole('link', { name: /Back to/ }).first())
+      // The back link precedes the focused article title in document order.
+      await page.keyboard.press('Shift+Tab')
+      await expect(page.getByRole('link', { name: /Back to/ }).first()).toBeFocused()
+      await visibleFocus(page.getByRole('link', { name: /Back to/ }).first())
       await page.keyboard.press('Enter')
       await expect(page).toHaveURL('/blog')
       await expect(page.getByRole('heading', { level: 1 })).toBeFocused()

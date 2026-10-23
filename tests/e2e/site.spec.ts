@@ -101,7 +101,7 @@ test('Python MDX renders headings, code, lists and resource links', async ({ pag
   await page.goto('/blog/001-python-fundamentals')
   await expect(page.getByRole('heading', { level: 2, name: 'Lesson 001: Functions and Variables' })).toBeVisible()
   await expect(page.locator('pre code').first()).toHaveText('print("Hello, world!")\n')
-  await expect(page.locator('article ol li')).toHaveCount(5)
+  await expect(page.locator('.article-content ol li')).toHaveCount(5)
   await expect(page.getByRole('link', { name: 'Python 3 Documentation' })).toHaveAttribute('href', 'https://docs.python.org/3/')
   await expect(page.locator('article time')).toHaveAttribute('datetime', '2026-10-20')
 })

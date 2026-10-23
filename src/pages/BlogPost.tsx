@@ -1,5 +1,6 @@
 import { MDXProvider } from '@mdx-js/react'
 import { mdxComponents } from '../components/mdx/mapping'
+import { ArticleToc } from '../components/ArticleToc'
 import { Badge } from '../components/Badge'
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
 import { Container } from '../components/Container'
@@ -33,7 +34,8 @@ export function BlogPost() {
       <ArticleSchema post={post} />
 
       <main id="main-content" tabIndex={-1} className="min-h-screen bg-canvas text-foreground">
-        <Container>
+        <Container className="article-container">
+          <div className={post.headings.length > 1 ? "article-layout has-toc" : "article-layout"}>
           <article className="mx-auto max-w-3xl py-24 sm:py-32">
             <Reveal>
               <Link
@@ -71,6 +73,7 @@ export function BlogPost() {
               </div>
             </Reveal>
 
+            {post.headings.length > 1 && <div className="toc-mobile-slot"><ArticleToc key={post.slug} headings={post.headings} /></div>}
             <div className="prose article-content mt-12 max-w-none">
               <MDXProvider components={mdxComponents}><Content /></MDXProvider>
             </div>
@@ -81,6 +84,7 @@ export function BlogPost() {
               ))}
             </div>
           </article>
+          </div>
         </Container>
       </main>
     </>
