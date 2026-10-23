@@ -15,11 +15,29 @@
           "revision": "2026-10-21T00:33:00.000Z"
         }
       }
+    },
+    "402b3577d26a80229136ef1dd83af10d": {
+      "slug": "starting-over-without-starting-from-zero",
+      "date": "2026-10-23",
+      "history": [],
+      "redirectFrom": [],
+      "status": "published",
+      "assets": {}
+    },
+    "402b3577d26a804cbe45c6ce88398aa3": {
+      "slug": "a-hospital-is-the-most-complicated-computer-ive-ever-used",
+      "date": "2026-10-23",
+      "history": [],
+      "redirectFrom": [],
+      "status": "published",
+      "assets": {}
     }
   },
   "files": {
     "public/images/notion/3ffb3577d26a80e9b57fc08460c29516/publishing-test-image-01-ff804a5635dd.png": "ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25",
     "src/content/blog/publishing-test.mdx": "413696e3b2cb8e60f421f995b5b8ae82bbcda6224b9eff210ceddf501e5a6555",
+    "src/content/blog/starting-over-without-starting-from-zero.mdx": "f6a24f9a75766dbcf0bef566bb855be1c12f830ef81154abf902e1ebd0f2e874",
+    "src/content/blog/a-hospital-is-the-most-complicated-computer-ive-ever-used.mdx": "05b160fa511ac113ce0f70f62306ec2c17f48921d511735243fa6a74ce399e41",
     "public/images/notion/3ffb3577d26a80e9b57fc08460c29516/ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25.png": "ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25"
   }
 }

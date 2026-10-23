@@ -1,0 +1,379 @@
+export const metadata = {
+  title: "A Hospital Is the Most Complicated Computer I've Ever Used",
+  description: "What more than a decade in critical care taught me about software, systems, and the humans holding everything together.",
+  slug: "a-hospital-is-the-most-complicated-computer-ive-ever-used",
+  date: "2026-10-23",
+  category: "Ideas",
+  author: "David Becker",
+  tags: ["critical care","healthcare","human factors","software engineering","systems thinking"],
+  articleId: "notion:402b3577d26a804cbe45c6ce88398aa3",
+}
+
+<h2>{"A Hospital Is the Most Complicated Computer I've Ever Used"}</h2>
+<p><em>{"What more than a decade in critical care taught me about software, systems, and the humans holding everything together."}</em></p>
+<p>{"Hospitals are strange places."}</p>
+<p>{"They contain some of the most advanced technology humanity has ever developed. Machines can temporarily replace the function of failing organs. Imaging systems can reveal structures inside the human body. Laboratory instruments can detect abnormalities that would have been unimaginable a century ago."}</p>
+<p>{"We can monitor a patient's cardiovascular system in extraordinary detail, support their breathing with a mechanical ventilator, and continuously filter their blood through an extracorporeal circuit."}</p>
+<p>{"And yet, somewhere in that same hospital, a nurse is probably trying to figure out why a printer won't work."}</p>
+<p>{"Or calling another department because an order hasn't appeared."}</p>
+<p>{"Or manually entering information that already exists somewhere else in the system."}</p>
+<p>{"Or trying to find out whether a patient is actually supposed to be transferred."}</p>
+<p>{"After more than a decade working as a registered nurse, primarily in critical care, I've become accustomed to this contradiction."}</p>
+<p>{"Hospitals are simultaneously technological marvels and remarkably inefficient information systems."}</p>
+<p>{"Recently, as I've started learning software development, I've found myself thinking about hospitals differently."}</p>
+<p>{"The more I learn about computer systems, the more familiar certain concepts become."}</p>
+<p>{"Networks. Dependencies. Interfaces. Data synchronization. Fault tolerance. Bottlenecks. Technical debt."}</p>
+<p>{"I've encountered versions of all of them in healthcare."}</p>
+<p>{"And I've started to wonder whether a hospital might be one of the most complicated computers we interact with."}</p>
+<p>{"Not because it literally functions like a computer, but because so much of its operation depends on information moving between interconnected systems."}</p>
+<p>{"The difference is that when the software doesn't work, the people inside the hospital have to compensate."}</p>
+<p>{"And those people are often already busy keeping someone alive."}</p>
+<h3>{"A Hospital Is a Distributed System"}</h3>
+<p>{"In software engineering, a distributed system consists of multiple independent components that communicate and coordinate to accomplish a larger task."}</p>
+<p>{"The individual components may run on different machines, operate independently, and exchange information over a network."}</p>
+<p>{"A hospital works in a surprisingly similar way."}</p>
+<p>{"Consider a single patient admitted to an intensive care unit."}</p>
+<p>{"Their care may involve physicians, nurses, respiratory therapists, pharmacists, laboratory personnel, radiology technicians, physical therapists, case managers, transport staff, and specialists from several departments."}</p>
+<p>{"Each group performs a different function."}</p>
+<p>{"Each has its own workflows, priorities, information systems, and responsibilities."}</p>
+<p>{"Yet all of them must coordinate around one patient."}</p>
+<p>{"A physician enters an order for a medication."}</p>
+<p>{"The pharmacy verifies it."}</p>
+<p>{"The medication becomes available through the appropriate dispensing process."}</p>
+<p>{"A nurse retrieves it, verifies the order and patient, administers the medication, and documents what happened."}</p>
+<p>{"The patient's response is monitored."}</p>
+<p>{"If the treatment isn't working as expected, that information needs to make its way back into the decision-making process."}</p>
+<p>{"What appears to be one clinical action is actually a sequence of dependent operations across multiple systems."}</p>
+<p>{"And any one of those operations can fail."}</p>
+<p>{"The order might be incomplete."}</p>
+<p>{"The pharmacy might need clarification."}</p>
+<p>{"The medication might be unavailable."}</p>
+<p>{"The electronic medication administration record might not reflect a recent change."}</p>
+<p>{"The patient might develop a contraindication before administration."}</p>
+<p>{"The problem isn't necessarily that any individual component is broken."}</p>
+<p>{"It's that coordinating independent components is difficult."}</p>
+<p>{"Software engineers spend enormous amounts of time solving exactly this kind of problem."}</p>
+<p>{"Hospitals do too."}</p>
+<p>{"We just don't always describe it that way."}</p>
+<h3>{"The Electronic Health Record Is Not the Hospital"}</h3>
+<p>{"One of the first things I noticed while learning software development was the distinction between an interface and the underlying system."}</p>
+<p>{"An interface is how someone interacts with software."}</p>
+<p>{"It isn't necessarily a complete representation of everything happening behind it."}</p>
+<p>{"The electronic health record is a perfect example."}</p>
+<p>{"When I open a patient's chart, I'm looking at a structured representation of their care."}</p>
+<p>{"I can review vital signs, medications, laboratory results, orders, clinical notes, and documentation from other departments."}</p>
+<p>{"But the chart isn't the patient."}</p>
+<p>{"And it isn't a complete representation of what's happening in the hospital."}</p>
+<p>{"It is an interface to information that has been collected, entered, transmitted, and organized by many different people and systems."}</p>
+<p>{"Some information is automatically imported."}</p>
+<p>{"Some is manually documented."}</p>
+<p>{"Some arrives after a delay."}</p>
+<p>{"Some is duplicated."}</p>
+<p>{"Some is missing."}</p>
+<p>{"And some may technically be present but buried in a location where nobody thinks to look."}</p>
+<p>{"A laboratory result might be available in one section of the chart before someone notices it."}</p>
+<p>{"A medication might appear active even though the clinical plan has changed."}</p>
+<p>{"A note might describe a patient's condition accurately when it was written but no longer reflect their current status."}</p>
+<p>{"This is a fundamental problem with information systems."}</p>
+<p><strong>{"The data displayed on a screen is not necessarily the complete or current state of reality."}</strong></p>
+<p>{"In software, developers have to think about stale data, synchronization delays, and inconsistent representations of the same information."}</p>
+<p>{"In healthcare, we deal with those problems constantly."}</p>
+<p>{"Except the consequences can be considerably more serious than displaying an outdated shopping cart."}</p>
+<h3>{"Nurses Are the Integration Layer"}</h3>
+<p>{"This might be the most interesting comparison of all."}</p>
+<p>{"In software architecture, an integration layer helps different systems communicate and work together."}</p>
+<p>{"It connects components that weren't necessarily designed to interact directly."}</p>
+<p>{"In hospitals, nurses often perform a substantial amount of that integration work."}</p>
+<p>{"Think about how much of a nurse's day involves coordinating information between people, departments, and technologies."}</p>
+<p>{"A patient's blood pressure is falling."}</p>
+<p>{"The nurse recognizes the trend, assesses the patient, reviews relevant information, communicates with the provider, implements appropriate interventions, coordinates additional testing or treatment, and evaluates the response."}</p>
+<p>{"Meanwhile, another department may need to be contacted."}</p>
+<p>{"A medication may need to be obtained."}</p>
+<p>{"An order may require clarification."}</p>
+<p>{"The patient's family may need an update."}</p>
+<p>{"And the electronic record needs to reflect what happened."}</p>
+<p>{"The nurse isn't simply executing a predefined set of instructions."}</p>
+<p>{"They're continuously interpreting information, identifying discrepancies, coordinating resources, and adjusting to changing conditions."}</p>
+<p>{"In many ways, they're connecting systems that would otherwise struggle to function together."}</p>
+<p>{"This is especially apparent in a system-wide float pool."}</p>
+<p>{"Working across intensive care units, progressive care, emergency departments, and medical-surgical floors exposes you to different workflows, different expectations, and different ways of solving the same operational problems."}</p>
+<p>{"You begin to recognize which processes are standardized and which depend heavily on local knowledge."}</p>
+<p>{"You also notice how much of the hospital's functionality relies on experienced people knowing whom to call, where to look, and how to work around limitations."}</p>
+<p>{"That's an impressive demonstration of human adaptability."}</p>
+<p>{"But it also raises an uncomfortable question."}</p>
+<p><strong>{"How much of the hospital works because its systems are well designed, and how much works because its employees have learned to compensate for systems that aren't?"}</strong></p>
+<p>{"Those are very different things."}</p>
+<h3>{"Hospitals Have Technical Debt"}</h3>
+<p>{"Software developers use the term "}<em>{"technical debt"}</em>{" to describe the future costs created by shortcuts, compromises, or outdated design decisions."}</p>
+<p>{"Sometimes technical debt is intentional."}</p>
+<p>{"A team needs to deliver something quickly, so it accepts a less-than-ideal solution with the understanding that it may need improvement later."}</p>
+<p>{"Other times, technical debt accumulates gradually."}</p>
+<p>{"Systems become more complicated."}</p>
+<p>{"Temporary fixes become permanent."}</p>
+<p>{"New features are layered on top of old architecture."}</p>
+<p>{"Eventually, changing anything becomes difficult because so many other things depend on the existing structure."}</p>
+<p>{"Hospitals have their own versions of this."}</p>
+<p>{"Consider a workflow that requires a nurse to document the same information in multiple places."}</p>
+<p>{"Perhaps each documentation requirement originally served a legitimate purpose."}</p>
+<p>{"One was introduced for clinical communication."}</p>
+<p>{"Another supported regulatory reporting."}</p>
+<p>{"Another was added for quality improvement."}</p>
+<p>{"Another became necessary after a software implementation."}</p>
+<p>{"Over time, the combined process may become cumbersome."}</p>
+<p>{"But removing any individual step can be difficult because different stakeholders depend on it."}</p>
+<p>{"The result is a workflow that nobody would deliberately design from scratch."}</p>
+<p>{"Yet everyone is expected to follow it."}</p>
+<p>{"That's operational technical debt."}</p>
+<p>{"And like software technical debt, it creates hidden costs."}</p>
+<p>{"Time."}</p>
+<p>{"Attention."}</p>
+<p>{"Training requirements."}</p>
+<p>{"Additional opportunities for error."}</p>
+<p>{"Frustration."}</p>
+<p>{"And reduced flexibility when something needs to change."}</p>
+<p>{"The difficult part is that individual requirements may be reasonable even when the overall system is inefficient."}</p>
+<p>{"Optimizing one component doesn't necessarily optimize the whole."}</p>
+<h3>{"The ICU Is a Real-Time Monitoring System"}</h3>
+<p>{"An intensive care unit produces an extraordinary amount of information."}</p>
+<p>{"Heart rate."}</p>
+<p>{"Blood pressure."}</p>
+<p>{"Oxygen saturation."}</p>
+<p>{"Respiratory rate."}</p>
+<p>{"Temperature."}</p>
+<p>{"Urine output."}</p>
+<p>{"Laboratory values."}</p>
+<p>{"Ventilator measurements."}</p>
+<p>{"Infusion rates."}</p>
+<p>{"Hemodynamic parameters."}</p>
+<p>{"Depending on the patient, we may also be monitoring invasive pressures, cardiac output, continuous renal replacement therapy, or mechanical circulatory support."}</p>
+<p>{"Much of this information changes continuously."}</p>
+<p>{"And not all of it is equally important."}</p>
+<p>{"A single abnormal value may mean very little."}</p>
+<p>{"A trend across several measurements may mean everything."}</p>
+<p>{"A monitor displaying a heart rate of 115 doesn't tell you why the patient's heart rate is elevated."}</p>
+<p>{"Is the patient in pain?"}</p>
+<p>{"Are they febrile?"}</p>
+<p>{"Hypovolemic?"}</p>
+<p>{"Anxious?"}</p>
+<p>{"Developing an arrhythmia?"}</p>
+<p>{"Experiencing a compensatory response to another physiological problem?"}</p>
+<p>{"The number is data."}</p>
+<p>{"Understanding its significance requires context."}</p>
+<p>{"This is where healthcare begins to resemble another challenge in software engineering: observability."}</p>
+<p>{"In complex software systems, observability refers to the ability to understand what's happening internally by examining the information the system produces."}</p>
+<p>{"Developers use metrics, logs, traces, and alerts to identify problems."}</p>
+<p>{"Clinicians use vital signs, laboratory results, physical assessments, monitoring devices, and clinical history."}</p>
+<p>{"Both environments generate signals that must be interpreted."}</p>
+<p>{"And both struggle with the difference between having information and understanding it."}</p>
+<h4>{"More data doesn't automatically mean better decisions"}</h4>
+<p>{"There's a temptation to assume that collecting more information always improves performance."}</p>
+<p>{"Sometimes it does."}</p>
+<p>{"But information has a cost."}</p>
+<p>{"Every additional measurement competes for attention."}</p>
+<p>{"Every alert demands some degree of evaluation."}</p>
+<p>{"Every dashboard adds another place to look."}</p>
+<p>{"When everything is presented as important, it becomes harder to identify what actually matters."}</p>
+<p>{"This is one reason alarm fatigue is such a serious issue in clinical environments."}</p>
+<p>{"A monitoring system that generates excessive nonactionable alarms can make meaningful warnings harder to distinguish."}</p>
+<p>{"The problem isn't simply that the system produces too much information."}</p>
+<p>{"It's that the system doesn't always communicate the significance of that information effectively."}</p>
+<p>{"A well-designed system shouldn't merely collect data."}</p>
+<p>{"It should help people recognize when the data requires action."}</p>
+<p>{"That's true whether you're monitoring a server or a patient."}</p>
+<h3>{"Handoffs Are Data Transfers"}</h3>
+<p>{"One of the most vulnerable moments in any complex system occurs when responsibility moves from one component to another."}</p>
+<p>{"In hospitals, we call this a handoff."}</p>
+<p>{"A patient transfers from the emergency department to the intensive care unit."}</p>
+<p>{"A nurse gives report to the next shift."}</p>
+<p>{"A patient moves from the operating room to a recovery area."}</p>
+<p>{"A specialist assumes responsibility for a particular aspect of care."}</p>
+<p>{"Each transition requires information to move between people."}</p>
+<p>{"And that information needs to be accurate, relevant, and sufficiently complete."}</p>
+<p>{"Imagine transferring a file between two computers."}</p>
+<p>{"If part of the file is missing, the receiving computer may not be able to use it correctly."}</p>
+<p>{"Clinical handoffs are far more complicated because the information isn't a static file."}</p>
+<p>{"The patient's condition may be changing during the transfer."}</p>
+<p>{"Some details are objectively measurable."}</p>
+<p>{"Others depend on clinical judgment."}</p>
+<p>{"Some information is urgent."}</p>
+<p>{"Other information provides background context."}</p>
+<p>{"And the receiving clinician needs to understand not just what has happened, but what might happen next."}</p>
+<p>{"A good handoff communicates the current state of the patient, the important events leading up to that state, and the anticipated problems or next steps."}</p>
+<p>{"A poor handoff can leave the receiving clinician reconstructing the situation from incomplete information."}</p>
+<p>{"That's why structured communication tools can be valuable."}</p>
+<p>{"They create a shared expectation about what information should be transferred."}</p>
+<p>{"But even a structured handoff cannot eliminate every problem."}</p>
+<p>{"The quality of the transfer still depends on the accuracy of the underlying information, the judgment of the people involved, and the opportunity to clarify uncertainties."}</p>
+<p>{"In software terms, the interface matters."}</p>
+<p>{"But so does the integrity of the data moving through it."}</p>
+<h3>{"The Most Dangerous Failures Are Often Between Systems"}</h3>
+<p>{"When something goes wrong in a hospital, it's tempting to look for the individual component that failed."}</p>
+<p>{"Was an order entered incorrectly?"}</p>
+<p>{"Did someone miss an abnormal result?"}</p>
+<p>{"Was a medication delayed?"}</p>
+<p>{"Did a clinician misunderstand the plan?"}</p>
+<p>{"These are important questions."}</p>
+<p>{"But they don't always explain the full problem."}</p>
+<p>{"Sometimes every individual involved was operating reasonably within the information available to them."}</p>
+<p>{"The failure occurred between components."}</p>
+<p>{"Information wasn't transmitted."}</p>
+<p>{"Responsibilities weren't clearly assigned."}</p>
+<p>{"Two systems displayed conflicting information."}</p>
+<p>{"A process depended on an assumption that turned out to be incorrect."}</p>
+<p>{"This is one of the reasons complex systems are difficult to manage."}</p>
+<p>{"Their behavior isn't always predictable from the behavior of their individual parts."}</p>
+<p>{"You can have excellent clinicians, sophisticated equipment, and carefully designed procedures while still experiencing failures in coordination."}</p>
+<p>{"Software engineering has an entire vocabulary for these kinds of problems."}</p>
+<p>{"Race conditions."}</p>
+<p>{"Dependency failures."}</p>
+<p>{"Interface mismatches."}</p>
+<p>{"Synchronization errors."}</p>
+<p>{"Single points of failure."}</p>
+<p>{"Hospitals have analogous problems, although the mechanisms and consequences differ."}</p>
+<p>{"Consider a transfer where one department believes another has assumed responsibility, while the receiving team believes the transfer is still pending."}</p>
+<p>{"Neither group necessarily intends to neglect the patient."}</p>
+<p>{"But the ambiguity itself creates risk."}</p>
+<p>{"That's a systems problem."}</p>
+<p>{"And solving it requires more than telling individuals to be more careful."}</p>
+<p>{"It requires designing workflows where responsibilities, information, and transitions are explicit."}</p>
+<h3>{"Healthcare Runs on Human Fault Tolerance"}</h3>
+<p>{"In computing, fault tolerance describes a system's ability to continue operating when some of its components fail."}</p>
+<p>{"Redundant servers, backup power supplies, replicated databases, and failover mechanisms can help prevent a single failure from bringing down an entire service."}</p>
+<p>{"Hospitals also use redundancy."}</p>
+<p>{"Backup generators."}</p>
+<p>{"Emergency equipment."}</p>
+<p>{"Independent safety checks."}</p>
+<p>{"Escalation procedures."}</p>
+<p>{"Alternative treatment pathways."}</p>
+<p>{"But healthcare relies heavily on another form of resilience."}</p>
+<p>{"Human adaptability."}</p>
+<p>{"When an expected process fails, people improvise within the boundaries of safe practice."}</p>
+<p>{"They communicate directly."}</p>
+<p>{"They locate alternative resources."}</p>
+<p>{"They escalate problems."}</p>
+<p>{"They reconcile conflicting information."}</p>
+<p>{"They recognize that a displayed value doesn't match the patient's clinical presentation."}</p>
+<p>{"They catch discrepancies that automated systems missed."}</p>
+<p>{"This flexibility is one of healthcare's greatest strengths."}</p>
+<p>{"It's also a potential weakness."}</p>
+<p>{"Because a system that depends on people constantly compensating for its limitations may appear more reliable than it actually is."}</p>
+<p>{"If a nurse catches a documentation discrepancy before it causes harm, the patient benefits."}</p>
+<p>{"But the underlying problem may remain."}</p>
+<p>{"If a pharmacist identifies a problematic order, an error may be prevented."}</p>
+<p>{"But that doesn't necessarily explain why the order reached that point."}</p>
+<p>{"Human vigilance is essential in healthcare."}</p>
+<p>{"It shouldn't be treated as an unlimited resource."}</p>
+<p>{"People become tired."}</p>
+<p>{"They get interrupted."}</p>
+<p>{"They manage competing demands."}</p>
+<p>{"Their attention is finite."}</p>
+<p>{"A resilient system should support human judgment without depending on extraordinary effort to make ordinary processes function."}</p>
+<h3>{"Why We Can't Just Rewrite the Hospital"}</h3>
+<p>{"When I encounter a frustrating software problem, it's easy to imagine replacing the entire system with something better."}</p>
+<p>{"Start over."}</p>
+<p>{"Simplify the architecture."}</p>
+<p>{"Remove unnecessary dependencies."}</p>
+<p>{"Design a cleaner interface."}</p>
+<p>{"But hospitals aren't applications that can simply be taken offline and rebuilt."}</p>
+<p>{"They're living organizations."}</p>
+<p>{"They have to continue functioning while changes are made."}</p>
+<p>{"Patients still need care."}</p>
+<p>{"Medications still need to be administered."}</p>
+<p>{"Emergency departments still receive patients."}</p>
+<p>{"Operating rooms still run."}</p>
+<p>{"Staff members still need to understand their responsibilities."}</p>
+<p>{"Every change interacts with existing clinical, operational, financial, and regulatory requirements."}</p>
+<p>{"And unlike a small personal software project, the consequences of a poorly designed change may affect patient safety."}</p>
+<p>{"That makes improvement difficult."}</p>
+<p>{"But not impossible."}</p>
+<p>{"It suggests that healthcare technology needs to be designed with a deeper understanding of how work actually happens."}</p>
+<p>{"Not just how a workflow appears in a process diagram."}</p>
+<p>{"Not just how administrators expect a process to function."}</p>
+<p>{"Not just how software developers imagine people will use an interface."}</p>
+<p>{"But how clinicians behave when the unit is busy, a patient is deteriorating, multiple alarms are sounding, and the expected workflow no longer matches reality."}</p>
+<p>{"The difference between the intended process and the actual process is where many of the most important design problems become visible."}</p>
+<h3>{"The Future Isn't Just More Technology"}</h3>
+<p>{"Healthcare technology is advancing rapidly."}</p>
+<p>{"Artificial intelligence may help summarize clinical information, identify patterns, reduce documentation burdens, and support certain decisions."}</p>
+<p>{"Automation may eliminate repetitive administrative tasks."}</p>
+<p>{"Better interoperability could allow information to move more reliably between organizations and systems."}</p>
+<p>{"More sophisticated monitoring could help clinicians identify meaningful changes earlier."}</p>
+<p>{"These possibilities are exciting."}</p>
+<p>{"But I don't think the ultimate goal should be to make hospitals more technologically complicated."}</p>
+<p>{"It should be to make them easier to operate safely."}</p>
+<p>{"Those aren't necessarily the same thing."}</p>
+<p>{"Adding another dashboard doesn't automatically improve situational awareness."}</p>
+<p>{"Adding another alert doesn't automatically improve safety."}</p>
+<p>{"Adding another automated process doesn't automatically eliminate work."}</p>
+<p>{"Sometimes it simply moves the work somewhere else."}</p>
+<p>{"The question shouldn't be how much technology we can introduce."}</p>
+<p>{"It should be whether the technology reduces unnecessary complexity for the people providing care."}</p>
+<p>{"Does it make important information easier to find?"}</p>
+<p>{"Does it reduce duplication?"}</p>
+<p>{"Does it clarify responsibility?"}</p>
+<p>{"Does it help clinicians recognize meaningful changes?"}</p>
+<p>{"Does it make the safest action easier to perform?"}</p>
+<p>{"Does it free up attention for the parts of healthcare that genuinely require human judgment?"}</p>
+<p>{"Those seem like better measures of progress than the number of features a system contains."}</p>
+<h3>{"The Part That Doesn't Fit the Analogy"}</h3>
+<p>{"There's a limit to comparing hospitals with computers."}</p>
+<p>{"And it's an important one."}</p>
+<p>{"Patients aren't data structures."}</p>
+<p>{"Nurses aren't software processes."}</p>
+<p>{"Clinical judgment isn't simply an algorithm."}</p>
+<p>{"A hospital is not a deterministic machine where identical inputs always produce identical outputs."}</p>
+<p>{"Human physiology is complex."}</p>
+<p>{"People have different needs, values, histories, and responses to treatment."}</p>
+<p>{"Clinical decisions often involve uncertainty that cannot be eliminated by collecting more information."}</p>
+<p>{"And some of the most important parts of healthcare are difficult to quantify."}</p>
+<p>{"Reassuring a frightened patient."}</p>
+<p>{"Recognizing that a family member doesn't understand what's happening."}</p>
+<p>{"Noticing a subtle change in someone's behavior."}</p>
+<p>{"Helping a person make a difficult decision."}</p>
+<p>{"Being present when there isn't anything left to fix."}</p>
+<p>{"These aren't problems that can be solved by optimizing data transfer."}</p>
+<p>{"They're fundamental parts of caring for people."}</p>
+<p>{"So the computer analogy is useful, but incomplete."}</p>
+<p>{"It helps explain how information moves, how processes interact, and why coordination failures occur."}</p>
+<p>{"It doesn't explain everything that makes healthcare work."}</p>
+<p>{"And it shouldn't."}</p>
+<h3>{"What Building Software Has Changed About How I See Healthcare"}</h3>
+<p>{"I'm still very much a beginner in software development."}</p>
+<p>{"I don't pretend to understand all the complexities of designing large distributed systems."}</p>
+<p>{"But learning how software is built has given me a new vocabulary for problems I've encountered throughout my nursing career."}</p>
+<p>{"Things I previously thought of as frustrating workflows now look like interface design problems."}</p>
+<p>{"Repeated documentation looks like unnecessary duplication."}</p>
+<p>{"Unclear handoffs look like poorly defined boundaries between components."}</p>
+<p>{"Communication delays look like coordination failures."}</p>
+<p>{"Workarounds look like evidence of accumulated operational debt."}</p>
+<p>{"And the experienced nurse who somehow keeps everything moving?"}</p>
+<p>{"That person looks a lot like the human integration layer holding an imperfect system together."}</p>
+<p>{"I find that perspective fascinating."}</p>
+<p>{"Because it suggests that some of healthcare's most persistent problems aren't exclusively medical problems."}</p>
+<p>{"They're problems of information architecture, system design, human factors, communication, and organizational complexity."}</p>
+<p>{"Those are areas where healthcare and software engineering have a great deal to learn from each other."}</p>
+<p>{"I don't know exactly where my interest in software development will lead."}</p>
+<p>{"Maybe I'll build useful healthcare tools."}</p>
+<p>{"Maybe I'll create educational resources."}</p>
+<p>{"Maybe I'll continue making websites and experimenting with technology simply because I enjoy it."}</p>
+<p>{"But I already know that learning something outside my profession has changed how I understand the profession I've spent years practicing."}</p>
+<p>{"And that's been one of the most unexpected rewards of starting something new."}</p>
+<h3>{"The Most Important Component"}</h3>
+<p>{"If a hospital really is a kind of enormous distributed computer, it's one of the strangest ever constructed."}</p>
+<p>{"Its components are spread across buildings and departments."}</p>
+<p>{"Its information moves through software, machines, conversations, and handwritten notes."}</p>
+<p>{"Its operating conditions change constantly."}</p>
+<p>{"Its users are simultaneously operators, decision-makers, and participants in the system."}</p>
+<p>{"And its most important outputs cannot always be reduced to numbers."}</p>
+<p>{"But what makes it truly unusual is that the people operating it are also part of its resilience."}</p>
+<p>{"When information is incomplete, they investigate."}</p>
+<p>{"When systems disagree, they reconcile."}</p>
+<p>{"When processes fail, they adapt."}</p>
+<p>{"When the unexpected happens, they make judgments that no workflow can fully anticipate."}</p>
+<p>{"The hospital's technology is extraordinary."}</p>
+<p>{"But the technology alone doesn't make the hospital function."}</p>
+<p>{"The people do."}</p>
+<p>{"And maybe that's the most important lesson software engineering can teach us about healthcare."}</p>
+<p><strong>{"The best systems aren't the ones that demand the most from the people using them. They're the ones that make it easier for those people to do their best work."}</strong></p>
+<hr />
+<p><em>{"I'm a critical care nurse learning to build software. Simpyll is where I explore the unexpected connections between those two worlds—and whatever else catches my curiosity along the way."}</em></p>
