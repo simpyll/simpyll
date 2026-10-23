@@ -70,6 +70,8 @@ for (const theme of ['light', 'dark']) test(`discovery accessibility, keyboard, 
   expect(afterControls.height).toBe(controls!.height)
   await page.getByText('Categories', { exact: true }).click()
   await scan(page, info, `discovery-filters-${theme}`)
+  await page.getByText('Tags', { exact: true }).click()
+  await expect(page.getByRole('checkbox', { name: 'CS50P', exact: true })).toBeVisible()
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
 })
 

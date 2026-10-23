@@ -600,3 +600,4 @@ main { overflow-wrap: anywhere; }
 
 .discovery-control-heading { display: flex; align-items: center; justify-content: space-between; min-height: 2.75rem; gap: 1rem; }
 .discovery-control-heading button { min-height: 2.75rem; font-size: .875rem; }
+.discovery-filter:nth-child(2) fieldset { left: auto; right: 0; }
