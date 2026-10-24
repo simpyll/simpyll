@@ -23,7 +23,7 @@ export function SEO({
 }: SEOProps) {
   const pageTitle = `${title} | ${siteConfig.name}`
   const canonicalUrl = getSiteUrl(path)
-  const imageUrl = image ? getSiteUrl(image) : undefined
+  const imageUrl = getSiteUrl(image || '/og-image.png')
 
   return (
     <Helmet>
@@ -58,7 +58,7 @@ export function SEO({
 
       <meta
         name="twitter:card"
-        content={imageUrl ? 'summary_large_image' : 'summary'}
+        content="summary_large_image"
       />
       <meta name="twitter:title" content={pageTitle} />
       <meta
