@@ -100,12 +100,12 @@ test('Pages artifact includes the custom domain and root-relative assets', async
   }
 })
 
-test('article heading permalinks are native prerendered anchors with separate copy actions', async () => {
+test('article headings retain static fragment targets without toolbars', async () => {
   const { readFile } = await import('node:fs/promises')
   const html = await readFile('dist/blog/hello-world/index.html', 'utf8')
   assert.match(html, /id="why-i-built-this"/)
-  assert.match(html, /href="#why-i-built-this" aria-label="Link to Why I Built This section"/)
-  assert.match(html, /aria-label="Copy link to Why I Built This section"/)
+  assert.match(html, /href="#why-i-built-this"/)
+  assert.doesNotMatch(html, /heading-actions|heading-feedback|heading-permalink|Copy link to|Section URL for/)
   assert.match(html, /href="#whats-next"/)
 })
 
