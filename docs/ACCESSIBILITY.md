@@ -291,3 +291,17 @@ scripts/notion/*.test.mjs scripts/smoke/*.test.mjs scripts/images/*.test.mjs`):
 to launch missing Chromium (infrastructure, not suppressed). Accessibility,
 reflow/keyboard and full browser results require successful GitHub CI before
 review readiness. No deployment or automatic merge is authorized by this PR.
+
+
+CI retest: [Validate Simpyll run 40135762399](https://github.com/simpyll/simpyll/actions/runs/40135762399)
+on implementation SHA `e9eb97f5659d3745bdae57f7e98ddc969241f34c` passed all
+stages on Ubuntu 24.04.5: production build/TypeScript, lint, metadata/content,
+unit/smoke, Notion build, rich MDX and full browser gate. The browser gate reports
+**476 passed, six skipped** (existing isolated-fixture cases; dedicated fixture
+gates passed separately), zero failed. Engines installed: Chromium 156,
+Firefox 157.0 and WebKit 27.2; desktop plus Pixel 7 Chromium contexts.
+Both themes, new route coverage, keyboard filter-removal restoration and
+320/768/1280 text-spacing/reflow scans passed. Normal/reduced-motion, route/hash,
+404 hydration, navigation, search, footer and theme regressions also passed.
+No manual AT/device/zoom result is implied. Subsequent commits update audit
+records only; their current CI status is available on PR #132.
