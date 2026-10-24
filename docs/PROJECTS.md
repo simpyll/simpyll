@@ -42,7 +42,7 @@ This is an **illustrative example**, not an actual portfolio entry:
 
 All fields shown before `startDate` are required, except `tags`. Arrays may be
 empty, including technologies/links. Never guess a stack, public URL, metric or
-completion date. The approved initial inventory includes 21 projects; only Simpyll has a verified software stack.
+completion date. The approved initial inventory includes 21 projects; only Simpyll has a verified application stack; AI Engineering keeps technologies empty to avoid presenting future learning targets as implemented software.
 
 Keep `id` stable when changing the public slug. IDs and slugs are unique across
 **all** visibility states, 1–100 lowercase alphanumeric characters in single
@@ -203,7 +203,7 @@ Set `caseStudy.contentKey` on a public project only when a complete editorial fi
 exists in `content/case-studies/<contentKey>.json`. The project generator validates and publishes only associated public editorial
 content into an ignored generated manifest. Do not copy title, status,
 stack or canonical links into editorial content. The layout reads them from the
-validated metadata. Only Simpyll is published in this increment.
+validated metadata. Simpyll and AI Engineering are published.
 
 Each study supplies `sections` (unique hyphenated `id`, `title`, nonempty
 `paragraphs`). `timeline` is optional; entries use verified ISO date, title, text
@@ -263,3 +263,21 @@ Prerendering, sitemap and deployment smoke routes consume the same derived route
 list. No Hub, Board/Grid, router, sitemap or prerender edits are needed for a new
 study. The isolated production-build test adds a second fictional study only in
 a temporary checkout and verifies its Hub link, HTML and sitemap entry.
+
+### AI Engineering editorial evidence (October 24, 2026)
+
+The second increment uses `ai-engineering.json` with the existing section, flow,
+and source-link schema. No route, layout, or Hub special case is required. This
+also demonstrates a long-running learning initiative rather than a finished app.
+The Simpyll editorial record is unchanged; #27 remains partial and open.
+
+Source: `simpyll/ai-engineering-learning` main at
+`96ec89ee962210bbfed6c2989a1e37c3173272a1`. Reviewed README, NOW, curriculum.json,
+docs 01–05 and 08–12, full weekly assignments, tracking, templates, GitHub forms
+and validation workflow, and Python render/validation scripts. The current-focus
+snapshot is explicitly dated and links to live NOW.md; it has no runtime API.
+Tracking has no assessed competency evidence. Live issues #1–#4 and S0/S1
+milestone associations contradict the scaffold's unpublished/no-issues prose.
+Issue #1 checks the script-building task but leaves acceptance/evidence pending.
+Board configuration could not be verified; do not claim a configured board.
+Refresh the dated snapshot against NOW, tracking, and issues when editing it.

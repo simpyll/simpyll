@@ -18,7 +18,7 @@ for (const theme of ['light', 'dark'] as const) {
       await page.emulateMedia({ colorScheme: theme })
       await page.addInitScript(theme => localStorage.setItem('simpyll-theme', theme), theme)
     })
-    for (const route of ['/', '/blog', '/about', '/projects', ...articles, '/accessibility-missing-page']) {
+    for (const route of ['/', '/blog', '/about', '/projects', '/projects/ai-engineering', ...articles, '/accessibility-missing-page']) {
       test(`hydrated route ${route}`, async ({ page }, info) => {
         await page.goto(route)
         await ready(page)

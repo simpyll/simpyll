@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { caseStudyRoutes } from './project-routes.mjs'
 test('only published case studies produce routes and meaningful static SEO',async()=>{
- assert.deepEqual(await caseStudyRoutes(),['/projects/simpyll'])
+ assert.deepEqual(await caseStudyRoutes(),['/projects/simpyll','/projects/ai-engineering'])
  const html=await readFile('dist/projects/simpyll/index.html','utf8')
  for(const text of ['A place to build in public','In Progress','Active','Static rendering and hydration','https://simpyll.com/projects/simpyll','og:image']) assert.ok(html.includes(text),text)
  assert.ok((await readFile('public/sitemap.xml','utf8')).includes('https://simpyll.com/projects/simpyll'))

@@ -27,3 +27,43 @@ test('case study direct load, canonical status, accessibility and board navigati
   await page.goto('/projects/not-a-project')
   await expect(page.locator('meta[name=robots]')).toHaveAttribute('content',/noindex/)
 })
+
+for (const theme of ['light','dark'] as const) test(`AI Engineering ${theme}: direct route, workflow, keyboard and hydration`, async ({page}, testInfo) => {
+ const errors:string[]=[]
+ page.on('pageerror',e=>errors.push(e.message))
+ page.on('console',m=>{if(m.type()==='error')errors.push(m.text())})
+ await page.emulateMedia({colorScheme:theme})
+ await page.addInitScript(theme=>localStorage.setItem('simpyll-theme',theme),theme)
+ await page.goto('/projects/ai-engineering')
+ await expect(page.locator('html')).toHaveAttribute('data-theme',theme)
+ await expect(page.locator('h1')).toHaveText('AI Engineering.')
+ await expect(page.locator('#workflow').locator('..').locator('ol > li')).toHaveCount(8)
+ await expect(page.locator('#current-focus').locator('..')).toContainText('October 24, 2026')
+ await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href','https://simpyll.com/projects/ai-engineering')
+ const start=page.locator('#start-here').locator('..').getByRole('link',{name:'1. See the current assignment — NOW.md'})
+ await expect(start).toHaveAttribute('href','https://github.com/simpyll/ai-engineering-learning/blob/main/NOW.md')
+ await page.locator('main').focus()
+ for(let i=0;i<40 && !await start.evaluate(e=>e===document.activeElement);i++)await page.keyboard.press('Tab')
+ await expect(start).toBeFocused()
+ expect(await start.evaluate(e=>getComputedStyle(e).outlineStyle)).not.toBe('none')
+ expect((await new AxeBuilder({page}).analyze()).violations).toEqual([])
+ for(const width of [320,390,1280]) {
+  await page.setViewportSize({width,height:900})
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true)
+ }
+ await page.screenshot({path:testInfo.outputPath(`ai-engineering-${theme}.png`),fullPage:true})
+ await page.getByRole('link',{name:'← Explore the Project Lab'}).click()
+ await page.getByRole('link',{name:'View Case Study for AI Engineering',exact:true}).click()
+ await expect(page.locator('h1')).toHaveText('AI Engineering.')
+ expect(errors).toEqual([])
+})
+
+test('AI Engineering is readable and linked without JavaScript',async({browser})=>{
+ const context=await browser.newContext({javaScriptEnabled:false})
+ const page=await context.newPage()
+ await page.goto('/projects')
+ await page.getByRole('link',{name:'View Case Study for AI Engineering',exact:true}).click()
+ await expect(page.locator('h1')).toHaveText('AI Engineering.')
+ await expect(page.locator('#workflow').locator('..')).toContainText('Record evidence')
+ await context.close()
+})
