@@ -18,7 +18,7 @@ export interface Project {
   subtitle?: string; description?: string; category?: string; tags?: string[]; role?: string
   startDate?: string; completionDate?: string; updatedDate?: string; seoDescription?: string
   cover?: ProjectImage; screenshots?: ProjectImage[]; relatedArticles?: string[]
-  caseStudy?: { contentKey: string }
+  caseStudy?: { contentKey: string; visibility?: 'public' | 'draft' | 'private' }
 }
 export type ProjectInput = Omit<Project, 'links'> & { links: Omit<ProjectLink, 'external'>[] }
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
@@ -116,7 +116,7 @@ export function validateProjects(input: unknown, assetExists?: (src: string) => 
       if (!Array.isArray(p.screenshots)) error('screenshots', 'must be an array')
       else p.screenshots.forEach((v,i) => image(v, `screenshots[${i}]`))
     }
-    if (p.caseStudy !== undefined && (!record(p.caseStudy) || Object.keys(p.caseStudy).some(k => k !== 'contentKey') || typeof p.caseStudy.contentKey !== 'string' || !slugPattern.test(p.caseStudy.contentKey))) error('caseStudy', 'requires a hyphenated contentKey; it does not enable a route')
+    if (p.caseStudy !== undefined && (!record(p.caseStudy) || Object.keys(p.caseStudy).some(k => !['contentKey','visibility'].includes(k)) || typeof p.caseStudy.contentKey !== 'string' || !slugPattern.test(p.caseStudy.contentKey) || (p.caseStudy.visibility !== undefined && !['public','draft','private'].includes(String(p.caseStudy.visibility))))) error('caseStudy', 'requires a hyphenated contentKey; it does not enable a route')
     // Only return typed records after the entire collection validates.
     projects.push(p as unknown as Project)
   })
@@ -132,4 +132,10 @@ export function createProjectSelectors(projects: readonly Project[]) {
     getProjectBySlug: (slug: string) => publicProjects.find(p => p.slug === slug),
     getProjectById: (id: string) => publicProjects.find(p => p.id === id),
   }
+}
+
+// Input records are validated before this shared publication/route contract is used.
+export function getCaseStudyPath(project: Project): string | undefined {
+  return project.visibility === 'public' && project.caseStudy && (project.caseStudy.visibility ?? 'public') === 'public'
+    ? `/projects/${project.slug}` : undefined
 }

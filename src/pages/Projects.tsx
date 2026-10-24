@@ -1,7 +1,7 @@
 import { useState, useSyncExternalStore } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { SEO } from '../components/SEO'
-import { getPublicProjects, technologies, workflowStages, lifecycleStatuses, type Project } from '../projects'
+import { getCaseStudyPath, getPublicProjects, technologies, workflowStages, lifecycleStatuses, type Project } from '../projects'
 import './projects.css'
 
 const projects = getPublicProjects()
@@ -10,15 +10,17 @@ const types = [...new Set(projects.map(p => p.projectType).filter(Boolean))].sor
 const usedTechnologies = Object.entries(technologies).filter(([id]) => projects.some(p => p.technologies.includes(id as keyof typeof technologies)))
 const subscribe = () => () => {}
 
-function ProjectCard({ project: p }: { project: Project }) {
+export function ProjectCard({ project: p }: { project: Project }) {
+  const caseStudyPath = getCaseStudyPath(p)
   return <article className="lab-card" data-project={p.id}>
     <p className="lab-type">{p.projectType}</p>
-    <h3>{p.caseStudy ? <Link to={`/projects/${p.slug}`}>{p.title}</Link> : p.title}</h3>
+    <h3>{p.title}</h3>
     <p className="lab-summary">{p.summary}</p>
     <div className="lab-tags"><span>{p.workflowStage && workflowStages[p.workflowStage]}</span><span>Lifecycle: {p.lifecycleStatus && lifecycleStatuses[p.lifecycleStatus]}</span></div>
     {p.technologies.length > 0 && <ul className="lab-tags" aria-label="Technologies">{p.technologies.map(t => <li key={t}>{technologies[t]}</li>)}</ul>}
     {p.nextMilestone && <p className="lab-summary">Next: {p.nextMilestone}</p>}
     {p.description && <details><summary>More about {p.title}</summary><p>{p.description}</p></details>}
+    {caseStudyPath && <div className="lab-links"><Link className="lab-case-study" to={caseStudyPath} aria-label={`View Case Study for ${p.title}`}>View Case Study <span aria-hidden="true">→</span></Link></div>}
     {p.links.length > 0 && <div className="lab-links">{p.links.map(link => <a key={link.url} href={link.url}>{link.label} <span aria-hidden="true">↗</span></a>)}</div>}
   </article>
 }
@@ -74,7 +76,7 @@ export function Projects() {
             </section>
           })}
         </div>
-      </> : <section aria-label="Project grid" className="lab-grid">{results.map(p => <ProjectCard key={p.id} project={p} />)}</section>}
+      </> : <section aria-label="Project grid" className="lab-grid"><h2 className="sr-only">Project results</h2>{results.map(p => <ProjectCard key={p.id} project={p} />)}</section>}
       {!results.length && <p className="lab-no-results">No projects match. Try another search or reset the filters.</p>}
       <p className="lab-note">Stages reflect my current priorities, not release availability. Healthcare ideas are educational software concepts, not released clinical tools.</p>
       <noscript><style>{'.lab-controls,.lab-mobile-selector,.lab-more{display:none!important}.lab-board{display:block!important}.lab-column{display:block!important;margin-bottom:2rem}'}</style></noscript>

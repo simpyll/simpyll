@@ -391,3 +391,6 @@
 
 }
 
+
+.lab-case-study { text-decoration:underline; text-underline-offset:.25em; font-weight:600; }
+.lab-case-study:hover { text-decoration-thickness:2px; }

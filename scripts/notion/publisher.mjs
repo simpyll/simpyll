@@ -137,7 +137,7 @@ export async function readBlocks(api, parent, depth = 0) {
   return blocks.filter(block => !block.in_trash)
 }
 
-export async function convertBlocks(blocks, image) {
+export async function convertBlocks(blocks, image, headingStack = []) {
   const output = []
   let list = null
   for (const block of blocks) {
@@ -161,12 +161,21 @@ export async function convertBlocks(blocks, image) {
       output.push(`<table>${data.has_column_header && rows.length ? `<thead>${renderRow(rows[0], 0)}</thead>` : ''}<tbody>${rows.slice(data.has_column_header ? 1 : 0).map((row, i) => renderRow(row, i + (data.has_column_header ? 1 : 0))).join('')}</tbody></table>`)
       continue
     }
+    // The page owns h1. Preserve authored nesting without skipped heading levels,
+    // even when an author starts with Notion Heading 2/3 or skips a rank.
+    let headingLevel
+    if (/^heading_[123]$/.test(type)) {
+      const rank = Number(type.at(-1))
+      while (headingStack.length && headingStack.at(-1).rank >= rank) headingStack.pop()
+      headingLevel = (headingStack.at(-1)?.level ?? 1) + 1
+      headingStack.push({ rank, level: headingLevel })
+    }
     const text = richText(data.rich_text)
-    const children = block.children?.length ? await convertBlocks(block.children, image) : ''
+    const children = block.children?.length ? await convertBlocks(block.children, image, headingStack) : ''
     if (current) output.push(`<li>${text}${children}</li>`)
     else if (type === 'paragraph') output.push(`<p>${text}</p>${children}`)
     else if (/^heading_[123]$/.test(type)) {
-      const level = Number(type.at(-1)) + 1 // Page template owns H1.
+      const level = headingLevel
       output.push(`<h${level}>${text}</h${level}>${children}`)
     } else if (type === 'callout') output.push(`<Callout variant="note"><p>${text}</p>${children}</Callout>`)
     else if (type === 'quote') output.push(`<blockquote><p>${text}</p>${children}</blockquote>`)

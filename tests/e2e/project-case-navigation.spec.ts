@@ -1,0 +1,52 @@
+import { test, expect } from '@playwright/test'
+import AxeBuilder from '@axe-core/playwright'
+
+for (const view of ['board', 'grid']) test(`${view}: case study navigation, controls and history`, async ({ page }) => {
+  const errors: string[] = []
+  page.on('pageerror', e => errors.push(e.message))
+  page.on('console', m => { if (m.type() === 'error') errors.push(m.text()) })
+  const url = `/projects?view=${view}&stage=in-progress&q=simpyll`
+  await page.goto(url)
+  await expect(page.getByLabel('Search projects')).toHaveValue('simpyll')
+  const card = page.locator('[data-project="simpyll"]')
+  const link = card.getByRole('link', { name: 'View Case Study for Simpyll' })
+  await expect(link).toHaveAttribute('href', '/projects/simpyll')
+  await expect(card.locator('a[href="/projects/simpyll"]')).toHaveCount(1)
+  await expect(card.locator('a a, button button')).toHaveCount(0)
+  await expect(card.getByRole('link', { name: /GitHub/ })).toHaveAttribute('href', 'https://github.com/simpyll/simpyll')
+  expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(44)
+  // Reach the destination through native keyboard order, without programmatic link focus.
+  await page.getByRole('main').focus()
+  for (let i = 0; i < 30 && !await link.evaluate(el => el === document.activeElement); i++) await page.keyboard.press('Tab')
+  await expect(link).toBeFocused()
+  expect(await link.evaluate(el => getComputedStyle(el).outlineStyle)).not.toBe('none')
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+  await page.keyboard.press('Enter')
+  await expect(page).toHaveURL(/\/projects\/simpyll$/)
+  await expect(page.locator('h1')).toHaveText('Simpyll.')
+  await page.goBack()
+  await expect(page).toHaveURL(url)
+  await expect(page.getByLabel('Search projects')).toHaveValue('simpyll')
+  await expect(page.getByLabel('Workflow stage', { exact: true })).toHaveValue('in-progress')
+  await expect(page.getByRole('button', { name: view === 'grid' ? 'Grid' : 'Board', exact: true })).toHaveAttribute('aria-pressed', 'true')
+  await page.goForward()
+  await expect(page).toHaveURL(/\/projects\/simpyll$/)
+  await page.reload()
+  await expect(page.getByRole('article', { name: 'Simpyll case study' })).toContainText('A place to build in public')
+  expect(errors).toEqual([])
+  await page.goto('/projects?view=grid')
+  await expect(page.locator('[data-project="ai-engineering"]')).toHaveCount(1)
+  await expect(page.locator('[data-project="ai-engineering"] a[href^="/projects/"]')).toHaveCount(0)
+})
+
+test('native no-JavaScript case study navigation and trailing slash', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false })
+  const page = await context.newPage()
+  await page.goto('/projects')
+  await page.getByRole('link', { name: 'View Case Study for Simpyll' }).click()
+  await expect(page.locator('h1')).toHaveText('Simpyll.')
+  await page.goto('/projects/simpyll/')
+  await expect(page.getByRole('article', { name: 'Simpyll case study' })).toContainText('A place to build in public')
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://simpyll.com/projects/simpyll')
+  await context.close()
+})

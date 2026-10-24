@@ -32,10 +32,10 @@ async function expectNoHorizontalOverflow(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
 }
 
-async function tabTo(page: Page, target: ReturnType<Page['getByRole']>) {
+async function tabTo(page: Page, target: ReturnType<Page['getByRole']>, reverse = false) {
   // A bounded real Tab sequence detects controls removed from keyboard order.
   for (let index = 0; index < 40; index++) {
-    await page.keyboard.press('Tab')
+    await page.keyboard.press(reverse ? 'Shift+Tab' : 'Tab')
     if (await target.evaluate(element => element === document.activeElement)) return
   }
   await expect(target).toBeFocused()
@@ -162,11 +162,16 @@ test('keyboard skip link, primary navigation and journal controls are usable', a
   await tabTo(page, page.getByRole('link', { name: 'Read the learning journal' }))
   await page.keyboard.press('Enter')
   await expect(page).toHaveURL('/blog')
-  const article = page.getByRole('link', { name: /Hello, World/ })
+  // Exercise the current journal inventory instead of a growing Tab path to an old post.
+  const article = page.locator('main article h2 a').first()
+  const articlePath = await article.getAttribute('href')
+  expect(articlePath).toMatch(/^\/blog\/[a-z0-9-]+$/)
   await tabTo(page, article)
   await page.keyboard.press('Enter')
-  await expect(page).toHaveURL('/blog/hello-world')
-  await tabTo(page, page.getByRole('link', { name: 'Back to journal' }))
+  await expect(page).toHaveURL(articlePath!)
+  // Route navigation focuses the article h1; the return link precedes it.
+  await expect(page.getByRole('heading', { level: 1 })).toBeFocused()
+  await tabTo(page, page.getByRole('link', { name: 'Back to journal' }), true)
   await page.keyboard.press('Enter')
   await expect(page).toHaveURL('/blog')
 })
