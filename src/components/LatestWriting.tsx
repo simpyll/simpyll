@@ -10,23 +10,24 @@ export function LatestWriting() {
   return (
     <section
       id="writing"
-      className="scroll-mt-24 border-t border-outline py-24 sm:py-32"
+      aria-labelledby="writing-title"
+      className="scroll-mt-24 border-t border-outline py-16 sm:py-20"
     >
       <Container>
-        <div className="mb-12 flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+        <div className="mb-8 flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <div>
             <p className="mb-4 text-xs font-medium uppercase tracking-eyebrow text-accent">
-              Notes from the learning process
+              02 / Recent writing
             </p>
 
-            <h2 className="font-display text-4xl font-semibold tracking-heading sm:text-5xl">
+            <h2 id="writing-title" className="font-display text-3xl font-semibold tracking-heading sm:text-4xl">
               Learning journal<span className="text-accent">.</span>
             </h2>
           </div>
 
           <Link
             to="/blog"
-            className="group inline-flex items-center gap-3 text-sm font-medium text-accent ui-link-feedback"
+            className="group inline-flex min-h-11 items-center gap-3 text-sm font-medium text-accent ui-link-feedback"
           >
             Read the journal
             <span aria-hidden="true">↗</span>
