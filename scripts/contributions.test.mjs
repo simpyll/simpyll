@@ -18,8 +18,9 @@ test('contribution resolver uses authoritative public sources and safe fallbacks
       } else assert.equal(url.pathname, `/simpyll/simpyll/edit/main/${post.sourcePath}`)
     }
     assert.ok(resolve('/projects/simpyll').href.endsWith('/content/case-studies/simpyll.json'))
+    assert.ok(resolve('/projects/ai-engineering').href.endsWith('/content/case-studies/ai-engineering.json'))
     for (const path of ['/', '/about', '/blog', '/projects', '/explore']) assert.ok(resolve(path).href.includes('/edit/main/src/'))
-    for (const path of ['/missing', '/blog/missing', '/projects/missing', '/projects/ai-engineering']) {
+    for (const path of ['/missing', '/blog/missing', '/projects/missing']) {
       const url = new URL(resolve(path).href)
       assert.equal(url.pathname, '/simpyll/simpyll/issues/new')
       assert.equal(url.searchParams.get('page-url'), `https://simpyll.com${path}`)

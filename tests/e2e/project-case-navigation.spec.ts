@@ -36,7 +36,7 @@ for (const view of ['board', 'grid']) test(`${view}: case study navigation, cont
   expect(errors).toEqual([])
   await page.goto('/projects?view=grid')
   await expect(page.locator('[data-project="ai-engineering"]')).toHaveCount(1)
-  await expect(page.locator('[data-project="ai-engineering"] a[href^="/projects/"]')).toHaveCount(0)
+  await expect(page.locator('[data-project="medical-calculators"] a[href^="/projects/"]')).toHaveCount(0)
 })
 
 test('native no-JavaScript case study navigation and trailing slash', async ({ browser }) => {

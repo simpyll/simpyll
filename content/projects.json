@@ -44,18 +44,29 @@
     "id": "ai-engineering",
     "slug": "ai-engineering",
     "title": "AI Engineering",
-    "summary": "An ongoing exploration of AI engineering, software development, automation, intelligent applications, and practical engineering workflows. An active learning initiative.",
+    "summary": "A long-term, project-based learning initiative building software, mathematics, data, and systems foundations for reliable AI applications.",
     "projectType": "Learning / Engineering",
     "workflowStage": "in-progress",
     "lifecycleStatus": "active",
     "visibility": "public",
     "technologies": [],
-    "links": [],
+    "links": [
+      {
+        "kind": "repository",
+        "label": "AI Engineering learning repository",
+        "url": "https://github.com/simpyll/ai-engineering-learning"
+      }
+    ],
     "featured": {
       "enabled": true,
       "order": 2
     },
-    "order": 2
+    "order": 2,
+    "subtitle": "Learning to build intelligent systems, one project at a time.",
+    "seoDescription": "Explore a five-hour weekly AI engineering learning workflow: start with NOW.md, build the assigned deliverable, assess understanding, and record evidence.",
+    "caseStudy": {
+      "contentKey": "ai-engineering"
+    }
   },
   {
     "id": "rntonp-database",
