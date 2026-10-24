@@ -13,9 +13,16 @@ test('editorial headings stay clean through hover, keyboard and theme changes', 
   await expect(removed).toHaveCount(0)
   await heading.hover()
   await expect(removed).toHaveCount(0)
-  await heading.focus()
+  // Plain headings are not Tab stops. Use the real TOC navigation path to
+  // establish fragment focus before checking the next keyboard destination.
+  const mobileToc = page.locator('.toc-mobile summary')
+  if (await mobileToc.isVisible()) await mobileToc.click()
+  const toc = page.getByRole('navigation', { name: 'On this page', exact: true }).filter({ visible: true })
+  await toc.locator('a[href="#why-i-built-this"]').focus()
   await page.keyboard.press('Enter')
+  await expect(heading).toBeFocused()
   await page.keyboard.press('Tab')
+  await expect(page.locator('.skip-link')).not.toBeFocused()
   await expect(removed).toHaveCount(0)
   for (const theme of ['light', 'dark']) {
     await page.evaluate(theme => document.documentElement.dataset.theme = theme, theme)
