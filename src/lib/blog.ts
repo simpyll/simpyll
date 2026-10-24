@@ -17,6 +17,7 @@ export type ArticleHeading = { id: string; title: string; depth: 2 | 3 }
 
 export type BlogPost = {
   slug: string
+  sourcePath: string
   metadata: BlogPostMetadata
   headings: ArticleHeading[]
   Content: ComponentType
@@ -42,6 +43,7 @@ export const posts: BlogPost[] = Object.entries(modules)
 
     return {
       slug,
+      sourcePath: path.replace('../', 'src/'),
       metadata: module.metadata,
       Content: module.default,
       headings: module.headings,

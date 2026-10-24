@@ -111,7 +111,10 @@ for (const motion of ['reduce', 'no-preference'] as const) {
     await visibleFocus(page.getByRole('button', { name: 'Close search' }))
     await page.keyboard.press('Escape')
     await visibleFocus(page.getByRole('button', { name: 'Open search' }))
-    await tabTo(page, page.getByRole('contentinfo').getByRole('link', { name: 'Projects', exact: true }))
+    for (const name of ['GitHub', 'LinkedIn', 'X (Twitter)']) {
+      await tabTo(page, page.getByRole('contentinfo').getByRole('link', { name, exact: true }))
+    }
+    await tabTo(page, page.getByRole('contentinfo').getByRole('link', { name: 'Edit this page on GitHub' }))
   })
 }
 

@@ -1,0 +1,10 @@
+name: Bug report
+description: Report a reproducible site problem.
+body:
+  - type: textarea
+    id: details
+    attributes:
+      label: What happened?
+      description: Include the page URL, steps, expected result, browser and device.
+    validations:
+      required: true

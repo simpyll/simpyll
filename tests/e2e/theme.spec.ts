@@ -1,3 +1,4 @@
+import { destination } from './helpers/navigation'
 import { test, expect, type Page } from '@playwright/test'
 
 const key = 'simpyll-theme'
@@ -174,7 +175,7 @@ for (const system of ['light', 'dark'] as const) {
     await page.getByRole('button', { name: `Switch to ${next} theme` }).click()
     await expect(page.getByRole('button', { name: `Switch to ${system} theme` })).toBeVisible()
     expect(await page.evaluate(k => localStorage.getItem(k), key)).toBe(next)
-    await page.getByRole('contentinfo').getByRole('link', { name: 'Projects', exact: true }).click()
+    await (await destination(page, 'Projects')).click()
     await expect(page).toHaveURL(/\/projects\/?$/)
     await expect(page.locator('html')).toHaveAttribute('data-theme', next)
     await page.reload()
@@ -199,7 +200,7 @@ for (const system of ['light', 'dark'] as const) {
   }
 }
 
-test('legacy saved system follows OS and footer retains only its existing content', async ({ page }) => {
+test('legacy saved system follows OS without a footer theme control', async ({ page }) => {
   await page.addInitScript(k => localStorage.setItem(k, 'system'), key)
   await page.emulateMedia({ colorScheme: 'dark' })
   await page.goto('/')
@@ -209,9 +210,6 @@ test('legacy saved system follows OS and footer retains only its existing conten
   const footer = page.getByRole('contentinfo')
   await expect(footer.getByRole('button')).toHaveCount(0)
   await expect(footer.getByText(/theme/i)).toHaveCount(0)
-  await expect(footer.getByRole('link')).toHaveCount(2)
-  await expect(footer.getByRole('link', { name: 'Projects', exact: true })).toHaveAttribute('href', '/projects')
   await expect(footer.getByRole('link', { name: 'simpyll.' })).toHaveAttribute('href', '/')
-  await expect(footer).toContainText('Clinical roots. A learning mindset.')
   await expect(footer).toContainText(/© \d{4} Simpyll/)
 })

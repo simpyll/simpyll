@@ -51,6 +51,8 @@ export async function visibleFocus(control: Locator) {
 }
 
 export async function tabTo(page: Page, control: Locator, limit = 50) {
+  // Diagnose stale targets before entering a keyboard journey.
+  await expect(control, 'Keyboard target must exist exactly once').toHaveCount(1)
   for (let i = 0; i < limit; i++) {
     await page.keyboard.press('Tab')
     const focused = page.locator(':focus')

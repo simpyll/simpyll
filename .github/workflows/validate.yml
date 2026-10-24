@@ -27,7 +27,7 @@ jobs:
       - run: npm run build
       - run: node --test scripts/discovery.test.mjs
       - run: npm run lint
-      - run: node --test scripts/case-study.test.mjs scripts/prerender.test.mjs scripts/remark-heading-ids.test.mjs scripts/article-toc.test.mjs scripts/motion.test.mjs scripts/navigation.test.mjs
+      - run: node --test scripts/contributions.test.mjs scripts/case-study.test.mjs scripts/prerender.test.mjs scripts/remark-heading-ids.test.mjs scripts/article-toc.test.mjs scripts/motion.test.mjs scripts/navigation.test.mjs
 
       - name: Install Chromium for browser tests
         run: npx playwright install --with-deps chromium

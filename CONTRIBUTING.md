@@ -101,3 +101,21 @@ See [accessibility testing and manual audit](docs/ACCESSIBILITY.md) for axe rule
 configuration, keyboard contracts, failure diagnostics, and adding coverage.
 Accessibility tests are part of the existing required browser validation; automated
 results do not establish complete WCAG conformance.
+
+## Page corrections
+
+The footer links to the current page's canonical source or a prefilled content
+correction issue. Static composition maps to its page component; About maps to
+`src/content/profile.ts`, its canonical biography source. Published project
+studies map through validated `caseStudy.contentKey` to their editorial JSON.
+Blog paths come from the actual MDX glob, not a guessed URL. Articles marked
+with a Notion article identity use correction issues containing only the public
+URL and title: maintainers must apply accepted changes in Notion, then sync.
+Do not edit generated MDX for these articles; synchronization can overwrite it.
+Unknown routes also use correction issues, never fabricated file paths.
+No runtime GitHub API or private Notion identifier is needed for this flow.
+
+GitHub issues require an account. A verified contact destination for readers
+without GitHub accounts remains tracked in #83/#55; no email address is invented.
+The security template points to GitHub private vulnerability reporting, whose
+availability depends on repository settings; do not submit vulnerabilities publicly.
