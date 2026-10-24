@@ -210,8 +210,43 @@ of axe contrast violations. Main already fixes these contracts in `209f8a7`.
 `f942587` and `012ec8e` separately fix shared 404 hydration and distinguish
 expected missing-page HTTP status from application/asset errors. Do not duplicate
 those fixes, restore unwanted UI, or weaken assertions. The manifest-driven route
-coverage now reduces missed-page risk. Keep accessible-role/name selectors and
+coverage now reduces missed-page risk.
+
+Additional historical logs: job `120912644827` reports a real `heading-order`
+violation on `/blog/why-simpyll` (1.3.1/best-practice hierarchy), alongside a stale
+keyboard expectation that Hello World remained the first journal card. Job
+`120928686988` reports `target-size` on partially obscured theme/Home controls
+(2.5.8), with contrast listed as **incomplete**, not a proven contrast violation.
+The subsequent heading test uses real TOC navigation (`efb5ba1`) rather than
+artificial heading focus/scroll state. Retain full scans and assess actual
+occlusion whenever this recurs; do not label every axe failure a selector bug.
+
+Keep accessible-role/name selectors and
 update all affected journeys whenever shared UI changes.
+
+### Source-level contrast calculations
+
+Calculated WCAG relative luminance in Python from current `src/index.css` sRGB
+hex values, linearizing channels at 0.04045 and applying `(Lmax+.05)/(Lmin+.05)`.
+Each entry below is the minimum against canvas, surface and surface-hover.
+These are source calculations, not rendered pixel sampling or human visual tests.
+
+| Role | Dark minimum | Light minimum | Applicable threshold |
+| --- | --- | --- | --- |
+| Foreground | 15.12:1 | 13.01:1 | 4.5:1 |
+| Muted | 6.44:1 | 6.39:1 | 4.5:1 |
+| Subtle | 4.89:1 | 5.46:1 | 4.5:1 |
+| Accent / focus | 11.62:1 | 5.93:1 | 4.5:1 text; 3:1 applicable non-text |
+| Control outline | 3.41:1 | 3.66:1 | 3:1 |
+
+For the navigation's 92%-surface glass, conservatively composite its sRGB channels
+as `.92 * surface + .08 * backdrop`, testing black/white endpoint backdrops.
+Worst foreground/muted bounds are 13.58/5.78 in dark and 11.88/5.84 in light.
+This bounds those two text roles over arbitrary backdrops under that CSS blend;
+it does not evaluate all states, focus-ring geometry, transparency during motion,
+or browser rendering differences. Syntax comments use muted, keywords/titles
+accent and strings/numbers foreground on the opaque code surface. Actual visual
+contrast and incomplete axe findings still require the manual checks below.
 
 ### Manual evidence ledger and required follow-through
 
