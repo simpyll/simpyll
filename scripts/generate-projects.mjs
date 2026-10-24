@@ -2,7 +2,7 @@ import { validateCaseStudy } from './case-study-schema.mjs'
 import { readFile, writeFile, mkdir, realpath, stat, rm } from 'node:fs/promises'
 import { resolve, sep } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { validateProjects } from '../src/projects/schema.ts'
+import { validateProjects, getCaseStudyPath } from '../src/projects/schema.ts'
 export async function generateProjects(root = process.cwd()) {
   const output = resolve(root, 'src/generated/projects.json')
   await rm(output, { force: true })
@@ -21,13 +21,17 @@ export async function generateProjects(root = process.cwd()) {
   const result = validateProjects(input, src => assets.has(src))
   if (result.errors.length) throw new Error(result.errors.join('\n'))
   const studies = {}
-  for (const project of result.projects.filter(p => p.visibility === 'public' && p.caseStudy)) {
+  for (const project of result.projects.filter(p => getCaseStudyPath(p))) {
     const key = project.caseStudy.contentKey
     studies[key] = validateCaseStudy(JSON.parse(await readFile(resolve(root, `content/case-studies/${key}.json`), 'utf8')))
   }
   await mkdir(resolve(root, 'src/generated'), { recursive: true })
   await writeFile(editorialOutput, JSON.stringify(studies, null, 2) + '\n')
-  await writeFile(output, JSON.stringify(result.projects.filter(p => p.visibility === 'public'), null, 2) + '\n')
+  await writeFile(output, JSON.stringify(result.projects.filter(p => p.visibility === 'public').map(p => {
+    if (getCaseStudyPath(p)) return p
+    const { caseStudy: _unpublished, ...listed } = p
+    return listed
+  }), null, 2) + '\n')
   return result
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {

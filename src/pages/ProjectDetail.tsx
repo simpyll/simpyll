@@ -1,14 +1,14 @@
 import { Link, useParams } from 'react-router-dom'
 import { SEO } from '../components/SEO'
 import { Figure } from '../components/mdx/components'
-import { getProjectBySlug, lifecycleStatuses, technologies, workflowStages, type Project } from '../projects'
+import { getCaseStudyPath, getProjectBySlug, lifecycleStatuses, technologies, workflowStages, type Project } from '../projects'
 import { caseStudies, type CaseStudy } from '../projects/case-studies'
 import { NotFound } from './NotFound'
 import './project-detail.css'
 
 export function ProjectDetailLayout({ project: p, study }: { project: Project; study: CaseStudy }) {
   return <>
-    <SEO title={`${p.title} — Project case study`} description={p.seoDescription ?? p.summary} path={`/projects/${p.slug}`} image={p.cover?.src ?? (p.id === 'simpyll' ? '/images/simpyll-architecture.png' : undefined)} />
+    <SEO title={`${p.title} — Project case study`} description={p.seoDescription ?? p.summary} path={getCaseStudyPath(p)} image={p.cover?.src ?? (p.id === 'simpyll' ? '/images/simpyll-architecture.png' : undefined)} />
     <main id="main-content" tabIndex={-1} className="case-study bg-canvas text-foreground">
       <Link className="case-back" to="/projects">← Explore the Project Lab</Link>
       <header className="case-hero">
@@ -36,6 +36,6 @@ export function ProjectDetailLayout({ project: p, study }: { project: Project; s
 export function ProjectDetail() {
   const { slug = '' } = useParams()
   const project = getProjectBySlug(slug)
-  const study = project?.caseStudy && caseStudies[project.caseStudy.contentKey]
+  const study = project && getCaseStudyPath(project) && project.caseStudy && caseStudies[project.caseStudy.contentKey]
   return project && study ? <ProjectDetailLayout project={project} study={study} /> : <NotFound />
 }

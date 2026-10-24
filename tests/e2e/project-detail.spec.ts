@@ -19,7 +19,7 @@ test('case study direct load, canonical status, accessibility and board navigati
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true)
   }
   await page.getByRole('link',{name:'← Explore the Project Lab'}).click()
-  await page.getByRole('link',{name:'Simpyll',exact:true}).click()
+  await page.getByRole('link',{name:'View Simpyll case study',exact:true}).click()
   await expect(page).toHaveURL(/\/projects\/simpyll$/)
   await page.goBack()
   await expect(page).toHaveURL(/\/projects$/)

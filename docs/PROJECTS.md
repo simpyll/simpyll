@@ -48,7 +48,7 @@ Keep `id` stable when changing the public slug. IDs and slugs are unique across
 **all** visibility states, 1–100 lowercase alphanumeric characters in single
 hyphen-separated words. Reserved slugs are `new`, `edit`, `index`, `about`, `blog`,
 `explore`, `projects`, and `404`. Future published slug changes need #27's explicit
-route migration/redirect plan; this pipeline never creates routes or redirects.
+route migration/redirect plan; the metadata validator does not create redirects. Published case-study routes are generated as described below.
 
 Set `visibility` to `public` only for owner-approved content; `draft` and `private`
 are excluded even if featured. Public UI lookup functions never find hidden
@@ -83,8 +83,7 @@ normalized destinations. Consumers should use native same-tab anchors or the
 existing internal Router link patterns; explicit new-tab links need
 `noopener noreferrer` and accessible context. There is no implicit new tab.
 Availability/internal-route existence is not promised by structural validation:
-authors must link only to implemented destinations. Case-study association does
-not create a card URL. The Simpyll links and explicitly labeled existing RNtoNP website are owner-verified.
+authors must link only to implemented destinations. A validated public case-study association automatically creates a card destination. The Simpyll links and explicitly labeled existing RNtoNP website are owner-verified.
 
 Optional text fields: `subtitle`, `description`, `category`, `role`,
 `seoDescription`. Optional arrays: `tags`, `relatedArticles` (article slugs).
@@ -167,7 +166,7 @@ in server HTML. No-JavaScript CSS shows every stage and the remaining Ideas.
 Ideas initially shows four cards with explicit expansion; Grid shows the complete
 filtered collection. Empty stages have compact messages. No destinations means
 no link or clickable-card affordance. Optional descriptions use native details.
-No case-study route is generated: #27 must add real pages before linking them.
+Validated public case studies automatically gain a dedicated View Case Study link in the shared Board/Grid card. Titles remain plain text to avoid duplicate keyboard stops.
 
 Search matches title, summary, description, type, topic tags and technology labels.
 Type, technology, stage and lifecycle selectors use AND composition. Search uses
@@ -239,3 +238,28 @@ when publishing a case study. Case study publication is not project completion.
 - Timeline dates are commit dates. Installed lockfile versions inspected include
   React 19.2.8, Vite 8.3.4, Tailwind 4.3.3 and Motion 14.3.0; public prose uses
   technology names to avoid stale patch-version claims.
+
+### Publishing a new case study
+
+1. Add or update the stable project record in `content/projects.json`. Its unique
+   `slug` determines the URL; workflow stage and lifecycle do not affect publication.
+2. Write validated editorial sections in `content/case-studies/<contentKey>.json`.
+3. Set `caseStudy: { "contentKey": "<contentKey>" }` on the public project.
+   Association `visibility` optionally accepts `public`, `draft`, or `private`;
+   omitted means public for existing content. For an unpublished study on a
+   listed project, set association visibility to draft/private. Editorial files
+   without a public association are never imported. Project visibility also gates publication.
+4. Run `npm run validate:projects`, `npm run build`, `npm run test:projects`,
+   and `npx playwright test project-case-navigation project-detail project-lab`.
+
+`getCaseStudyPath` is the shared publication and canonical path helper used by
+Hub links, detail SEO and `project-routes.mjs`. The generated public manifest
+removes unpublished associations; the editorial manifest contains only validated
+publicly associated content. Missing or invalid public editorial files fail the
+build rather than creating broken links. Draft/private editorial need not be
+complete until publication. Existing schema validation still rejects malformed associations.
+
+Prerendering, sitemap and deployment smoke routes consume the same derived route
+list. No Hub, Board/Grid, router, sitemap or prerender edits are needed for a new
+study. The isolated production-build test adds a second fictional study only in
+a temporary checkout and verifies its Hub link, HTML and sitemap entry.
