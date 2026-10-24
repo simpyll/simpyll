@@ -2,10 +2,13 @@ name: Validate Simpyll
 on:
   pull_request:
     branches: [main]
+concurrency:
+  group: validate-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
-  validate:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -17,39 +20,121 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
-      - run: npm run test:projects
       - run: npm run test:redirects
       - run: npm run test:notion
       - run: npm run test:images
       - run: npm run test:content
       - run: npm run test:search
       - run: npm run test:smoke
-      - run: npm run build
-      - run: node --test scripts/discovery.test.mjs
+      - name: Restore image transformations
+        uses: actions/cache@v4
+        with:
+          path: public/images/optimized
+          key: images-${{ runner.os }}-${{ hashFiles('package-lock.json', 'scripts/images/**', 'scripts/publishing-media.mjs', 'src/content/blog/**', 'public/images/**') }}
+      - name: Build and validate production output
+        run: npm run build
+      - run: node --test scripts/ci-workflows.test.mjs scripts/discovery.test.mjs
       - run: npm run lint
       - run: node --test scripts/ai-engineering.test.mjs scripts/contributions.test.mjs scripts/case-study.test.mjs scripts/prerender.test.mjs scripts/remark-heading-ids.test.mjs scripts/article-toc.test.mjs scripts/motion.test.mjs scripts/navigation.test.mjs
 
-      - name: Install browsers for accessibility and browser tests
-        run: npx playwright install --with-deps chromium firefox webkit
-
-      - run: npm run test:notion:build
-
-      - name: Test rich MDX and Notion rendering
-        run: npm run test:mdx
-
-      - name: Enforce accessibility and browser regressions (desktop and mobile)
-        run: npm run test:e2e:built
-
-      - name: Upload browser test diagnostics and navigation screenshots
-        if: always()
+      - name: Record artifact revision
+        run: git rev-parse HEAD > ci-revision.txt
+      - name: Share this run's immutable production output
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-results
+          name: validated-build
+          retention-days: 1
+          include-hidden-files: true
+          path: |
+            ci-revision.txt
+            dist/
+            dist-server/
+            src/generated/
+            public/images/optimized/
+
+  browser:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: validated-build
+      - name: Verify artifact revision
+        run: test "$(cat ci-revision.txt)" = "$(git rev-parse HEAD)"
+      - uses: ./.github/actions/browsers
+      - name: Enforce all browser and accessibility projects
+        run: npm run test:e2e:built -- --shard=${{ matrix.shard }}/3
+      - name: Preserve browser failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results-${{ matrix.shard }}
+          retention-days: 14
+          if-no-files-found: ignore
+          path: |
+            playwright-report/
+            test-results/
+
+  fixtures:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: validated-build
+      - name: Verify artifact revision
+        run: test "$(cat ci-revision.txt)" = "$(git rev-parse HEAD)"
+      - uses: ./.github/actions/browsers
+        with:
+          browsers: chromium
+      - run: npm run test:projects
+      - run: npm run test:notion:build
+      - name: Test rich MDX and Notion rendering
+        run: npm run test:mdx
+      - name: Preserve fixture failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: publishing-fixture-results
+          retention-days: 14
+          if-no-files-found: ignore
           path: |
             playwright-report/
             test-results/
             artifacts/rich-content/
             artifacts/toc/
-            docs/discovery/
-          retention-days: 14
-          if-no-files-found: ignore
+
+  # Preserve the existing branch-protection context. Never let a failed or
+  # skipped dependency turn this required check green.
+  validate:
+    if: always()
+    needs: [build, browser, fixtures]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every validation tier
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          node -e 'const jobs = JSON.parse(process.env.RESULTS); for (const [name, job] of Object.entries(jobs)) { if (job.result !== "success") { console.error(name, job.result); process.exitCode = 1 } }'

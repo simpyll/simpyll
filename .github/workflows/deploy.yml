@@ -50,7 +50,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - run: npm run test:projects
       - run: npm run test:redirects
 
       - name: Test Notion publisher
@@ -78,14 +77,15 @@ jobs:
       - name: Build and prerender site
         run: npm run build
 
+      - run: npm run test:projects
+
       - name: Lint
         run: npm run lint
 
       - name: Validate prerendered HTML and SEO
         run: node --test scripts/contributions.test.mjs scripts/case-study.test.mjs scripts/prerender.test.mjs scripts/remark-heading-ids.test.mjs scripts/article-toc.test.mjs
 
-      - name: Install browsers for accessibility and browser tests
-        run: npx playwright install --with-deps chromium firefox webkit
+      - uses: ./.github/actions/browsers
 
       - run: npm run test:notion:build
 
@@ -163,8 +163,9 @@ jobs:
           path: expected-release
       - name: Verify public HTTP content after Pages deployment
         run: npm run smoke:http
-      - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+      - uses: ./.github/actions/browsers
+        with:
+          browsers: chromium
 
       - run: npm run test:notion:build
       - name: Verify hydrated production in Chromium

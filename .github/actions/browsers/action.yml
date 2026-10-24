@@ -1,0 +1,21 @@
+name: Install pinned Playwright browsers
+description: Cache binaries by OS, architecture and exact dependency lockfile; always install system libraries.
+inputs:
+  browsers:
+    description: Space-separated browser engines
+    default: chromium firefox webkit
+runs:
+  using: composite
+  steps:
+    - uses: actions/cache@v4
+      id: cache
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-${{ runner.os }}-${{ runner.arch }}-${{ inputs.browsers }}-${{ hashFiles('package-lock.json') }}
+    - name: Install browser system dependencies
+      shell: bash
+      run: npx playwright install-deps ${{ inputs.browsers }}
+    - name: Install browser binaries on cache miss
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: npx playwright install ${{ inputs.browsers }}
