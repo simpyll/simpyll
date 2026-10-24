@@ -41,3 +41,6 @@ the checked-out SHA, including Notion-generated commits. See
 retry limits, scheduled monitoring, diagnostics, limitations and the DNS/HTTPS
 runbook. Verification failures fail the Actions run without automatically
 rolling back a successfully published deployment.
+
+CI topology, required gates, caches and performance evidence are maintained in
+[CI performance and validation](CI.md).
