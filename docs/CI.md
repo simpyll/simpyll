@@ -4,7 +4,7 @@
 
 PRs and manual `Validate Simpyll` dispatches run `build` (production generation, TypeScript, lint, unit and output checks),
 then three independent `browser` shards and `fixtures` in parallel. Playwright's
-native sharding partitions the entire unchanged four-project inventory, with two
+native sharding partitions the entire seven-project inventory, with two
 workers per runner. Each shard owns one preview server. `fixtures` retains real
 project/Notion/rich-content builds and Chromium hydration/redirect journeys.
 These builds intentionally modify input content; they cannot reuse the production
@@ -45,6 +45,11 @@ restore those caches. PR jobs have contents:read, no secrets, no pull_request_ta
 and checkout does not persist credentials. Deployment permissions stay isolated.
 
 ## Test tiers and #77
+
+See [cross-browser commands and tiers](CROSS-BROWSER.md) for the expanded
+functional smoke projects, scheduled/manual extended matrix, diagnostics and iOS
+limitations. All pre-existing required coverage remains.
+
 
 Every PR and main build retains Chromium desktop/mobile full journeys and bounded
 Firefox/WebKit accessibility coverage, including both themes, keyboard, reflow,

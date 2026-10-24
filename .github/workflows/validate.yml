@@ -1,6 +1,13 @@
 name: Validate Simpyll
 on:
   workflow_dispatch:
+    inputs:
+      full_matrix:
+        description: Run extended portable journeys across all browser engines
+        type: boolean
+        default: true
+  schedule:
+    - cron: '23 7 * * 2'
   pull_request:
     branches: [main]
 concurrency:
@@ -77,6 +84,8 @@ jobs:
         run: test "$(cat ci-revision.txt)" = "$(git rev-parse HEAD)"
       - uses: ./.github/actions/browsers
       - name: Enforce all browser and accessibility projects
+        env:
+          PLAYWRIGHT_FULL_MATRIX: ${{ (github.event_name == 'schedule' || inputs.full_matrix) && '1' || '' }}
         run: npm run test:e2e:built -- --shard=${{ matrix.shard }}/3
       - name: Preserve browser failure diagnostics
         if: failure()

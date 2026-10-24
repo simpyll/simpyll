@@ -21,6 +21,8 @@
     "test": "npm run build && npm run test:images && node --test scripts/*.test.mjs scripts/notion/*.test.mjs && npm run test:smoke && npm run test:e2e:built",
     "test:e2e": "npm run build && npm run test:e2e:built",
     "test:e2e:built": "playwright test",
+    "test:e2e:smoke": "playwright test cross-browser",
+    "test:e2e:full": "PLAYWRIGHT_FULL_MATRIX=1 playwright test",
     "test:e2e:report": "playwright show-report",
     "generate:search": "node scripts/generate-search.mjs",
     "test:search": "node --test scripts/search.test.mjs",

@@ -1,6 +1,10 @@
 import { defineConfig, devices } from '@playwright/test'
 import process from 'node:process'
 
+const crossBrowserMatch = process.env.PLAYWRIGHT_FULL_MATRIX
+  ? /(?:cross-browser|navigation|heading-permalinks|project-detail|about|footer|recovery)\.spec\.ts/
+  : /cross-browser\.spec\.ts/
+
 const previewPort = Number(process.env.PLAYWRIGHT_PREVIEW_PORT ?? 4173)
 
 export default defineConfig({
@@ -22,6 +26,9 @@ export default defineConfig({
   projects: [
     { name: 'desktop-chromium', use: { ...devices['Desktop Chrome'], launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : undefined } },
     { name: 'mobile-chromium', use: { ...devices['Pixel 7'], launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : undefined } },
+    { name: 'desktop-firefox', testMatch: crossBrowserMatch, use: { ...devices['Desktop Firefox'], viewport: { width: 1440, height: 900 } } },
+    { name: 'desktop-webkit', testMatch: crossBrowserMatch, use: { ...devices['Desktop Safari'], viewport: { width: 1440, height: 900 } } },
+    { name: 'mobile-webkit', testMatch: crossBrowserMatch, use: { ...devices['iPhone SE'] } },
     // Bounded coverage across engines; full feature journeys remain in Chromium.
     { name: 'accessibility-firefox', testMatch: /accessibility\.spec\.ts/, use: { ...devices['Desktop Firefox'] } },
     { name: 'accessibility-webkit', testMatch: /accessibility\.spec\.ts/, use: { ...devices['Desktop Safari'] } },
