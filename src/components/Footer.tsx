@@ -1,10 +1,8 @@
 import { Link } from 'react-router-dom'
 
-import { useTheme } from '../theme/store'
 import { Container } from './Container'
 
 export function Footer() {
-  const { preference, setPreference } = useTheme()
   return (
     <footer className="border-t border-outline bg-canvas">
       <Container>
@@ -21,9 +19,6 @@ export function Footer() {
             Clinical roots. A learning mindset.
           </p>
 
-          <button type="button" className="min-h-11 rounded-lg px-2 text-xs text-subtle hover:text-foreground" aria-pressed={preference === 'system'} onClick={() => setPreference('system')}>
-            Use system theme
-          </button>
           <p className="text-xs text-subtle">
             © {import.meta.env.BUILD_YEAR} Simpyll
           </p>

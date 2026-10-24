@@ -111,7 +111,7 @@ for (const motion of ['reduce', 'no-preference'] as const) {
     await visibleFocus(page.getByRole('button', { name: 'Close search' }))
     await page.keyboard.press('Escape')
     await visibleFocus(page.getByRole('button', { name: 'Open search' }))
-    await tabTo(page, page.getByRole('link', { name: 'Use system theme' }).or(page.getByRole('button', { name: 'Use system theme' })))
+    await tabTo(page, page.getByRole('contentinfo').getByRole('link', { name: 'Projects', exact: true }))
   })
 }
 

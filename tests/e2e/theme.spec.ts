@@ -1,9 +1,8 @@
 import { test, expect, type Page } from '@playwright/test'
 
 const key = 'simpyll-theme'
-async function choose(page: Page, theme: string) {
-  if (theme === 'system') await page.getByRole('button', { name: 'Use system theme' }).click()
-  else if (await page.locator('html').getAttribute('data-theme') !== theme)
+async function choose(page: Page, theme: 'light' | 'dark') {
+  if (await page.locator('html').getAttribute('data-theme') !== theme)
     await page.getByRole('button', { name: `Switch to ${theme} theme` }).click()
 }
 
@@ -15,6 +14,7 @@ test('System defaults follow live OS changes; explicit preferences persist and i
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
   await page.emulateMedia({ colorScheme: 'dark' })
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  expect(await page.evaluate(k => localStorage.getItem(k), key)).toBeNull()
   await choose(page, 'light')
   await page.reload()
   await expect(page.locator('html')).toHaveAttribute('data-theme-preference', 'light')
@@ -22,11 +22,7 @@ test('System defaults follow live OS changes; explicit preferences persist and i
   await choose(page, 'dark')
   await page.emulateMedia({ colorScheme: 'light' })
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
-  await choose(page, 'system')
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
-  await page.reload()
-  await expect(page.locator('html')).toHaveAttribute('data-theme-preference', 'system')
-  expect(await page.evaluate(k => localStorage.getItem(k), key)).toBe('system')
+  expect(await page.evaluate(k => localStorage.getItem(k), key)).toBe('dark')
 })
 
 test('tabs synchronize changes, removal and storage clear', async ({ page, context }) => {
@@ -64,12 +60,14 @@ test('blocked storage still allows session selection and system updates', async 
     Storage.prototype.getItem = () => { throw new Error('blocked') }
     Storage.prototype.setItem = () => { throw new Error('blocked') }
   })
+  await page.emulateMedia({ colorScheme: 'light' })
   await page.goto('/')
-  await choose(page, 'light')
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
-  await choose(page, 'system')
   await page.emulateMedia({ colorScheme: 'dark' })
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  await choose(page, 'light')
+  await page.emulateMedia({ colorScheme: 'light' })
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
 })
 
 test('native theme control supports keyboard, touch-sized mobile and stable layout', async ({ page }) => {
@@ -88,7 +86,7 @@ test('native theme control supports keyboard, touch-sized mobile and stable layo
 
   expect((await control.boundingBox())!.height).toBeGreaterThanOrEqual(44)
   const before = await page.locator('header').boundingBox()
-  // Native select keyboard behavior is browser/platform owned.
+  // The first keyboard activation must invert the current OS-resolved theme.
   await page.emulateMedia({ colorScheme: 'dark' })
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
   await page.keyboard.press('Enter')
@@ -161,4 +159,59 @@ test('native reveal uses button center, covers corners, serializes clicks and cl
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
   await page.setViewportSize({ width: 360, height: 740 })
   await expect(page.locator('html')).not.toHaveAttribute('data-theme-transition')
+})
+
+for (const system of ['light', 'dark'] as const) {
+  test(`first visit follows ${system} without saving; toggle persists across routes`, async ({ page }) => {
+    const errors: string[] = []
+    page.on('pageerror', error => errors.push(error.message))
+    page.on('console', message => { if (message.type() === 'error') errors.push(message.text()) })
+    await page.emulateMedia({ colorScheme: system })
+    await page.goto('/')
+    await expect(page.locator('html')).toHaveAttribute('data-theme', system)
+    expect(await page.evaluate(k => localStorage.getItem(k), key)).toBeNull()
+    const next = system === 'dark' ? 'light' : 'dark'
+    await page.getByRole('button', { name: `Switch to ${next} theme` }).click()
+    await expect(page.getByRole('button', { name: `Switch to ${system} theme` })).toBeVisible()
+    expect(await page.evaluate(k => localStorage.getItem(k), key)).toBe(next)
+    await page.getByRole('contentinfo').getByRole('link', { name: 'Projects', exact: true }).click()
+    await expect(page).toHaveURL(/\/projects\/?$/)
+    await expect(page.locator('html')).toHaveAttribute('data-theme', next)
+    await page.reload()
+    await expect(page.locator('html')).toHaveAttribute('data-theme', next)
+    await page.emulateMedia({ colorScheme: next })
+    await page.emulateMedia({ colorScheme: system })
+    await expect(page.locator('html')).toHaveAttribute('data-theme', next)
+    expect(errors).toEqual([])
+  })
+
+  for (const saved of [null, 'light', 'dark', 'system'] as const) {
+    test(`before hydration: system ${system}, saved ${saved}`, async ({ page }) => {
+      await page.emulateMedia({ colorScheme: system })
+      if (saved) await page.addInitScript(({ key, saved }) => localStorage.setItem(key, saved), { key, saved })
+      await page.route('**/assets/*.js', route => route.abort())
+      await page.goto('/')
+      const resolved = saved === 'light' || saved === 'dark' ? saved : system
+      await expect(page.locator('html')).toHaveAttribute('data-theme', resolved)
+      await expect(page.getByRole('main')).toHaveCSS('background-color', resolved === 'dark' ? 'rgb(9, 11, 16)' : 'rgb(250, 251, 249)')
+      expect(await page.evaluate(k => localStorage.getItem(k), key)).toBe(saved)
+    })
+  }
+}
+
+test('legacy saved system follows OS and footer retains only its existing content', async ({ page }) => {
+  await page.addInitScript(k => localStorage.setItem(k, 'system'), key)
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await page.goto('/')
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  await page.emulateMedia({ colorScheme: 'light' })
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
+  const footer = page.getByRole('contentinfo')
+  await expect(footer.getByRole('button')).toHaveCount(0)
+  await expect(footer.getByText(/theme/i)).toHaveCount(0)
+  await expect(footer.getByRole('link')).toHaveCount(2)
+  await expect(footer.getByRole('link', { name: 'Projects', exact: true })).toHaveAttribute('href', '/projects')
+  await expect(footer.getByRole('link', { name: 'simpyll.' })).toHaveAttribute('href', '/')
+  await expect(footer).toContainText('Clinical roots. A learning mindset.')
+  await expect(footer).toContainText(/© \d{4} Simpyll/)
 })
