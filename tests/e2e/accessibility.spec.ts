@@ -1,5 +1,5 @@
 import { test as base, expect } from '@playwright/test'
-import { readdirSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { ready, scan, tabTo, visibleFocus } from './helpers/accessibility'
 
 const test = base.extend<{ health: void }>({
@@ -12,13 +12,16 @@ const test = base.extend<{ health: void }>({
   }, { auto: true }],
 })
 const articles = readdirSync(new URL('../../src/content/blog/', import.meta.url)).filter(f => f.endsWith('.mdx')).map(f => `/blog/${f.slice(0, -4)}`)
+const projects = JSON.parse(readFileSync(new URL('../../src/generated/projects.json', import.meta.url), 'utf8')) as { slug: string; visibility: string; caseStudy?: unknown }[]
+const projectRoutes = projects.filter(p => p.visibility === 'public' && p.caseStudy).map(p => `/projects/${p.slug}`)
+
 for (const theme of ['light', 'dark'] as const) {
   test.describe(theme, () => {
     test.beforeEach(async ({ page }) => {
       await page.emulateMedia({ colorScheme: theme })
       await page.addInitScript(theme => localStorage.setItem('simpyll-theme', theme), theme)
     })
-    for (const route of ['/', '/blog', '/about', '/projects', '/projects/ai-engineering', ...articles, '/accessibility-missing-page']) {
+    for (const route of ['/', '/blog', '/about', '/projects', '/explore', ...projectRoutes, ...articles, '/accessibility-missing-page']) {
       test(`hydrated route ${route}`, async ({ page }, info) => {
         await page.goto(route)
         await ready(page)

@@ -84,8 +84,8 @@ jobs:
       - name: Validate prerendered HTML and SEO
         run: node --test scripts/contributions.test.mjs scripts/case-study.test.mjs scripts/prerender.test.mjs scripts/remark-heading-ids.test.mjs scripts/article-toc.test.mjs
 
-      - name: Install Chromium for browser tests
-        run: npx playwright install --with-deps chromium
+      - name: Install browsers for accessibility and browser tests
+        run: npx playwright install --with-deps chromium firefox webkit
 
       - run: npm run test:notion:build
 

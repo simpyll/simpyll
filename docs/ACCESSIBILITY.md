@@ -24,9 +24,9 @@ journey keeps normal motion enabled to check the theme reveal preserves focus.
 External requests are blocked in accessibility tests; checked-in content and the
 isolated rich fixture need no Notion credentials.
 
-Routes: `/`, `/blog`, every checked-in article, and an unknown URL. Projects and
-About are homepage sections, not standalone routes. Journal cards are native links and covered by route scans and existing site
-journeys; the project preview cards are static, not interactive controls.
+Routes: `/`, `/blog`, `/about`, `/explore`, `/projects`, every public published
+case study discovered from the validated project manifest, every checked-in article,
+and an unknown URL. Journal and case-study cards use native links.
 There are no application modal dialogs, tab widgets or interactive embeds today;
 search is a nonmodal combobox/listbox and More is a native disclosure pattern.
 Do not add dialog semantics or a focus trap to these nonmodal controls.
@@ -145,3 +145,163 @@ browser validation used Chromium 153 via the existing executable-path override.
 CI retains the normal pinned Playwright Chromium installation. GitHub CI results
 must still be checked on the PR. No manual screen-reader/device audit was
 performed as part of these automated checks; use the checklist above and #43.
+
+
+## October 24, 2026 audit increment — #43
+
+This is a partial audit against WCAG 2.2 AA, not certification or a claim of
+conformance. Baseline main: `248daa05a81d4e433b13fec0cacc63039f40cf13`.
+Remediation/test source: the commit containing this section (resolve using
+`git log -1 --format=%H -- docs/ACCESSIBILITY.md`).
+
+### Reproducible baseline and environment
+
+Ubuntu 24.04.3 container, Node 24.22.1. Read #43 (no comments), #85, #89,
+PR #109, repository instructions, both CI gates and current browser suites.
+Current main includes the homepage, footer and AI Engineering changes.
+
+Before edits, invoked `npm run build` then `npm run test:a11y`. Build, metadata,
+content validation, TypeScript and prerendering passed (14 pages plus 404).
+Browser execution was blocked by missing pinned Chromium. Download attempts
+returned truncated Chromium archives. Firefox/WebKit downloads became available,
+but WebKit host libraries are missing. The dependency installer failed on
+container setgroups/permissions. Google Chrome 156.0.8078.47 was downloaded as a
+fallback; launch failed before any page loaded with `process_singleton_posix.cc:
+socket() failed: Operation not permitted`. Thus there is **no local axe baseline,
+keyboard pass, browser version result, or manual visual result** to report.
+Configured baseline projects: desktop Chromium and Pixel 7; both themes.
+Infrastructure failures must not be counted as WCAG violations or clean scans.
+
+### Findings and remediation
+
+| Finding | Severity / criterion | Before → after | Evidence / retest |
+| --- | --- | --- | --- |
+| Removing a focused Explore chip deletes its focused DOM node; Clear filters hides/disables its focused control | P1; 2.4.3 Focus Order | No focus destination → focus journal search before changing state; also covers search clear and empty-result recovery | Source review of Explore handlers; keyboard regression in accessibility-audit.spec.ts; browser retest pending CI |
+| New page templates not consistently covered by shared axe gate | P2; regression gap | Simpyll case study and Explore omitted → both included; public case studies discovered from validated manifest | accessibility.spec.ts; no axe exclusions |
+| Only one browser engine in the audit gate | P2; coverage gap | Chromium desktop/mobile → add bounded desktop Firefox/WebKit accessibility journeys in both PR and Pages build gates | playwright.config.ts; local engine validation unavailable; CI must pass |
+| Documentation described obsolete homepage-only Projects/About sections | P2; process gap | Incorrect coverage description → actual standalone routes and limitations recorded | This document |
+
+### Audit review and boundaries
+
+Source review: native labels and status announcements in Project Hub/Explore;
+board and grid use the same project metadata, status labels accompany colors;
+native links/buttons in footer and navigation; mobile TOC uses details/summary;
+RouteNavigation owns heading/hash focus and avoids initial hydration focus;
+Reveal and project hover CSS respect reduced motion. Existing tests cover skip
+link, search dismissal/restoration, theme focus, TOC/hash/history navigation and
+404 hydration errors. These observations are source evidence, not substitutes
+for usability or screen-reader testing.
+
+Images: publishing-test contains an empty-alt image; whether it is decorative
+needs author/visual review. The publishing diagram has a useful six-stage alt.
+Do not invent image descriptions or treat presence of alt as adequate meaning.
+Composited glass, syntax colors, hover/disabled/focus contrast and 200%/400% real
+browser zoom remain **unverified**. Added 320/768/1280 CSS-pixel text-spacing/reflow
+scans are automated proxies, not actual browser zoom or physical mobile tests.
+No P0 was established from source review; this does not prove none exists.
+
+### Recurring CI failure investigation
+
+Inspected logs for job `120977331755`, run `40129283601`: 12 failures, 320 passes,
+6 skips. Examples: theme tests demanded exactly two footer links after the
+footer added social/contribution links; keyboard journeys still targeted the
+removed System footer control. These are stale behavior contracts, not evidence
+of axe contrast violations. Main already fixes these contracts in `209f8a7`.
+`f942587` and `012ec8e` separately fix shared 404 hydration and distinguish
+expected missing-page HTTP status from application/asset errors. Do not duplicate
+those fixes, restore unwanted UI, or weaken assertions. The manifest-driven route
+coverage now reduces missed-page risk.
+
+Additional historical logs: job `120912644827` reports a real `heading-order`
+violation on `/blog/why-simpyll` (1.3.1/best-practice hierarchy), alongside a stale
+keyboard expectation that Hello World remained the first journal card. Job
+`120928686988` reports `target-size` on partially obscured theme/Home controls
+(2.5.8), with contrast listed as **incomplete**, not a proven contrast violation.
+The subsequent heading test uses real TOC navigation (`efb5ba1`) rather than
+artificial heading focus/scroll state. Retain full scans and assess actual
+occlusion whenever this recurs; do not label every axe failure a selector bug.
+
+Keep accessible-role/name selectors and
+update all affected journeys whenever shared UI changes.
+
+### Source-level contrast calculations
+
+Calculated WCAG relative luminance in Python from current `src/index.css` sRGB
+hex values, linearizing channels at 0.04045 and applying `(Lmax+.05)/(Lmin+.05)`.
+Each entry below is the minimum against canvas, surface and surface-hover.
+These are source calculations, not rendered pixel sampling or human visual tests.
+
+| Role | Dark minimum | Light minimum | Applicable threshold |
+| --- | --- | --- | --- |
+| Foreground | 15.12:1 | 13.01:1 | 4.5:1 |
+| Muted | 6.44:1 | 6.39:1 | 4.5:1 |
+| Subtle | 4.89:1 | 5.46:1 | 4.5:1 |
+| Accent / focus | 11.62:1 | 5.93:1 | 4.5:1 text; 3:1 applicable non-text |
+| Control outline | 3.41:1 | 3.66:1 | 3:1 |
+
+For the navigation's 92%-surface glass, conservatively composite its sRGB channels
+as `.92 * surface + .08 * backdrop`, testing black/white endpoint backdrops.
+Worst foreground/muted bounds are 13.58/5.78 in dark and 11.88/5.84 in light.
+This bounds those two text roles over arbitrary backdrops under that CSS blend;
+it does not evaluate all states, focus-ring geometry, transparency during motion,
+or browser rendering differences. Syntax comments use muted, keywords/titles
+accent and strings/numbers foreground on the opaque code surface. Actual visual
+contrast and incomplete axe findings still require the manual checks below.
+
+### Manual evidence ledger and required follow-through
+
+No native screen reader or physical device is available. No human-operated
+browser test was performed. Linux headless automation is not VoiceOver, NVDA,
+TalkBack, Safari-on-iOS, or physical touch testing. Keep #43 open; #77 also tracks
+broader browser coverage. Each pending row requires date, actual browser/OS/device,
+AT version (or none), tested SHA, scenario, observed result, defect, fix and retest.
+
+| Pending environment | Reproducible scenario | Result / retest |
+| --- | --- | --- |
+| Windows + Firefox/Chrome + NVDA | Landmarks/headings/links across all routes; search result names and live announcements; filters and code reading | Not run / pending |
+| macOS Safari + VoiceOver | Same reading/keyboard journey; route and hash orientation, history, theme and TOC | Not run / pending |
+| Android Chrome + TalkBack; iOS Safari + VoiceOver | Touch exploration, navigation, filters, search with virtual keyboard, orientation, target spacing | Not run / pending |
+| Desktop browsers, no AT | 200%/400% actual browser zoom; both palettes; composite glass/syntax/active/hover/focus contrast measurements; motion comfort | Not run / pending |
+
+For keyboard spot checks: Tab from skip link through theme/navigation, open search
+with Enter, select results with arrows/Enter, dismiss with Escape and verify focus
+returns. Navigate to each page; check heading focus after links, TOC heading focus,
+Back/Forward position, Project Hub view/filter/disclosure actions and footer social
+and editing links. At 320 CSS pixels and real zoom, verify readable content,
+reachable controls and no unintended document overflow. Record failures rather
+than checking off this ledger based on automated passes.
+
+### Every-PR developer checklist
+
+- Native landmarks/headings/labels; correct accessible names and states.
+- Keyboard activation, dismissal, focus order/restoration and visible unobscured focus.
+- Both-theme text/control/focus contrast on actual backgrounds.
+- Narrow reflow, zoom/text spacing and target size; reduced-motion behavior.
+- Meaningful image alternatives and logical reading order.
+- Build, lint, affected browser journeys plus full accessibility gate before review;
+  inspect final CI failures and artifacts when local browsers cannot launch.
+- Manual keyboard/visual spot check; document unavailable AT/device tests honestly.
+
+### Validation for this increment
+
+Local production build/TypeScript/project metadata/content/prerender: passed.
+ESLint: passed. Combined Node command (`node --test scripts/*.test.mjs
+scripts/notion/*.test.mjs scripts/smoke/*.test.mjs scripts/images/*.test.mjs`):
+178/180 passed; Notion/rich integration builds fail when their browser stage tries
+to launch missing Chromium (infrastructure, not suppressed). Accessibility,
+reflow/keyboard and full browser results require successful GitHub CI before
+review readiness. No deployment or automatic merge is authorized by this PR.
+
+
+CI retest: [Validate Simpyll run 40135762399](https://github.com/simpyll/simpyll/actions/runs/40135762399)
+on implementation SHA `e9eb97f5659d3745bdae57f7e98ddc969241f34c` passed all
+stages on Ubuntu 24.04.5: production build/TypeScript, lint, metadata/content,
+unit/smoke, Notion build, rich MDX and full browser gate. The browser gate reports
+**476 passed, six skipped** (existing isolated-fixture cases; dedicated fixture
+gates passed separately), zero failed. Engines installed: Chromium 156,
+Firefox 157.0 and WebKit 27.2; desktop plus Pixel 7 Chromium contexts.
+Both themes, new route coverage, keyboard filter-removal restoration and
+320/768/1280 text-spacing/reflow scans passed. Normal/reduced-motion, route/hash,
+404 hydration, navigation, search, footer and theme regressions also passed.
+No manual AT/device/zoom result is implied. Subsequent commits update audit
+records only; their current CI status is available on PR #132.
