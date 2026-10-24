@@ -48,8 +48,17 @@ test('contextual contribution sources and client navigation', async ({ page }) =
   await expect(action).toHaveAttribute('href', /edit\/main\/src\/content\/profile.ts$/)
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
-  page.on('console', message => { if (message.type() === 'error') errors.push(message.text()) })
-  await page.goto('/missing-page')
+  page.on('console', message => {
+    if (/hydration|hydrated|server rendered|Minified React error/i.test(message.text())) errors.push(message.text())
+  })
+  const failedAssets: string[] = []
+  page.on('response', response => {
+    if (response.status() >= 400 && response.request().resourceType() !== 'document') failedAssets.push(response.url())
+  })
+  // A missing document must return 404; Chromium logs that expected status.
+  const response = await page.goto('/missing-page')
+  expect(response?.status()).toBe(404)
   await expect.poll(async () => new URL((await action.getAttribute('href'))!).searchParams.get('page-url')).toBe('https://simpyll.com/missing-page')
   expect(errors).toEqual([])
+  expect(failedAssets).toEqual([])
 })
