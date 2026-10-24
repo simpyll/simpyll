@@ -2,7 +2,7 @@
 
 ## Architecture
 
-PRs run `build` (production generation, TypeScript, lint, unit and output checks),
+PRs and manual `Validate Simpyll` dispatches run `build` (production generation, TypeScript, lint, unit and output checks),
 then three independent `browser` shards and `fixtures` in parallel. Playwright's
 native sharding partitions the entire unchanged four-project inventory, with two
 workers per runner. Each shard owns one preview server. `fixtures` retains real
@@ -22,7 +22,9 @@ runners and concurrent browser execution. npm ci remains reproducible in every j
 Pages retains its `build`, `deploy`, `verify` names and serialized production
 concurrency. All production validation still precedes upload/deploy. Project fixture
 tests now follow generation to reuse image transformations. Verification retains
-HTTP identity checks, Notion integration and live Chromium checks. Publishing and
+HTTP identity checks and live Chromium checks. The identical Notion fixture
+integration runs once in the predeployment build gate at the same revision;
+its redundant second execution in verify is removed. Publishing and
 availability triggers/policies are unchanged. PR concurrency cancels superseded
 runs per PR only; it cannot cancel Pages deployments.
 
@@ -30,7 +32,9 @@ runs per PR only; it cannot cancel Pages deployments.
 
 setup-node caches npm's download store using the lockfile; never node_modules.
 Image transformations use the existing content-addressed image generator and a
-source/lockfile key; all manifests are rebuilt. Inputs including posts, projects,
+exact source/generator/lockfile key, with no broad fallback across changed
+transformation code; all manifests are rebuilt. Content/image/generator changes
+can cause cold image processing by design. Inputs including posts, projects,
 case studies, images, scripts and dependencies always run the full build and gates.
 No compiled HTML/client/server cache or unsafe incremental build is introduced.
 Playwright binaries use an exact OS/architecture/engine-list/lockfile key; system
@@ -94,7 +98,8 @@ never sum parallel job times. Inspect job/step timestamps, browser install/cache
 restore, npm ci, build, fixtures, each shard and artifact upload/download separately.
 Watch for >20% median wall regression over five comparable runs; inspect queue/load
 before adding workers/shards. Full validation is always required before merging;
-`npm run test:e2e:built` runs all configured engines on demand locally.
+`npm run test:e2e:built` runs all configured engines on demand locally;
+Actions → Validate Simpyll → Run workflow runs the same complete gate on demand.
 
 A red build identifies setup, generation, TypeScript, lint or named Node tests.
 A red shard identifies browser/axe/keyboard failures; download its 14-day failure
@@ -105,5 +110,7 @@ Pages verification failures are separate from completed deployment, as before.
 
 Rollback: revert this issue's workflow/action/test/documentation commit(s). The
 original validate and Pages contexts remain; no protection migration is intended.
-Actual protection settings require authenticated admin inspection; retaining names
+The public active-rules endpoint returns no ruleset rules for main; legacy branch
+protection returns 403 to the connected integration and requires admin inspection.
+Retaining names
 is not proof of the currently configured repository rules.

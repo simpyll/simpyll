@@ -1,0 +1,619 @@
+[
+  {
+    "id": 40138890847,
+    "attempt": 1,
+    "url": "https://github.com/simpyll/simpyll/actions/runs/40138890847",
+    "workflow": "Validate Simpyll",
+    "event": "pull_request",
+    "sha": "6fbda32457f9ba9af42e765a3173828fb0ef74ba",
+    "conclusion": "success",
+    "created_at": "2026-10-24T22:30:56Z",
+    "started_at": "2026-10-24T22:30:59Z",
+    "completed_at": "2026-10-24T22:36:15Z",
+    "wall_seconds": 319,
+    "initial_queue_seconds": 3,
+    "execution_span_seconds": 316,
+    "jobs": [
+      {
+        "name": "build",
+        "conclusion": "success",
+        "started_at": "2026-10-24T22:30:59Z",
+        "completed_at": "2026-10-24T22:32:44Z",
+        "seconds": 105,
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:30:59Z",
+            "completed_at": "2026-10-24T22:31:01Z",
+            "seconds": 2
+          },
+          {
+            "name": "Run actions/checkout@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:31:01Z",
+            "completed_at": "2026-10-24T22:31:03Z",
+            "seconds": 2
+          },
+          {
+            "name": "Run actions/setup-node@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:31:03Z",
+            "completed_at": "2026-10-24T22:31:05Z",
+            "seconds": 2
+          },
+          {
+            "name": "Run npm ci",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:31:05Z",
+            "completed_at": "2026-10-24T22:31:09Z",
+            "seconds": 4
+          },
+          {
+            "name": "Run npm run test:redirects",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:31:09Z",
+            "completed_at": "2026-10-24T22:31:09Z",
+            "seconds": 0
+          },
+          {
+            "name": "Run npm run test:notion",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:31:09Z",
+            "completed_at": "2026-10-24T22:31:10Z",
+            "seconds": 1
+          },
+          {
+            "name": "Run npm run test:images",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:31:10Z",
+            "completed_at": "2026-10-24T22:31:10Z",
+            "seconds": 0
+          },
+          {
+            "name": "Run npm run test:content",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:31:10Z",
+            "completed_at": "2026-10-24T22:31:11Z",
+            "seconds": 1
+          },
+          {
+            "name": "Run npm run test:search",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:31:11Z",
+            "completed_at": "2026-10-24T22:31:12Z",
+            "seconds": 1
+          },
+          {
+            "name": "Run npm run test:smoke",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:31:12Z",
+            "completed_at": "2026-10-24T22:31:22Z",
+            "seconds": 10
+          },
+          {
+            "name": "Restore image transformations",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:31:22Z",
+            "completed_at": "2026-10-24T22:31:23Z",
+            "seconds": 1
+          },
+          {
+            "name": "Build and validate production output",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:31:23Z",
+            "completed_at": "2026-10-24T22:32:29Z",
+            "seconds": 66
+          },
+          {
+            "name": "Run node --test scripts/ci-workflows.test.mjs scripts/discovery.test.mjs",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:29Z",
+            "completed_at": "2026-10-24T22:32:32Z",
+            "seconds": 3
+          },
+          {
+            "name": "Run npm run lint",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:32Z",
+            "completed_at": "2026-10-24T22:32:36Z",
+            "seconds": 4
+          },
+          {
+            "name": "Run node --test scripts/ai-engineering.test.mjs scripts/contributions.test.mjs scripts/case-study.test.mjs scripts/prerender.test.mjs scripts/remark-heading-ids.test.mjs scripts/article-toc.test.mjs scripts/motion.test.mjs scripts/navigation.test.mjs",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:36Z",
+            "completed_at": "2026-10-24T22:32:38Z",
+            "seconds": 2
+          },
+          {
+            "name": "Record artifact revision",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:38Z",
+            "completed_at": "2026-10-24T22:32:38Z",
+            "seconds": 0
+          },
+          {
+            "name": "Share this run's immutable production output",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:38Z",
+            "completed_at": "2026-10-24T22:32:40Z",
+            "seconds": 2
+          },
+          {
+            "name": "Post Restore image transformations",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:40Z",
+            "completed_at": "2026-10-24T22:32:42Z",
+            "seconds": 2
+          },
+          {
+            "name": "Post Run actions/setup-node@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:42Z",
+            "completed_at": "2026-10-24T22:32:42Z",
+            "seconds": 0
+          },
+          {
+            "name": "Post Run actions/checkout@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:42Z",
+            "completed_at": "2026-10-24T22:32:42Z",
+            "seconds": 0
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:42Z",
+            "completed_at": "2026-10-24T22:32:42Z",
+            "seconds": 0
+          }
+        ]
+      },
+      {
+        "name": "fixtures",
+        "conclusion": "success",
+        "started_at": "2026-10-24T22:32:46Z",
+        "completed_at": "2026-10-24T22:34:12Z",
+        "seconds": 86,
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:46Z",
+            "completed_at": "2026-10-24T22:32:47Z",
+            "seconds": 1
+          },
+          {
+            "name": "Run actions/checkout@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:48Z",
+            "completed_at": "2026-10-24T22:32:49Z",
+            "seconds": 1
+          },
+          {
+            "name": "Run actions/setup-node@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:49Z",
+            "completed_at": "2026-10-24T22:32:50Z",
+            "seconds": 1
+          },
+          {
+            "name": "Run npm ci",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:50Z",
+            "completed_at": "2026-10-24T22:32:55Z",
+            "seconds": 5
+          },
+          {
+            "name": "Run actions/download-artifact@v4",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:55Z",
+            "completed_at": "2026-10-24T22:32:57Z",
+            "seconds": 2
+          },
+          {
+            "name": "Verify artifact revision",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:57Z",
+            "completed_at": "2026-10-24T22:32:57Z",
+            "seconds": 0
+          },
+          {
+            "name": "Run ./.github/actions/browsers",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:57Z",
+            "completed_at": "2026-10-24T22:33:19Z",
+            "seconds": 22
+          },
+          {
+            "name": "Run npm run test:projects",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:33:19Z",
+            "completed_at": "2026-10-24T22:33:30Z",
+            "seconds": 11
+          },
+          {
+            "name": "Run npm run test:notion:build",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:33:30Z",
+            "completed_at": "2026-10-24T22:33:47Z",
+            "seconds": 17
+          },
+          {
+            "name": "Test rich MDX and Notion rendering",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:33:47Z",
+            "completed_at": "2026-10-24T22:34:06Z",
+            "seconds": 19
+          },
+          {
+            "name": "Preserve fixture failure diagnostics",
+            "conclusion": "skipped",
+            "started_at": "2026-10-24T22:34:06Z",
+            "completed_at": "2026-10-24T22:34:06Z",
+            "seconds": 0
+          },
+          {
+            "name": "Post Run ./.github/actions/browsers",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:34:06Z",
+            "completed_at": "2026-10-24T22:34:11Z",
+            "seconds": 5
+          },
+          {
+            "name": "Post Run actions/setup-node@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:34:11Z",
+            "completed_at": "2026-10-24T22:34:11Z",
+            "seconds": 0
+          },
+          {
+            "name": "Post Run actions/checkout@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:34:11Z",
+            "completed_at": "2026-10-24T22:34:11Z",
+            "seconds": 0
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:34:11Z",
+            "completed_at": "2026-10-24T22:34:11Z",
+            "seconds": 0
+          }
+        ]
+      },
+      {
+        "name": "browser (3)",
+        "conclusion": "success",
+        "started_at": "2026-10-24T22:32:46Z",
+        "completed_at": "2026-10-24T22:35:51Z",
+        "seconds": 185,
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:47Z",
+            "completed_at": "2026-10-24T22:32:49Z",
+            "seconds": 2
+          },
+          {
+            "name": "Run actions/checkout@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:49Z",
+            "completed_at": "2026-10-24T22:32:50Z",
+            "seconds": 1
+          },
+          {
+            "name": "Run actions/setup-node@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:50Z",
+            "completed_at": "2026-10-24T22:32:53Z",
+            "seconds": 3
+          },
+          {
+            "name": "Run npm ci",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:53Z",
+            "completed_at": "2026-10-24T22:32:56Z",
+            "seconds": 3
+          },
+          {
+            "name": "Run actions/download-artifact@v4",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:56Z",
+            "completed_at": "2026-10-24T22:32:59Z",
+            "seconds": 3
+          },
+          {
+            "name": "Verify artifact revision",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:59Z",
+            "completed_at": "2026-10-24T22:32:59Z",
+            "seconds": 0
+          },
+          {
+            "name": "Run ./.github/actions/browsers",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:59Z",
+            "completed_at": "2026-10-24T22:33:50Z",
+            "seconds": 51
+          },
+          {
+            "name": "Enforce all browser and accessibility projects",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:33:50Z",
+            "completed_at": "2026-10-24T22:35:44Z",
+            "seconds": 114
+          },
+          {
+            "name": "Preserve browser failure diagnostics",
+            "conclusion": "skipped",
+            "started_at": "2026-10-24T22:35:44Z",
+            "completed_at": "2026-10-24T22:35:44Z",
+            "seconds": 0
+          },
+          {
+            "name": "Post Run ./.github/actions/browsers",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:35:44Z",
+            "completed_at": "2026-10-24T22:35:49Z",
+            "seconds": 5
+          },
+          {
+            "name": "Post Run actions/setup-node@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:35:49Z",
+            "completed_at": "2026-10-24T22:35:49Z",
+            "seconds": 0
+          },
+          {
+            "name": "Post Run actions/checkout@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:35:49Z",
+            "completed_at": "2026-10-24T22:35:49Z",
+            "seconds": 0
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:35:49Z",
+            "completed_at": "2026-10-24T22:35:49Z",
+            "seconds": 0
+          }
+        ]
+      },
+      {
+        "name": "browser (2)",
+        "conclusion": "success",
+        "started_at": "2026-10-24T22:32:46Z",
+        "completed_at": "2026-10-24T22:36:02Z",
+        "seconds": 196,
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:47Z",
+            "completed_at": "2026-10-24T22:32:49Z",
+            "seconds": 2
+          },
+          {
+            "name": "Run actions/checkout@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:49Z",
+            "completed_at": "2026-10-24T22:32:50Z",
+            "seconds": 1
+          },
+          {
+            "name": "Run actions/setup-node@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:50Z",
+            "completed_at": "2026-10-24T22:32:53Z",
+            "seconds": 3
+          },
+          {
+            "name": "Run npm ci",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:53Z",
+            "completed_at": "2026-10-24T22:32:58Z",
+            "seconds": 5
+          },
+          {
+            "name": "Run actions/download-artifact@v4",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:58Z",
+            "completed_at": "2026-10-24T22:33:02Z",
+            "seconds": 4
+          },
+          {
+            "name": "Verify artifact revision",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:33:02Z",
+            "completed_at": "2026-10-24T22:33:02Z",
+            "seconds": 0
+          },
+          {
+            "name": "Run ./.github/actions/browsers",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:33:02Z",
+            "completed_at": "2026-10-24T22:33:57Z",
+            "seconds": 55
+          },
+          {
+            "name": "Enforce all browser and accessibility projects",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:33:57Z",
+            "completed_at": "2026-10-24T22:35:55Z",
+            "seconds": 118
+          },
+          {
+            "name": "Preserve browser failure diagnostics",
+            "conclusion": "skipped",
+            "started_at": "2026-10-24T22:35:55Z",
+            "completed_at": "2026-10-24T22:35:55Z",
+            "seconds": 0
+          },
+          {
+            "name": "Post Run ./.github/actions/browsers",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:35:55Z",
+            "completed_at": "2026-10-24T22:35:59Z",
+            "seconds": 4
+          },
+          {
+            "name": "Post Run actions/setup-node@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:35:59Z",
+            "completed_at": "2026-10-24T22:35:59Z",
+            "seconds": 0
+          },
+          {
+            "name": "Post Run actions/checkout@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:35:59Z",
+            "completed_at": "2026-10-24T22:35:59Z",
+            "seconds": 0
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:35:59Z",
+            "completed_at": "2026-10-24T22:35:59Z",
+            "seconds": 0
+          }
+        ]
+      },
+      {
+        "name": "browser (1)",
+        "conclusion": "success",
+        "started_at": "2026-10-24T22:32:47Z",
+        "completed_at": "2026-10-24T22:36:09Z",
+        "seconds": 202,
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:48Z",
+            "completed_at": "2026-10-24T22:32:49Z",
+            "seconds": 1
+          },
+          {
+            "name": "Run actions/checkout@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:49Z",
+            "completed_at": "2026-10-24T22:32:50Z",
+            "seconds": 1
+          },
+          {
+            "name": "Run actions/setup-node@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:50Z",
+            "completed_at": "2026-10-24T22:32:54Z",
+            "seconds": 4
+          },
+          {
+            "name": "Run npm ci",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:32:54Z",
+            "completed_at": "2026-10-24T22:33:00Z",
+            "seconds": 6
+          },
+          {
+            "name": "Run actions/download-artifact@v4",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:33:00Z",
+            "completed_at": "2026-10-24T22:33:03Z",
+            "seconds": 3
+          },
+          {
+            "name": "Verify artifact revision",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:33:03Z",
+            "completed_at": "2026-10-24T22:33:03Z",
+            "seconds": 0
+          },
+          {
+            "name": "Run ./.github/actions/browsers",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:33:03Z",
+            "completed_at": "2026-10-24T22:34:02Z",
+            "seconds": 59
+          },
+          {
+            "name": "Enforce all browser and accessibility projects",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:34:02Z",
+            "completed_at": "2026-10-24T22:36:02Z",
+            "seconds": 120
+          },
+          {
+            "name": "Preserve browser failure diagnostics",
+            "conclusion": "skipped",
+            "started_at": "2026-10-24T22:36:02Z",
+            "completed_at": "2026-10-24T22:36:02Z",
+            "seconds": 0
+          },
+          {
+            "name": "Post Run ./.github/actions/browsers",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:36:02Z",
+            "completed_at": "2026-10-24T22:36:06Z",
+            "seconds": 4
+          },
+          {
+            "name": "Post Run actions/setup-node@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:36:06Z",
+            "completed_at": "2026-10-24T22:36:06Z",
+            "seconds": 0
+          },
+          {
+            "name": "Post Run actions/checkout@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:36:06Z",
+            "completed_at": "2026-10-24T22:36:06Z",
+            "seconds": 0
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:36:06Z",
+            "completed_at": "2026-10-24T22:36:06Z",
+            "seconds": 0
+          }
+        ]
+      },
+      {
+        "name": "validate",
+        "conclusion": "success",
+        "started_at": "2026-10-24T22:36:11Z",
+        "completed_at": "2026-10-24T22:36:15Z",
+        "seconds": 4,
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:36:12Z",
+            "completed_at": "2026-10-24T22:36:12Z",
+            "seconds": 0
+          },
+          {
+            "name": "Require every validation tier",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:36:12Z",
+            "completed_at": "2026-10-24T22:36:13Z",
+            "seconds": 1
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:36:13Z",
+            "completed_at": "2026-10-24T22:36:13Z",
+            "seconds": 0
+          }
+        ]
+      }
+    ]
+  }
+]

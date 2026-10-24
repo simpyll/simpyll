@@ -1,5 +1,364 @@
 [
   {
+    "id": 40137773306,
+    "attempt": 1,
+    "url": "https://github.com/simpyll/simpyll/actions/runs/40137773306",
+    "workflow": "Deploy Simpyll to GitHub Pages",
+    "event": "push",
+    "sha": "fa15a4b4c2637f14a94876db2a761e367b4a3ca8",
+    "conclusion": "success",
+    "created_at": "2026-10-24T22:15:31Z",
+    "started_at": "2026-10-24T22:15:33Z",
+    "completed_at": "2026-10-24T22:29:36Z",
+    "wall_seconds": 845,
+    "initial_queue_seconds": 2,
+    "execution_span_seconds": 843,
+    "jobs": [
+      {
+        "name": "build",
+        "conclusion": "success",
+        "started_at": "2026-10-24T22:15:33Z",
+        "completed_at": "2026-10-24T22:26:52Z",
+        "seconds": 679,
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:15:34Z",
+            "completed_at": "2026-10-24T22:15:35Z",
+            "seconds": 1
+          },
+          {
+            "name": "Check out repository",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:15:35Z",
+            "completed_at": "2026-10-24T22:15:36Z",
+            "seconds": 1
+          },
+          {
+            "name": "Record checked-out deployment identity",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:15:36Z",
+            "completed_at": "2026-10-24T22:15:36Z",
+            "seconds": 0
+          },
+          {
+            "name": "Set up Node.js",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:15:36Z",
+            "completed_at": "2026-10-24T22:15:38Z",
+            "seconds": 2
+          },
+          {
+            "name": "Configure GitHub Pages",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:15:38Z",
+            "completed_at": "2026-10-24T22:15:39Z",
+            "seconds": 1
+          },
+          {
+            "name": "Install dependencies",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:15:39Z",
+            "completed_at": "2026-10-24T22:15:44Z",
+            "seconds": 5
+          },
+          {
+            "name": "Run npm run test:projects",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:15:44Z",
+            "completed_at": "2026-10-24T22:17:17Z",
+            "seconds": 93
+          },
+          {
+            "name": "Run npm run test:redirects",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:17:17Z",
+            "completed_at": "2026-10-24T22:17:18Z",
+            "seconds": 1
+          },
+          {
+            "name": "Test Notion publisher",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:17:18Z",
+            "completed_at": "2026-10-24T22:17:18Z",
+            "seconds": 0
+          },
+          {
+            "name": "Test content validation",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:17:18Z",
+            "completed_at": "2026-10-24T22:17:19Z",
+            "seconds": 1
+          },
+          {
+            "name": "Test static blog search",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:17:19Z",
+            "completed_at": "2026-10-24T22:17:20Z",
+            "seconds": 1
+          },
+          {
+            "name": "Test production monitoring",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:17:20Z",
+            "completed_at": "2026-10-24T22:17:32Z",
+            "seconds": 12
+          },
+          {
+            "name": "Restore image transformations",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:17:32Z",
+            "completed_at": "2026-10-24T22:17:32Z",
+            "seconds": 0
+          },
+          {
+            "name": "Test image transformations",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:17:32Z",
+            "completed_at": "2026-10-24T22:17:33Z",
+            "seconds": 1
+          },
+          {
+            "name": "Build and prerender site",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:17:33Z",
+            "completed_at": "2026-10-24T22:18:47Z",
+            "seconds": 74
+          },
+          {
+            "name": "Lint",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:18:47Z",
+            "completed_at": "2026-10-24T22:18:52Z",
+            "seconds": 5
+          },
+          {
+            "name": "Validate prerendered HTML and SEO",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:18:52Z",
+            "completed_at": "2026-10-24T22:18:54Z",
+            "seconds": 2
+          },
+          {
+            "name": "Install browsers for accessibility and browser tests",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:18:54Z",
+            "completed_at": "2026-10-24T22:19:32Z",
+            "seconds": 38
+          },
+          {
+            "name": "Run npm run test:notion:build",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:19:32Z",
+            "completed_at": "2026-10-24T22:19:49Z",
+            "seconds": 17
+          },
+          {
+            "name": "Test rich MDX and Notion rendering",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:19:49Z",
+            "completed_at": "2026-10-24T22:20:08Z",
+            "seconds": 19
+          },
+          {
+            "name": "Enforce accessibility and browser regressions (desktop and mobile)",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:20:08Z",
+            "completed_at": "2026-10-24T22:26:47Z",
+            "seconds": 399
+          },
+          {
+            "name": "Upload browser test diagnostics",
+            "conclusion": "skipped",
+            "started_at": "2026-10-24T22:26:47Z",
+            "completed_at": "2026-10-24T22:26:47Z",
+            "seconds": 0
+          },
+          {
+            "name": "Preserve expected release manifest",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:26:47Z",
+            "completed_at": "2026-10-24T22:26:47Z",
+            "seconds": 0
+          },
+          {
+            "name": "Upload Pages artifact",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:26:47Z",
+            "completed_at": "2026-10-24T22:26:49Z",
+            "seconds": 2
+          },
+          {
+            "name": "Post Restore image transformations",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:26:49Z",
+            "completed_at": "2026-10-24T22:26:49Z",
+            "seconds": 0
+          },
+          {
+            "name": "Post Set up Node.js",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:26:49Z",
+            "completed_at": "2026-10-24T22:26:50Z",
+            "seconds": 1
+          },
+          {
+            "name": "Post Check out repository",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:26:50Z",
+            "completed_at": "2026-10-24T22:26:50Z",
+            "seconds": 0
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:26:50Z",
+            "completed_at": "2026-10-24T22:26:50Z",
+            "seconds": 0
+          }
+        ]
+      },
+      {
+        "name": "deploy",
+        "conclusion": "success",
+        "started_at": "2026-10-24T22:26:55Z",
+        "completed_at": "2026-10-24T22:27:06Z",
+        "seconds": 11,
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:26:56Z",
+            "completed_at": "2026-10-24T22:26:57Z",
+            "seconds": 1
+          },
+          {
+            "name": "Deploy to GitHub Pages",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:26:57Z",
+            "completed_at": "2026-10-24T22:27:04Z",
+            "seconds": 7
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:27:04Z",
+            "completed_at": "2026-10-24T22:27:04Z",
+            "seconds": 0
+          }
+        ]
+      },
+      {
+        "name": "verify",
+        "conclusion": "success",
+        "started_at": "2026-10-24T22:27:08Z",
+        "completed_at": "2026-10-24T22:29:36Z",
+        "seconds": 148,
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:27:09Z",
+            "completed_at": "2026-10-24T22:27:10Z",
+            "seconds": 1
+          },
+          {
+            "name": "Run actions/checkout@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:27:11Z",
+            "completed_at": "2026-10-24T22:27:12Z",
+            "seconds": 1
+          },
+          {
+            "name": "Run actions/setup-node@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:27:12Z",
+            "completed_at": "2026-10-24T22:27:16Z",
+            "seconds": 4
+          },
+          {
+            "name": "Run npm ci",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:27:16Z",
+            "completed_at": "2026-10-24T22:27:22Z",
+            "seconds": 6
+          },
+          {
+            "name": "Run actions/download-artifact@v4",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:27:22Z",
+            "completed_at": "2026-10-24T22:27:23Z",
+            "seconds": 1
+          },
+          {
+            "name": "Verify public HTTP content after Pages deployment",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:27:23Z",
+            "completed_at": "2026-10-24T22:27:27Z",
+            "seconds": 4
+          },
+          {
+            "name": "Install Chromium",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:27:27Z",
+            "completed_at": "2026-10-24T22:27:50Z",
+            "seconds": 23
+          },
+          {
+            "name": "Run npm run test:notion:build",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:27:50Z",
+            "completed_at": "2026-10-24T22:29:29Z",
+            "seconds": 99
+          },
+          {
+            "name": "Verify hydrated production in Chromium",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:29:29Z",
+            "completed_at": "2026-10-24T22:29:32Z",
+            "seconds": 3
+          },
+          {
+            "name": "Report separate deployment and verification outcomes",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:29:32Z",
+            "completed_at": "2026-10-24T22:29:32Z",
+            "seconds": 0
+          },
+          {
+            "name": "Preserve production diagnostics",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:29:32Z",
+            "completed_at": "2026-10-24T22:29:34Z",
+            "seconds": 2
+          },
+          {
+            "name": "Post Run actions/setup-node@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:29:34Z",
+            "completed_at": "2026-10-24T22:29:34Z",
+            "seconds": 0
+          },
+          {
+            "name": "Post Run actions/checkout@v7",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:29:34Z",
+            "completed_at": "2026-10-24T22:29:34Z",
+            "seconds": 0
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success",
+            "started_at": "2026-10-24T22:29:34Z",
+            "completed_at": "2026-10-24T22:29:34Z",
+            "seconds": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": 40136629734,
     "url": "https://github.com/simpyll/simpyll/actions/runs/40136629734",
     "workflow": "Validate Simpyll",

@@ -68,8 +68,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: public/images/optimized
-          key: images-${{ runner.os }}-${{ hashFiles('package-lock.json', 'scripts/images/**', 'public/images/**', 'src/content/blog/**') }}
-          restore-keys: images-${{ runner.os }}-
+          key: images-${{ runner.os }}-${{ hashFiles('package-lock.json', 'scripts/images/**', 'scripts/publishing-media.mjs', 'src/content/blog/**', 'public/images/**') }}
 
       - name: Test image transformations
         run: npm run test:images
@@ -167,7 +166,6 @@ jobs:
         with:
           browsers: chromium
 
-      - run: npm run test:notion:build
       - name: Verify hydrated production in Chromium
         id: browser
         run: npm run smoke:browser

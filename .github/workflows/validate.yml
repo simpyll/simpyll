@@ -1,5 +1,6 @@
 name: Validate Simpyll
 on:
+  workflow_dispatch:
   pull_request:
     branches: [main]
 concurrency:
@@ -87,6 +88,8 @@ jobs:
           path: |
             playwright-report/
             test-results/
+            artifacts/toc/
+            docs/discovery/
 
   fixtures:
     needs: build

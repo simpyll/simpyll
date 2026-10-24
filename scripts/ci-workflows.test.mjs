@@ -32,3 +32,13 @@ test('shards partition the complete current browser inventory without dropping o
   assert.equal(new Set(shards).size, all.length)
   for (const project of ['desktop-chromium', 'mobile-chromium', 'accessibility-firefox', 'accessibility-webkit']) assert.ok(all.some(id => id.startsWith(project + ':')))
 })
+
+test('Pages gates deployment on validation and runs the Notion fixture exactly once before publishing', async () => {
+  const deploy = await readFile('.github/workflows/deploy.yml', 'utf8')
+  const [beforeVerify, verify] = deploy.split('  verify:')
+  assert.equal((beforeVerify.match(/run: npm run test:notion:build/g) ?? []).length, 1)
+  assert.doesNotMatch(verify, /run: npm run test:notion:build/)
+  assert.match(beforeVerify, /needs: build/)
+  assert.match(verify, /needs: \[build, deploy\]/)
+  for (const command of ['smoke:http', 'smoke:browser']) assert.ok(verify.includes(`run: npm run ${command}`))
+})

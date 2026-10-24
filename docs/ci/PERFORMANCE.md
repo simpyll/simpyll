@@ -20,12 +20,19 @@ report upload. Failed runs are evidence for diagnosis, excluded from success med
 
 Run URLs: `https://github.com/simpyll/simpyll/actions/runs/<ID>`.
 Failed PRs also collected: 40131411776, 40130770096, 40129283601.
+Job 120983717807 logs identify two footer hydration/contribution assertions in
+40131411776, each retried twice. These failures predate this branch; retries and
+failure reporting are unchanged. They are not cache misses or evidence for
+disabling accessibility checks.
 Publisher failure 40134808239 was inspected in the run listing, not counted as
 successful publishing work. No-change publishing is distinct from content deploys.
 
 The latest **three** comparable successful PRs include #43's added Firefox/WebKit
 coverage: wall 739/725/705s (median **725s**), browser 413/401/403s (median **403s**).
-Older PRs and all five sampled completed Pages builds predate that expansion.
+Older PRs and the initial five sampled completed Pages builds predate that expansion.
+A subsequently completed same-inventory baseline Pages run, **40137773306**,
+was also collected: wall **845s**, execution span **843s** (build 679s, deploy
+11s, verify 148s; one sample only).
 Do not claim browser speedup by comparing a smaller old inventory to the new one.
 Five same-inventory PR baselines were not yet available at collection time.
 
@@ -68,23 +75,28 @@ critical path is a single serial job; Pages is build → deploy → verify.
   Tiny repeated project validation in standalone client/server scripts remains to
   protect direct invocations. No persistent generated-output cache or concurrent
   writes to generated manifests. Image generator validates source hashes and files.
-- Publishing rebuild after committing is intentional: the deploy manifest must
-  identify the final content commit; verify also retains its prior Notion test.
-  No privileged PR artifacts are consumed by deployment.
+- Pages verify repeated the exact Notion fixture integration already required in
+  predeployment build, at the same checkout SHA. Remove this second full fixture
+  build (101s in run 40134824212); keep the original required test and live HTTP/
+  Chromium verification. Publishing rebuild after committing remains intentional:
+  the release manifest must identify the final content commit. No privileged PR
+  artifacts are consumed by deployment.
 
 ## Before/after
 
-After measurements will be appended from completed optimized Actions runs. No
-forecast is a measurement, and no 30% claim is made before those runs complete.
+First optimized run [40138890847](https://github.com/simpyll/simpyll/actions/runs/40138890847)
+passed with confirmed image and browser binary cache misses (npm download cache
+hit). Timing evidence is in [optimized.json](optimized.json). This is one cold
+sample against three comparable baseline runs; warm results follow separately.
 
 | Metric | Before | After | Improvement |
 |---|---:|---:|---:|
-| Typical PR wall, same browser inventory | 725s (3 runs) | pending CI | pending |
-| PR critical execution span | 722s (3 runs) | pending CI | pending |
-| Primary production build | 91s | pending CI | pending |
-| Dependency install | 6s | pending CI | pending |
-| Browser execution | 403s (3 runs) | pending CI | pending |
-| Main/deploy wall (older inventory) | 640s (5 runs) | requires post-merge observation | not comparable yet |
+| Typical PR wall, same browser inventory | 725s (3 runs) | 319s (cold sample) | 56.0% |
+| PR critical execution span | 722s (3 runs) | 316s | 56.2% |
+| Primary production build | 91s | 66s cold | 27.5% |
+| Dependency install (build job) | 6s | 4s | 33.3% |
+| Browser execution (longest shard) | 403s (3 runs) | 120s | 70.2% |
+| Main/deploy wall (same inventory) | 845s (1 run; older five-run median 640s) | requires post-merge observation | not comparable yet |
 
 Formula: `(before - after) / before * 100`. Use end-to-end completion including
 all shards, fixtures and final gate, not only the fastest shard. Cache hit/miss
@@ -92,5 +104,39 @@ must be established from logs, not assumed from first/second run labels.
 Production deployment cannot be measured on the new workflow without merging or
 publishing; this PR deliberately does neither. Preserve that limitation if #133
 remains open for post-merge measurement. Actual admin branch-protection settings
-are not available via the unauthenticated REST endpoint (401); existing context
+are not available via unauthenticated REST (401) or the connected integration
+(403 Resource not accessible by integration). The public active-rules endpoint
+`GET /repos/simpyll/simpyll/rules/branches/main` returned `[]`; this does not
+prove legacy branch protection is absent. Existing context
 names are preserved and aggregate gate behavior tested.
+
+
+## Local correctness checks
+
+Clean npm ci succeeded. No existing optimized-image directory or dist was present
+before the first local production build; all stages passed. A subsequent measured
+warm build completed in **8.24s**. SHA-256 comparison of every dist file showed only
+`deployment.json` changed, due to its intentional `builtAt` timestamp; no files
+were added or removed. Project fixture suite: 27 passes in 8.91s after generation.
+Static/output/workflow regression group: 38 passes in 4.16s. Redirect (8), Notion
+(15), image (3), content (39), search (5), smoke (34) suites and lint passed.
+Local Chromium download failed with a truncated archive; no local browser pass
+is claimed. GitHub-hosted browser validation remains authoritative for this PR.
+
+
+### First optimized run details
+
+Build 105s → browser jobs 185/196/202s (parallel with fixtures 86s) → validate 4s.
+Wall includes 3s initial queue plus inter-job handoffs. Artifact upload 2s;
+downloads 2–4s per consumer. Browser binary install including system libraries
+51/55/59s; cache post-save 4–5s. npm ci 3–6s per runner. Fixture project checks
+11s versus baseline 93s. Browser shard counts: 158+159+159 = **476 passes**,
+3+0+3 = **six existing fixture-only skips**, zero failures. Dedicated Notion and
+rich-content fixture gates passed, as did full static and output validation.
+Native shard-union regression passed. No retry or test inventory change.
+Two cache-save contenders correctly report the immutable key already reserved by
+another shard; one saves successfully. This is a harmless first-run race, not
+suppressed test failure. Warm runs should restore the resulting cache.
+Longest shard execution is a stage metric, not total work; total wall remains
+the primary comparison. Cold build time also varies with hosted runner load, so
+do not attribute its entire observed change to workflow edits.
