@@ -1,0 +1,35 @@
+name: Content correction
+description: Suggest a correction or improvement to a page.
+title: 'Content correction: '
+body:
+  - type: input
+    id: page-url
+    attributes:
+      label: Page URL
+      description: Paste the public Simpyll page URL.
+    validations:
+      required: true
+  - type: dropdown
+    id: change-type
+    attributes:
+      label: Type of change
+      options:
+        - Factual correction
+        - Typo or clarity
+        - Broken link
+        - Accessibility
+        - Other improvement
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Suggested correction
+      description: What should change, and why?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Supporting context (optional)
+      description: Sources, examples, or screenshots. Do not include private information.
