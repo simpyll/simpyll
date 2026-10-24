@@ -63,17 +63,17 @@ export function Explore() {
       <section aria-label="Discover articles" className="discovery-controls">
         <form role="search" onSubmit={event => { event.preventDefault(); change({ ...state, q: input, sort: state.q ? state.sort : 'relevance' }) }}>
           <div className="discovery-control-heading"><label htmlFor="discovery-query" className="text-sm text-muted">Search the journal</label>
-            <button type="button" className="discovery-reset" style={{ visibility: active ? 'visible' : 'hidden' }} disabled={!active} onClick={() => change(defaultState)}>Clear filters</button></div>
+            <button type="button" className="discovery-reset" style={{ visibility: active ? 'visible' : 'hidden' }} disabled={!active} onClick={() => { document.getElementById('discovery-query')?.focus(); change(defaultState) }}>Clear filters</button></div>
           <div className="discovery-query"><input id="discovery-query" type="search" maxLength={160} placeholder="Search articles, topics, and technologies…" value={input}
             onChange={event => setDraft({ text: event.target.value, source: current })} />
-            <button type="button" disabled={!input} onClick={() => change({ ...state, q: '', sort: state.sort === 'relevance' ? 'newest' : state.sort })}>Clear search</button></div>
+            <button type="button" disabled={!input} onClick={() => { document.getElementById('discovery-query')?.focus(); change({ ...state, q: '', sort: state.sort === 'relevance' ? 'newest' : state.sort }) }}>Clear search</button></div>
         </form>
         <DiscoveryFilters state={state} categories={categories} tags={tags} change={next => change({ ...next, q: input })} />
         <p className="mt-3 text-xs text-muted">Match any selected category and any selected tag, together with your search.</p>
         <div className="discovery-chips" role="group" aria-label="Active filters">
-          {state.q && <button onClick={() => change({ ...state, q: '', sort: state.sort === 'relevance' ? 'newest' : state.sort })} aria-label={`Remove search: ${state.q}`}>Search: {state.q} ×</button>}
+          {state.q && <button onClick={() => { document.getElementById('discovery-query')?.focus(); change({ ...state, q: '', sort: state.sort === 'relevance' ? 'newest' : state.sort }) }} aria-label={`Remove search: ${state.q}`}>Search: {state.q} ×</button>}
           {(['categories', 'tags'] as const).flatMap(field => state[field].map(value => <button key={`${field}:${value}`} aria-label={`Remove ${field === 'tags' ? 'tag' : 'category'}: ${label(value, field === 'tags' ? tags : categories)}`}
-            onClick={() => change({ ...state, [field]: state[field].filter(id => id !== value) })}>{field === 'tags' ? 'Tag' : 'Category'}: {label(value, field === 'tags' ? tags : categories)} ×</button>))}
+            onClick={() => { document.getElementById('discovery-query')?.focus(); change({ ...state, [field]: state[field].filter(id => id !== value) }) }}>{field === 'tags' ? 'Tag' : 'Category'}: {label(value, field === 'tags' ? tags : categories)} ×</button>))}
         </div>
       </section>
       <section aria-label="Article results" className="pb-24">
@@ -81,7 +81,7 @@ export function Explore() {
         <div className="discovery-results">{failed ? <div className="discovery-empty"><h2>Articles are temporarily unavailable.</h2><button className="min-h-11 text-accent" onClick={() => { setFailed(false); void loadIndex().then(data => setLoaded(data)).catch(() => setFailed(true)) }}>Retry loading articles</button></div> : !loaded ? <p>Loading the journal…</p> : results.length ? results.map(article => <ArticleCard key={article.id} article={article} />) : <div className="discovery-empty">
           <h2 className="text-2xl font-semibold">{index.length ? 'No articles matched your search and filters.' : 'No published articles yet.'}</h2>
           <p className="mt-3 text-muted">{index.length ? 'Try another search or remove a filter above.' : 'Check back soon for new writing.'}</p>
-          {active && <button className="mt-5 text-accent" onClick={() => change(defaultState)}>Show all articles</button>}
+          {active && <button className="mt-5 text-accent" onClick={() => { document.getElementById('discovery-query')?.focus(); change(defaultState) }}>Show all articles</button>}
         </div>}</div>
       </section></Container>
     </main>
