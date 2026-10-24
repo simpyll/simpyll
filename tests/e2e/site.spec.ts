@@ -169,7 +169,10 @@ test('keyboard skip link, primary navigation and journal controls are usable', a
   await tabTo(page, article)
   await page.keyboard.press('Enter')
   await expect(page).toHaveURL(articlePath!)
-  await tabTo(page, page.getByRole('link', { name: 'Back to journal' }))
+  // Route navigation focuses the article h1; the return link precedes it.
+  await expect(page.getByRole('heading', { level: 1 })).toBeFocused()
+  await page.keyboard.press('Shift+Tab')
+  await expect(page.getByRole('link', { name: 'Back to journal' })).toBeFocused()
   await page.keyboard.press('Enter')
   await expect(page).toHaveURL('/blog')
 })
