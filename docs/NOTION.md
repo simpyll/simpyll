@@ -66,8 +66,9 @@ pull requests.
 
 Paragraphs, headings, bold/italic/underline/strikethrough, safe web/mail links,
 inline code, nested bullet/numbered lists, quotes, code blocks, and images are
-supported. Dividers, callouts, and toggles are also supported. Headings shift
-one level (Notion H1 → H2) because the blog template supplies the article H1.
+supported. Dividers, callouts, and toggles are also supported. The blog template
+supplies H1. Imported headings begin at H2 and preserve relative nesting without
+skipped levels, even if the first Notion heading is H2/H3 or an author skips a rank.
 Code preserves literal text. Notion text is encoded as string literals inside
 generated JSX, so pasted braces, HTML, Markdown, and import/export statements
 cannot execute as MDX code.

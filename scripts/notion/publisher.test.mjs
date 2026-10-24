@@ -188,3 +188,21 @@ test('revision cache reuses local bytes and preserves old public image URLs', as
   await sync({ api: fixture({ pages: [] }).api })
   assert.deepEqual(await readFile(join(root, imagePath)), png)
 })
+
+test('article headings start at h2 and preserve nesting without skipped ranks', async () => {
+  for (const [ranks, expected] of [
+    [[1,2,3,2,1],[2,3,4,3,2]],
+    [[2,2,3,2],[2,2,3,2]],
+    [[3,3,1,3],[2,2,2,3]],
+    [[1,3,2,3],[2,3,3,4]],
+  ]) {
+    const output = await convertBlocks(ranks.map(rank => block(`heading_${rank}`, `Heading ${rank}`)), async () => '')
+    assert.deepEqual([...output.matchAll(/<h([2-4])>/g)].map(match => Number(match[1])), expected)
+  }
+  const nested = block('heading_2','Parent')
+  nested.children = [block('heading_3','Nested')]
+  const output = await convertBlocks([nested,block('heading_2','Sibling')],async () => '')
+  assert.deepEqual([...output.matchAll(/<h([2-4])>/g)].map(match => Number(match[1])),[2,3,2])
+  const literal = await convertBlocks([block('code','<h3>literal</h3>')],async () => '')
+  assert.equal(JSON.parse(literal.slice(literal.indexOf('{') + 1, literal.lastIndexOf('}'))), '<h3>literal</h3>')
+})
