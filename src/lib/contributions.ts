@@ -9,7 +9,7 @@ const staticSources: Record<string, string> = {
   '/explore': 'src/pages/Explore.tsx',
 }
 function edit(source: string, label: string) {
-  return { label, href: `${repository}/edit/main/${source.split('/').map(encodeURIComponent).join('/')}` }
+  return { unmapped: false, label, href: `${repository}/edit/main/${source.split('/').map(encodeURIComponent).join('/')}` }
 }
 export function contributionForPage(pathname: string) {
   const path = pathname.replace(/\/+$/, '') || '/'
@@ -21,5 +21,5 @@ export function contributionForPage(pathname: string) {
   if (staticSources[path]) return edit(staticSources[path], 'Edit this page on GitHub')
   const title = post?.metadata.title ?? path
   const params = new URLSearchParams({ template: 'content-correction.yml', title: `Content correction: ${title}`, 'page-url': `https://simpyll.com${path}`, description: post ? `Article: ${title}\n\nDescribe the suggested correction. This article is published from Notion; maintainers should apply accepted corrections in the editorial source.` : 'Describe the suggested correction to this page.' })
-  return { label: post ? 'Suggest an edit to this article on GitHub' : 'Suggest an edit on GitHub', href: `${repository}/issues/new?${params}` }
+  return { unmapped: !post, label: post ? 'Suggest an edit to this article on GitHub' : 'Suggest an edit on GitHub', href: `${repository}/issues/new?${params}` }
 }

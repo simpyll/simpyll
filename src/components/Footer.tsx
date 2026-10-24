@@ -1,3 +1,4 @@
+import { useSyncExternalStore } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Container } from './Container'
 import { contributionForPage } from '../lib/contributions'
@@ -8,9 +9,15 @@ const socials = [
   { name: 'LinkedIn', url: 'https://www.linkedin.com/in/david-becker-rn-ccrn', path: 'M20.45 0H3.55A3.55 3.55 0 0 0 0 3.55v16.9A3.55 3.55 0 0 0 3.55 24h16.9A3.55 3.55 0 0 0 24 20.45V3.55A3.55 3.55 0 0 0 20.45 0ZM7.12 20.45H3.56V9h3.56ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM20.45 20.45H16.9v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05a3.75 3.75 0 0 1 3.37-1.85c3.6 0 4.26 2.37 4.26 5.45Z' },
   { name: 'X (Twitter)', url: 'https://x.com/simpyll', path: 'M18.9 1.15h3.68l-8.04 9.19L24 22.85h-7.41l-5.8-7.59-6.64 7.59H.47l8.6-9.83L0 1.15h7.6l5.24 6.93ZM17.61 20.65h2.04L6.49 3.24H4.3Z' },
 ]
+const subscribeToHydration = () => () => {}
+
 export function Footer() {
   const { pathname } = useLocation()
-  const contribution = contributionForPage(pathname)
+  // Pages serves one /404 document for every missing URL. Match that document
+  // during hydration, then resolve the actual requested URL on the client.
+  const contributionPath = useSyncExternalStore(subscribeToHydration, () => pathname,
+    () => contributionForPage(pathname).unmapped ? '/404' : pathname)
+  const contribution = contributionForPage(contributionPath)
   return (
     <footer className="border-t border-outline bg-canvas">
       <Container>

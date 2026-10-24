@@ -24,3 +24,8 @@
   or the PR as ready to merge. Inspect failure logs and fix affected assertions.
 - Distinguish actual accessibility violations from stale selectors, assertions,
   browser installation problems and other failures in the combined browser gate.
+- GitHub Pages serves the same prerendered `/404` document for every unknown
+  URL. Any route-dependent markup outside the 404 page must match that document
+  for the hydration render, then update to the requested URL after hydration.
+  Assert the eventual URL with a retrying assertion and capture hydration errors;
+  an immediate DOM read can observe the static fallback before React starts.

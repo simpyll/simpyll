@@ -46,6 +46,10 @@ test('contextual contribution sources and client navigation', async ({ page }) =
   await expect(action).toHaveAttribute('href', /edit\/main\/content\/case-studies\/simpyll.json$/)
   await page.goto('/about')
   await expect(action).toHaveAttribute('href', /edit\/main\/src\/content\/profile.ts$/)
+  const errors: string[] = []
+  page.on('pageerror', error => errors.push(error.message))
+  page.on('console', message => { if (message.type() === 'error') errors.push(message.text()) })
   await page.goto('/missing-page')
-  expect(new URL((await action.getAttribute('href'))!).searchParams.get('page-url')).toBe('https://simpyll.com/missing-page')
+  await expect.poll(async () => new URL((await action.getAttribute('href'))!).searchParams.get('page-url')).toBe('https://simpyll.com/missing-page')
+  expect(errors).toEqual([])
 })
