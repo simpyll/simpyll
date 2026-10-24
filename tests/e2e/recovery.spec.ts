@@ -14,7 +14,7 @@ async function injectFailure(page: import('@playwright/test').Page, text: string
 }
 
 test('route failures preserve the shell, focus recovery, and retry successfully', async ({ page }) => {
-  await injectFailure(page, 'A nurse learning to build')
+  await injectFailure(page, 'Simpyll / A personal work in progress')
   await page.goto('/blog')
   await (await destination(page, 'Home')).click()
   await expect(page.getByRole('heading', { name: 'Something went wrong.' })).toBeFocused()
@@ -30,7 +30,7 @@ test('route failures preserve the shell, focus recovery, and retry successfully'
 })
 
 test('persistent failures have bounded retry and navigation resets the boundary', async ({ page }) => {
-  await injectFailure(page, 'A nurse learning to build')
+  await injectFailure(page, 'Simpyll / A personal work in progress')
   await page.goto('/blog')
   await (await destination(page, 'Home')).click()
   await page.getByRole('button', { name: 'Try again' }).click()
