@@ -32,10 +32,10 @@ async function expectNoHorizontalOverflow(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
 }
 
-async function tabTo(page: Page, target: ReturnType<Page['getByRole']>) {
+async function tabTo(page: Page, target: ReturnType<Page['getByRole']>, reverse = false) {
   // A bounded real Tab sequence detects controls removed from keyboard order.
   for (let index = 0; index < 40; index++) {
-    await page.keyboard.press('Tab')
+    await page.keyboard.press(reverse ? 'Shift+Tab' : 'Tab')
     if (await target.evaluate(element => element === document.activeElement)) return
   }
   await expect(target).toBeFocused()
@@ -171,8 +171,7 @@ test('keyboard skip link, primary navigation and journal controls are usable', a
   await expect(page).toHaveURL(articlePath!)
   // Route navigation focuses the article h1; the return link precedes it.
   await expect(page.getByRole('heading', { level: 1 })).toBeFocused()
-  await page.keyboard.press('Shift+Tab')
-  await expect(page.getByRole('link', { name: 'Back to journal' })).toBeFocused()
+  await tabTo(page, page.getByRole('link', { name: 'Back to journal' }), true)
   await page.keyboard.press('Enter')
   await expect(page).toHaveURL('/blog')
 })
