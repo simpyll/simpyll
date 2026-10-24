@@ -6,15 +6,7 @@
       "slug": "publishing-test",
       "date": "2026-10-20",
       "history": [],
-      "redirectFrom": [],
-      "status": "published",
-      "assets": {
-        "400b3577d26a80a8be3de910cb7209b2": {
-          "path": "public/images/notion/3ffb3577d26a80e9b57fc08460c29516/publishing-test-image-01-ff804a5635dd.png",
-          "identity": "https://prod-files-secure.s3.us-west-2.amazonaws.com/6d99360a-fad2-4772-ab5b-c484d52f4581/9b1c2e00-bf29-4229-b5e2-b2dbe1985a19/android-icon-192x192.png",
-          "revision": "2026-10-21T00:33:00.000Z"
-        }
-      }
+      "status": "unpublished"
     },
     "402b3577d26a80229136ef1dd83af10d": {
       "slug": "starting-over-without-starting-from-zero",
@@ -42,11 +34,10 @@
     }
   },
   "files": {
-    "public/images/notion/3ffb3577d26a80e9b57fc08460c29516/publishing-test-image-01-ff804a5635dd.png": "ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25",
-    "src/content/blog/publishing-test.mdx": "413696e3b2cb8e60f421f995b5b8ae82bbcda6224b9eff210ceddf501e5a6555",
     "src/content/blog/starting-over-without-starting-from-zero.mdx": "f6a24f9a75766dbcf0bef566bb855be1c12f830ef81154abf902e1ebd0f2e874",
     "src/content/blog/a-hospital-is-the-most-complicated-computer-ive-ever-used.mdx": "05b160fa511ac113ce0f70f62306ec2c17f48921d511735243fa6a74ce399e41",
-    "src/content/blog/why-simpyll.mdx": "cb4edd78c2b61cdcf1acb021a4f4aca2aa85d063ea816dc510a97fa1977577e9",
+    "src/content/blog/why-simpyll.mdx": "aea7fb40df15c52a569330e27569fb4aa8c24b399a007efcd0c8132fe2c92632",
+    "public/images/notion/3ffb3577d26a80e9b57fc08460c29516/publishing-test-image-01-ff804a5635dd.png": "ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25",
     "public/images/notion/3ffb3577d26a80e9b57fc08460c29516/ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25.png": "ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25"
   }
 }
