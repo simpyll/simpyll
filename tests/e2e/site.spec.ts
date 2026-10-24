@@ -43,7 +43,7 @@ async function tabTo(page: Page, target: ReturnType<Page['getByRole']>, reverse 
 
 test('homepage navigation reaches sections and journal, including from an article', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Frombedside tobuild.')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('From bedside to build.')
   await expectNoHorizontalOverflow(page)
   const nav = page.getByRole('navigation', { name: 'Main navigation' })
   await navigationReady(page)

@@ -4,27 +4,27 @@ import { Card } from './Card'
 import { Container } from './Container'
 import { Reveal } from './Reveal'
 
-import { getFeaturedProjects, workflowStages, technologies } from '../projects'
+import { getFeaturedProjects, getCaseStudyPath, workflowStages, lifecycleStatuses, technologies } from '../projects'
 
 export function FeaturedWork() {
   const projects = getFeaturedProjects()
   return (
-    <section id="work" className="scroll-mt-24 py-24 sm:py-32">
+    <section aria-labelledby="work-title" id="work" className="scroll-mt-24 py-16 sm:py-20">
       <Container>
-        <div className="mb-12 flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+        <div className="mb-8 flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <div>
             <p className="mb-4 text-xs font-medium uppercase tracking-eyebrow text-accent">
-              Learning through practice
+              01 / Selected work
             </p>
 
-            <h2 className="font-display text-4xl font-semibold tracking-heading sm:text-5xl">
+            <h2 id="work-title" className="font-display text-3xl font-semibold tracking-heading sm:text-4xl">
               Projects & experiments<span className="text-accent">.</span>
             </h2>
           </div>
 
           <p className="max-w-xs text-sm leading-relaxed text-muted">
-            This site is a working project. I’ll share more
-            experiments here as I learn.
+            Working software and open-ended exploration.
+            The process is part of the work.
           </p>
         </div>
 
@@ -36,13 +36,13 @@ export function FeaturedWork() {
                 className="group h-full hover:border-accent/50"
                 hoverable
               >
-                <div className="mb-16 flex flex-wrap items-center justify-between gap-2">
+                <div className="mb-8 flex flex-wrap items-center justify-between gap-2">
                   <span className="text-xs tracking-widest text-subtle">
                     {String(index + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}
                   </span>
 
                   <span className="text-xs tracking-widest text-accent">
-                    {workflowStages[project.workflowStage].toUpperCase()}
+                    {workflowStages[project.workflowStage].toUpperCase()} · {lifecycleStatuses[project.lifecycleStatus]}
                   </span>
                 </div>
 
@@ -60,22 +60,15 @@ export function FeaturedWork() {
                   ))}
                 </div>
 
-                {project.links.length > 0 && (
-                  <div className="mt-8 flex flex-wrap gap-4 text-sm text-accent">
+                {(getCaseStudyPath(project) || project.links.length > 0) && (
+                  <div className="mt-8 flex flex-wrap gap-x-5 gap-y-1 text-sm text-accent">
+                    {getCaseStudyPath(project) && <Link className="inline-flex min-h-11 items-center ui-link-feedback" to={getCaseStudyPath(project)!} aria-label={`View Case Study for ${project.title}`}>View case study →</Link>}
                     {project.links.map(link => link.external
-                      ? <a key={link.url} href={link.url}>{link.label}</a>
-                      : <Link key={link.url} to={link.url}>{link.label}</Link>)}
+                      ? <a className="inline-flex min-h-11 items-center ui-link-feedback" key={link.url} href={link.url}>{link.label}</a>
+                      : <Link className="inline-flex min-h-11 items-center ui-link-feedback" key={link.url} to={link.url}>{link.label}</Link>)}
                   </div>
                 )}
 
-                <div className="mt-8 flex justify-end">
-                  <span
-                    aria-hidden="true"
-                    className="text-xl text-subtle ui-motion-arrow"
-                  >
-                    ↗
-                  </span>
-                </div>
               </Card>
             </Reveal>
           ))}

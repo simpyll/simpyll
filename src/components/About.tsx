@@ -8,17 +8,18 @@ export function About() {
   return (
     <section
       id="about"
-      className="scroll-mt-24 border-t border-outline py-24 sm:py-32"
+      aria-labelledby="home-about-title"
+      className="scroll-mt-24 border-t border-outline py-16 sm:py-20"
     >
       <Container>
         <div className="grid gap-12 md:grid-cols-[1fr_2fr] md:gap-20">
           <Reveal>
             <div>
               <p className="mb-4 text-xs font-medium uppercase tracking-eyebrow text-accent">
-                Healthcare × technology
+                03 / A clinical perspective
               </p>
 
-              <h2 className="font-display text-4xl font-semibold tracking-heading sm:text-5xl">
+              <h2 id="home-about-title" className="font-display text-3xl font-semibold tracking-heading sm:text-4xl">
                 About<span className="text-accent">.</span>
               </h2>
             </div>
@@ -36,7 +37,7 @@ export function About() {
 
               <Link
                 to="/about"
-                className="mt-10 inline-flex items-center gap-3 text-sm font-medium text-accent ui-link-feedback"
+                className="mt-10 inline-flex min-h-11 items-center gap-3 text-sm font-medium text-accent ui-link-feedback"
               >
                 More about me
                 <span aria-hidden="true">↗</span>
