@@ -31,7 +31,7 @@ test('contextual contribution sources and client navigation', async ({ page }) =
   await page.goto('/')
   const action = page.getByRole('contentinfo').getByRole('link', { name: /GitHub/ }).filter({ hasText: /Edit|Suggest/ })
   await expect(action).toHaveAttribute('href', /edit\/main\/src\/pages\/Home.tsx$/)
-  await (await destination(page, 'Blog')).click()
+  await (await destination(page, 'Journal')).click()
   await expect(action).toHaveAttribute('href', /edit\/main\/src\/pages\/Blog.tsx$/)
   await page.goto('/blog/hello-world')
   await expect(action).toHaveAttribute('href', /edit\/main\/src\/content\/blog\/hello-world.mdx$/)
