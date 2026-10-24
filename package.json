@@ -16,7 +16,7 @@
     "test:notion": "node --test scripts/notion/*.test.mjs",
     "test:notion:build": "node --test scripts/notion-build.test.mjs",
     "validate:content": "node scripts/validate-content.mjs",
-    "test:mdx": "node --test scripts/mdx.test.mjs scripts/rich-content.test.mjs",
+    "test:mdx": "node --test scripts/article-heading.test.mjs scripts/mdx.test.mjs scripts/rich-content.test.mjs",
     "test:content": "node --test scripts/validate-content.test.mjs",
     "test": "npm run build && npm run test:images && node --test scripts/*.test.mjs scripts/notion/*.test.mjs && npm run test:smoke && npm run test:e2e:built",
     "test:e2e": "npm run build && npm run test:e2e:built",

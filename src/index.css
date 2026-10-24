@@ -549,18 +549,6 @@ main { overflow-wrap: anywhere; }
 }
 @media print { .article-toc, .toc-mobile-slot { display: none; } .has-toc { padding: 0; } }
 
-/* Controls occupy a permanent gutter; headings keep their full reading width. */
-.heading-permalink { position: relative; }
-.heading-actions { position: absolute; inset-inline-end: 0; top: -2rem; display: flex; gap: .25rem; font-size: .875rem; }
-.article-content .heading-actions :is(a,button) { display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; margin: 0; padding: 0; border: 1px solid var(--ui-outline); border-radius: .375rem; background: var(--ui-surface); color: var(--ui-muted); text-decoration: none; cursor: pointer; }
-.heading-actions :is(a,button):focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
-.heading-feedback { position: absolute; z-index: 5; inset-inline-start: 0; inset-inline-end: 4.5rem; top: -2rem; height: 2rem; display: flex; align-items: center; font-size: .8125rem; line-height: 1.4; background: var(--ui-surface); color: var(--ui-foreground); border-radius: .375rem; }
-.heading-feedback[data-active="true"] { padding: .125rem .5rem; border: 1px solid var(--ui-outline); }
-.heading-feedback[data-active="false"] { border: 0; padding: 0; background: transparent; }
-.heading-feedback input { display: block; width: 100%; min-width: 0; height: 100%; padding: .25rem; background: var(--ui-surface); color: var(--ui-foreground); }
-@media (min-width: 60rem) { .heading-actions { inset-inline-end: calc(100% + .25rem); top: 0; flex-direction: column; } }
-@media print { .heading-actions, .heading-feedback { display: none; } }
-
 /* Discovery uses fixed control slots and overlay disclosures; filtering never
    changes the floating capsule's geometry or introduces result animations. */
 .discovery-controls { position: relative; padding: 1.25rem; border: 1px solid var(--color-outline); border-radius: 1rem; }

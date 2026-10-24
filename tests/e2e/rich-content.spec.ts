@@ -12,6 +12,7 @@ test('rich manual and Notion content hydrates, scrolls and works by keyboard', a
   await page.goto('/blog/rich-content-fixture')
   await expect(page.getByRole('heading', { name: 'Writing for clarity' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Notion heading' })).toHaveAttribute('id', 'notion-heading')
+  await expect(page.locator('.heading-actions, .heading-feedback, .heading-permalink')).toHaveCount(0)
   await expect(page.getByRole('note', { name: 'Information: Shared renderer' })).toBeVisible()
   for (const variant of ['note', 'tip', 'information', 'warning', 'important']) await expect(page.locator(`.article-callout[data-variant="${variant}"]`).first()).toBeAttached()
   await expect(page.locator('code.hljs .hljs-keyword').first()).toBeAttached()
