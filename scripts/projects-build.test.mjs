@@ -29,7 +29,7 @@ test('real production build excludes unpublished metadata and fails on invalid r
     assert.ok(html.indexOf('>Simpyll</h3>') < html.indexOf('>AI Engineering</h3>'))
     assert.match(await readFile(join(root,'dist/sitemap.xml'),'utf8'),/\/projects\/simpyll<\/loc>/)
     const hub=await readFile(join(root,'dist/projects/index.html'),'utf8')
-    assert.equal(parseHTML(hub).document.querySelector('[data-project="fixture-second"] a[aria-label="View Fixture second study case study"]').getAttribute('href'),'/projects/fixture-unique-slug')
+    assert.equal(parseHTML(hub).document.querySelector('[data-project="fixture-second"] a[aria-label="View Case Study for Fixture second study"]').getAttribute('href'),'/projects/fixture-unique-slug')
     assert.match(await readFile(join(root,'dist/projects/fixture-unique-slug/index.html'),'utf8'),/Second study fixture content/)
     assert.match(await readFile(join(root,'dist/sitemap.xml'),'utf8'),/https:\/\/simpyll.com\/projects\/fixture-unique-slug<\/loc>/)
     assert.doesNotMatch(hub,/href="\/projects\/study-(draft|private)"/)

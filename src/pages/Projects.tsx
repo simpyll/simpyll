@@ -10,7 +10,7 @@ const types = [...new Set(projects.map(p => p.projectType).filter(Boolean))].sor
 const usedTechnologies = Object.entries(technologies).filter(([id]) => projects.some(p => p.technologies.includes(id as keyof typeof technologies)))
 const subscribe = () => () => {}
 
-function ProjectCard({ project: p }: { project: Project }) {
+export function ProjectCard({ project: p }: { project: Project }) {
   const caseStudyPath = getCaseStudyPath(p)
   return <article className="lab-card" data-project={p.id}>
     <p className="lab-type">{p.projectType}</p>
@@ -20,7 +20,7 @@ function ProjectCard({ project: p }: { project: Project }) {
     {p.technologies.length > 0 && <ul className="lab-tags" aria-label="Technologies">{p.technologies.map(t => <li key={t}>{technologies[t]}</li>)}</ul>}
     {p.nextMilestone && <p className="lab-summary">Next: {p.nextMilestone}</p>}
     {p.description && <details><summary>More about {p.title}</summary><p>{p.description}</p></details>}
-    {caseStudyPath && <div className="lab-links"><Link className="lab-case-study" to={caseStudyPath} aria-label={`View ${p.title} case study`}>View Case Study <span aria-hidden="true">→</span></Link></div>}
+    {caseStudyPath && <div className="lab-links"><Link className="lab-case-study" to={caseStudyPath} aria-label={`View Case Study for ${p.title}`}>View Case Study <span aria-hidden="true">→</span></Link></div>}
     {p.links.length > 0 && <div className="lab-links">{p.links.map(link => <a key={link.url} href={link.url}>{link.label} <span aria-hidden="true">↗</span></a>)}</div>}
   </article>
 }

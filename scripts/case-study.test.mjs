@@ -30,3 +30,24 @@ test('editorial validation rejects missing sections, duplicate IDs, unsafe links
  assert.deepEqual(validateCaseStudy(valid),valid)
  for (const invalid of [{sections:[]},{sections:[...valid.sections,...valid.sections]},{sections:[{...valid.sections[0],paragraphs:[]}]},{sections:[{...valid.sections[0],links:[{label:'Source',url:'javascript:alert(1)'}]}]},{...valid,timeline:[{date:'2026-02-30',title:'False',text:'False',url:'/'}]}]) assert.throws(()=>validateCaseStudy(invalid))
 })
+
+
+test('shared Hub card preserves optional disclosures and independent resource links', async () => {
+ const { createServer } = await import('vite')
+ const server = await createServer({server:{middlewareMode:true}, hmr:false})
+ try {
+  const { ProjectCard } = await server.ssrLoadModule('/src/pages/Projects.tsx')
+  const { createElement } = await import('react')
+  const { renderToStaticMarkup } = await import('react-dom/server')
+  const { MemoryRouter } = await import('react-router-dom')
+  const { parseHTML } = await import('linkedom')
+  const project = JSON.parse(await readFile('src/generated/projects.json','utf8'))[0]
+  const html = renderToStaticMarkup(createElement(MemoryRouter,{},createElement(ProjectCard,{project:{...project,description:'Isolated disclosure fixture'}})))
+  const doc = parseHTML(html).document
+  assert.equal(doc.querySelector('details summary').textContent,'More about Simpyll')
+  assert.equal(doc.querySelector('details p').textContent,'Isolated disclosure fixture')
+  assert.equal(doc.querySelectorAll('a[href="/projects/simpyll"]').length,1)
+  assert.ok(doc.querySelector('a[href="https://github.com/simpyll/simpyll"]'))
+  assert.equal(doc.querySelectorAll('a a, a button, button a').length,0)
+ } finally { await server.close() }
+})
