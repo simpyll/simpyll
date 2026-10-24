@@ -1,3 +1,4 @@
+import { caseStudyRoutes } from './project-routes.mjs'
 
 import { readdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
@@ -64,6 +65,7 @@ async function generateSitemap() {
     { path: '/explore' },
     { path: '/projects' },
     ...posts,
+    ...(await caseStudyRoutes()).map(path => ({ path })),
   ]
 
   const urls = pages

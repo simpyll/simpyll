@@ -14,6 +14,7 @@ test('real production build excludes unpublished metadata and fails on invalid r
     await symlink(resolve('.git'),join(root,'.git'),'dir')
     const data = JSON.parse(await readFile(join(root,'content/projects.json'),'utf8'))
     for (const visibility of ['draft','private']) data.push({...data[0],id:`hidden-${visibility}`,slug:`hidden-${visibility}`,title:`UNPUBLISHED_SENTINEL_${visibility}`,visibility})
+    await writeFile(join(root,'content/case-studies/unassociated.json'),JSON.stringify({sections:[{id:'private',title:'UNPUBLISHED_SENTINEL_editorial',paragraphs:['Not public'] }]}))
     await writeFile(join(root,'content/projects.json'),JSON.stringify(data))
     const options={cwd:root,maxBuffer:4e6,env:{...process.env,SMOKE_BUILD_SHA:(await exec('git',['rev-parse','HEAD'])).stdout.trim()}}
     await exec('npm',['run','build'],options)
@@ -22,7 +23,7 @@ test('real production build excludes unpublished metadata and fails on invalid r
     const html=await readFile(join(root,'dist/index.html'),'utf8')
     assert.match(html, /<h3[^>]*>Simpyll<\/h3>/)
     assert.ok(html.indexOf('>Simpyll</h3>') < html.indexOf('>AI Engineering</h3>'))
-    assert.doesNotMatch(await readFile(join(root,'dist/sitemap.xml'),'utf8'),/\/projects\//)
+    assert.match(await readFile(join(root,'dist/sitemap.xml'),'utf8'),/\/projects\/simpyll<\/loc>/)
     data.push(data[0]);await writeFile(join(root,'content/projects.json'),JSON.stringify(data))
     await assert.rejects(exec('npm',['run','build'],options), error=>error.code===1 && /Project "simpyll": slug duplicates/.test(error.stderr))
   } finally { await rm(root,{recursive:true,force:true}) }

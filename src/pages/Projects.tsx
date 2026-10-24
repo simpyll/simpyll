@@ -1,5 +1,5 @@
 import { useState, useSyncExternalStore } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { SEO } from '../components/SEO'
 import { getPublicProjects, technologies, workflowStages, lifecycleStatuses, type Project } from '../projects'
 import './projects.css'
@@ -13,7 +13,7 @@ const subscribe = () => () => {}
 function ProjectCard({ project: p }: { project: Project }) {
   return <article className="lab-card" data-project={p.id}>
     <p className="lab-type">{p.projectType}</p>
-    <h3>{p.title}</h3>
+    <h3>{p.caseStudy ? <Link to={`/projects/${p.slug}`}>{p.title}</Link> : p.title}</h3>
     <p className="lab-summary">{p.summary}</p>
     <div className="lab-tags"><span>{p.workflowStage && workflowStages[p.workflowStage]}</span><span>Lifecycle: {p.lifecycleStatus && lifecycleStatuses[p.lifecycleStatus]}</span></div>
     {p.technologies.length > 0 && <ul className="lab-tags" aria-label="Technologies">{p.technologies.map(t => <li key={t}>{technologies[t]}</li>)}</ul>}

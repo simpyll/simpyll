@@ -1,3 +1,4 @@
+import { ProjectDetail } from './pages/ProjectDetail'
 import { Projects } from './pages/Projects'
 import { Explore } from './pages/Explore'
 import { ErrorBoundary } from './recovery/ErrorBoundary'
@@ -26,6 +27,7 @@ export function AppContent() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/projects/:slug" element={<ProjectDetail />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/blog" element={<Blog />} />
