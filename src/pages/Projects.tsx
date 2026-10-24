@@ -76,7 +76,7 @@ export function Projects() {
             </section>
           })}
         </div>
-      </> : <section aria-label="Project grid" className="lab-grid">{results.map(p => <ProjectCard key={p.id} project={p} />)}</section>}
+      </> : <section aria-label="Project grid" className="lab-grid"><h2 className="sr-only">Project results</h2>{results.map(p => <ProjectCard key={p.id} project={p} />)}</section>}
       {!results.length && <p className="lab-no-results">No projects match. Try another search or reset the filters.</p>}
       <p className="lab-note">Stages reflect my current priorities, not release availability. Healthcare ideas are educational software concepts, not released clinical tools.</p>
       <noscript><style>{'.lab-controls,.lab-mobile-selector,.lab-more{display:none!important}.lab-board{display:block!important}.lab-column{display:block!important;margin-bottom:2rem}'}</style></noscript>
