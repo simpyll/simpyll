@@ -29,3 +29,41 @@ workflow created_at to last required job completed_at, including handoffs and
 queue gaps. Do not sum parallel jobs. Record cold/warm cache evidence from logs;
 runner load and cache differences limit single-run attribution. Main deployment
 validation remains gated; post-merge deployment timing requires later observation.
+
+## Executed extended matrix
+
+[Run 40145800507](https://github.com/simpyll/simpyll/actions/runs/40145800507)
+at `3b02571e244cf49e7606286f9868e1b7c6b87bcb`: all six jobs succeeded.
+585 discovered, 579 passed, six existing isolated-fixture skips; no failures or
+retries. The dedicated fixtures job executed those fixture journeys successfully.
+Wall: 00:12:37Z → 00:19:21Z = **404s**. Browser execution: longest extended
+shard 265s. Extended coverage intentionally concentrates more expensive engine
+journeys in the last shard; this is not the routine PR tier. A temporary commit
+forced the extended tier for this verification and is restored in the final tree.
+
+## Failures investigated
+
+The initial hosted run exposed tests depending on the unpublished Notion
+`publishing-test` post (pre-existing at the baseline SHA). Responsive-image checks
+now use the maintained manual article; the existing real Notion fixture additionally
+checks image loading in-browser. No editorial content is restored or invented.
+Footer/HTML tests now use a current Notion article. These preserve the assertions'
+meaning while removing dependence on a retired post.
+
+Firefox exposed absent return-focus indicators after Escape: targeted CSS keeps
+More/search focus visible even when Firefox retains pointer modality. Broader
+verification also required accepting successful HTTP 304 reload revalidation,
+rounding geometry to 0.001 CSS px for nominal 44px targets (observed float errors
+below 0.0001px), and hit-testing a focused card's *visible* viewport fragment.
+The focus helper still requires an actual outline/shadow, viewport intersection
+and an unobscured hit; no axe rules, keyboard assertions or browsers were dropped.
+All extended checks passed after these fixes. Failure artifacts were successfully
+uploaded and downloaded for trace/screenshot inspection; successful runs upload no
+browser diagnostics.
+
+Local validation: production build/TypeScript/prerender, ESLint, 40 static/workflow
+checks, redirect, Notion unit, image, content, search and smoke suites pass.
+An early blanket Node test invocation preceded completed output generation and
+included integration browser tests, producing missing-output and missing-browser
+failures; it is not counted as a pass. The output group was rerun successfully
+following the production build; hosted fixture/browser gates are authoritative.
