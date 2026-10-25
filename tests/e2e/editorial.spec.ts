@@ -41,7 +41,9 @@ for (const slug of ['editorial-fixture', 'notion-fixture']) {
         expect(articles).toHaveLength(1)
         expect(articles[0]).toMatchObject({ datePublished: '2026-10-20', dateModified: '2026-10-25' })
         await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `https://simpyll.com/blog/${slug}`)
-        expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([])
+        // axe uses page timers, which browsers suppress when JavaScript is disabled.
+        // Scan the full hydrated document; retain all static no-JS assertions below.
+        if (javaScriptEnabled) expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([])
         if (javaScriptEnabled) {
           await page.locator('.article-metadata').screenshot({ path: info.outputPath(`metadata-${slug}-${theme}.png`) })
           await page.locator('.editorial-history').first().screenshot({ path: info.outputPath(`corrections-${slug}-${theme}.png`) })

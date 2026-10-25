@@ -98,7 +98,7 @@ test('the actual reusable component omits an empty section and preserves accessi
     return `data:text/javascript;base64,${Buffer.from(code).toString('base64')}`
   }
   const taxonomy = compile('src/components/TaxonomyLink.tsx', { '../lib/discovery': new URL('../src/lib/discovery.ts', import.meta.url).href })
-  const card = compile('src/components/ArticleCard.tsx', { './TaxonomyLink': taxonomy })
+  const card = compile('src/components/ArticleCard.tsx', { './TaxonomyLink': taxonomy, '../lib/editorial.mjs': new URL('../src/lib/editorial.mjs', import.meta.url).href })
   const { RelatedArticles } = await import(compile('src/components/RelatedArticles.tsx', { './ArticleCard': card }))
   const render = articles => renderToStaticMarkup(createElement(MemoryRouter, null, createElement(RelatedArticles, { articles })))
   assert.equal(render([]), '')
