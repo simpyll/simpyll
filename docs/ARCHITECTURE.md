@@ -64,3 +64,31 @@ Issue #41 printable CV remains separate. Starter articles remain unchanged.
 See [unified discovery](DISCOVERY.md) for combined URL search, taxonomy filters, sorting and prerender behavior.
 
 Project metadata and publication contract: [PROJECTS.md](PROJECTS.md).
+
+### Breadcrumb navigation
+
+Before #5, articles and case studies had single parent back links; article
+BlogPosting JSON-LD and canonical tags were separate existing head components.
+Breadcrumbs now replace those back links on the only shipped nested routes:
+Home → Blog → article, and Home → Projects → case study. Top-level and unknown
+pages omit them; learning and notes have no implemented nested routes yet.
+
+Resolved public records supply titles and canonical paths to `contentBreadcrumbs`.
+`Breadcrumbs` uses that same data for its ordered navigation list and one Helmet
+BreadcrumbList script, serialized with HTML-safe escaping. Existing SEO and article
+schema are preserved. Current pages are noninteractive `aria-current` text;
+ancestors are native links with visible focus. CSS truncation retains the full
+accessible title on mobile. Breadcrumbs are hidden in print.
+
+New articles and studies inherit this automatically. Future nested page templates
+can pass their authoritative metadata through the shared component; do not add a
+second title registry. Blog aliases redirect before rendering content; static alias
+stubs contain no breadcrumb schema. Renamed titles/slugs therefore use only the
+current canonical record without changing immutable identity.
+
+After one `npm run build`, run `node --test scripts/breadcrumbs.test.mjs` and
+`npx playwright test breadcrumbs` to check the actual static HTML, schema/UI
+agreement, omissions, aliases, keyboard focus, themes, mobile and no-JavaScript
+navigation. Inspect `dist/blog/<slug>/index.html` for the nav and BreadcrumbList;
+its final item must match the existing canonical link. Screenshots are emitted
+as Playwright test artifacts. No new dependencies, build steps or API calls.

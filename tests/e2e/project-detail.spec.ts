@@ -18,7 +18,7 @@ test('case study direct load, canonical status, accessibility and board navigati
     await page.setViewportSize({width,height:900})
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true)
   }
-  await page.getByRole('link',{name:'← Explore the Project Lab'}).click()
+  await page.getByRole('navigation', { name: 'Breadcrumb', exact: true }).getByRole('link', { name: 'Projects', exact: true }).click()
   await page.getByRole('link',{name:'View Case Study for Simpyll',exact:true}).click()
   await expect(page).toHaveURL(/\/projects\/simpyll$/)
   await page.goBack()
@@ -52,7 +52,7 @@ for (const theme of ['light','dark'] as const) test(`AI Engineering ${theme}: di
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true)
  }
  await page.screenshot({path:testInfo.outputPath(`ai-engineering-${theme}.png`),fullPage:true})
- await page.getByRole('link',{name:'← Explore the Project Lab'}).click()
+ await page.getByRole('navigation', { name: 'Breadcrumb', exact: true }).getByRole('link', { name: 'Projects', exact: true }).click()
  await page.getByRole('link',{name:'View Case Study for AI Engineering',exact:true}).click()
  await expect(page.locator('h1')).toHaveText('AI Engineering.')
  expect(errors).toEqual([])

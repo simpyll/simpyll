@@ -1,3 +1,5 @@
+import { Breadcrumbs } from '../components/Breadcrumbs'
+import { contentBreadcrumbs } from '../lib/breadcrumbs'
 import { ProjectStatus } from '../components/ProjectStatus'
 import { Link, useParams } from 'react-router-dom'
 import { SEO } from '../components/SEO'
@@ -10,7 +12,7 @@ export function ProjectDetailLayout({ project: p, study }: { project: Project; s
   return <>
     <SEO title={`${p.title} — Project case study`} description={p.seoDescription ?? p.summary} path={getCaseStudyPath(p)} image={p.cover?.src ?? (p.id === 'simpyll' ? '/images/simpyll-architecture.png' : undefined)} />
     <main id="main-content" tabIndex={-1} className="case-study bg-canvas text-foreground">
-      <Link className="case-back" to="/projects">← Explore the Project Lab</Link>
+      <Breadcrumbs items={contentBreadcrumbs('projects', p.title, getCaseStudyPath(p))} />
       <header className="case-hero">
         <p className="case-eyebrow">Engineering case study · {p.category ?? p.projectType}</p>
         <h1>{p.title}<span className="text-accent">.</span></h1>
