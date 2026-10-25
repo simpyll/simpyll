@@ -65,7 +65,11 @@ test('Notion fixture reaches built HTML, metadata, sitemap and durable image thr
   assert.match(await readFile(join(root, 'dist/sitemap.xml'), 'utf8'), /<lastmod>2026-10-25<\/lastmod>/)
   assert.match(await readFile(join(root, 'dist/sitemap.xml'), 'utf8'), /https:\/\/simpyll.com\/blog\/notion-fixture/)
   assert.equal((await synchronize(options)).changed, false)
-  try { await exec(resolve('node_modules/.bin/playwright'), ['test', 'redirects.spec.ts', 'editorial.spec.ts', '--project=desktop-chromium', '--project=mobile-chromium', '--workers=2'], { cwd: root, env: { ...process.env, REDIRECT_FIXTURE: '1', EDITORIAL_FIXTURE: '1', PLAYWRIGHT_PREVIEW_PORT: '4174' }, maxBuffer: 3e6 }) } catch (error) {
+  try { const browserRun = exec(resolve('node_modules/.bin/playwright'), ['test', 'redirects.spec.ts', 'editorial.spec.ts', '--project=desktop-chromium', '--project=mobile-chromium', '--workers=2'], { cwd: root, env: { ...process.env, REDIRECT_FIXTURE: '1', EDITORIAL_FIXTURE: '1', PLAYWRIGHT_PREVIEW_PORT: '4174' }, maxBuffer: 3e6 })
+    browserRun.child.stdout.on('data', chunk => process.stdout.write(chunk))
+    browserRun.child.stderr.on('data', chunk => process.stderr.write(chunk))
+    await browserRun
+  } catch (error) {
     await mkdir('artifacts/editorial', { recursive: true })
     await cp(join(root, 'test-results'), 'artifacts/editorial', { recursive: true }).catch(() => {})
     throw new Error(error.stdout + error.stderr)

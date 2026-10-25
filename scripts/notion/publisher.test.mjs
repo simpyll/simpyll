@@ -251,3 +251,19 @@ test('optional Notion editorial fields fail clearly for invalid shapes, dates an
   p.properties.Corrections = { type: 'select' }
   assert.throws(() => metadataFor(p, undefined, []), /Corrections must be a Notion text/)
 })
+test('withdrawal and republication preserve original publication and slug aliases', async t => {
+  const { root, sync } = await setup(t)
+  await sync()
+  await sync({ api: fixture({ pages: [] }).api })
+  const p = page()
+  p.properties['Published Date'].date.start = '2026-10-25'
+  p.properties.Slug.rich_text = [rt('new-address')]
+  await sync({ api: fixture({ pages: [p] }).api })
+  const manifest = JSON.parse(await readFile(join(root, '.notion/published.json'), 'utf8'))
+  assert.equal(manifest.articles[PAGE].date, '2026-10-20')
+  assert.deepEqual(manifest.articles[PAGE].history, ['notion-fixture'])
+  const { metadata } = await evaluate(await readFile(join(root, 'src/content/blog/new-address.mdx'), 'utf8'), runtime)
+  assert.equal(metadata.articleId, `notion:${PAGE}`)
+  assert.equal(metadata.date, '2026-10-20')
+  assert.equal(metadata.updatedAt, undefined)
+})

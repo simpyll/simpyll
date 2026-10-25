@@ -1,3 +1,4 @@
+import { formatArticleDate } from '../lib/editorial.mjs'
 import { Link } from 'react-router-dom'
 import { TaxonomyLink } from './TaxonomyLink'
 import type { DiscoveryRecord } from '../lib/discovery'
@@ -7,7 +8,7 @@ export function ArticleCard({ article, headingLevel = 2 }: { article: DiscoveryR
     <div className="flex flex-wrap items-center justify-between gap-3">
       <TaxonomyLink kind="category" label={article.category} />
       <div className="flex flex-wrap items-center gap-3">
-        {article.date && <time className="text-xs text-subtle" dateTime={article.date}>{new Date(`${article.date}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}</time>}
+        {article.date && <time className="text-xs text-subtle" dateTime={article.date}>{formatArticleDate(article.date, 'short')}</time>}
         {article.readingTimeMinutes !== undefined && <span className="text-xs text-subtle">{article.readingTimeMinutes} min read</span>}
       </div>
     </div>

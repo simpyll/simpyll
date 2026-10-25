@@ -2,8 +2,8 @@
 export function validEditorialDate(value) {
   return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(Date.parse(value)) && new Date(value).toISOString().slice(0, 10) === value
 }
-export function formatArticleDate(date) {
-  return new Date(`${date}T00:00:00Z`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
+export function formatArticleDate(date, month = 'long') {
+  return new Date(`${date}T00:00:00Z`).toLocaleDateString('en-US', { month, day: 'numeric', year: 'numeric', timeZone: 'UTC' })
 }
 export function correctionId(entry) {
   // Content-derived fallback: unrelated additions/reordering cannot change a link.
@@ -49,7 +49,7 @@ export function normalizeEditorial(metadata) {
   const result = { ...metadata }
   for (const field of ['revisions', 'corrections']) {
     if (metadata[field] !== undefined) result[field] = metadata[field].map(entry => ({ date: entry.date, description: entry.description.trim(), ...(entry.id !== undefined ? { id: entry.id } : {}) }))
-      .sort((a, b) => compare(b.date, a.date) || compare(a.id ?? a.description, b.id ?? b.description))
+      .sort((a, b) => compare(b.date, a.date) || compare(a.id ?? a.description, b.id ?? b.description) || compare(a.description, b.description))
   }
   return result
 }
