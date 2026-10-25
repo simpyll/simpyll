@@ -67,3 +67,21 @@ An early blanket Node test invocation preceded completed output generation and
 included integration browser tests, producing missing-output and missing-browser
 failures; it is not counted as a pass. The output group was rerun successfully
 following the production build; hosted fixture/browser gates are authoritative.
+
+## Routine timing sample
+
+[Run 40146302115](https://github.com/simpyll/simpyll/actions/runs/40146302115):
+492 discovered; 485 first-attempt passes, one existing Chromium resize test passed
+on retry, six fixture-only skips, no final failures. All six jobs succeeded.
+Wall **284s** (00:20:23Z → 00:25:07Z), versus historical optimized **261s**:
++23s / +8.8%. Build 44s versus 46s; longest browser execution 183s versus 138s;
+browser setup 33–44s versus 34–50s. npm and Playwright cache hits in every shard;
+binary installs skipped. No added production build, engine download or required
+job. Existing native shard balancing by test count concentrates cross-engine
+work in shard 3; this remains the critical path. These are individual samples,
+not a statistical estimate of typical CI or a causal attribution of every second.
+
+The retry read primary/overflow navigation lists in separate protocol calls,
+straddling a responsive React render. The final version captures both lists
+atomically while preserving all partition assertions. The PR records final-run
+verification after this test synchronization fix.
