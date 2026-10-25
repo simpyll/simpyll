@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://simpyll.com/privacy</loc>
+  </url>
+  <url>
+    <loc>https://simpyll.com/terms</loc>
+  </url>
+  <url>
+    <loc>https://simpyll.com/disclaimers</loc>
+  </url>
+  <url>
+    <loc>https://simpyll.com/editorial-standards</loc>
+  </url>
+  <url>
+    <loc>https://simpyll.com/accessibility</loc>
+  </url>
+  <url>
     <loc>https://simpyll.com/</loc>
   </url>
   <url>
@@ -28,10 +43,6 @@
     <lastmod>2026-10-19</lastmod>
   </url>
   <url>
-    <loc>https://simpyll.com/blog/publishing-test</loc>
-    <lastmod>2026-10-20</lastmod>
-  </url>
-  <url>
     <loc>https://simpyll.com/blog/starting-over-without-starting-from-zero</loc>
     <lastmod>2026-10-23</lastmod>
   </url>
@@ -40,6 +51,13 @@
     <lastmod>2026-10-22</lastmod>
   </url>
   <url>
+    <loc>https://simpyll.com/blog/why-simpyll</loc>
+    <lastmod>2026-10-23</lastmod>
+  </url>
+  <url>
     <loc>https://simpyll.com/projects/simpyll</loc>
+  </url>
+  <url>
+    <loc>https://simpyll.com/projects/ai-engineering</loc>
   </url>
 </urlset>

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useSyncExternalStore } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Container } from './Container'
@@ -30,6 +31,10 @@ export function Footer() {
             </div>
           </div>
           <a className="footer-contribution text-sm text-muted" href={contribution.href} target="_blank" rel="noopener noreferrer">{contribution.label} <span aria-hidden="true">↗</span></a>
+          <nav aria-label="Legal and transparency" className="footer-legal">
+            <h2 className="text-sm font-medium text-muted">Legal &amp; Transparency</h2>
+            <ul className="flex flex-wrap gap-x-5">{[['privacy', 'Privacy'], ['terms', 'Terms'], ['disclaimers', 'Disclaimers'], ['accessibility', 'Accessibility'], ['editorial-standards', 'Editorial Standards']].map(([slug, title]) => <li key={slug}><Link className="inline-flex min-h-11 items-center text-sm text-muted underline underline-offset-4" to={`/${slug}`}>{title}</Link></li>)}</ul>
+          </nav>
           <p className="footer-copyright text-xs text-subtle">© {import.meta.env.BUILD_YEAR} Simpyll. All rights reserved.</p>
         </div>
       </Container>

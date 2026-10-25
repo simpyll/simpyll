@@ -6,6 +6,7 @@ const repository = 'https://github.com/simpyll/simpyll'
 const staticSources: Record<string, string> = {
   '/': 'src/pages/Home.tsx', '/about': 'src/content/profile.ts',
   '/blog': 'src/pages/Blog.tsx', '/projects': 'src/pages/Projects.tsx',
+  ...Object.fromEntries(['privacy', 'terms', 'disclaimers', 'editorial-standards', 'accessibility'].map(slug => [`/${slug}`, 'src/content/policies.json'])),
   '/explore': 'src/pages/Explore.tsx',
 }
 function edit(source: string, label: string) {
