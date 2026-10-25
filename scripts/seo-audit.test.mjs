@@ -122,3 +122,15 @@ test('build invokes offline SEO gate and existing CI executes regression tests',
   const result = await auditSeo({ directory, articles: [{ slug: 'dated', status: 'published', metadata: { date: '2026-10-20', updatedAt: '2026-10-24' } }] })
   assert.ok(result.issues.some(i => i.code === 'sitemap-lastmod'))
 })
+
+
+test('SVG chart titles are accessible descriptions, not duplicate document metadata', async t => {
+ const result = await auditSeo({ directory: await fixture(t, html({body:'<h1>Example page</h1><svg><title>Chart description</title></svg>'})) })
+ assert.ok(!result.issues.some(i => i.code === 'title'))
+ assert.equal(result.pages[0].title,'Example page | Simpyll')
+})
+test('link kinds preserve contextual, related, breadcrumb, previous-next and global distinctions', async t => {
+ const body='<h1>Example page</h1><header><a href="/">Global</a></header><nav aria-label="Breadcrumb"><a href="/">Home</a></nav><div class="article-content"><a href="/">Context</a></div><section aria-labelledby="related-articles-heading"><a href="/">Related</a></section><nav aria-label="Article navigation"><a href="/">Next</a></nav><footer><a href="/">Footer</a></footer>'
+ const result=await auditSeo({directory:await fixture(t,html({body}))})
+ assert.deepEqual(result.pages[0].links.map(l=>l.kind),['global','breadcrumb','contextual','related','previous-next','footer'])
+})

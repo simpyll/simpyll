@@ -1,0 +1,25 @@
+{
+  "sections": [
+    {
+      "id": "overview",
+      "title": "An open window into the site",
+      "paragraphs": [
+        "Pulse makes the structure of Simpyll visible: what is published, how articles connect, and where automated technical checks find opportunities. Search and visitor metrics remain unavailable until separately authorized Google integrations."
+      ],
+      "links": [
+        {
+          "label": "Explore the dashboard",
+          "url": "/pulse"
+        }
+      ]
+    },
+    {
+      "id": "architecture",
+      "title": "One audit, two outputs",
+      "paragraphs": [
+        "The existing SEO validator reads prerendered HTML. Pulse projects a versioned, allowlisted public snapshot from that result; actionable findings stay in ignored local artifacts. Native SVG and HTML provide visualizations without a charting dependency.",
+        "Publication and explicit revision metadata describe currently published content. These are not traffic measurements or a complete historical inventory. Accessible tables accompany charts and graph exploration."
+      ]
+    }
+  ]
+}

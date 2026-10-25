@@ -6,13 +6,13 @@ const data = JSON.parse(await readFile('content/projects.json','utf8'))
 test('owner assignments, honest destinations, and deterministic inventory',()=>{
  const {projects,errors}=validateProjects(data)
  assert.deepEqual(errors,[])
- assert.equal(projects.length,21)
+ assert.equal(projects.length,22)
  assert.deepEqual(projects.filter(p=>p.workflowStage==='in-progress').map(p=>p.id),['simpyll','ai-engineering'])
  assert.deepEqual(projects.filter(p=>p.workflowStage==='on-deck').map(p=>p.id),['rntonp-database','medical-calculators'])
  assert.equal(projects.filter(p=>p.workflowStage==='ideas').length,17)
- assert.equal(projects.filter(p=>['shipped','archived'].includes(p.workflowStage)).length,0)
+ assert.equal(projects.filter(p=>['shipped','archived'].includes(p.workflowStage)).length,1)
  assert.equal(projects.find(p=>p.id==='ai-engineering').links[0].url,'https://github.com/simpyll/ai-engineering-learning')
- assert.deepEqual(projects.flatMap(p=>p.links.map(l=>l.url)),['https://simpyll.com/','https://github.com/simpyll/simpyll','https://github.com/simpyll/ai-engineering-learning','https://rntonp.com/'])
+ assert.deepEqual(projects.flatMap(p=>p.links.map(l=>l.url)),['https://simpyll.com/','https://github.com/simpyll/simpyll','https://github.com/simpyll/ai-engineering-learning','https://rntonp.com/','/pulse','https://github.com/simpyll/simpyll'])
  assert.deepEqual(createProjectSelectors(projects.toReversed()).getPublicProjects(),projects)
  assert.deepEqual(createProjectSelectors(projects).getFeaturedProjects().map(p=>p.id),['simpyll','ai-engineering'])
 })
@@ -26,7 +26,7 @@ test('stage and lifecycle validate independently; hidden records stay hidden',()
   assert.ok(validateProjects(invalid).errors.length)
  }
  const privateRecord={...data[0],id:'private-test',slug:'private-test',visibility:'private'}
- assert.equal(createProjectSelectors(validateProjects([...data,privateRecord]).projects).getPublicProjects().length,21)
+ assert.equal(createProjectSelectors(validateProjects([...data,privateRecord]).projects).getPublicProjects().length,22)
 })
 
 test('all canonical workflow/lifecycle values are independent and require canonical labels', async () => {

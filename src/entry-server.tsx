@@ -9,7 +9,12 @@ import App from './App'
 import index from '../public/search-index.json'
 import { DiscoveryData } from './lib/discovery-data'
 
-export function render(url: string) {
+import { Pulse } from './pages/Pulse'
+import { registerPulse } from './pulse/loader'
+import { PulseData, type PulseSnapshot } from './pulse/data'
+registerPulse(Pulse)
+
+export function render(url: string, pulse: PulseSnapshot | null = null) {
   // Rendering the document lets React 19 hoist metadata into <head> while
   // keeping ordinary scripts (including JSON-LD) in the hydrated tree.
   return '<!doctype html>' + renderToString(
@@ -19,7 +24,7 @@ export function render(url: string) {
         <div id="root">
           <HelmetProvider>
             <StaticRouter location={url}>
-              <DiscoveryData.Provider value={index}><App /></DiscoveryData.Provider>
+              <PulseData.Provider value={pulse}><DiscoveryData.Provider value={index}><App /></DiscoveryData.Provider></PulseData.Provider>
             </StaticRouter>
           </HelmetProvider>
         </div>

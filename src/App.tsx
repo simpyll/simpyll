@@ -1,4 +1,4 @@
-import './pages/project-detail.css'
+import { PulseRoute } from './pulse/route'
 import { Policy } from './pages/Policy'
 import policyLinks from './content/policies.json'
 import { ProjectDetailRoute } from './projects/ProjectDetailRoute'
@@ -17,9 +17,15 @@ import { Home } from './pages/Home'
 import { Blog } from './pages/Blog'
 import { NotFound } from './pages/NotFound'
 import { BlogPost } from './pages/BlogPost'
+import { useEffect } from 'react'
 
 export function AppContent() {
   const { pathname } = useLocation()
+  useEffect(() => {
+    if (pathname === '/blog' || pathname.startsWith('/blog/')) {
+      void import('./pages/article-style').catch(error => console.warn('Unable to load article styles', error))
+    }
+  }, [pathname])
   return (
     <>
       <a href="#main-content" className="skip-link">Skip to content</a>
@@ -31,6 +37,7 @@ export function AppContent() {
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:slug" element={<ProjectDetailRoute />} />
+          <Route path="/pulse" element={<PulseRoute />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/blog" element={<Blog />} />

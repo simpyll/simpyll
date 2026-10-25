@@ -89,7 +89,7 @@ test('sitemap and robots reference the canonical public pages', async () => {
     .filter((file) => file.endsWith('.mdx'))
     .map((file) => `/blog/${file.replace(/\.mdx$/, '')}`)
 
-  const expectedRoutes = [...policies.map(p => `/${p.slug}`), '/', '/blog', '/about', '/explore', '/projects', '/projects/simpyll', '/projects/ai-engineering', ...blogRoutes]
+  const expectedRoutes = [...policies.map(p => `/${p.slug}`), '/', '/blog', '/about', '/explore', '/projects', '/projects/simpyll', '/projects/ai-engineering', '/projects/simpyll-pulse', '/pulse', ...blogRoutes]
   const expectedUrls = expectedRoutes.map(
     (route) => `https://simpyll.com${route}`
   )

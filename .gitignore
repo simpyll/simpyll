@@ -47,3 +47,6 @@ artifacts/
 /src/generated/article-navigation.json
 
 /src/generated/related-articles.json
+
+# Pulse browser evidence is regenerated as PNG; reviewed WebP copies are committed.
+/docs/pulse/*.png
