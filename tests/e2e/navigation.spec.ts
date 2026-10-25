@@ -40,8 +40,8 @@ test('320px disclosure supports keyboard, dismissal, section focus and touch tar
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
   for (const control of await nav.locator('a:visible, button:visible').all()) {
     const box = await control.boundingBox()
-    expect(box!.width).toBeGreaterThanOrEqual(44)
-    expect(box!.height).toBeGreaterThanOrEqual(44)
+    expect(Number((box!.width).toFixed(3))).toBeGreaterThanOrEqual(44)
+    expect(Number((box!.height).toFixed(3))).toBeGreaterThanOrEqual(44)
   }
   await more.click()
   await page.locator('h1').click()
@@ -74,8 +74,12 @@ const labels = ['Home', 'Projects', 'Journal', 'About']
 
 async function assertPartition(page: import('@playwright/test').Page) {
   const nav = page.getByRole('navigation', { name: 'Main navigation' })
-  const primary = await page.locator('.floating-links a').allTextContents()
-  const overflow = await page.locator('#navigation-overflow a').allTextContents()
+  // Capture one render atomically: ResizeObserver can repartition between two
+  // independent protocol reads, falsely combining old primary/new overflow.
+  const { primary, overflow } = await page.evaluate(() => ({
+    primary: [...document.querySelectorAll('.floating-links a')].map(el => el.textContent),
+    overflow: [...document.querySelectorAll('#navigation-overflow a')].map(el => el.textContent),
+  }))
   expect(primary).toEqual(labels.slice(0, primary.length))
   expect(overflow).toEqual(labels.slice(primary.length))
   const more = nav.getByRole('button', { name: 'More' })
@@ -88,8 +92,8 @@ async function assertPartition(page: import('@playwright/test').Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
   for (const control of await nav.locator('a:visible, button:visible').all()) {
     const box = (await control.boundingBox())!
-    expect(box.width).toBeGreaterThanOrEqual(44)
-    expect(box.height).toBeGreaterThanOrEqual(44)
+    expect(Number((box.width).toFixed(3))).toBeGreaterThanOrEqual(44)
+    expect(Number((box.height).toFixed(3))).toBeGreaterThanOrEqual(44)
   }
   return primary.length
 }

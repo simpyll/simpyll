@@ -40,7 +40,12 @@ export async function visibleFocus(control: Locator) {
     // space, so hit-test actual fragments rather than reporting false occlusion.
     const unobscured = [...el.getClientRects()].some(rect => {
       if (!rect.width || !rect.height) return false
-      const hit = document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2)
+      // Firefox may scroll just the leading edge of a large focused card
+      // into view. Hit-test its visible fragment, not an offscreen center.
+      const left = Math.max(0, rect.left), right = Math.min(innerWidth, rect.right)
+      const top = Math.max(0, rect.top), bottom = Math.min(innerHeight, rect.bottom)
+      if (right <= left || bottom <= top) return false
+      const hit = document.elementFromPoint((left + right) / 2, (top + bottom) / 2)
       return !!hit && (hit === el || el.contains(hit))
     })
     return {

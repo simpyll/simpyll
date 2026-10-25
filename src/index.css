@@ -200,7 +200,9 @@ html {
   }
 }
 
-:focus-visible {
+/* Escape restores focus to these disclosure controls. Firefox can retain
+   pointer modality on programmatic focus, so keep the return target visible. */
+.nav-overflow:focus, .nav-search-control:focus, :focus-visible {
   outline: var(--ui-focus-width) solid var(--ui-focus);
   outline-offset: var(--ui-focus-offset);
 }

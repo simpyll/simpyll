@@ -92,6 +92,8 @@ jobs:
         run: npm run test:mdx
 
       - name: Enforce accessibility and browser regressions (desktop and mobile)
+        env:
+          PLAYWRIGHT_FULL_MATRIX: '1'
         run: npm run test:e2e:built
 
       - name: Upload browser test diagnostics

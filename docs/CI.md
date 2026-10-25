@@ -4,7 +4,7 @@
 
 PRs and manual `Validate Simpyll` dispatches run `build` (production generation, TypeScript, lint, unit and output checks),
 then three independent `browser` shards and `fixtures` in parallel. Playwright's
-native sharding partitions the entire unchanged four-project inventory, with two
+native sharding partitions the entire seven-project inventory, with two
 workers per runner. Each shard owns one preview server. `fixtures` retains real
 project/Notion/rich-content builds and Chromium hydration/redirect journeys.
 These builds intentionally modify input content; they cannot reuse the production
@@ -46,13 +46,17 @@ and checkout does not persist credentials. Deployment permissions stay isolated.
 
 ## Test tiers and #77
 
-Every PR and main build retains Chromium desktop/mobile full journeys and bounded
-Firefox/WebKit accessibility coverage, including both themes, keyboard, reflow,
-reduced motion, hydration, routes and axe. Fixture-only conditional tests retain
-their separate fixture gates. #77 may add broader journeys later: retain existing
-required coverage and use the same shard mechanism; evaluate added representative
-PR coverage and extended main/scheduled/manual tiers then. This change does not
-move any existing test to a weaker trigger. #46 runtime budgets remain separate.
+See [cross-browser commands and tiers](CROSS-BROWSER.md) for the expanded
+functional smoke projects, scheduled/manual extended matrix, diagnostics and iOS
+limitations. All pre-existing required coverage remains.
+
+
+Every PR retains the full Chromium desktop/mobile journeys and existing
+Firefox/WebKit accessibility suites. Five functional projects run bounded smoke.
+Main, weekly schedule and full manual dispatch add portable regression journeys
+in Firefox, desktop WebKit and mobile WebKit. Existing tests are never moved to
+weaker triggers. Fixture-only tests retain their dedicated gates. #46 runtime
+performance budgets remain separate.
 
 ## Reproduce locally
 

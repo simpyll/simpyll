@@ -30,7 +30,7 @@ test('shards partition the complete current browser inventory without dropping o
   assert.ok(all.length > 0)
   assert.deepEqual(shards, all)
   assert.equal(new Set(shards).size, all.length)
-  for (const project of ['desktop-chromium', 'mobile-chromium', 'accessibility-firefox', 'accessibility-webkit']) assert.ok(all.some(id => id.startsWith(project + ':')))
+  for (const project of ['desktop-chromium', 'mobile-chromium', 'accessibility-firefox', 'accessibility-webkit', 'desktop-firefox', 'desktop-webkit', 'mobile-webkit']) assert.ok(all.some(id => id.startsWith(project + ':')))
 })
 
 test('Pages gates deployment on validation and runs the Notion fixture exactly once before publishing', async () => {
@@ -41,4 +41,18 @@ test('Pages gates deployment on validation and runs the Notion fixture exactly o
   assert.match(beforeVerify, /needs: build/)
   assert.match(verify, /needs: \[build, deploy\]/)
   for (const command of ['smoke:http', 'smoke:browser']) assert.ok(verify.includes(`run: npm run ${command}`))
+})
+
+
+test('extended matrix is available without weakening routine gates or rebuilding output', async () => {
+  const config = await readFile('playwright.config.ts', 'utf8')
+  assert.match(config, /PLAYWRIGHT_FULL_MATRIX/)
+  assert.match(config, /iPhone SE/)
+  assert.match(pr, /schedule:/)
+  assert.match(pr, /full_matrix:/)
+  assert.match(pr, /PLAYWRIGHT_FULL_MATRIX:/)
+  assert.equal((pr.match(/run: npm run build\n/g) ?? []).length, 1)
+  assert.match(pr, /--shard=\$\{\{ matrix.shard \}\}\/3/)
+  const deploy = await readFile('.github/workflows/deploy.yml', 'utf8')
+  assert.match(deploy, /PLAYWRIGHT_FULL_MATRIX: '1'/)
 })

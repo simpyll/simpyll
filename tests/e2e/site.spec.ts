@@ -104,10 +104,10 @@ test('Python MDX renders headings, code, lists and resource links', async ({ pag
   await expect(page.locator('article time')).toHaveAttribute('datetime', '2026-10-20')
 })
 
-test('Notion-published MDX includes a working durable image', async ({ page }) => {
-  await page.goto('/blog/publishing-test')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Publishing Test')
-  await expect(page.locator('.prose p')).toContainText('my first blog post written in Notion')
+test('checked-in MDX includes a working durable image', async ({ page }) => {
+  await page.goto('/blog/the-art-of-reading-code')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('The Art of Reading Code: Inside Simpyll’s New Journal Experience')
+  await expect(page.locator('article figcaption')).toContainText('publishing pipeline')
   const image = page.locator('article figure img')
   await image.scrollIntoViewIfNeeded()
   await expect(image).toHaveAttribute('src', /^\/images\/optimized\/.+\.png$/)
@@ -182,7 +182,7 @@ test.describe('prerendered documents without JavaScript', () => {
     ['/', 'From Bedside to Build | Simpyll'],
     ['/blog', 'Learning Journal | Simpyll'],
     ['/blog/hello-world', 'Hello, World. | Simpyll'],
-    ['/blog/publishing-test', 'Publishing Test | Simpyll'],
+    ['/blog/why-simpyll', 'Why Simpyll? A Name, a Philosophy, and the Beauty of Doing Less | Simpyll'],
   ]
   for (const [path, title] of routes) {
     test(`direct HTML: ${path}`, async ({ page }) => {

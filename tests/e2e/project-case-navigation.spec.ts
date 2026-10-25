@@ -14,7 +14,7 @@ for (const view of ['board', 'grid']) test(`${view}: case study navigation, cont
   await expect(card.locator('a[href="/projects/simpyll"]')).toHaveCount(1)
   await expect(card.locator('a a, button button')).toHaveCount(0)
   await expect(card.getByRole('link', { name: /GitHub/ })).toHaveAttribute('href', 'https://github.com/simpyll/simpyll')
-  expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(44)
+  expect(Number(((await link.boundingBox())!.height).toFixed(3))).toBeGreaterThanOrEqual(44)
   // Reach the destination through native keyboard order, without programmatic link focus.
   await page.getByRole('main').focus()
   for (let i = 0; i < 30 && !await link.evaluate(el => el === document.activeElement); i++) await page.keyboard.press('Tab')

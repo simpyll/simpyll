@@ -62,7 +62,8 @@ test('About supports direct loads, refresh, metadata and honest public content',
       sameAs: [profile.links.linkedin],
     })
   }
-  expect((await page.reload())?.status()).toBe(200)
+  // Firefox exposes successful conditional revalidation as 304.
+  expect([200, 304]).toContain((await page.reload())?.status())
   await expect(page.locator('h1')).toBeVisible()
   expect(errors).toEqual([])
 })
