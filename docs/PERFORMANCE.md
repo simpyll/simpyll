@@ -29,7 +29,8 @@ summary reports observed transfer, including response overhead, separately.
 
 | Limit | Bytes | Rationale |
 |---|---:|---|
-| Shared initial JS and per-page JS | 160,000 | baseline 155,649; optimized shared 148,020, modest growth |
+| Shared initial JS | 160,000 | baseline 155,649; optimized shared 148,020, modest growth |
+| Per-page required JS | 180,000 | project shared + deferred code ~157,424; ~14% growth |
 | Individual deferred JS chunk | 16,000 | measured project chunk ~9,400; bounded feature growth |
 | CSS per page | 16,000 | baseline 13,310; optimized project CSS ~13,680 |
 | Images per page | 1,650,000 | largest existing media page ~1,411,834 |
@@ -92,7 +93,9 @@ browser/accessibility/security gates retain their triggers and enforcement.
 A separate performance job downloads the same run's immutable validated-build,
 checks its SHA, uses the existing cached Chromium installation action and retains
 reports for 14 days. PRs sample homepage mobile/desktop once; weekly/manual runs
-measure all six templates three times. It runs parallel to browser/fixture jobs
+measure all six templates three times. Both also collect a separate single-run
+mobile/desktop observation of the production homepage, recording its deployed SHA
+when available; this is not the candidate build and cannot measure its changes. It runs parallel to browser/fixture jobs
 and is intentionally outside the required `validate` aggregate. Collection errors
 make the performance job red; threshold misses emit advisory warnings. This keeps
 broken collection visible without making variable scores required merge gates.

@@ -168,6 +168,13 @@ jobs:
           PERF_RUNS: ${{ github.event_name == 'pull_request' && '1' || '3' }}
           PERF_ROUTES: ${{ github.event_name == 'pull_request' && '/' || '' }}
         run: npm run perf:lighthouse
+      - name: Observe current production separately from candidate build
+        env:
+          PERF_ORIGIN: https://simpyll.com
+          PERF_OUTPUT: artifacts/performance/production
+          PERF_RUNS: '1'
+          PERF_ROUTES: '/'
+        run: npm run perf:lighthouse
       - name: Retain Lighthouse reports even when collection fails
         if: always()
         uses: actions/upload-artifact@v4

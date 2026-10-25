@@ -7,5 +7,6 @@
   "total": 240000,
   "mediaTotal": 1900000,
   "individualImage": 1600000,
-  "individualAsset": 600000
+  "individualAsset": 600000,
+  "pageJS": 180000
 }

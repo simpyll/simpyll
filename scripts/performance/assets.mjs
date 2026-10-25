@@ -79,7 +79,7 @@ export function violations(report, budget) {
   const check = (label, value, limit) => { if (!Number.isFinite(limit) || limit <= 0) throw new Error(`Invalid budget ${label}`); if (value > limit) errors.push(`${label}: ${value} bytes > ${limit} bytes`) }
   check('shared initial JS (gzip)', report.initialJS, budget.initialJS)
   for (const chunk of report.routeChunks) check(`deferred JS ${chunk.path} (gzip)`, chunk.estimated, budget.routeJS)
-  for (const page of report.pages) for (const category of ['initialJS','css','images','fonts','total']) check(`${page.route || '/'} ${category}`, page[category], category === 'total' && page.images ? budget.mediaTotal : budget[category])
+  for (const page of report.pages) for (const category of ['initialJS','css','images','fonts','total']) check(`${page.route || '/'} ${category}`, page[category], category === 'initialJS' ? budget.pageJS : category === 'total' && page.images ? budget.mediaTotal : budget[category])
   for (const asset of report.assets) check(`asset ${asset.path} (raw)`, asset.raw, media.test(asset.path) ? budget.individualImage : budget.individualAsset)
   return errors
 }

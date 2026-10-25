@@ -58,5 +58,12 @@ for (const route of selected) for (const profile of ['mobile', 'desktop']) {
   if (scores.performance < (profile === 'mobile' ? .9 : .95) || metrics.lcp > 2500 || metrics.cls > .1) console.warn(`ADVISORY ${profile} ${route}: performance=${scores.performance}, LCP=${metrics.lcp}ms, CLS=${metrics.cls}; inspect HTML report`)
 }
 const deployment = JSON.parse(await readFile('dist/deployment.json', 'utf8'))
-await writeFile(`${out}/summary.json`, JSON.stringify({ sha: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), buildSha: deployment.sha, origin, timestamp: new Date().toISOString(), elapsedSeconds: (Date.now()-started)/1000, environment: { node: process.version, platform: process.platform, arch: process.arch, ci: !!process.env.CI }, fieldINP: null, summaries }, null, 2))
+let productionSha = null
+if (process.env.PERF_ORIGIN) {
+  try {
+    const response = await fetch(new URL('/deployment.json', origin))
+    if (response.ok) productionSha = (await response.json()).sha ?? null
+  } catch { /* Remote deployment identity may not be exposed. */ }
+}
+await writeFile(`${out}/summary.json`, JSON.stringify({ sha: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), buildSha: deployment.sha, productionSha, origin, timestamp: new Date().toISOString(), elapsedSeconds: (Date.now()-started)/1000, environment: { node: process.version, platform: process.platform, arch: process.arch, ci: !!process.env.CI }, fieldINP: null, summaries }, null, 2))
 console.table(summaries.map(s => ({ route: s.route, profile: s.profile, performance: s.scores.performance, LCP: s.lcp, CLS: s.cls, TBT: s.tbt })))

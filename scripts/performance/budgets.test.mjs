@@ -6,7 +6,7 @@ import { join } from 'node:path'
 import { measureAssets, violations } from './assets.mjs'
 import { projectHead } from './route-assets.mjs'
 
-const limits = { initialJS: 1000, routeJS: 1000, css: 1000, images: 1000, fonts: 1000, total: 5000, mediaTotal: 5000, individualImage: 1000, individualAsset: 5000 }
+const limits = { initialJS: 1000, pageJS: 1000, routeJS: 1000, css: 1000, images: 1000, fonts: 1000, total: 5000, mediaTotal: 5000, individualImage: 1000, individualAsset: 5000 }
 test('budgets measure gzip text, raw media and deferred imports from manifest without hashed names', async () => {
   const root = await mkdtemp(join(tmpdir(), 'perf-budget-'))
   try {
@@ -22,7 +22,7 @@ test('budgets measure gzip text, raw media and deferred imports from manifest wi
     assert.equal(report.pages[0].fonts, 400)
     assert.ok(report.pages[1].initialJS > report.pages[0].initialJS)
     assert.deepEqual(violations(report, limits), [])
-    for (const key of ['initialJS', 'routeJS', 'css', 'images', 'fonts', 'total', 'mediaTotal', 'individualImage', 'individualAsset']) assert.ok(violations(report, { ...limits, [key]: 1 }).some(message => message.includes('bytes > 1 bytes')), key)
+    for (const key of ['initialJS', 'pageJS', 'routeJS', 'css', 'images', 'fonts', 'total', 'mediaTotal', 'individualImage', 'individualAsset']) assert.ok(violations(report, { ...limits, [key]: 1 }).some(message => message.includes('bytes > 1 bytes')), key)
     assert.throws(() => violations(report, { ...limits, css: 0 }), /Invalid budget/)
     const head = projectHead(manifest, '/projects/example')
     assert.match(head, /modulepreload.*detail-456.js/)
