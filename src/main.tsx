@@ -7,7 +7,6 @@ import { BrowserRouter } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 
 import App from './App'
-import { preloadArticle } from './pulse/article-loader'
 import { preloadPulse } from './pulse/loader'
 import { PulseData, readPulse } from './pulse/data'
 import { DiscoveryData, readDiscoveryData } from './lib/discovery-data'
@@ -28,7 +27,6 @@ const app = (
 )
 
 async function start() {
-  if (window.location.pathname.startsWith('/blog/')) await preloadArticle()
   await preloadProjectDetail(window.location.pathname)
   if (window.location.pathname.replace(/\/$/, '') === '/pulse') await preloadPulse()
   if (container.hasChildNodes()) {

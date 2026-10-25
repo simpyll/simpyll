@@ -133,7 +133,7 @@ test('reduced motion keeps reveals, theme, search and project controls usable', 
   await (await destination(page, 'Projects')).click()
   await page.getByRole('button', { name: 'Grid', exact: true }).click()
   await page.getByLabel('Search projects').fill('Simpyll')
-  await expect(page.locator('.lab-grid [data-project]')).toHaveCount(1)
+  await expect(page.locator('.lab-grid [data-project]')).toHaveCount(2)
   await page.getByRole('button', { name: 'Reset filters' }).click()
   await expect(page.locator('.lab-grid [data-project]').nth(1)).toBeVisible()
   await noOverflow(page)

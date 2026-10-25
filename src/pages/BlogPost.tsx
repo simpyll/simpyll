@@ -1,4 +1,3 @@
-import './article.css'
 import { ArticleEditorialHistory } from '../components/ArticleEditorialHistory'
 import { formatArticleDate } from '../lib/editorial.mjs'
 import { Breadcrumbs } from '../components/Breadcrumbs'

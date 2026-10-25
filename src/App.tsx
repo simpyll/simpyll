@@ -16,10 +16,16 @@ import { AboutPage } from './pages/About'
 import { Home } from './pages/Home'
 import { Blog } from './pages/Blog'
 import { NotFound } from './pages/NotFound'
-import { ArticleRoute } from './pulse/article-route'
+import { BlogPost } from './pages/BlogPost'
+import { useEffect } from 'react'
 
 export function AppContent() {
   const { pathname } = useLocation()
+  useEffect(() => {
+    if (pathname === '/blog' || pathname.startsWith('/blog/')) {
+      void import('./pages/article-style').catch(error => console.warn('Unable to load article styles', error))
+    }
+  }, [pathname])
   return (
     <>
       <a href="#main-content" className="skip-link">Skip to content</a>
@@ -35,7 +41,7 @@ export function AppContent() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:slug" element={<ArticleRoute />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
           {policyLinks.map(({ slug }) => <Route key={slug} path={`/${slug}`} element={<Policy slug={slug} />} />)}
           <Route path="*" element={<NotFound />} />
         </Routes>

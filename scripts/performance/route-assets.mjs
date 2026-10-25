@@ -1,7 +1,7 @@
 // Explicit relationship between a route template and its deferred client entry.
 // Read filenames from Vite's manifest; hashed output names are never configured.
 export function projectAssets(manifest, route) {
-  const key = route.startsWith('/blog/') ? 'src/pages/BlogPost.tsx' : route === '/pulse' ? 'src/pages/Pulse.tsx' : route.startsWith('/projects/') ? 'src/pages/ProjectDetail.tsx' : ''
+  const key = (route === '/blog' || route.startsWith('/blog/')) ? 'src/pages/article-style.ts' : route === '/pulse' ? 'src/pages/Pulse.tsx' : route.startsWith('/projects/') ? 'src/pages/ProjectDetail.tsx' : ''
   if (!key || !manifest[key]) return []
   const seen = new Set()
   function visit(key) {

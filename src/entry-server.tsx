@@ -9,9 +9,6 @@ import App from './App'
 import index from '../public/search-index.json'
 import { DiscoveryData } from './lib/discovery-data'
 
-import { BlogPost } from './pages/BlogPost'
-import { registerArticle } from './pulse/article-loader'
-registerArticle(BlogPost)
 import { Pulse } from './pages/Pulse'
 import { registerPulse } from './pulse/loader'
 import { PulseData, type PulseSnapshot } from './pulse/data'
