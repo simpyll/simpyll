@@ -30,6 +30,7 @@ export function Blog() {
                 Technical notes, experiments, and reflections as I learn to
                 build software and explore AI with a clinical perspective.
               </p>
+              <a href="/rss.xml" className="mt-6 inline-block text-accent underline underline-offset-4">Subscribe via RSS</a>
             </Reveal>
           </section>
 

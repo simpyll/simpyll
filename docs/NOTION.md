@@ -155,3 +155,43 @@ recovery, consistent snapshots, immutable IDs/aliases, image restoration and the
 isolated monthly integrity drill. Git protects committed public content, not
 private drafts. Pause synchronization and reconcile Notion before resuming after
 a restoration; otherwise the next successful sync replaces the recovered state.
+
+## RSS syndication
+
+The excerpt feed is **https://simpyll.com/rss.xml** (RSS 2.0). `npm run build`
+validates public MDX, then `npm run generate:rss` writes `public/rss.xml` before
+Vite copies static assets to `dist`. Prerendering preserves it; the existing Pages
+artifact deploys it with no additional workflow or Notion API access. Pages owns
+response MIME headers; the `.xml` extension provides standard XML delivery.
+
+The generator reuses `collectArticles` from the redirect/identity registry and
+`searchDocument` publication filters, plus the restricted literal metadata parser.
+Manual articles in `src/content/blog` are published by default; explicit private
+statuses, draft flags, test content and incomplete metadata are excluded. Notion
+manifest status and current canonical slug are authoritative. Withdrawn records
+and historical slug aliases never become entries. The build's existing public-only
+content validator rejects private MDX rather than deploying it elsewhere on site.
+
+GUIDs are `urn:simpyll:article:<articleId>` with `isPermaLink="false"`. Existing
+`manual:*` and `notion:*` identities survive edits, synchronization and renames;
+links follow the registry's current slug. Missing historical identities follow
+Issue #66's migration policy: assign a `manual:<original-slug>` ID once and retain
+it permanently. The generator deliberately fails on missing/mismatched identities
+or duplicate IDs/URLs rather than silently changing subscriber identity.
+
+Descriptions come from article metadata, with Markdown formatting converted to
+plain text; bodies and private fields are never syndicated. Dates use the original
+publication date at midnight UTC, never the build clock. Ordering is date descending,
+then identity and slug in code-point order. `lastBuildDate` uses the greatest
+publication date (or valid optional `updated` date); it is omitted for an empty feed.
+No author email is invented for RSS's email-based author element.
+
+After `npm ci`, run `npm run build` and `npm run test:rss`. Tests parse XML using
+`fast-xml-parser`, check publication fixtures, and inspect deployed XML and HTML.
+Use `npm run generate:rss` alone to regenerate locally from repository content.
+For missing entries, check manifest status, the current MDX filename, stable ID,
+required metadata/date and search publication flags. For malformed entries, run
+`npm run validate:content`, then `npm run test:rss`; XML-invalid control characters
+are removed and metadata is XML-escaped. There is no live Notion request or summary
+service. The journal's native subscription anchor and prerendered head autodiscovery
+work without JavaScript. No sync, weekly audit or monthly recovery schedule changes.
