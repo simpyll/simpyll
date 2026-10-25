@@ -52,7 +52,7 @@ for (const saved of ['light', 'dark', 'system', 'invalid']) {
     const resolved = saved === 'dark' ? 'dark' : 'light'
     await expect(page.locator('html')).toHaveAttribute('data-theme', resolved)
     await expect(page.getByRole('main')).toHaveCSS('background-color', resolved === 'dark' ? 'rgb(9, 11, 16)' : 'rgb(250, 251, 249)')
-    await expect(page.locator('pre').first()).toHaveCSS('background-color', resolved === 'dark' ? 'rgb(18, 21, 28)' : 'rgb(240, 243, 240)')
+    await expect(page.locator('pre').first()).toHaveCSS('background-color', resolved === 'dark' ? 'rgb(13, 17, 23)' : 'rgb(246, 248, 250)')
   })
 }
 

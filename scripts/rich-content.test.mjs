@@ -32,6 +32,9 @@ test('rich MDX fixture compiles, prerenders and hydrates through both publishing
   try { await exec('npm', ['run', 'build'], { cwd: root, env: { ...process.env, SMOKE_BUILD_SHA: (await exec('git', ['rev-parse', 'HEAD'])).stdout.trim() }, maxBuffer: 3e6 }) } catch (error) { throw new Error(error.stdout + error.stderr) }
   const html = await readFile(join(root, 'dist/blog/rich-content-fixture/index.html'), 'utf8')
   assert.match(html, /class="hljs-keyword"/)
+  for (const language of ['javascript', 'typescript', 'tsx', 'json', 'bash', 'python', 'css', 'html', 'markdown', 'sql', 'diff']) {
+    assert.match(html, new RegExp(`class="[^"]*hljs[^"]*language-${language}`))
+  }
   assert.match(html, /scope="row"/)
   assert.match(html, /&lt;script&gt;alert/)
   assert.doesNotMatch(html, /<iframe|<script>alert/)

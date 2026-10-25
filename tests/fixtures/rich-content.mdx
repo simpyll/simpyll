@@ -39,6 +39,9 @@ Both publishing paths use the same component mapping, semantic tokens, and spaci
 ## Working examples
 
 ```typescript
+// Preserve syntax, whitespace and nested interpolation.
+class Configuration {}
+function configure(value: number) { return value + 42 }
 const configuration = {
   enabled: true,
   label: 'Keep whitespace intact',
@@ -77,3 +80,58 @@ A reference with a stable anchor.[^reading]
 ---
 
 ## Notion output
+
+```javascript
+// JavaScript example
+function greet(name) { return `Hello, ${name}` }
+const pattern = /hello/gi;
+```
+
+```tsx
+type Props = { label: string };
+const Button = ({ label }: Props) => <button disabled={false}>{label}</button>;
+```
+
+```json
+{"enabled": true, "count": 42, "label": "example"}
+```
+
+```bash
+#!/bin/bash
+# Shell example
+echo "$HOME"
+```
+
+```css
+.example:hover { color: #fff; display: block; }
+```
+
+```html
+<!-- HTML example -->
+<div class="example">Readable text</div>
+```
+
+```markdown
+# Heading
+**Strong** and *emphasis* with `inline code`
+- List item
+> Quoted text
+```
+
+```sql
+-- SQL example
+SELECT name FROM articles WHERE id = 42 AND status = 'published';
+```
+
+```text
+Plain text stays readable, including <angle brackets>.
+```
+
+```diff
+-removed line
++added line
+```
+
+```
+long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_long_line_
+```

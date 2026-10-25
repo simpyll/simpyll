@@ -5,6 +5,24 @@
 /* Dark identity is preserved; resolved theme overrides only semantic roles. */
 :root {
   color-scheme: dark;
+  /* GitHub-style syntax roles; shared by all build-time hljs selectors. */
+  --code-background: #0d1117;
+  --code-foreground: #c9d1d9;
+  --code-comment: #8b949e;
+  --code-keyword: #ff7b72;
+  --code-string: #a5d6ff;
+  --code-function: #d2a8ff;
+  --code-type: #ffa657;
+  --code-literal: #79c0ff;
+  --code-tag: #7ee787;
+  --code-bullet: #f2cc60;
+  --code-selection: #264f78;
+  --code-selection-text: #ffffff;
+  --code-addition: #aff5b4;
+  --code-addition-background: #033a16;
+  --code-deletion: #ffdcd7;
+  --code-deletion-background: #67060c;
+
   --ui-canvas: #090b10;
   --ui-surface: #12151c;
   --ui-surface-hover: #1b1f28;
@@ -41,6 +59,23 @@
 
 :root[data-theme="light"] {
   color-scheme: light;
+  --code-background: #f6f8fa;
+  --code-foreground: #24292f;
+  --code-comment: #68717b;
+  --code-keyword: #cf222e;
+  --code-string: #0a3069;
+  --code-function: #8250df;
+  --code-type: #953800;
+  --code-literal: #0550ae;
+  --code-tag: #116329;
+  --code-bullet: #735c0f;
+  --code-selection: #b6d7ff;
+  --code-selection-text: #24292f;
+  --code-addition: #116329;
+  --code-addition-background: #dafbe1;
+  --code-deletion: #82071e;
+  --code-deletion-background: #ffebe9;
+
   --ui-canvas: #fafbf9;
   --ui-surface: #f0f3f0;
   --ui-surface-hover: #e4eae6;
@@ -59,6 +94,23 @@
 
 :root:not([data-theme]) {
   color-scheme: light;
+  --code-background: #f6f8fa;
+  --code-foreground: #24292f;
+  --code-comment: #68717b;
+  --code-keyword: #cf222e;
+  --code-string: #0a3069;
+  --code-function: #8250df;
+  --code-type: #953800;
+  --code-literal: #0550ae;
+  --code-tag: #116329;
+  --code-bullet: #735c0f;
+  --code-selection: #b6d7ff;
+  --code-selection-text: #24292f;
+  --code-addition: #116329;
+  --code-addition-background: #dafbe1;
+  --code-deletion: #82071e;
+  --code-deletion-background: #ffebe9;
+
   --ui-canvas: #fafbf9;
   --ui-surface: #f0f3f0;
   --ui-surface-hover: #e4eae6;
@@ -476,8 +528,8 @@ html[data-theme="dark"] .theme-moon { opacity: 1; transform: none; }
 .code-toolbar { display: flex; justify-content: space-between; align-items: center; padding: .25rem .75rem; border-bottom: 1px solid var(--ui-outline); font-size: .8rem; color: var(--ui-muted); }
 .code-toolbar button { min-height: 44px; min-width: 44px; padding: .5rem; border-radius: .375rem; cursor: pointer; color: var(--ui-accent); }
 .code-toolbar button:hover { background: var(--ui-surface-hover); }
-.article-content .code-block pre { margin: 0; border-radius: 0; padding: 1.25rem; overflow-x: auto; white-space: pre; line-height: 1.7; }
-.article-content pre code { white-space: pre; overflow-wrap: normal; color: var(--ui-foreground); }
+.article-content .code-block pre { margin: 0; border-radius: 0; padding: 1.25rem; overflow-x: auto; white-space: pre; line-height: 1.7; background: var(--code-background); color: var(--code-foreground); }
+.article-content pre code { white-space: pre; overflow-wrap: normal; color: var(--code-foreground); }
 .copy-status { display: block; padding-inline: .75rem; font-size: .8rem; color: var(--ui-foreground); }
 .copy-status:empty { display: none; }
 .article-content figure { margin-block: 2em; }
@@ -487,12 +539,28 @@ html[data-theme="dark"] .theme-moon { opacity: 1; transform: none; }
 .article-content summary { cursor: pointer; color: var(--ui-foreground); font-weight: 600; min-height: 24px; }
 .article-content details[open] summary { margin-bottom: 1rem; }
 .external-mark { font-size: .8em; white-space: nowrap; }
-/* Build-time highlight.js token classes, using the existing accessible palette. */
-.article-content .hljs-comment, .article-content .hljs-quote { color: var(--ui-muted); font-style: italic; }
-.article-content .hljs-keyword, .article-content .hljs-selector-tag, .article-content .hljs-literal { color: var(--ui-accent); font-weight: 650; }
-.article-content .hljs-string, .article-content .hljs-attr, .article-content .hljs-number { color: var(--ui-foreground); }
-.article-content .hljs-title, .article-content .hljs-built_in { color: var(--ui-accent); }
+/* Build-time highlight.js scopes, mapped using its established GitHub themes.
+   Uncolored properties, punctuation and params inherit the code foreground. */
+.article-content :is(.hljs-comment, .hljs-code, .hljs-formula) { color: var(--code-comment); }
+.article-content :is(.hljs-doctag, .hljs-keyword, .hljs-template-tag, .hljs-template-variable, .hljs-type, .hljs-variable.language_) { color: var(--code-keyword); }
+.article-content .hljs-title { color: var(--code-function); }
+.article-content :is(.hljs-title.class_, .hljs-built_in, .hljs-symbol) { color: var(--code-type); }
+.article-content :is(.hljs-attr, .hljs-attribute, .hljs-literal, .hljs-meta, .hljs-number, .hljs-operator, .hljs-variable, .hljs-selector-attr, .hljs-selector-class, .hljs-selector-id, .hljs-section) { color: var(--code-literal); }
+.article-content :is(.hljs-string, .hljs-regexp), .article-content .hljs-meta .hljs-string { color: var(--code-string); }
+.article-content .hljs-meta .hljs-keyword { color: var(--code-keyword); }
+.article-content :is(.hljs-name, .hljs-quote, .hljs-selector-tag, .hljs-selector-pseudo) { color: var(--code-tag); }
+.article-content :is(.hljs-subst, .hljs-emphasis, .hljs-strong) { color: var(--code-foreground); }
+.article-content .hljs-bullet { color: var(--code-bullet); }
+.article-content .hljs-emphasis { font-style: italic; }
+.article-content :is(.hljs-strong, .hljs-section) { font-weight: bold; }
+.article-content .hljs-addition { color: var(--code-addition); background: var(--code-addition-background); }
+.article-content .hljs-deletion { color: var(--code-deletion); background: var(--code-deletion-background); }
+.article-content pre ::selection { color: var(--code-selection-text); background: var(--code-selection); }
 @media print {
+  /* Neutral ink remains readable even when print backgrounds are omitted. */
+  .article-content .code-block { overflow: visible; background: white; border-color: #68717b; }
+  .article-content .code-block :is(pre, code, span), .article-content .code-block pre code [class] { color: #24292f; background: transparent; }
+  .article-content .code-toolbar { color: #24292f; border-color: #68717b; }
   .code-toolbar button, .copy-status, .table-hint { display: none; }
   .table-scroll { overflow: visible; }
   .article-content .code-block pre { white-space: pre-wrap; overflow-wrap: anywhere; }
