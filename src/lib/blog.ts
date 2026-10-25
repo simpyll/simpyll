@@ -19,11 +19,13 @@ export type BlogPost = {
   slug: string
   sourcePath: string
   metadata: BlogPostMetadata
+  readingTimeMinutes: number
   headings: ArticleHeading[]
   Content: ComponentType
 }
 
 type MDXModule = {
+  readingTimeMinutes: number
   headings: ArticleHeading[]
   default: ComponentType
   metadata: BlogPostMetadata
@@ -47,6 +49,7 @@ export const posts: BlogPost[] = Object.entries(modules)
       metadata: module.metadata,
       Content: module.default,
       headings: module.headings,
+      readingTimeMinutes: module.readingTimeMinutes,
     }
   })
   .sort(

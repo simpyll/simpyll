@@ -4,6 +4,7 @@ import { extname, resolve, sep } from 'node:path'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import mdx from '@mdx-js/rollup'
+import { remarkReadingTime } from './scripts/reading-time.mjs'
 import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 import { remarkRichContent } from './scripts/remark-rich-content.mjs'
@@ -53,7 +54,7 @@ export default defineConfig({
       },
     },
     prerenderedRoutes(),
-    { enforce: 'pre', ...mdx({ providerImportSource: '@mdx-js/react', remarkPlugins: [remarkGfm, remarkHeadingIds, remarkRichContent], rehypePlugins: [[rehypeHighlight, { detect: false, ignoreMissing: true }]] }) },
+    { enforce: 'pre', ...mdx({ providerImportSource: '@mdx-js/react', remarkPlugins: [remarkGfm, remarkReadingTime, remarkHeadingIds, remarkRichContent], rehypePlugins: [[rehypeHighlight, { detect: false, ignoreMissing: true }]] }) },
     react(),
     tailwindcss(),
   ],

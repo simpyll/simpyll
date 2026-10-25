@@ -1,4 +1,4 @@
-export type SearchDocument = { slug: string; title: string; description: string; category: string; tags: string[]; body: string; id?: string; type?: string; url?: string; date?: string }
+export type SearchDocument = { readingTimeMinutes?: number; slug: string; title: string; description: string; category: string; tags: string[]; body: string; id?: string; type?: string; url?: string; date?: string }
 export const normalize = (text: string) => text.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim()
 export function prepareSearch<T extends SearchDocument>(documents: T[], limit = 8) {
   const unique = [...new Map(documents.map(document => [document.slug, document])).values()]

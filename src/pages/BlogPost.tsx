@@ -70,6 +70,8 @@ export function BlogPost() {
                     year: 'numeric',
                   })}
                 </time>
+                <span aria-hidden="true">·</span>
+                <span>{post.readingTimeMinutes} min read</span>
               </div>
             </Reveal>
 
