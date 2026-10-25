@@ -210,3 +210,8 @@ pinned browser installation. A read-only live probe reached the domain but
 `/deployment.json` returned HTTP 404, as expected before this feature is deployed;
 this is not a passing live release verification. No production deployment was
 triggered. The first merged deployment must establish the live verification result.
+
+For lost/corrupt Notion publishing sources, use the
+[Git-based disaster recovery runbook](NOTION-RECOVERY.md). Its monthly isolated
+drill cannot modify production, push or deploy. Source restoration requires an
+explicit operator apply followed by a reviewed PR and normal deployment checks.

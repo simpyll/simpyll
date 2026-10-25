@@ -147,3 +147,11 @@ and [GitHub workflow triggering](https://docs.github.com/en/actions/how-tos/writ
 Image naming now uses captions/article context with stable local copies. See
 [image lifecycle and compatibility policy](IMAGES.md); old public media is retained in source; media belonging to unpublished articles
 is excluded from deployment artifacts (see [URL safety](REDIRECTS.md)).
+
+### Git content recovery
+
+See [Notion disaster recovery](NOTION-RECOVERY.md) for offline dry-run/apply
+recovery, consistent snapshots, immutable IDs/aliases, image restoration and the
+isolated monthly integrity drill. Git protects committed public content, not
+private drafts. Pause synchronization and reconcile Notion before resuming after
+a restoration; otherwise the next successful sync replaces the recovered state.

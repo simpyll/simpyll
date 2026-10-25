@@ -1,3 +1,4 @@
+import { ownedPath } from './ownership.mjs'
 import { advanceHistory, normalizeSlug, resolveRegistry, readMetadata, manualHistory } from '../redirects.mjs'
 import { readdir, lstat } from 'node:fs/promises'
 import sharp from 'sharp'
@@ -248,9 +249,7 @@ const manifestPath = '.notion/published.json'
 async function readOptional(path) {
   try { return await readFile(path) } catch (error) { if (error.code === 'ENOENT') return null; throw error }
 }
-function ownedPath(path) {
-  return /^src\/content\/blog\/[a-z0-9]+(?:-[a-z0-9]+)*\.mdx$/.test(path) || /^public\/images\/notion\/[a-f0-9]{32}\/(?:[a-f0-9]{64}|[a-z0-9]+(?:-[a-z0-9]+)*-[a-f0-9]{12})\.(png|jpg|gif|webp|avif)$/.test(path)
-}
+
 
 // Build a complete plan before touching disk. Any API/conversion/collision error aborts it.
 export async function synchronize({ root, api, pageId, imageDownloader = downloadImage, validate = async () => {} , dryRun = false }) {

@@ -1,0 +1,25 @@
+name: Monthly publishing recovery drill
+on:
+  schedule:
+    - cron: '17 4 3 * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: monthly-publishing-recovery
+  cancel-in-progress: false
+jobs:
+  recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Test isolated Git recovery and report results
+        run: npm run drill:recovery
