@@ -445,3 +445,78 @@ date, including after withdrawal/republication and slug changes. No historical
 article dates were migrated. Existing identity, alias history, ownership hashes,
 weekly audits and monthly recovery remain unchanged. The RSS generator's unused
 `updated` hook now reads the same `updatedAt` contract instead of a parallel field.
+
+## Citations and references (#63)
+
+Current-state audit: #58's `remark-gfm` already emits numbered native anchors,
+`user-content-fn-*` definition IDs, distinct `fnref` IDs for repeated mentions,
+and separately named backlinks. These render in static HTML; no citation engine,
+registry, network request or client state is needed. Shared `ArticleLink` preserves
+these anchors and now names markers “Footnote N”. Generated IDs are reserved from
+manual IDs. The existing print system already prints outbound destinations.
+
+Choose one appropriate author-controlled convention; no bibliography is appended
+from footnotes, and no citation style or missing bibliographic data is inferred.
+
+```md
+Hydration attaches behavior to existing HTML.[^react]
+The same documentation supports this second mention.[^react]
+
+[^react]: React Documentation. *hydrateRoot*.
+    https://react.dev/reference/react-dom/client/hydrateRoot
+```
+
+Activate a numbered marker to reach its definition. Backlinks return to each
+originating marker; repeated mentions have separate, distinguishable backlinks.
+Native anchors work after refresh and without JavaScript. Keep labels stable when
+editing to preserve incoming citation fragments. Historical routes use the existing
+redirect system, which preserves fragments. Do not manually use reserved
+`user-content-fn*`, `footnote-label`, or `editorial-*` IDs.
+
+For author-date writing, supply the inline citation and an ordinary bibliography:
+
+```md
+React Documentation (n.d.) describes the hydration API.
+
+## References
+
+1. React Documentation. (n.d.). *hydrateRoot*.
+   https://react.dev/reference/react-dom/client/hydrateRoot
+```
+
+Academic structure (placeholders below are not a real source; replace and verify
+all fields before publication):
+
+```md
+Author (Year) describes the result.
+
+## References
+
+1. Author, A. A. (Year). Article title. *Journal, volume*(issue), pages.
+   [Article DOI](https://doi.org/10.1000/example)
+```
+
+Use canonical `https://doi.org/10.<registrant>/<suffix>` links, with descriptive
+text or the visible URL. Bare DOIs stay plain text: no automatic normalization or
+metadata lookup occurs. Authors own accuracy, permissions and style (APA, AMA,
+IEEE or otherwise). Do not publish illustrative sources as evidence.
+
+`npm run validate:content` parses GFM, including links inside footnote definitions,
+and rejects unresolved markers, duplicate definitions, unsafe schemes, malformed
+URLs, credential-bearing URLs and noncanonical DOI resolver URLs. It reports
+locations without fetching remote sites or rewriting source. Credentials are
+redacted from URL diagnostics. Dynamic trusted manual MDX destinations require
+manual review. Shared link rendering independently blocks unsafe destinations.
+Remote availability checking remains separate work (#80); routine builds do not
+make HTTP requests, so 403/429 responses cannot cause false broken-source failures.
+
+References use normal semantic headings and ordered lists. Long URLs wrap;
+footnote controls have 24px minimum targets, explicit keyboard outlines and native
+fragment navigation. Print keeps markers, definitions, numbering and destinations,
+while hiding return arrows. Avoid empty reference headings and duplicate lists.
+
+Verification: `node --test scripts/citations.test.mjs`, `npm run test:content`,
+production build and `npx playwright test citations`. Browser tests exercise native
+anchors with/without JavaScript, themes, wrapping, focus and print. Axe incomplete
+results require inspection; they are neither passes nor violations. Automated
+semantics checks do not substitute for an actual screen-reader listening session.

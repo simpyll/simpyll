@@ -21,7 +21,7 @@ export function remarkHeadingIds() {
     const reserve = node => {
       const id = explicit(node)
       if (typeof id === 'string') {
-        if (id.startsWith('editorial-') || used.has(id)) throw new Error(`Duplicate or reserved article ID: ${id}`)
+        if ((id.startsWith('editorial-') || id.startsWith('user-content-fn')) || used.has(id)) throw new Error(`Duplicate or reserved article ID: ${id}`)
         used.add(id)
       }
       node.children?.forEach(reserve)

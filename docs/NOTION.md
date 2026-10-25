@@ -239,3 +239,28 @@ notes alone normalizes to the same output, unchanged reruns create no commits,
 and no sync schedule, audit, recovery workflow, alias or article identity changes.
 See [MDX editorial guidance](MDX.md#editorial-dates-revisions-and-corrections) for
 validation, correction links, SEO, RSS and tests.
+
+### References and citations
+
+Use an ordinary **References** heading, numbered-list entries, italic rich text for
+journal/book titles, and Notion rich-text hyperlinks for documentation or canonical
+`https://doi.org/10.<registrant>/<suffix>` destinations. For example:
+
+1. Add a paragraph: `React Documentation (n.d.) describes hydration.`
+2. Add a heading: `References`.
+3. Add a numbered entry: `React Documentation. (n.d.). hydrateRoot.`
+4. Italicize `hydrateRoot` and link it to
+   `https://react.dev/reference/react-dom/client/hydrateRoot`.
+
+Academic references use the same blocks with author-supplied authors, date, title,
+journal and DOI; no fields are inferred. Use the complete examples in MDX.md as a
+format guide. The publisher preserves list order and linked rich text
+deterministically, with no extra properties, databases, schedules or registries.
+
+**Limitation:** Notion rich text is intentionally escaped as literal MDX expression
+text. Typing `[^source]` / `[^source]: ...` in a Notion paragraph does not create GFM
+footnotes. Use author-date prose plus a numbered References list and inline source
+hyperlinks instead. Native GFM footnotes are supported in manually authored MDX.
+Do not use code blocks or raw HTML to bypass this safety boundary. Citation
+accuracy remains the author's responsibility. Existing URL safety checks and the
+build's content validator also apply to publisher-generated reference links.
