@@ -85,7 +85,7 @@ jobs:
       - uses: ./.github/actions/browsers
       - name: Enforce all browser and accessibility projects
         env:
-          PLAYWRIGHT_FULL_MATRIX: ${{ (github.event_name == 'schedule' || inputs.full_matrix) && '1' || '' }}
+          PLAYWRIGHT_FULL_MATRIX: '1' # Temporary extended-matrix verification before restoring PR smoke tier
         run: npm run test:e2e:built -- --shard=${{ matrix.shard }}/3
       - name: Preserve browser failure diagnostics
         if: failure()

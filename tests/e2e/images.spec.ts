@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test'
 test('article images select responsive formats with reserved dimensions and no overflow', async ({ page }, info) => {
   const failures: string[] = []
   page.on('pageerror', e => failures.push(e.message))
-  await page.goto('/blog/publishing-test/')
+  await page.goto('/blog/the-art-of-reading-code/')
   const img = page.locator('article figure picture img').first()
   await expect(img).toHaveAttribute('width', /\d+/)
   await expect(img).toHaveAttribute('height', /\d+/)
@@ -18,10 +18,10 @@ test('article images select responsive formats with reserved dimensions and no o
   await page.screenshot({ path: info.outputPath('responsive-image.png') })
 })
 
-test('responsive article images work without JavaScript', async ({ browser }) => {
+test('responsive article images work without JavaScript', async ({ browser, baseURL }) => {
   const context = await browser.newContext({ javaScriptEnabled: false })
   const page = await context.newPage()
-  await page.goto('http://127.0.0.1:4173/blog/publishing-test/')
+  await page.goto(`${baseURL}/blog/the-art-of-reading-code/`)
   const image = page.locator('article picture img').first()
   await image.scrollIntoViewIfNeeded()
   await expect(image).toBeVisible()

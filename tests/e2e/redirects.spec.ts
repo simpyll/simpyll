@@ -21,6 +21,12 @@ test.describe('published slug history', () => {
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://simpyll.com/blog/notion-fixture')
     }
     await page.goto('/blog/notion-fixture')
+    // Keep Notion-image browser coverage independent of live editorial posts.
+    const image = page.locator('article figure img').first()
+    await expect(image).toHaveAttribute('src', /^\/images\/optimized\/.+\.png$/)
+    await image.scrollIntoViewIfNeeded()
+    await expect.poll(() => image.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true)
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
     await page.evaluate(() => {
       history.pushState({}, '', '/blog/notion-original?source=bookmark#main-content')
       dispatchEvent(new PopStateEvent('popstate'))

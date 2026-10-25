@@ -10,7 +10,11 @@ From workflow start 22:37:04Z to final required job completion 22:41:25Z:
 execution 138s; browser setup 34–50s across shards. Three browser jobs and fixtures
 run concurrently. Six jobs including aggregate validate; these remain six jobs.
 An earlier cold optimized run 40138890847 took 319s. This small sample is not a median.
-Existing recorded inventory: 476 passes, six fixture-only skips, zero failures.
+Historical optimized run: 476 passes, six fixture-only skips, zero failures.
+Current baseline discovery: 472 tests (203 per Chromium project, 33 per
+accessibility project); current routine inventory: 492 (207 per Chromium,
+33 per accessibility project, four per new engine/device project). The inventory
+difference from the historical run reflects the checked-in baseline, not dropped tests.
 
 Local browser installation: system dependency installer fails with sandbox
 setgroups/setegid errors; binary-only installation also fails downloading archives.
