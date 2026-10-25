@@ -87,8 +87,8 @@ jobs:
         env:
           PLAYWRIGHT_FULL_MATRIX: ${{ (github.event_name == 'schedule' || inputs.full_matrix) && '1' || '' }}
         run: npm run test:e2e:built -- --shard=${{ matrix.shard }}/3
-      - name: Preserve browser failure diagnostics
-        if: failure()
+      - name: Preserve browser reports and layout evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-results-${{ matrix.shard }}

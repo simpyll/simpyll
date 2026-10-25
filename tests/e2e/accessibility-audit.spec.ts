@@ -1,5 +1,8 @@
+import { readFileSync } from 'node:fs'
 import { test, expect } from '@playwright/test'
 import { ready, scan, tabTo, visibleFocus } from './helpers/accessibility'
+
+const policyRoutes = JSON.parse(readFileSync(new URL('../../src/content/policies.json', import.meta.url), 'utf8')).map((p: { slug: string }) => `/${p.slug}`)
 
 // Removing a focused filter must leave focus at a useful, stable control.
 test('removing discovery filters preserves keyboard focus', async ({ page }) => {
@@ -14,7 +17,7 @@ test('removing discovery filters preserves keyboard focus', async ({ page }) => 
 })
 
 for (const width of [320, 768, 1280]) {
-  for (const route of ['/', '/about', '/blog', '/explore', '/projects', '/projects/simpyll', '/projects/ai-engineering', '/blog/001-python-fundamentals', '/audit-missing']) {
+  for (const route of [...policyRoutes, '/', '/about', '/blog', '/explore', '/projects', '/projects/simpyll', '/projects/ai-engineering', '/blog/001-python-fundamentals', '/audit-missing']) {
     test(`reflow and text spacing at ${width} CSS pixels: ${route}`, async ({ page }, info) => {
       await page.setViewportSize({ width, height: 900 })
       await page.goto(route)
