@@ -67,6 +67,7 @@ async function generateSitemap() {
     { path: '/about' },
     { path: '/explore' },
     { path: '/projects' },
+    { path: '/pulse' },
     ...posts,
     ...(await caseStudyRoutes()).map(path => ({ path })),
   ]

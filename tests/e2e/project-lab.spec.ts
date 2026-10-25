@@ -24,7 +24,7 @@ test('board inventory, discovery, URL history, and grid share one collection', a
   await page.goBack()
   await expect(page.locator('.lab-grid [data-project]')).toHaveCount(1)
   await page.getByRole('button', { name: 'Reset filters' }).click()
-  await expect(page.locator('.lab-grid [data-project]')).toHaveCount(21)
+  await expect(page.locator('.lab-grid [data-project]')).toHaveCount(22)
   await page.getByLabel('Lifecycle', {exact: true}).selectOption('active')
   await expect(page.locator('.lab-grid [data-project]')).toHaveCount(2)
   await page.getByRole('button', { name: 'Reset filters' }).click()

@@ -9,6 +9,7 @@ const navigation = [
   { label: 'Projects', href: '/projects' },
   { label: 'Journal', href: '/blog' },
   { label: 'About', href: '/about' },
+  { label: 'Pulse', href: '/pulse' },
 ]
 
 export function Header() {
@@ -28,6 +29,7 @@ export function Header() {
   const indicator = useRef<HTMLSpanElement>(null)
   const active = (location.pathname.startsWith('/blog') || location.pathname === '/explore') ? '/blog'
     : location.pathname === '/projects' ? '/projects'
+    : location.pathname === '/pulse' ? '/pulse'
     : location.pathname === '/about' ? '/about'
     : location.pathname === '/' ? `/${location.hash === '#work' || location.hash === '#about' ? location.hash : ''}` : null
 

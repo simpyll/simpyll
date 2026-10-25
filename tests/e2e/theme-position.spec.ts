@@ -99,7 +99,7 @@ for (const position of ['top', 'scrolled', 'fragment']) {
       if (await more.isVisible()) {
         await more.click()
         const nav = page.getByRole('navigation', { name: 'Main navigation' })
-        for (const name of ['Home', 'Projects', 'Journal', 'About']) {
+        for (const name of ['Home', 'Projects', 'Journal', 'About', 'Pulse']) {
           await expect(nav.getByRole('link', { name, exact: true })).toHaveCount(1)
         }
         await page.keyboard.press('Escape')

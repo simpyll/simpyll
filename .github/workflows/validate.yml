@@ -46,6 +46,7 @@ jobs:
       - name: Build and validate production output
         run: npm run build
       - run: node --test scripts/citations.test.mjs scripts/editorial.test.mjs scripts/breadcrumbs.test.mjs scripts/related-articles.test.mjs scripts/article-adjacency.test.mjs scripts/reading-time.test.mjs scripts/rss.test.mjs scripts/ci-workflows.test.mjs scripts/discovery.test.mjs
+      - run: npm run test:pulse
       - run: npm run test:seo
       - run: npm run lint
       - run: node --test scripts/ai-engineering.test.mjs scripts/contributions.test.mjs scripts/case-study.test.mjs scripts/prerender.test.mjs scripts/remark-heading-ids.test.mjs scripts/article-toc.test.mjs scripts/motion.test.mjs scripts/navigation.test.mjs
@@ -60,7 +61,6 @@ jobs:
           include-hidden-files: true
           path: |
             ci-revision.txt
-            artifacts/seo/audit.json
             dist/
             dist-server/
             src/generated/

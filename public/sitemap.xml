@@ -31,6 +31,9 @@
     <loc>https://simpyll.com/projects</loc>
   </url>
   <url>
+    <loc>https://simpyll.com/pulse</loc>
+  </url>
+  <url>
     <loc>https://simpyll.com/blog/001-python-fundamentals</loc>
     <lastmod>2026-10-20</lastmod>
   </url>
@@ -59,5 +62,8 @@
   </url>
   <url>
     <loc>https://simpyll.com/projects/ai-engineering</loc>
+  </url>
+  <url>
+    <loc>https://simpyll.com/projects/simpyll-pulse</loc>
   </url>
 </urlset>

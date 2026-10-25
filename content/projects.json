@@ -396,5 +396,42 @@
       "order": 21
     },
     "order": 21
+  },
+  {
+    "id": "simpyll-pulse",
+    "slug": "simpyll-pulse",
+    "title": "Simpyll Pulse",
+    "summary": "A public window into content architecture and technical SEO, powered by static audits and accessible interactive visualization.",
+    "projectType": "Developer Tools / Analytics / SEO",
+    "workflowStage": "shipped",
+    "lifecycleStatus": "active",
+    "visibility": "public",
+    "technologies": [
+      "react",
+      "typescript",
+      "vite",
+      "github-actions"
+    ],
+    "links": [
+      {
+        "kind": "live",
+        "label": "Explore Pulse",
+        "url": "/pulse"
+      },
+      {
+        "kind": "repository",
+        "label": "Source code",
+        "url": "https://github.com/simpyll/simpyll"
+      }
+    ],
+    "featured": {
+      "enabled": false,
+      "order": 5
+    },
+    "order": 5,
+    "caseStudy": {
+      "contentKey": "simpyll-pulse"
+    },
+    "seoDescription": "How Simpyll Pulse turns static site audits into an accessible public dashboard while keeping detailed diagnostics local."
   }
 ]

@@ -1,4 +1,4 @@
-import './pages/project-detail.css'
+import { PulseRoute } from './pulse/route'
 import { Policy } from './pages/Policy'
 import policyLinks from './content/policies.json'
 import { ProjectDetailRoute } from './projects/ProjectDetailRoute'
@@ -16,7 +16,7 @@ import { AboutPage } from './pages/About'
 import { Home } from './pages/Home'
 import { Blog } from './pages/Blog'
 import { NotFound } from './pages/NotFound'
-import { BlogPost } from './pages/BlogPost'
+import { ArticleRoute } from './pulse/article-route'
 
 export function AppContent() {
   const { pathname } = useLocation()
@@ -31,10 +31,11 @@ export function AppContent() {
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:slug" element={<ProjectDetailRoute />} />
+          <Route path="/pulse" element={<PulseRoute />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:slug" element={<BlogPost />} />
+          <Route path="/blog/:slug" element={<ArticleRoute />} />
           {policyLinks.map(({ slug }) => <Route key={slug} path={`/${slug}`} element={<Policy slug={slug} />} />)}
           <Route path="*" element={<NotFound />} />
         </Routes>

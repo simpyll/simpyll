@@ -32,17 +32,17 @@ export async function auditSeo({ directory = 'dist', expectedRoutes, articles } 
           try { const data = JSON.parse(node.textContent); schemas.push(...(Array.isArray(data) ? data : data['@graph'] ?? [data])) }
           catch { add(route, 'invalid-jsonld', 'High', 'JSON-LD cannot be parsed') }
         }
-        const links = [...doc.querySelectorAll('a[href]')].map(n => ({ href: n.getAttribute('href'), anchor: n.getAttribute('aria-label') || text(n), contextual: !!n.closest('.article-content') }))
+        const links = [...doc.querySelectorAll('a[href]')].map(n => ({ href: n.getAttribute('href'), anchor: n.getAttribute('aria-label') || text(n), contextual: !!n.closest('.article-content'), kind: n.closest('.article-content') ? 'contextual' : n.closest('[aria-label="Breadcrumb"]') ? 'breadcrumb' : n.closest('[aria-labelledby="related-articles-heading"]') ? 'related' : n.closest('header') ? 'global' : n.closest('footer') ? 'footer' : n.closest('[aria-label="Article navigation"]') ? 'previous-next' : n.closest('nav') ? 'navigation' : n.closest('[class*="project"]') ? 'project' : 'other' }))
         const images = [...doc.querySelectorAll('img')].map(n => ({ src: n.getAttribute('src'), alt: n.getAttribute('alt'), width: n.getAttribute('width'), height: n.getAttribute('height'), loading: n.getAttribute('loading'), srcset: n.getAttribute('srcset') }))
         const social = Object.fromEntries(['og:title','og:description','og:url','og:type','og:image','twitter:title','twitter:description','twitter:card','twitter:image'].map(key => [key, content(doc, `meta[${key.startsWith('og:') ? 'property' : 'name'}="${key}"]`)]))
-        const page = { route, url: origin + route, pageType: redirect ? 'redirect' : route === '/404' ? '404' : route.startsWith('/blog/') ? 'article' : route.startsWith('/projects/') ? 'case-study' : 'page', indexable, httpStatus: null, robots, canonicals, title: text(doc.querySelector('title')), description: content(doc, 'meta[name="description"]'), headings, presentationalHeadings, social, schemas, links, images, inbound: [], outbound: [], contextualOutbound: [], prerendered: !!doc.querySelector('main') && !!text(doc.querySelector('main')), articleText: text(doc.querySelector('.article-content')), ids: [...doc.querySelectorAll('[id]')].map(n => n.id) }
+        const page = { route, url: origin + route, pageType: redirect ? 'redirect' : route === '/404' ? '404' : route.startsWith('/blog/') ? 'article' : route.startsWith('/projects/') ? 'case-study' : 'page', indexable, httpStatus: null, robots, canonicals, title: text(doc.querySelector('head title')), description: content(doc, 'meta[name="description"]'), headings, presentationalHeadings, social, schemas, links, images, inbound: [], outbound: [], contextualOutbound: [], prerendered: !!doc.querySelector('main') && !!text(doc.querySelector('main')), articleText: text(doc.querySelector('.article-content')), ids: [...doc.querySelectorAll('[id]')].map(n => n.id) }
         pages.push(page)
         if (!indexable) {
           if (!/\bnoindex\b/i.test(robots)) add(route, 'special-indexability', 'High', '404/redirect must declare noindex')
           continue
         }
         if (canonicals.length !== 1 || canonicals[0] !== page.url) add(route, 'canonical', 'Critical', JSON.stringify(canonicals))
-        for (const [selector, value, code] of [['title', page.title, 'title'], ['meta[name="description"]', page.description, 'description']]) {
+        for (const [selector, value, code] of [['head title', page.title, 'title'], ['meta[name="description"]', page.description, 'description']]) {
           if (!value || doc.querySelectorAll(selector).length !== 1) add(route, code, 'High', `Expected one nonempty ${code}`)
         }
         if (headings.filter(h => h.level === 1).length !== 1) add(route, 'h1', 'Medium', 'Expected one primary heading')
@@ -180,7 +180,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
   const articles = await collectArticles(process.cwd(), { history: new Map() })
   for (const article of articles.filter(a => a.status === 'published')) article.metadata = await readMetadata(await readFile(`src/content/blog/${article.slug}.mdx`, 'utf8'))
   const policies = JSON.parse(await readFile('src/content/policies.json', 'utf8'))
-  const expectedRoutes = ['/', '/about', '/blog', '/explore', '/projects', ...policies.map(p => `/${p.slug}`), ...await caseStudyRoutes(), ...articles.filter(a => a.status === 'published').map(a => `/blog/${a.slug}`)]
+  const expectedRoutes = ['/', '/about', '/blog', '/explore', '/projects', '/pulse', ...policies.map(p => `/${p.slug}`), ...await caseStudyRoutes(), ...articles.filter(a => a.status === 'published').map(a => `/blog/${a.slug}`)]
   const result = await auditSeo({ expectedRoutes, articles })
   const output = process.argv[2] ?? 'artifacts/seo/audit.json'
   await mkdir(resolve(output, '..'), { recursive: true })

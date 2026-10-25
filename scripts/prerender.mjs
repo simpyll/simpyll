@@ -9,6 +9,7 @@ import { redirectHtml } from './redirects.mjs'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
+import { generatePulse } from './pulse.mjs'
 const root = process.cwd()
 const distDirectory = join(root, 'dist')
 const blogDirectory = join(root, 'src/content/blog')
@@ -64,6 +65,12 @@ async function prerender() {
   }
 
   await writeFile(join(distDirectory, '404.html'), render('/404').replace('<head>', `<head>${templateHead}`), 'utf8')
+
+  await mkdir(join(distDirectory, 'pulse'), { recursive: true })
+  await writeFile(join(distDirectory, 'pulse/index.html'), render('/pulse').replace('<head>', `<head>${templateHead}${projectHead(clientManifest, '/pulse')}`))
+  const pulse = await generatePulse({ expectedRoutes: [...routes, '/pulse'], directory: distDirectory })
+  await mkdir(join(distDirectory, 'pulse'), { recursive: true })
+  await writeFile(join(distDirectory, 'pulse/index.html'), render('/pulse', pulse).replace('<head>', `<head>${templateHead}${projectHead(clientManifest, '/pulse')}`))
 
   console.log(`Successfully prerendered ${routes.length} pages and 404.html.`)
 }

@@ -108,7 +108,7 @@ test('smallest supported viewport fits navigation and reduced motion removes hov
   await nav.getByRole('button', { name: 'More' }).focus()
   await page.keyboard.press('Enter')
   const labels = await nav.getByRole('link').allTextContents()
-  expect(labels.sort()).toEqual(['About', 'Home', 'Journal', 'Projects'])
+  expect(labels.sort()).toEqual(['About', 'Home', 'Journal', 'Projects', 'Pulse'])
   for (const link of await nav.getByRole('link').all()) await expect(link).toBeInViewport()
   const link = page.locator('#navigation-overflow').getByRole('link').first()
   // Theme control precedes the first overflow link in normal tab order.

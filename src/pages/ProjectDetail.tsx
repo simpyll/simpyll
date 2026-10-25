@@ -1,3 +1,4 @@
+import './project-detail.css'
 import { Breadcrumbs } from '../components/Breadcrumbs'
 import { contentBreadcrumbs } from '../lib/breadcrumbs'
 import { ProjectStatus } from '../components/ProjectStatus'

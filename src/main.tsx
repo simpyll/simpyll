@@ -7,6 +7,9 @@ import { BrowserRouter } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 
 import App from './App'
+import { preloadArticle } from './pulse/article-loader'
+import { preloadPulse } from './pulse/loader'
+import { PulseData, readPulse } from './pulse/data'
 import { DiscoveryData, readDiscoveryData } from './lib/discovery-data'
 import './index.css'
 
@@ -17,7 +20,7 @@ const app = (
     <ErrorBoundary scope="application">
       <HelmetProvider>
         <BrowserRouter>
-          <DiscoveryData.Provider value={readDiscoveryData()}><App /></DiscoveryData.Provider>
+          <PulseData.Provider value={readPulse()}><DiscoveryData.Provider value={readDiscoveryData()}><App /></DiscoveryData.Provider></PulseData.Provider>
         </BrowserRouter>
       </HelmetProvider>
     </ErrorBoundary>
@@ -25,7 +28,9 @@ const app = (
 )
 
 async function start() {
+  if (window.location.pathname.startsWith('/blog/')) await preloadArticle()
   await preloadProjectDetail(window.location.pathname)
+  if (window.location.pathname.replace(/\/$/, '') === '/pulse') await preloadPulse()
   if (container.hasChildNodes()) {
     hydrateRoot(container, app)
   } else {

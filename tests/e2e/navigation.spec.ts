@@ -70,7 +70,7 @@ test('indicator responds to resize and reduced motion with theme screenshots', a
   }
 })
 
-const labels = ['Home', 'Projects', 'Journal', 'About']
+const labels = ['Home', 'Projects', 'Journal', 'About', 'Pulse']
 
 async function assertPartition(page: import('@playwright/test').Page) {
   const nav = page.getByRole('navigation', { name: 'Main navigation' })
