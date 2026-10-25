@@ -17,7 +17,7 @@ test('removing discovery filters preserves keyboard focus', async ({ page }) => 
 })
 
 for (const width of [320, 768, 1280]) {
-  for (const route of [...policyRoutes, '/', '/about', '/blog', '/explore', '/projects', '/projects/simpyll', '/projects/ai-engineering', '/blog/001-python-fundamentals', '/audit-missing']) {
+  for (const route of [...policyRoutes, '/', '/about', '/blog', '/explore', '/projects', '/pulse', '/projects/simpyll', '/projects/ai-engineering', '/blog/001-python-fundamentals', '/audit-missing']) {
     test(`reflow and text spacing at ${width} CSS pixels: ${route}`, async ({ page }, info) => {
       await page.setViewportSize({ width, height: 900 })
       await page.goto(route)
