@@ -1,3 +1,4 @@
+import { ProjectStatus } from '../components/ProjectStatus'
 import { useState, useSyncExternalStore } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { SEO } from '../components/SEO'
@@ -16,7 +17,7 @@ export function ProjectCard({ project: p }: { project: Project }) {
     <p className="lab-type">{p.projectType}</p>
     <h3>{p.title}</h3>
     <p className="lab-summary">{p.summary}</p>
-    <div className="lab-tags"><span>{p.workflowStage && workflowStages[p.workflowStage]}</span><span>Lifecycle: {p.lifecycleStatus && lifecycleStatuses[p.lifecycleStatus]}</span></div>
+    <div className="mt-4"><ProjectStatus project={p} /></div>
     {p.technologies.length > 0 && <ul className="lab-tags" aria-label="Technologies">{p.technologies.map(t => <li key={t}>{technologies[t]}</li>)}</ul>}
     {p.nextMilestone && <p className="lab-summary">Next: {p.nextMilestone}</p>}
     {p.description && <details><summary>More about {p.title}</summary><p>{p.description}</p></details>}
@@ -78,7 +79,7 @@ export function Projects() {
         </div>
       </> : <section aria-label="Project grid" className="lab-grid"><h2 className="sr-only">Project results</h2>{results.map(p => <ProjectCard key={p.id} project={p} />)}</section>}
       {!results.length && <p className="lab-no-results">No projects match. Try another search or reset the filters.</p>}
-      <p className="lab-note">Stages reflect my current priorities, not release availability. Healthcare ideas are educational software concepts, not released clinical tools.</p>
+      <p className="lab-note">Workflow stage describes development progress; lifecycle describes ongoing work and maintenance. A published case study does not mean a project is complete. Healthcare ideas are educational software concepts, not released clinical tools.</p>
       <noscript><style>{'.lab-controls,.lab-mobile-selector,.lab-more{display:none!important}.lab-board{display:block!important}.lab-column{display:block!important;margin-bottom:2rem}'}</style></noscript>
     </main>
   </>

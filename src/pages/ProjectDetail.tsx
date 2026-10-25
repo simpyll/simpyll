@@ -1,7 +1,8 @@
+import { ProjectStatus } from '../components/ProjectStatus'
 import { Link, useParams } from 'react-router-dom'
 import { SEO } from '../components/SEO'
 import { Figure } from '../components/mdx/components'
-import { getCaseStudyPath, getProjectBySlug, lifecycleStatuses, technologies, workflowStages, type Project } from '../projects'
+import { getCaseStudyPath, getProjectBySlug, technologies, type Project } from '../projects'
 import { caseStudies, type CaseStudy } from '../projects/case-studies'
 import { NotFound } from './NotFound'
 
@@ -15,7 +16,7 @@ export function ProjectDetailLayout({ project: p, study }: { project: Project; s
         <h1>{p.title}<span className="text-accent">.</span></h1>
         {p.subtitle && <p className="case-subtitle">{p.subtitle}</p>}
         <p className="case-summary">{p.summary}</p>
-        <dl className="case-metadata"><div><dt>Workflow stage</dt><dd>{workflowStages[p.workflowStage]}</dd></div><div><dt>Lifecycle</dt><dd>{lifecycleStatuses[p.lifecycleStatus]}</dd></div><div><dt>Publication</dt><dd>Project case study</dd></div></dl>
+        <div className="case-metadata"><ProjectStatus project={p} /><dl><div><dt>Publication</dt><dd>Project case study</dd></div></dl></div>
         <ul className="case-tech" aria-label="Technologies">{p.technologies.map(t => <li key={t}>{technologies[t]}</li>)}</ul>
         <div className="case-links">{p.links.map(l => <a key={l.url} href={l.url}>{l.label} <span aria-hidden="true">↗</span></a>)}</div>
       </header>

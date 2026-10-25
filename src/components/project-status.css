@@ -1,0 +1,23 @@
+.project-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem 1.5rem;
+  margin: 0;
+  min-width: 0;
+  font-size: .75rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.project-status dt {
+  color: var(--ui-muted);
+  font-size: inherit;
+  margin: 0 0 .25rem;
+}
+
+.project-status dd {
+  color: var(--ui-accent);
+  font-size: inherit;
+  font-weight: 500;
+  margin: 0;
+}
