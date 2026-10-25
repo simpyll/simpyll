@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
+import { accessibilityTags } from './helpers/accessibility'
 import { destination } from './helpers/navigation'
 import { mkdir } from 'node:fs/promises'
 test('Pulse renders real data, supports keyboard graph exploration, filters and accessible alternatives',async({page},testInfo)=>{
@@ -25,7 +26,7 @@ test('Pulse renders real data, supports keyboard graph exploration, filters and 
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true)
  for(const theme of ['light','dark']){
   await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme)
-  const result=await new AxeBuilder({page}).include('main').withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze()
+  const result=await new AxeBuilder({page}).include('main').withTags(accessibilityTags).analyze()
   expect(result.violations).toEqual([])
   if(testInfo.project.name==='desktop-chromium'||testInfo.project.name==='mobile-chromium'){
    await page.evaluate(() => { (document.activeElement as HTMLElement)?.blur(); window.scrollTo(0,0) });
