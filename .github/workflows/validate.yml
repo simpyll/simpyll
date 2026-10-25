@@ -32,6 +32,8 @@ jobs:
         run: npm run test:performance
       - run: npm run test:redirects
       - run: npm run test:notion
+      - name: Test weekly publishing audit
+        run: node --test scripts/publishing-health.test.mjs
       - run: npm run test:images
       - run: npm run test:content
       - run: npm run test:search
@@ -196,3 +198,4 @@ jobs:
           RESULTS: ${{ toJSON(needs) }}
         run: |
           node -e 'const jobs = JSON.parse(process.env.RESULTS); for (const [name, job] of Object.entries(jobs)) { if (job.result !== "success") { console.error(name, job.result); process.exitCode = 1 } }'
+
