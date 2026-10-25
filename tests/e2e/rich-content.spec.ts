@@ -158,6 +158,7 @@ for (const colorScheme of ['light', 'dark'] as const) {
     const page = await context.newPage()
     await page.goto('/blog/rich-content-fixture/')
     await expect(page.locator('html')).not.toHaveAttribute('data-theme')
+    await expect(page.locator('.article-callout').first()).toHaveCSS('border-inline-start-color', colorScheme === 'light' ? 'rgb(29, 78, 216)' : 'rgb(96, 165, 250)')
     await expect(page.locator('.code-block pre').first()).toHaveCSS('background-color', colorScheme === 'light' ? 'rgb(246, 248, 250)' : 'rgb(13, 17, 23)')
     for (const language of ['javascript', 'typescript', 'tsx', 'json', 'bash', 'python', 'css', 'html', 'markdown', 'sql', 'diff']) {
       const code = page.locator(`code.language-${language}`).first()
@@ -169,3 +170,51 @@ for (const colorScheme of ['light', 'dark'] as const) {
     await context.close()
   })
 }
+
+test('semantic callouts share accessible palettes, fallback and print styles', async ({ page }, testInfo) => {
+  await page.goto('/blog/rich-content-fixture/')
+  const variants = ['note', 'tip', 'information', 'warning', 'important']
+  const palettes = { dark: ['#a5b4fc', '#65d6b4', '#60a5fa', '#fbbf24', '#fb7185'], light: ['#4f46e5', '#047857', '#1d4ed8', '#92400e', '#be123c'] }
+  for (const theme of ['dark', 'light'] as const) {
+    await page.evaluate(theme => document.documentElement.dataset.theme = theme, theme)
+    for (const [i, variant] of variants.entries()) {
+      const callout = page.locator(`.article-callout[data-variant="${variant}"]`).first()
+      const expected = palettes[theme][i]
+      const colors = await callout.evaluate(el => {
+        const style = getComputedStyle(el)
+        const icon = el.querySelector('svg')!
+        return { accent: style.getPropertyValue('--callout-accent').trim().toLowerCase(), border: style.borderInlineStartColor, icon: getComputedStyle(icon).color }
+      })
+      expect(colors.accent).toBe(expected)
+      expect(colors.border).toBe(colors.icon)
+      const contrasts = await callout.evaluate(el => {
+        const luminance = (color: string) => {
+          const c = color.match(/[\d.]+/g)!.slice(0, 3).map(Number).map(v => { const n = v / 255; return n <= .04045 ? n / 12.92 : ((n + .055) / 1.055) ** 2.4 })
+          return c[0] * .2126 + c[1] * .7152 + c[2] * .0722
+        }
+        const background = luminance(getComputedStyle(el).backgroundColor)
+        const ratio = (color: string) => { const value = luminance(color); return (Math.max(background, value) + .05) / (Math.min(background, value) + .05) }
+        return { icon: ratio(getComputedStyle(el.querySelector('svg')!).color), title: ratio(getComputedStyle(el.querySelector('.callout-title')!).color), body: ratio(getComputedStyle(el).color) }
+      })
+      expect(contrasts.icon).toBeGreaterThanOrEqual(3)
+      expect(contrasts.title).toBeGreaterThanOrEqual(4.5)
+      expect(contrasts.body).toBeGreaterThanOrEqual(4.5)
+      await testInfo.attach(`${theme}-${variant}-contrast`, { body: JSON.stringify(contrasts), contentType: 'application/json' })
+      await expect(callout.locator('svg')).toHaveAttribute('aria-hidden', 'true')
+      await expect(callout.locator('.callout-title')).toContainText(variant === 'information' ? 'Information' : variant[0].toUpperCase() + variant.slice(1))
+    }
+    const fallback = page.getByRole('note', { name: 'Note: Fallback contract' })
+    await expect(fallback).toHaveAttribute('data-variant', 'note')
+    await expect(fallback.locator('ul ul li')).toHaveText('Nested item')
+    await expect(fallback.locator('pre')).toContainText('const safe = true')
+    await fallback.getByRole('link').focus()
+    await visibleFocus(fallback.getByRole('link'))
+    await page.evaluate(() => document.documentElement.style.fontSize = '200%')
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true)
+    await page.evaluate(() => document.documentElement.style.fontSize = '')
+    await scan(page, testInfo, `semantic-callouts-${theme}`)
+  }
+  await page.emulateMedia({ media: 'print' })
+  await expect(page.locator('.article-callout').first()).toHaveCSS('background-color', 'rgb(255, 255, 255)')
+  await expect(page.locator('.callout-title').first()).toHaveCSS('color', 'rgb(24, 37, 31)')
+})
