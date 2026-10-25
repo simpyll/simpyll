@@ -28,8 +28,18 @@ const variants = { note: 'Note', tip: 'Tip', information: 'Information', warning
 export type CalloutProps = { variant?: keyof typeof variants; title?: string; children?: ReactNode }
 export function Callout({ variant = 'note', title, children }: CalloutProps) {
   const label = useId()
-  const name = variants[variant] ?? variants.note
-  return <aside role="note" className="article-callout" data-variant={variant} aria-labelledby={label}><p className="callout-title" id={label}>{title ? `${name}: ${title}` : name}</p><div>{children}</div></aside>
+  // Runtime MDX can bypass TypeScript. Normalize label, icon and styling together.
+  const resolved = Object.hasOwn(variants, variant) ? variant : 'note'
+  const name = variants[resolved]
+  const icons = {
+    note: <path d="m4 16 1 4 4-1L20 8l-5-5L4 16Zm9-11 5 5M4 20h16" />,
+    tip: <><path d="M9 18h6m-6 3h6M8 14a7 7 0 1 1 8 0c-1 1-1 2-1 3H9c0-1 0-2-1-3Z" /></>,
+    information: <><circle cx="12" cy="12" r="9" /><path d="M12 11v6m0-10v1" /></>,
+    warning: <><path d="m12 3 10 18H2L12 3Zm0 6v5m0 3v1" /></>,
+    important: <><circle cx="12" cy="12" r="9" /><path d="M12 6v8m0 3v1" /></>,
+  }
+
+  return <aside role="note" className="article-callout" data-variant={resolved} aria-labelledby={label}><p className="callout-title" id={label}><svg className="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">{icons[resolved]}</svg><span>{title ? `${name}: ${title}` : name}</span></p><div>{children}</div></aside>
 }
 
 export function CodeBlock({ children, ...props }: ComponentProps<'pre'>) {

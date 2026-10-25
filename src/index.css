@@ -5,6 +5,12 @@
 /* Dark identity is preserved; resolved theme overrides only semantic roles. */
 :root {
   color-scheme: dark;
+  --callout-note-accent: #A5B4FC;
+  --callout-tip-accent: #65D6B4;
+  --callout-info-accent: #60A5FA;
+  --callout-warning-accent: #FBBF24;
+  --callout-important-accent: #FB7185;
+
   /* GitHub-style syntax roles; shared by all build-time hljs selectors. */
   --code-background: #0d1117;
   --code-foreground: #c9d1d9;
@@ -59,6 +65,12 @@
 
 :root[data-theme="light"] {
   color-scheme: light;
+  --callout-note-accent: #4F46E5;
+  --callout-tip-accent: #047857;
+  --callout-info-accent: #1D4ED8;
+  --callout-warning-accent: #92400E;
+  --callout-important-accent: #BE123C;
+
   --code-background: #f6f8fa;
   --code-foreground: #24292f;
   --code-comment: #68717b;
@@ -94,6 +106,12 @@
 
 :root:not([data-theme]) {
   color-scheme: light;
+  --callout-note-accent: #4F46E5;
+  --callout-tip-accent: #047857;
+  --callout-info-accent: #1D4ED8;
+  --callout-warning-accent: #92400E;
+  --callout-important-accent: #BE123C;
+
   --code-background: #f6f8fa;
   --code-foreground: #24292f;
   --code-comment: #68717b;
@@ -520,7 +538,20 @@ html[data-theme="dark"] .theme-moon { opacity: 1; transform: none; }
 .article-content :is(th,td) { padding: .875rem 1rem; vertical-align: top; min-width: 10rem; }
 .article-content th { color: var(--ui-foreground); background: var(--ui-surface); font-weight: 600; }
 .article-callout, .article-embed { margin-block: 2em; padding: 1.25rem; background: var(--ui-surface); border: 1px solid var(--ui-outline); border-inline-start: 3px solid var(--ui-accent); border-radius: .75rem; }
-.article-callout[data-variant="warning"], .article-callout[data-variant="important"] { border-inline-start-color: var(--ui-foreground); }
+.article-callout { --callout-accent: var(--callout-note-accent); border-inline-start-color: var(--callout-accent); min-width: 0; }
+.article-callout[data-variant="note"] { --callout-accent: var(--callout-note-accent); }
+.article-callout[data-variant="tip"] { --callout-accent: var(--callout-tip-accent); }
+.article-callout[data-variant="information"] { --callout-accent: var(--callout-info-accent); }
+.article-callout[data-variant="warning"] { --callout-accent: var(--callout-warning-accent); }
+.article-callout[data-variant="important"] { --callout-accent: var(--callout-important-accent); }
+.callout-icon { color: var(--callout-accent); width: 1.1rem; height: 1.1rem; flex: none; margin-top: .15em; }
+.article-callout .callout-title { display: flex; align-items: flex-start; gap: .5rem; }
+.article-callout .callout-title span { min-width: 0; }
+@media print {
+  .article-callout { background: white; color: #18251f; border-color: #45564d; break-inside: avoid; }
+  .article-content .article-callout :is(p, li, a, strong, em, code), .article-callout .callout-icon { color: #18251f; }
+  .article-callout .callout-title { break-after: avoid; }
+}
 .article-content .callout-title { color: var(--ui-foreground); font-weight: 650; margin: 0 0 .5rem; font-size: .9rem; }
 .article-callout > div > :first-child { margin-top: 0; }
 .article-callout > div > :last-child { margin-bottom: 0; }

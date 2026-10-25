@@ -267,3 +267,51 @@ Reviewed [light](screenshots/syntax/desktop-light.png) and
 the code surface rather than wrapping. Local Chromium 153 passed all ten rich
 fixture browser journeys and 132 shared theme/accessibility browser checks.
 The normal CI runner uses the repository's pinned Playwright browsers.
+
+### Semantic callout presentation
+
+Callouts retain neutral `--ui-surface`, outline and text roles. Only the left
+border and small decorative inline SVG use `--callout-accent`. No icon package,
+theme state or publisher changes are required. Explicit theme and OS fallback
+selectors both define these centralized CSS tokens in `src/index.css`:
+
+| Type | Purpose | Dark | Light | Token | Icon |
+| --- | --- | --- | --- | --- | --- |
+| Note | Supplementary context | #A5B4FC | #4F46E5 | --callout-note-accent | Pencil |
+| Tip | Advice and best practices | #65D6B4 | #047857 | --callout-tip-accent | Lightbulb |
+| Information | Facts and background | #60A5FA | #1D4ED8 | --callout-info-accent | Information circle |
+| Warning | Risks and caution | #FBBF24 | #92400E | --callout-warning-accent | Triangle |
+| Important | Essential takeaways (not errors) | #FB7185 | #BE123C | --callout-important-accent | Exclamation circle |
+
+```mdx
+<Callout variant="note">Supplementary context.</Callout>
+<Callout variant="tip">Prefer small, reproducible examples.</Callout>
+<Callout variant="information">The build produces static HTML.</Callout>
+<Callout variant="warning">Check the target before running commands.</Callout>
+<Callout variant="important" title="Before publishing">Verify the sources.</Callout>
+```
+
+Titles retain the visible semantic label. Omitted or unknown runtime variants
+normalize to Note for the label, icon and accent together; TypeScript constrains
+known authoring variants. Nested Markdown still requires blank lines around block
+content. Notion continues emitting Note without guessing severity from icons.
+No database properties or manual color attributes are needed.
+
+Icons are hidden from assistive technology; static `role="note"` annotations
+never interrupt reading as alerts. Labels preserve meaning without color.
+Print uses dark ink, a visible border and labels on white, with page-break
+avoidance where practical. Long content wraps; fenced code keeps its own scroll
+surface. Tests exercise palettes, contrast, labels, unknown/default variants,
+nested content, keyboard focus, text scaling, print and no-JS OS themes through
+the existing rich MDX integration. Automated checks do not establish complete
+WCAG conformance or replace real-device/screen-reader review.
+
+To modify a variant, update both theme token sets (including OS fallback), the
+shared component label/icon map, variant selector, this table and fixture/browser
+expectations. Measure text at 4.5:1 and meaningful indicators at 3:1 against their
+actual surfaces. Keep the publisher mapping stable unless separately authorized.
+
+Review gallery: [dark](screenshots/callouts/after-dark.png) and
+[light](screenshots/callouts/after-light.png). Comparison images restore the previous
+CSS treatment on the same article content: [dark before](screenshots/callouts/before-dark.png)
+and [light before](screenshots/callouts/before-light.png).
