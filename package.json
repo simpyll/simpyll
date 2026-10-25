@@ -38,7 +38,9 @@
     "test:projects": "node --test scripts/projects.test.mjs scripts/projects-build.test.mjs scripts/project-lab.test.mjs scripts/case-study-association.test.mjs",
     "perf:assets": "node scripts/performance/assets.mjs",
     "perf:lighthouse": "node scripts/performance/lighthouse.mjs",
-    "test:performance": "node --test scripts/performance/*.test.mjs"
+    "test:performance": "node --test scripts/performance/*.test.mjs",
+    "recover:notion": "node scripts/notion/recovery.mjs",
+    "drill:recovery": "node scripts/notion/recovery-drill.mjs"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",
