@@ -1,0 +1,196 @@
+{
+  "checkedOn": "2026-10-25",
+  "note": "Observed deployed main before PR merge; distinct from candidate artifact.",
+  "pages": [
+    {
+      "route": "/404",
+      "url": "https://simpyll.com/seo-audit-nonexistent-151",
+      "status": 404,
+      "title": "Page not found | Simpyll",
+      "canonical": null,
+      "robots": "noindex, follow",
+      "h1": "Page not found.",
+      "staticArticleCharacters": null
+    },
+    {
+      "route": "/about",
+      "url": "https://simpyll.com/about",
+      "status": 200,
+      "title": "About David Becker — Critical Care Nurse & Curious Builder | Simpyll",
+      "canonical": "https://simpyll.com/about",
+      "robots": null,
+      "h1": "Critical care nurse.Curious builder.Always learning.",
+      "staticArticleCharacters": null
+    },
+    {
+      "route": "/accessibility",
+      "url": "https://simpyll.com/accessibility",
+      "status": 200,
+      "title": "Accessibility Statement | Simpyll",
+      "canonical": "https://simpyll.com/accessibility",
+      "robots": null,
+      "h1": "Accessibility Statement",
+      "staticArticleCharacters": null
+    },
+    {
+      "route": "/blog/001-python-fundamentals",
+      "url": "https://simpyll.com/blog/001-python-fundamentals",
+      "status": 200,
+      "title": "Learning Python #001: Functions, Variables, and My First CLI Tool | Simpyll",
+      "canonical": "https://simpyll.com/blog/001-python-fundamentals",
+      "robots": null,
+      "h1": "Learning Python #001: Functions, Variables, and My First CLI Tool",
+      "staticArticleCharacters": 7764
+    },
+    {
+      "route": "/blog/a-hospital-is-the-most-complicated-computer-ive-ever-used",
+      "url": "https://simpyll.com/blog/a-hospital-is-the-most-complicated-computer-ive-ever-used",
+      "status": 200,
+      "title": "A Hospital Is the Most Complicated Computer I've Ever Used | Simpyll",
+      "canonical": "https://simpyll.com/blog/a-hospital-is-the-most-complicated-computer-ive-ever-used",
+      "robots": null,
+      "h1": "A Hospital Is the Most Complicated Computer I've Ever Used",
+      "staticArticleCharacters": 24727
+    },
+    {
+      "route": "/blog/hello-world",
+      "url": "https://simpyll.com/blog/hello-world",
+      "status": 200,
+      "title": "Hello, World. | Simpyll",
+      "canonical": "https://simpyll.com/blog/hello-world",
+      "robots": null,
+      "h1": "Hello, World.",
+      "staticArticleCharacters": 414
+    },
+    {
+      "route": "/blog",
+      "url": "https://simpyll.com/blog",
+      "status": 200,
+      "title": "Learning Journal | Simpyll",
+      "canonical": "https://simpyll.com/blog",
+      "robots": null,
+      "h1": "Learning journal.",
+      "staticArticleCharacters": null
+    },
+    {
+      "route": "/blog/starting-over-without-starting-from-zero",
+      "url": "https://simpyll.com/blog/starting-over-without-starting-from-zero",
+      "status": 200,
+      "title": "Starting Over Without Starting From Zero | Simpyll",
+      "canonical": "https://simpyll.com/blog/starting-over-without-starting-from-zero",
+      "robots": null,
+      "h1": "Starting Over Without Starting From Zero",
+      "staticArticleCharacters": 13974
+    },
+    {
+      "route": "/blog/the-art-of-reading-code",
+      "url": "https://simpyll.com/blog/the-art-of-reading-code",
+      "status": 200,
+      "title": "The Art of Reading Code: Inside Simpyll’s New Journal Experience | Simpyll",
+      "canonical": "https://simpyll.com/blog/the-art-of-reading-code",
+      "robots": null,
+      "h1": "The Art of Reading Code: Inside Simpyll’s New Journal Experience",
+      "staticArticleCharacters": 7405
+    },
+    {
+      "route": "/blog/why-simpyll",
+      "url": "https://simpyll.com/blog/why-simpyll",
+      "status": 200,
+      "title": "Why Simpyll? A Name, a Philosophy, and the Beauty of Doing Less | Simpyll",
+      "canonical": "https://simpyll.com/blog/why-simpyll",
+      "robots": null,
+      "h1": "Why Simpyll? A Name, a Philosophy, and the Beauty of Doing Less",
+      "staticArticleCharacters": 10189
+    },
+    {
+      "route": "/disclaimers",
+      "url": "https://simpyll.com/disclaimers",
+      "status": 200,
+      "title": "Medical & Educational Disclaimers | Simpyll",
+      "canonical": "https://simpyll.com/disclaimers",
+      "robots": null,
+      "h1": "Medical & Educational Disclaimers",
+      "staticArticleCharacters": null
+    },
+    {
+      "route": "/editorial-standards",
+      "url": "https://simpyll.com/editorial-standards",
+      "status": 200,
+      "title": "Editorial Standards & AI Disclosure | Simpyll",
+      "canonical": "https://simpyll.com/editorial-standards",
+      "robots": null,
+      "h1": "Editorial Standards & AI Disclosure",
+      "staticArticleCharacters": null
+    },
+    {
+      "route": "/explore",
+      "url": "https://simpyll.com/explore",
+      "status": 200,
+      "title": "Explore articles | Simpyll",
+      "canonical": "https://simpyll.com/explore",
+      "robots": null,
+      "h1": "Explore.",
+      "staticArticleCharacters": null
+    },
+    {
+      "route": "/",
+      "url": "https://simpyll.com/",
+      "status": 200,
+      "title": "From Bedside to Build | Simpyll",
+      "canonical": "https://simpyll.com/",
+      "robots": null,
+      "h1": "From bedside to build.",
+      "staticArticleCharacters": null
+    },
+    {
+      "route": "/privacy",
+      "url": "https://simpyll.com/privacy",
+      "status": 200,
+      "title": "Privacy Policy | Simpyll",
+      "canonical": "https://simpyll.com/privacy",
+      "robots": null,
+      "h1": "Privacy Policy",
+      "staticArticleCharacters": null
+    },
+    {
+      "route": "/projects/ai-engineering",
+      "url": "https://simpyll.com/projects/ai-engineering",
+      "status": 200,
+      "title": "AI Engineering — Project case study | Simpyll",
+      "canonical": "https://simpyll.com/projects/ai-engineering",
+      "robots": null,
+      "h1": "AI Engineering.",
+      "staticArticleCharacters": null
+    },
+    {
+      "route": "/projects",
+      "url": "https://simpyll.com/projects",
+      "status": 200,
+      "title": "Projects | Simpyll",
+      "canonical": "https://simpyll.com/projects",
+      "robots": null,
+      "h1": "Projects.",
+      "staticArticleCharacters": null
+    },
+    {
+      "route": "/projects/simpyll",
+      "url": "https://simpyll.com/projects/simpyll",
+      "status": 200,
+      "title": "Simpyll — Project case study | Simpyll",
+      "canonical": "https://simpyll.com/projects/simpyll",
+      "robots": null,
+      "h1": "Simpyll.",
+      "staticArticleCharacters": null
+    },
+    {
+      "route": "/terms",
+      "url": "https://simpyll.com/terms",
+      "status": 200,
+      "title": "Terms of Use | Simpyll",
+      "canonical": "https://simpyll.com/terms",
+      "robots": null,
+      "h1": "Terms of Use",
+      "staticArticleCharacters": null
+    }
+  ]
+}

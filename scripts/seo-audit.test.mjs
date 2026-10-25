@@ -111,3 +111,13 @@ test('build invokes offline SEO gate and existing CI executes regression tests',
   const result = await auditSeo({ directory })
   assert.ok(result.issues.some(i => i.route === '/blog/shell' && i.code === 'empty-static-content'))
 })
+
+ test('sitemap lastmod uses editorial dates rather than rebuild time', async t => {
+  const directory = await fixture(t, html(), ['/', '/blog/dated'])
+  await mkdir(join(directory, 'blog/dated'), { recursive: true })
+  await writeFile(join(directory, 'blog/dated/index.html'), html({ route: '/blog/dated' }))
+  await writeFile(join(directory, 'search-index.json'), '[]')
+  await writeFile(join(directory, 'rss.xml'), '<rss><channel/></rss>')
+  const result = await auditSeo({ directory, articles: [{ slug: 'dated', status: 'published', metadata: { date: '2026-10-20', updatedAt: '2026-10-24' } }] })
+  assert.ok(result.issues.some(i => i.code === 'sitemap-lastmod'))
+})

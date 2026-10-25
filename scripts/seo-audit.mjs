@@ -159,7 +159,12 @@ export async function auditSeo({ directory = 'dist', expectedRoutes, articles } 
   else {
     const parsed = new XMLParser({ ignoreAttributes: false }).parse(xml)
     if (parsed.urlset?.['@_xmlns'] !== 'http://www.sitemaps.org/schemas/sitemap/0.9') add('/', 'sitemap-xml', 'High', 'Incorrect namespace')
-    sitemap = [parsed.urlset?.url ?? []].flat().map(item => item.loc)
+    const entries = [parsed.urlset?.url ?? []].flat()
+    sitemap = entries.map(item => item.loc)
+    for (const article of articles?.filter(a => a.status === 'published') ?? []) {
+      const entry = entries.find(item => item.loc === `${origin}/blog/${article.slug}`)
+      if (entry && article.metadata && entry.lastmod !== (article.metadata.updatedAt ?? article.metadata.date)) add(`/blog/${article.slug}`, 'sitemap-lastmod', 'High', 'Sitemap modification date must match authoritative editorial metadata')
+    }
     if (new Set(sitemap).size !== sitemap.length) add('/', 'sitemap-duplicates', 'High', 'Duplicate locations')
     for (const url of sitemap) if (!pages.some(p => p.indexable && p.url === url)) add('/', 'sitemap-extra', 'High', url)
     for (const page of pages) { page.sitemapIncluded = sitemap.includes(page.url); if (page.indexable && !page.sitemapIncluded) add(page.route, 'sitemap-missing', 'High', page.url) }

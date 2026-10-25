@@ -60,6 +60,7 @@ jobs:
           include-hidden-files: true
           path: |
             ci-revision.txt
+            artifacts/seo/audit.json
             dist/
             dist-server/
             src/generated/

@@ -5,7 +5,10 @@ Baseline was generated from a clean production build before template edits.
 [baseline.json](baseline.json) and [after.json](after.json) contain per-route evidence:
 metadata, headings, JSON-LD, social tags, sitemap membership, internal anchor edges,
 image attributes and static article excerpts. They are offline artifact observations;
-HTTP status is explicitly null, not a fabricated 200. No search-indexing or ranking
+HTTP status in offline reports is explicitly null, not a fabricated 200. A separate
+[production.json](production.json) records direct deployed HTTP/HTML checks: all 18
+public routes returned 200 and an invented URL returned the custom 404 with
+noindex. This observes deployed main before the PR, not the candidate. No search-indexing or ranking
 claims are inferred from artifact correctness.
 
 ## Research and decision rules
@@ -166,7 +169,9 @@ manual MDX and Notion. No new service, runtime dependency, AI call or SEO framew
 ## Validation record
 
 Production build (including TypeScript, static output checks and asset budgets),
-lint, content tests and the new SEO regression tests passed locally. Full existing
+lint, 47 content tests and 22 SEO regression tests passed locally. A focused run
+of existing prerender, CI-contract, content and SEO tests also passed (88 tests
+before the additional sitemap-date regression). Full existing
 Node tests initially exposed copied duplicate metadata in two publishing fixtures;
 those fixtures now have distinct author-controlled titles/descriptions. Browser
 installation in this workspace returned truncated archives, so local browser runs
