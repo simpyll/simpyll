@@ -548,7 +548,7 @@ html[data-theme="dark"] .theme-moon { opacity: 1; transform: none; }
 .article-callout .callout-title { display: flex; align-items: flex-start; gap: .5rem; }
 .article-callout .callout-title span { min-width: 0; }
 @media print {
-  .article-callout { background: white; color: #18251f; border-color: #45564d; break-inside: avoid; }
+  .article-callout { background: white; color: #18251f; border-color: #45564d; }
   .article-content .article-callout :is(p, li, a, strong, em, code), .article-callout .callout-icon { color: #18251f; }
   .article-callout .callout-title { break-after: avoid; }
 }
@@ -690,3 +690,71 @@ main { overflow-wrap: anywhere; }
 .discovery-control-heading { display: flex; align-items: center; justify-content: space-between; min-height: 2.75rem; gap: 1rem; }
 .discovery-control-heading button { min-height: 2.75rem; font-size: .875rem; }
 .discovery-filter:nth-child(2) fieldset { left: auto; right: 0; }
+
+
+/* Native article printing; the same prerendered content serves screen and paper. */
+.print-attribution { display: none; }
+@page { margin: 18mm 16mm; }
+@media print {
+  body:has(.print-article) {
+    --ui-canvas: white;
+    --ui-surface: white;
+    --ui-foreground: #18251f;
+    --ui-muted: #18251f;
+    --ui-subtle: #18251f;
+    --ui-accent: #18251f;
+    --ui-outline: #68717b;
+    background: white;
+    color: #18251f;
+    color-scheme: light;
+    min-height: 0;
+  }
+  html:has(.print-article) { background: white; font-size: 12pt; }
+  body:has(.print-article) :is(.floating-header, .navigation-slot, .skip-link, #root > footer),
+  .print-article :is(.article-back, .article-tags, nav[aria-label="Article navigation"], .article-toc, .toc-mobile-slot, section[aria-labelledby="related-articles-heading"]) { display: none !important; }
+  body:has(.print-article) main { min-height: 0; background: white; }
+  body:has(.print-article) :is(.article-container, .article-layout, .print-article) {
+    display: block; width: auto; max-width: none; margin: 0; padding: 0; min-width: 0;
+  }
+  .print-article, .print-article * { box-shadow: none !important; text-shadow: none !important; animation: none !important; transition: none !important; }
+  .print-article { font-family: Inter, Arial, sans-serif; line-height: 1.5; }
+  .print-article h1 { font-size: 26pt; line-height: 1.15; margin: 0 0 12pt; }
+  .print-article h1 + p { font-size: 12pt; margin-top: 0; }
+  .print-article .article-metadata { font-size: 9pt; margin-top: 12pt; padding-bottom: 10pt; gap: 8pt; }
+  .print-article .print-attribution { display: block; font-size: 9pt; margin: 8pt 0 18pt; overflow-wrap: anywhere; }
+  .print-article .article-content { margin-top: 18pt; font-size: 11pt; line-height: 1.55; }
+  .print-article :is(h1,h2,h3,h4,h5,h6,summary,.code-toolbar,.callout-title) { page-break-after: avoid; break-after: avoid-page; }
+  .print-article :is(p,li,pre) { orphans: 3; widows: 3; }
+  .print-article :is(h2,h3,h4) { margin-top: 18pt; margin-bottom: 8pt; }
+  .print-article h2 { font-size: 18pt; }
+  .print-article h3 { font-size: 14pt; }
+  .print-article h4 { font-size: 12pt; }
+  .print-article p { margin-block: 8pt; }
+  .print-article blockquote { border-color: #68717b; padding-inline-start: 12pt; }
+  .print-article :is(a, a:visited) { color: #18251f; text-decoration: underline; overflow-wrap: anywhere; }
+  .article-content a[href^="https://"]:not([href^="https://simpyll.com"]):not(:has(img))::after,
+  .article-content a[href^="http://"]:not(:has(img))::after {
+    content: " (" attr(href) ")"; font-size: .85em; font-weight: normal; overflow-wrap: anywhere;
+  }
+  .article-content .external-mark { display: none; }
+  .article-content :is(.article-callout,.article-embed,details,.code-block,.table-scroll) { border-radius: 0; background: white; }
+  .article-content .article-callout { break-inside: auto; padding: 10pt; }
+  .article-content [data-print-keep], .article-content figure { page-break-inside: avoid; break-inside: avoid-page; }
+  .article-content :is(.code-block,pre,.rich-table,.table-scroll,table,tbody) { max-height: none; overflow: visible; }
+  .article-content .code-block pre { padding: 8pt; font-size: 8.5pt; line-height: 1.4; }
+  .article-content code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+  .article-content :not(pre) > code { color: #18251f; background: white; }
+  .article-content table { width: 100%; min-width: 0; table-layout: fixed; border-collapse: collapse; font-size: 9pt; }
+  .article-content :is(th,td) { min-width: 0; padding: 5pt; border: 1px solid #68717b; overflow-wrap: anywhere; background: white; color: #18251f; }
+  .article-content thead { display: table-header-group; }
+  .article-content tfoot { display: table-footer-group; }
+  .article-content tr { page-break-inside: avoid; break-inside: avoid-page; }
+  .article-content figure { margin-block: 12pt; }
+  .article-content img { display: block; max-width: 100%; max-height: 210mm; width: auto; height: auto; object-fit: contain; border-radius: 0; }
+  .article-content figcaption { font-size: 9pt; margin-top: 5pt; }
+  /* Closed native disclosures must not discard article text in print. */
+  .article-content details > * { display: block !important; }
+  .article-content details::details-content { display: block; content-visibility: visible; }
+  .article-content summary { list-style: none; }
+  .article-content summary::marker { content: ""; }
+}
