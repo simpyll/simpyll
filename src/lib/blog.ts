@@ -1,3 +1,4 @@
+import navigation from '../generated/article-navigation.json' with { type: 'json' }
 
 import type { ComponentType } from 'react'
 
@@ -60,4 +61,14 @@ export const posts: BlogPost[] = Object.entries(modules)
 
 export function getPostBySlug(slug: string) {
   return posts.find((post) => post.slug === slug)
+}
+
+// The build emits only immutable IDs. Resolve current canonical posts without sorting.
+const postsById = new Map(posts.map(post => [post.metadata.articleId, post]))
+export function getAdjacentArticles(id: string) {
+  const neighbors = (navigation as Record<string, { previous?: string; next?: string }>)[id]
+  return {
+    previous: neighbors?.previous ? postsById.get(neighbors.previous) : undefined,
+    next: neighbors?.next ? postsById.get(neighbors.next) : undefined,
+  }
 }

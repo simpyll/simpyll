@@ -9,7 +9,8 @@ import { SEO } from '../components/SEO'
 import { ArticleSchema } from '../components/ArticleSchema'
 import { NotFound } from './NotFound'
 import redirects from '../generated/redirects.json' with { type: 'json' }
-import { getPostBySlug } from '../lib/blog'
+import { ArticlePagination } from '../components/ArticlePagination'
+import { getAdjacentArticles, getPostBySlug } from '../lib/blog'
 
 export function BlogPost() {
   const { slug } = useParams<{ slug: string }>()
@@ -85,6 +86,7 @@ export function BlogPost() {
                 <TaxonomyLink key={tag} kind="tag" label={tag} />
               ))}
             </div>
+            <ArticlePagination {...getAdjacentArticles(metadata.articleId!)} />
           </article>
           </div>
         </Container>
