@@ -59,7 +59,7 @@ test('already loaded static content remains usable offline', async ({ page, cont
   await page.goto('/blog')
   await context.setOffline(true)
   await page.locator('main a[href="/blog/hello-world"]').click()
-  await expect(page.locator('main article')).toBeVisible()
+  await expect(page.locator('main article').filter({ has: page.getByRole('heading', { level: 1 }) })).toBeVisible()
   expect(errors).toEqual([])
 })
 

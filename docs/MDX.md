@@ -179,3 +179,24 @@ or empty publications have no navigation. Links are prerendered and work without
 
 After `npm run build`, run `node --test scripts/article-adjacency.test.mjs` and
 `npx playwright test article-navigation accessibility theme` for regression checks.
+
+### Related Articles
+
+The existing redirect/content generation step uses the canonical published identity
+registry to generate up to three related article IDs per article. Each unique shared
+tag earns 3 points; a shared category earns 1. Comparisons reuse discovery's NFKC,
+whitespace and case normalization; display labels remain unchanged. No synonyms are
+inferred. Ties use original publication date descending, then immutable ID ascending
+ASCII. Updated timestamps do not count. Zero-score articles fill remaining slots in
+that same recent-publication order. The current identity, duplicates, alias routes,
+nonpublic and invalid metadata are excluded. No eligible alternatives means no section.
+
+Related cards reuse discovery cards with level-three headings under Related Articles,
+before chronological navigation. Links and reading time are present in static HTML,
+including without JavaScript. The browser only resolves precomputed IDs. Ordinary
+builds after Notion publication, withdrawal, taxonomy, date or slug edits refresh the
+results; no schema, schedule or API changes are needed. Small collections may repeat
+chronological neighbors; relevance is literal taxonomy overlap, not semantic matching.
+
+Run `npm run build`, `node --test scripts/related-articles.test.mjs`, and
+`npx playwright test related-articles article-navigation accessibility theme`.

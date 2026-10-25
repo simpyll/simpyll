@@ -45,3 +45,5 @@ artifacts/
 /public/rss.xml
 
 /src/generated/article-navigation.json
+
+/src/generated/related-articles.json

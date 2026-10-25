@@ -1,3 +1,4 @@
+import { RelatedArticles } from '../components/RelatedArticles'
 import { MDXProvider } from '@mdx-js/react'
 import { mdxComponents } from '../components/mdx/mapping'
 import { ArticleToc } from '../components/ArticleToc'
@@ -10,7 +11,7 @@ import { ArticleSchema } from '../components/ArticleSchema'
 import { NotFound } from './NotFound'
 import redirects from '../generated/redirects.json' with { type: 'json' }
 import { ArticlePagination } from '../components/ArticlePagination'
-import { getAdjacentArticles, getPostBySlug } from '../lib/blog'
+import { getAdjacentArticles, getPostBySlug, getRelatedArticles } from '../lib/blog'
 
 export function BlogPost() {
   const { slug } = useParams<{ slug: string }>()
@@ -86,6 +87,7 @@ export function BlogPost() {
                 <TaxonomyLink key={tag} kind="tag" label={tag} />
               ))}
             </div>
+            <RelatedArticles articles={getRelatedArticles(metadata.articleId!)} />
             <ArticlePagination {...getAdjacentArticles(metadata.articleId!)} />
           </article>
           </div>
