@@ -14,10 +14,13 @@ test('TOC navigation, scroll spy, geometry, history and accessibility', async ({
   const summary = page.locator('.toc-mobile summary')
   const content = page.locator('.article-content')
   const before = await content.boundingBox()
+  const documentTop = () => content.evaluate(element => element.getBoundingClientRect().top + scrollY)
+  const beforeDocumentTop = await documentTop()
   const header = await page.locator('.floating-header').boundingBox()
   if (!desktop) {
     await summary.click()
-    expect((await content.boundingBox())?.y).toBe(before?.y)
+    // Clicking an offscreen summary may scroll the viewport; layout must stay fixed.
+    await expect.poll(documentTop).toBe(beforeDocumentTop)
   }
   await expect(nav).toBeVisible()
   const links = nav.getByRole('link')
