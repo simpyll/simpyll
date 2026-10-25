@@ -18,6 +18,11 @@ Run `npm ci`, `npx playwright install --with-deps chromium firefox webkit`, then
 Smoke covers static HTML, hydration errors, SPA navigation and history, direct
 loads/reloads, project details, blog reading, scrollable code, TOC/hash focus,
 fixed navigation, touch targets, keyboard focus, search, theme and project filters.
+Firefox return-focus rings are explicitly styled for the More and search controls,
+including when Escape follows pointer interaction. Image checks use the maintained
+manual article; the isolated Notion fixture verifies publisher images, so retiring
+a live Notion post cannot invalidate that coverage.
+
 Reduced motion verifies reveals, indicator/theme transitions and scroll behavior.
 The responsive More menu is a nonmodal disclosure; it does not trap focus or
 make the background inert. Escape, outside dismissal and route focus are tested.

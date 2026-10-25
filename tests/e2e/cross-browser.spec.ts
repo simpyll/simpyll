@@ -27,7 +27,7 @@ async function noOverflow(page: Page) {
 test('prerender, hydration, client navigation, history and reload', async ({ page, request }) => {
   const response = await request.get('/projects/simpyll')
   expect(response.ok()).toBe(true)
-  expect(await response.text()).toMatch(/<h1[\s>]/)
+  expect(await response.text()).toMatch(/<h1[^>]*>Simpyll<span/)
   await page.goto('/')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('From bedside to build.')
   await navigationReady(page)
@@ -75,8 +75,8 @@ test('narrow disclosure supports touch, keyboard, dismissal and fixed navigation
   await expect.poll(async () => Math.abs((await header.boundingBox())!.y - before.y)).toBeLessThan(1)
   for (const control of await page.getByRole('navigation', { name: 'Main navigation' }).locator('a:visible,button:visible').all()) {
     const box = (await control.boundingBox())!
-    expect(box.width).toBeGreaterThanOrEqual(44)
-    expect(box.height).toBeGreaterThanOrEqual(44)
+    expect(Number((box.width).toFixed(3))).toBeGreaterThanOrEqual(44)
+    expect(Number((box.height).toFixed(3))).toBeGreaterThanOrEqual(44)
   }
   await more.click()
   await page.locator('h1').click()

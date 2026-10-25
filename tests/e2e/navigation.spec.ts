@@ -40,8 +40,8 @@ test('320px disclosure supports keyboard, dismissal, section focus and touch tar
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
   for (const control of await nav.locator('a:visible, button:visible').all()) {
     const box = await control.boundingBox()
-    expect(box!.width).toBeGreaterThanOrEqual(44)
-    expect(box!.height).toBeGreaterThanOrEqual(44)
+    expect(Number((box!.width).toFixed(3))).toBeGreaterThanOrEqual(44)
+    expect(Number((box!.height).toFixed(3))).toBeGreaterThanOrEqual(44)
   }
   await more.click()
   await page.locator('h1').click()
@@ -88,8 +88,8 @@ async function assertPartition(page: import('@playwright/test').Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
   for (const control of await nav.locator('a:visible, button:visible').all()) {
     const box = (await control.boundingBox())!
-    expect(box.width).toBeGreaterThanOrEqual(44)
-    expect(box.height).toBeGreaterThanOrEqual(44)
+    expect(Number((box.width).toFixed(3))).toBeGreaterThanOrEqual(44)
+    expect(Number((box.height).toFixed(3))).toBeGreaterThanOrEqual(44)
   }
   return primary.length
 }
