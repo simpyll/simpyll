@@ -1,4 +1,5 @@
-import { Policy, policyLinks } from './pages/Policy'
+import { Policy } from './pages/Policy'
+import policyLinks from './content/policies.json'
 import { ProjectDetail } from './pages/ProjectDetail'
 import { Projects } from './pages/Projects'
 import { Explore } from './pages/Explore'

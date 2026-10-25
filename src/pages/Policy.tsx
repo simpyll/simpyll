@@ -3,7 +3,7 @@ import { Container } from '../components/Container'
 import { SEO } from '../components/SEO'
 import policies from '../content/policies.json'
 
-export const policyLinks = policies.map(({ slug, title }) => ({ slug, title }))
+const policyLinks = policies.map(({ slug, title }) => ({ slug, title }))
 export function Policy({ slug }: { slug: string }) {
   const policy = policies.find(item => item.slug === slug)!
   return <>
