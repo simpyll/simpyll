@@ -1,3 +1,4 @@
+import { caseStudyRoutes } from './project-routes.mjs'
 import { editorialErrors } from '../src/lib/editorial.mjs'
 import { readFileSync } from 'node:fs'
 const policyRoutes = JSON.parse(readFileSync(new URL('../src/content/policies.json', import.meta.url), 'utf8')).map(({ slug }) => `/${slug}`)
@@ -67,7 +68,9 @@ export async function validateContent({ root = process.cwd() } = {}) {
   await scan(directory)
   let redirects = {}
   try { redirects = JSON.parse(await readFile(join(root, 'src/generated/redirects.json'), 'utf8')) } catch (error) { if (error.code !== 'ENOENT') throw error }
-  const routes = new Set([...policyRoutes, '/', '/blog', '/about', '/explore', ...articles.map(article => `/blog/${article.slug}`)])
+  let projectRoutes = []
+  try { projectRoutes = await caseStudyRoutes(root) } catch (error) { if (error.code !== 'ENOENT') throw error }
+  const routes = new Set([...policyRoutes, '/', '/blog', '/about', '/explore', '/projects', ...projectRoutes, ...articles.map(article => `/blog/${article.slug}`)])
   for (const article of articles) {
     const report = (message, node, target = errors) => {
       const position = node?.position?.start

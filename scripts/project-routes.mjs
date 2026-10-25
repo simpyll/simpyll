@@ -1,6 +1,7 @@
 import { getCaseStudyPath } from '../src/projects/schema.ts'
 import { readFile } from 'node:fs/promises'
-export async function caseStudyRoutes() {
-  const projects = JSON.parse(await readFile(new URL('../src/generated/projects.json', import.meta.url), 'utf8'))
+import { resolve } from 'node:path'
+export async function caseStudyRoutes(root = process.cwd()) {
+  const projects = JSON.parse(await readFile(resolve(root, 'src/generated/projects.json'), 'utf8'))
   return projects.map(getCaseStudyPath).filter(Boolean)
 }

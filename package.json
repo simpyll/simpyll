@@ -9,7 +9,7 @@
     "build:client": "npm run validate:projects && tsc -b && vite build",
     "build:server": "npm run validate:projects && vite build --ssr src/entry-server.tsx --outDir dist-server",
     "prerender": "node scripts/prerender.mjs",
-    "build": "npm run validate:projects && npm run generate:redirects && npm run validate:content && npm run generate:images && npm run generate:search && npm run generate:sitemap && npm run generate:rss && npm run build:client && npm run build:server && npm run prerender && node scripts/smoke/generate.mjs && npm run perf:assets",
+    "build": "npm run validate:projects && npm run generate:redirects && npm run validate:content && npm run generate:images && npm run generate:search && npm run generate:sitemap && npm run generate:rss && npm run build:client && npm run build:server && npm run prerender && node scripts/smoke/generate.mjs && npm run perf:assets && npm run audit:seo",
     "lint": "eslint .",
     "preview": "vite preview",
     "sync:notion": "node scripts/sync-notion.mjs",
@@ -42,7 +42,9 @@
     "recover:notion": "node scripts/notion/recovery.mjs",
     "drill:recovery": "node scripts/notion/recovery-drill.mjs",
     "generate:rss": "node scripts/generate-rss.mjs",
-    "test:rss": "node --test scripts/rss.test.mjs"
+    "test:rss": "node --test scripts/rss.test.mjs",
+    "audit:seo": "node scripts/seo-audit.mjs",
+    "test:seo": "node --test scripts/seo-audit.test.mjs"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",

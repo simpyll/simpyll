@@ -11,7 +11,7 @@ export function Home() {
   return (
     <>
       <SEO
-        title="From Bedside to Build"
+        title="Software Engineering & AI from a Critical Care Nurse"
         description="A critical care nurse learning software engineering and AI. A public journal of technical writing, experiments, and the journey from bedside to build."
         path="/"
       />
