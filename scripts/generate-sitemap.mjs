@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs'
+const policyRoutes = JSON.parse(readFileSync(new URL('../src/content/policies.json', import.meta.url), 'utf8')).map(({ slug }) => `/${slug}`)
 import { caseStudyRoutes } from './project-routes.mjs'
 
 import { readdir, readFile, writeFile } from 'node:fs/promises'
@@ -59,6 +61,7 @@ async function generateSitemap() {
   )
 
   const pages = [
+    ...policyRoutes.map(path => ({ path })),
     { path: '/' },
     { path: '/blog' },
     { path: '/about' },

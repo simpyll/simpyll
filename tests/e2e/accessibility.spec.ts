@@ -11,6 +11,7 @@ const test = base.extend<{ health: void }>({
     expect(errors, 'Hydrated application runtime errors').toEqual([])
   }, { auto: true }],
 })
+const policyRoutes = JSON.parse(readFileSync(new URL('../../src/content/policies.json', import.meta.url), 'utf8')).map((p: { slug: string }) => `/${p.slug}`)
 const articles = readdirSync(new URL('../../src/content/blog/', import.meta.url)).filter(f => f.endsWith('.mdx')).map(f => `/blog/${f.slice(0, -4)}`)
 const projects = JSON.parse(readFileSync(new URL('../../src/generated/projects.json', import.meta.url), 'utf8')) as { slug: string; visibility: string; caseStudy?: unknown }[]
 const projectRoutes = projects.filter(p => p.visibility === 'public' && p.caseStudy).map(p => `/projects/${p.slug}`)
@@ -21,7 +22,7 @@ for (const theme of ['light', 'dark'] as const) {
       await page.emulateMedia({ colorScheme: theme })
       await page.addInitScript(theme => localStorage.setItem('simpyll-theme', theme), theme)
     })
-    for (const route of ['/', '/blog', '/about', '/projects', '/explore', ...projectRoutes, ...articles, '/accessibility-missing-page']) {
+    for (const route of ['/', '/blog', '/about', '/projects', '/explore', ...projectRoutes, ...policyRoutes, ...articles, '/accessibility-missing-page']) {
       test(`hydrated route ${route}`, async ({ page }, info) => {
         await page.goto(route)
         await ready(page)

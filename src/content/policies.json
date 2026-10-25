@@ -1,0 +1,153 @@
+[
+  {
+    "slug": "privacy",
+    "title": "Privacy Policy",
+    "description": "How the current static website handles information.",
+    "sections": [
+      {
+        "title": "About this website",
+        "text": "Simpyll is a personal portfolio and educational publication. Public operator and private contact details are awaiting owner approval. This draft describes the inspected source configuration; production behavior and provider settings still require verification."
+      },
+      {
+        "title": "Hosting and connection information",
+        "text": "GitHub Pages is configured to serve this website. Delivering pages involves connection information such as IP address, requested URL, browser information and request time. GitHub may process technical information under its own privacy statement. Provider log access, retention and deletion settings have not been independently verified; Simpyll does not promise a retention period for them."
+      },
+      {
+        "title": "Cookies and browser storage",
+        "text": "The inspected application does not set cookies or include analytics trackers. It stores an explicit theme choice in localStorage under simpyll-theme, until changed or cleared through browser settings. Session storage under simpyll-scroll-v1 holds up to 100 navigation entries, including paths, queries, fragments and scroll positions, to restore reading position. Session storage normally lasts for the tab session; browser session restoration can extend it. These values are read in your browser and are not sent to an application backend by this code. Blocking storage leaves fallback behavior available."
+      },
+      {
+        "title": "Search and third parties",
+        "text": "Search downloads a same-origin search-index.json and matches queries in the browser. No query submission endpoint was found. Fonts are bundled locally. Social buttons and the current Embed component are links, not third-party widgets. Following an external link sends you to a separate service with its own practices. Article media may use external image URLs; loading those images can disclose connection information to their hosts. Notion publishing and GitHub Actions run during publishing, not as visitor-facing APIs."
+      },
+      {
+        "title": "Messages, retention and choices",
+        "text": "There is no on-site contact form, newsletter signup or comments system in the inspected implementation. Public GitHub reports disclose your account and submitted text to GitHub, maintainers and other readers. Repository history and public copies can persist after edits; no deletion timetable is promised. Do not post private requests, credentials or patient information. Clear site storage in your browser to remove local preferences and saved positions. GitHub controls requests concerning its own processing under its privacy statement."
+      },
+      {
+        "title": "Privacy requests and international visitors",
+        "text": "Depending on your location and applicable law, rights may include access, correction, deletion or objection. This draft does not determine which laws apply or promise a universal rights procedure. A verified private request channel, identity-verification process and response procedure are pending owner approval. Public GitHub issues are not a suitable substitute for private rights requests. Third-party processing may occur outside your country; provider arrangements require review."
+      },
+      {
+        "title": "Children and future changes",
+        "text": "The portfolio and professional education focus is not designed as a service for children; no child-specific submission feature was found. The intended audience needs owner confirmation. New forms, analytics, embeds, AI services or clinical tools require a fresh privacy and consent review before launch. No separate cookie banner or cookie policy has been added for the current source configuration; this is not a legal determination that consent is never required."
+      },
+      {
+        "title": "Policy updates",
+        "text": "Changes will be reflected on this page and in its review date and source history. No email notification system exists. This draft has no effective date until approved."
+      }
+    ]
+  },
+  {
+    "slug": "terms",
+    "title": "Terms of Use",
+    "description": "Draft conditions for using this personal publication.",
+    "sections": [
+      {
+        "title": "Use of the website",
+        "text": "These proposed terms describe use of Simpyll as a personal portfolio and educational publication. They remain a draft pending owner and legal review; no acceptance or effective date is asserted."
+      },
+      {
+        "title": "Permitted use",
+        "text": "Read, link to and discuss the site responsibly, subject to applicable law and any specific permissions. Do not disrupt availability, misuse contribution channels, submit malicious material or disclose confidential information. Healthcare material is general education, not individualized professional advice."
+      },
+      {
+        "title": "Content and software rights",
+        "text": "Public visibility is not an unrestricted reuse license. Consult an explicit license for each repository or asset before reuse; absent one, do not assume permission beyond applicable law. Code, articles, images and third-party materials may have different rights. Licensing and attribution decisions remain open under issue #88; these terms do not select a license or override third-party rights."
+      },
+      {
+        "title": "Accuracy, availability and external services",
+        "text": "Learning notes and experimental software can contain errors or become outdated. Independently check information before relying on it. Availability, completeness and fitness for a particular purpose are not promised. External services operate under their own terms. This draft does not exclude rights or responsibilities that applicable law does not allow to be excluded; liability language requires qualified review."
+      },
+      {
+        "title": "Changes and contact",
+        "text": "Substantive changes should update the review date and remain traceable in Git history. Public factual or technical corrections can use the page-specific GitHub link below. A private contact method remains pending. No governing-law, arbitration or indemnification provision has been selected."
+      }
+    ]
+  },
+  {
+    "slug": "disclaimers",
+    "title": "Medical & Educational Disclaimers",
+    "description": "Boundaries for healthcare education and experimental tools.",
+    "sections": [
+      {
+        "title": "General education",
+        "text": "Healthcare and nursing content is for general educational and informational purposes. It is not individualized medical advice, diagnosis or treatment. Reading or interacting with this website does not establish a clinician\u2013patient relationship."
+      },
+      {
+        "title": "Independent clinical judgment",
+        "text": "Do not substitute this material for independent clinical judgment, institutional protocols, professional standards or consultation with an appropriately qualified professional. Evaluate publication dates, references and subsequent updates: healthcare knowledge and guidance change."
+      },
+      {
+        "title": "Emergencies",
+        "text": "Simpyll is not an emergency service and does not provide urgent individualized guidance. For an emergency, contact your local emergency service or seek immediate in-person care; do not wait for a website response."
+      },
+      {
+        "title": "Protect patient privacy",
+        "text": "Do not submit identifiable patient information in GitHub issues, edits or any other contribution channel. Do not reproduce identifiable clinical cases without appropriate authorization and safeguards. Removing a name alone may not prevent identification."
+      },
+      {
+        "title": "Experimental tools and regulatory boundaries",
+        "text": "Future clinical calculators, assessment tools and educational software need feature-specific validation, limitations, source and licensing checks, and appropriate legal review before release. No clinical validation, professional accreditation, HIPAA certification, HIPAA compliance, FDA clearance or medical-device approval is asserted here. A disclaimer does not eliminate legal or professional responsibilities."
+      },
+      {
+        "title": "Report an inaccuracy",
+        "text": "Use the page-specific correction link for non-sensitive clinical or technical errors, including the public URL and supporting reference. Never put patient details in the report. Private contact and healthcare liability language remain subject to owner and qualified legal review."
+      }
+    ]
+  },
+  {
+    "slug": "editorial-standards",
+    "title": "Editorial Standards & AI Disclosure",
+    "description": "Research, learning in public, AI assistance and corrections.",
+    "sections": [
+      {
+        "title": "Mission and scope",
+        "text": "Simpyll documents practical engineering, technology, healthcare perspectives and learning in public. Personal experience and experiments should be distinguished from established evidence. These draft standards propose a maintainable approach; they are not proof of a formal review process for every existing article."
+      },
+      {
+        "title": "Research and verification",
+        "text": "Sources should support the claim, favor original documentation and primary research where practical, and be checked for currency and context. References allow readers to investigate further. No formal peer review or independent clinical review is claimed. Existing articles may differ in sourcing depth; report unsupported or outdated claims."
+      },
+      {
+        "title": "AI assistance",
+        "text": "AI tools may assist with brainstorming, organizing research, drafting, editing, coding, debugging and testing. AI output can be incorrect or omit context. Assistance is distinct from independent human verification, source checking and executable tests. This page does not claim that every statement or code change has been personally verified. The owner must confirm the precise editorial workflow and any article-specific disclosures before approval. No visitor-facing AI service was found in the inspected application."
+      },
+      {
+        "title": "Corrections and contributions",
+        "text": "Use the contextual GitHub link below each page to suggest a correction. Report factual errors, broken links, outdated guidance, clinical inaccuracies or software defects with the public page URL and evidence. Some article links open a correction issue because Notion is their editorial source; accepted corrections must be applied there before synchronization. Public reports require a GitHub account. Review and response times are not guaranteed; a non-GitHub feedback method remains unresolved."
+      },
+      {
+        "title": "Publication and updates",
+        "text": "Article publication dates identify original publication and should not be treated as a clinical review date. Substantive corrections should be explained and distinguished from original publication. Consistent article update metadata remains follow-up work in issue #62. Policy drafts carry a separate review date; Git history records source changes."
+      },
+      {
+        "title": "Material interests",
+        "text": "No sponsorship or affiliate arrangement was established by the source audit. This is not verification of the owner\u2019s off-site relationships. The owner must confirm material interests. If present or introduced, sponsorships and affiliate relationships should be disclosed clearly beside the relevant content or links, as well as reflected in these standards."
+      }
+    ]
+  },
+  {
+    "slug": "accessibility",
+    "title": "Accessibility Statement",
+    "description": "Accessibility goals, tested scope and remaining limitations.",
+    "sections": [
+      {
+        "title": "Goal and approach",
+        "text": "Simpyll targets WCAG 2.2 Level AA through semantic structure, keyboard navigation, visible focus, readable contrast, responsive layouts and reduced-motion support. Automated tests do not establish complete conformance; no full conformance claim is made."
+      },
+      {
+        "title": "Documented testing",
+        "text": "The repository accessibility record documents axe checks, keyboard and route navigation, theme behavior, text-spacing and reflow automation on Linux. Recorded CI run 40135762399 passed its browser gate with 476 passes and six existing isolated-fixture skips; separate fixture gates passed. It installed Chromium, Firefox and WebKit, with desktop and Pixel 7 Chromium contexts. Engine installation alone is not evidence that every scenario ran in each engine. This historical result does not certify subsequent changes."
+      },
+      {
+        "title": "Known limitations",
+        "text": "Manual NVDA, VoiceOver and TalkBack testing, physical-device touch and virtual-keyboard checks, actual 200%/400% browser zoom and human visual/motion review remain pending in issue #43. Mobile emulation and text enlargement are not equivalent to real-device or assistive-technology validation. The current audit ledger is linked below."
+      },
+      {
+        "title": "Feedback and follow-up",
+        "text": "For non-sensitive accessibility problems, use the page-specific GitHub contribution link, describing the URL, browser, device, assistive technology if applicable, and the blocked task. Do not submit personal health information. Feedback can be triaged through repository issues, with fixes and retests recorded there; no response deadline is promised. A verified private and non-GitHub channel remains an owner decision and blocks final approval of this statement."
+      }
+    ]
+  }
+]

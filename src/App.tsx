@@ -1,3 +1,5 @@
+import { Policy } from './pages/Policy'
+import policyLinks from './content/policies.json'
 import { ProjectDetail } from './pages/ProjectDetail'
 import { Projects } from './pages/Projects'
 import { Explore } from './pages/Explore'
@@ -32,6 +34,7 @@ export function AppContent() {
           <Route path="/explore" element={<Explore />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
+          {policyLinks.map(({ slug }) => <Route key={slug} path={`/${slug}`} element={<Policy slug={slug} />} />)}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </ErrorBoundary>

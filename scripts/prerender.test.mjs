@@ -2,7 +2,9 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
 
+const policies = JSON.parse(await readFile('src/content/policies.json', 'utf8'))
 const pages = [
+  ...policies.map(p => [`/${p.slug}`, `${p.title.replaceAll('&', '&amp;')} | Simpyll`]),
   ['/', 'From Bedside to Build | Simpyll'],
   ['/blog', 'Learning Journal | Simpyll'],
   ['/explore', 'Explore articles | Simpyll'],
@@ -76,7 +78,7 @@ test('sitemap and robots reference the canonical public pages', async () => {
     .filter((file) => file.endsWith('.mdx'))
     .map((file) => `/blog/${file.replace(/\.mdx$/, '')}`)
 
-  const expectedRoutes = ['/', '/blog', '/about', '/explore', '/projects', '/projects/simpyll', '/projects/ai-engineering', ...blogRoutes]
+  const expectedRoutes = [...policies.map(p => `/${p.slug}`), '/', '/blog', '/about', '/explore', '/projects', '/projects/simpyll', '/projects/ai-engineering', ...blogRoutes]
   const expectedUrls = expectedRoutes.map(
     (route) => `https://simpyll.com${route}`
   )

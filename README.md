@@ -106,3 +106,5 @@ Simpyll is evolving. Browse the [feature roadmap](docs/ROADMAP.md) and [open Git
 See the [design system](docs/DESIGN-SYSTEM.md) for tokens, component conventions, and examples.
 
 See [unified discovery](docs/DISCOVERY.md) for combined URL search, taxonomy filters, sorting and prerender behavior.
+
+Legal/transparency architecture, data inventory and approval blockers: [docs/LEGAL.md](docs/LEGAL.md). All new policy documents remain drafts pending owner review.

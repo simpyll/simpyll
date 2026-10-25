@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs'
+const policyRoutes = JSON.parse(readFileSync(new URL('../src/content/policies.json', import.meta.url), 'utf8')).map(({ slug }) => `/${slug}`)
 import { caseStudyRoutes } from './project-routes.mjs'
 
 import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises'
@@ -30,7 +32,7 @@ async function prerender() {
     .filter((file) => file.endsWith('.mdx'))
     .map((file) => `/blog/${file.replace(/\.mdx$/, '')}`)
 
-  const routes = ['/', '/blog', '/about', '/explore', '/projects', ...blogRoutes, ...await caseStudyRoutes()]
+  const routes = [...policyRoutes, '/', '/blog', '/about', '/explore', '/projects', ...blogRoutes, ...await caseStudyRoutes()]
 
   for (const route of routes) {
     const pageHtml = render(route).replace('<head>', `<head>${templateHead}`)
