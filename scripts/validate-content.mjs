@@ -5,6 +5,8 @@ import { readdir, readFile, lstat, realpath } from 'node:fs/promises'
 import { resolve, join, sep } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { compile } from '@mdx-js/mdx'
+import remarkGfm from 'remark-gfm'
+import { citationDiagnostics } from './remark-citations.mjs'
 
 // Read only literal data from the MDX parser's ESTree; never evaluate article code.
 export function literal(node) {
@@ -73,8 +75,9 @@ export async function validateContent({ root = process.cwd() } = {}) {
     }
     let tree
     try {
-      await compile({ value: article.source, path: article.file }, { remarkPlugins: [() => node => { tree = node }] })
+      await compile({ value: article.source, path: article.file }, { remarkPlugins: [remarkGfm, () => node => { tree = node }] })
     } catch (error) { report(`MDX compilation failed: ${error.message}`); continue }
+    for (const diagnostic of citationDiagnostics(tree)) report(diagnostic.message, diagnostic.node)
     let metadata
     try {
       for (const node of tree.children.filter(node => node.type === 'mdxjsEsm')) {
@@ -122,6 +125,8 @@ export async function validateContent({ root = process.cwd() } = {}) {
         if (unsafeCharacters(value, true)) throw new Error('Unsafe or malformed URL (whitespace, control character, or backslash)')
         const url = new URL(value, `${origin}/blog/${article.slug}/`)
         if (!['https:', 'http:', 'mailto:', 'tel:'].includes(url.protocol)) throw new Error(`Unsafe URL protocol "${url.protocol}"`)
+        if (url.username || url.password) throw new Error('Credential-bearing URLs are forbidden')
+        if (url.hostname === 'doi.org' && (url.protocol !== 'https:' || !/^\/10\.\d{4,9}\/\S+$/i.test(url.pathname))) throw new Error('Use a canonical DOI URL: https://doi.org/10.<registrant>/<suffix>')
         // Remote URLs are never fetched: availability is not a publishing requirement.
         if (url.origin !== origin) continue
         const rawPath = value.split(/[?#]/)[0].replace(/^https?:\/\/[^/]+/i, '')
@@ -140,7 +145,7 @@ export async function validateContent({ root = process.cwd() } = {}) {
         if (!image && Object.hasOwn(redirects, alias)) throw new Error(`Stale internal link; use /blog/${redirects[alias]} instead of ${route}`)
         if (!image && routes.has(route)) continue
         if (!await localFile(root, decoded)) throw new Error(`${image ? 'Missing local image/asset' : 'Broken internal link'} "${value}"; expected ${image ? 'a file under public/' : 'an existing site route or file under public/'}`)
-      } catch (error) { report(`${error.message} (destination: ${JSON.stringify(value)})`, node) }
+      } catch (error) { report(`${error.message} (destination: ${JSON.stringify(value.replace(/(https?:\/\/)[^/@]+@/gi, '$1[redacted]@'))})`, node) }
     }
   }
   return { errors, warnings, count: articles.length }

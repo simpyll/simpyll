@@ -137,3 +137,18 @@ test('manual editorial metadata is validated through the existing content gate',
   await writeFile(join(root, 'src/content/blog/valid.mdx'), article('', { ...data, updatedAt: '2024-02-28' }))
   assert.match((await validateContent({ root })).errors.join('\n'), /updatedAt must not precede/)
 })
+
+for (const [url, expected] of [
+  ['https://doi.org/10.1000/example', null],
+  ['https://react.dev/reference/react-dom/client/hydrateRoot', null],
+  ['https://doi.org/invalid', /canonical DOI/],
+  ['http://doi.org/10.1000/example', /canonical DOI/],
+  ['javascript:alert%281%29', /Unsafe URL/],
+  ['https://user:secret@example.com/reference', /Credential-bearing/],
+]) test(`footnote source validation: ${url.replace(/user:secret/, 'redacted')}`, async t => {
+  const root = await fixture(t, { 'valid.mdx': article(`Claim.[^source]\n\n[^source]: [Source](${url})`) })
+  const { errors } = await validateContent({ root })
+  if (expected) assert.match(errors.join('\n'), expected)
+  else assert.deepEqual(errors, [])
+  assert.doesNotMatch(errors.join('\n'), /user:secret/)
+})

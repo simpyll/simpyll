@@ -4,12 +4,14 @@ import imageData from '../../generated/images.json'
 import { Link } from 'react-router-dom'
 
 export function ArticleLink({ href, target, rel, children, ...props }: ComponentProps<'a'>) {
+  // Keep GFM's native anchors, targets and backlink labels intact.
+  const label = props['aria-label'] ?? ('data-footnote-ref' in props ? `Footnote ${contentText(children)}` : undefined)
   const safe = safeContentUrl(href)
   if (!safe) return <span>{children}</span>
   const external = /^https?:|^\/\//i.test(safe) && new URL(safe, 'https://simpyll.com').origin !== 'https://simpyll.com'
   const content = <>{children}{external && <span className="external-mark" aria-hidden="true"> ↗</span>}{target === '_blank' && <span className="sr-only"> (opens in a new tab)</span>}</>
   if (safe.startsWith('/') && !safe.startsWith('//') && target !== '_blank') return <Link {...props} to={safe}>{content}</Link>
-  return <a {...props} href={safe} target={target} rel={target === '_blank' ? `${rel ?? ''} noopener noreferrer`.trim() : rel}>{content}</a>
+  return <a {...props} aria-label={label} href={safe} target={target} rel={target === '_blank' ? `${rel ?? ''} noopener noreferrer`.trim() : rel}>{content}</a>
 }
 
 function contentText(node: ReactNode): string {
