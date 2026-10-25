@@ -1,5 +1,5 @@
 /** Public export is a projection, never a serialization of the audit objects. */
-import { readFile, writeFile, mkdir } from 'node:fs/promises'
+import { readFile, writeFile, mkdir, readdir, rm } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 import { auditSeo } from './seo-audit.mjs'
 import { collectArticles, readMetadata } from './redirects.mjs'
@@ -76,6 +76,12 @@ export async function generatePulse({ directory = 'dist', expectedRoutes, report
   await writeFile('artifacts/pulse/report.json',JSON.stringify(report,null,2)+'\n')
   await writeFile('artifacts/pulse/report.md',`# Pulse technical audit\n\n${report.findings.length} findings. Offline automated checks; not a ranking assessment.\n\n`+report.findings.map(i => `## ${i.severity}: ${i.rule}\n\nRoute: ${i.route}\n\nID: ${i.id} (${i.status})\n\nEvidence: ${i.explanation}\n\nRemediation: ${i.remediation}\n`).join('\n'))
   await writeFile(`${directory}/pulse.json`,JSON.stringify(snapshot)+'\n')
+  // Real daily local snapshots begin here; never infer technical history from article dates.
+  const historyDirectory = 'artifacts/pulse/snapshots'
+  await mkdir(historyDirectory, { recursive: true })
+  await writeFile(`${historyDirectory}/${reportDate}.json`,JSON.stringify(snapshot)+'\n')
+  const retained = (await readdir(historyDirectory)).filter(name => /^\d{4}-\d{2}-\d{2}\.json$/.test(name)).sort()
+  for (const name of retained.slice(0,Math.max(0,retained.length-90))) await rm(`${historyDirectory}/${name}`)
   return snapshot
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) await generatePulse({ baselinePath: process.argv[2] })
