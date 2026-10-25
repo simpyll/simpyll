@@ -99,7 +99,10 @@ test('journal, reading, code, TOC anchors and cold fragments', async ({ page, is
   await expect(page.locator(target)).toBeInViewport()
   const header = (await page.locator('.floating-header').boundingBox())!
   await expect.poll(async () => (await page.locator(target).boundingBox())!.y).toBeGreaterThan(header.y + header.height)
-  if (!isMobile) await expect(toc.locator('[aria-current]')).toHaveAttribute('href', target)
+  if (!isMobile) {
+    await expect(toc).toBeInViewport()
+    await expect(toc.locator('[aria-current]')).toHaveAttribute('href', target)
+  }
   await expect(page.locator('pre').first()).toBeAttached()
   expect(await page.locator('pre').first().evaluate(el => ['auto', 'scroll'].includes(getComputedStyle(el).overflowX))).toBe(true)
   await noOverflow(page)
