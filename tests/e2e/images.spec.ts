@@ -7,7 +7,7 @@ test('article images select responsive formats with reserved dimensions and no o
   const img = page.locator('article figure picture img').first()
   await expect(img).toHaveAttribute('width', /\d+/)
   await expect(img).toHaveAttribute('height', /\d+/)
-  await expect(img).toHaveAttribute('loading', 'lazy')
+  await expect(img).toHaveAttribute('loading', 'eager')
   await img.scrollIntoViewIfNeeded()
   await expect.poll(() => img.evaluate((e: HTMLImageElement) => e.complete && e.naturalWidth > 0)).toBe(true)
   const selected = await img.evaluate((e: HTMLImageElement) => ({ src: e.currentSrc, width: e.getBoundingClientRect().width, ratio: e.getBoundingClientRect().width / e.getBoundingClientRect().height, intrinsic: Number(e.getAttribute('width')) / Number(e.getAttribute('height')) }))

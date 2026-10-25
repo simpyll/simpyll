@@ -1,3 +1,4 @@
+import { getSiteUrl, siteConfig } from '../config/site'
 import { RelatedArticles } from '../components/RelatedArticles'
 import { MDXProvider } from '@mdx-js/react'
 import { mdxComponents } from '../components/mdx/mapping'
@@ -38,11 +39,11 @@ export function BlogPost() {
       <main id="main-content" tabIndex={-1} className="min-h-screen bg-canvas text-foreground">
         <Container className="article-container">
           <div className={post.headings.length > 1 ? "article-layout has-toc" : "article-layout"}>
-          <article className="mx-auto max-w-3xl py-24 sm:py-32">
+          <article className="print-article mx-auto max-w-3xl py-24 sm:py-32">
             <Reveal>
               <Link
                 to="/blog"
-                className="mb-12 inline-block text-sm text-muted transition-colors hover:text-accent"
+                className="article-back mb-12 inline-block text-sm text-muted transition-colors hover:text-accent"
               >
                 ← Back to journal
               </Link>
@@ -59,7 +60,7 @@ export function BlogPost() {
                 {metadata.description}
               </p>
 
-              <div className="mt-10 flex flex-wrap items-center gap-4 border-b border-outline pb-10 text-sm text-subtle">
+              <div className="article-metadata mt-10 flex flex-wrap items-center gap-4 border-b border-outline pb-10 text-sm text-subtle">
                 <span>{metadata.author}</span>
                 <span aria-hidden="true">·</span>
 
@@ -75,6 +76,7 @@ export function BlogPost() {
                 <span aria-hidden="true">·</span>
                 <span>{post.readingTimeMinutes} min read</span>
               </div>
+              <p className="print-attribution">{siteConfig.name} · <a href={getSiteUrl(`/blog/${post.slug}`)}>{getSiteUrl(`/blog/${post.slug}`)}</a></p>
             </Reveal>
 
             {post.headings.length > 1 && <div className="toc-mobile-slot"><ArticleToc key={post.slug} headings={post.headings} /></div>}
@@ -82,7 +84,7 @@ export function BlogPost() {
               <MDXProvider components={mdxComponents}><Content /></MDXProvider>
             </div>
 
-            <div className="mt-16 flex flex-wrap gap-2 border-t border-outline pt-8">
+            <div className="article-tags mt-16 flex flex-wrap gap-2 border-t border-outline pt-8">
               {metadata.tags.map((tag) => (
                 <TaxonomyLink key={tag} kind="tag" label={tag} />
               ))}

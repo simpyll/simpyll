@@ -13,13 +13,13 @@ export function ArticleLink({ href, target, rel, children, ...props }: Component
 }
 
 function contentText(node: ReactNode): string {
-  return Children.toArray(node).map(child => isValidElement<{ children?: ReactNode }>(child) ? contentText(child.props.children) : typeof child === 'string' || typeof child === 'number' ? String(child) : '').join(' ').replace(/\s+/g, ' ').trim()
+  return Children.toArray(node).map(child => isValidElement<{ children?: ReactNode }>(child) ? contentText(child.props.children) : typeof child === 'string' || typeof child === 'number' ? String(child) : '').join(' ')
 }
 
 export function RichTable({ children, ...props }: ComponentProps<'table'>) {
   const hint = useId()
   const heading = Children.toArray(children).find(child => isValidElement(child) && child.type === 'thead')
-  const name = props['aria-label'] || `Article table${heading ? `: ${contentText(heading)}` : ''}`
+  const name = props['aria-label'] || `Article table${heading ? `: ${contentText(heading).replace(/\s+/g, ' ').trim()}` : ''}`
   return <div className="rich-table"><p id={hint} className="table-hint">Scroll horizontally to read all columns.</p><div role="region" aria-label={name} aria-describedby={hint} tabIndex={0} className="table-scroll"><table {...props}>{children}</table></div></div>
 }
 export function TableHeader(props: ComponentProps<'th'>) { return <th scope="col" {...props} /> }
@@ -39,7 +39,7 @@ export function Callout({ variant = 'note', title, children }: CalloutProps) {
     important: <><circle cx="12" cy="12" r="9" /><path d="M12 6v8m0 3v1" /></>,
   }
 
-  return <aside role="note" className="article-callout" data-variant={resolved} aria-labelledby={label}><p className="callout-title" id={label}><svg className="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">{icons[resolved]}</svg><span>{title ? `${name}: ${title}` : name}</span></p><div>{children}</div></aside>
+  return <aside role="note" className="article-callout" data-print-keep={contentText(children).length <= 600 ? '' : undefined} data-variant={resolved} aria-labelledby={label}><p className="callout-title" id={label}><svg className="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">{icons[resolved]}</svg><span>{title ? `${name}: ${title}` : name}</span></p><div>{children}</div></aside>
 }
 
 export function CodeBlock({ children, ...props }: ComponentProps<'pre'>) {
@@ -52,7 +52,7 @@ export function CodeBlock({ children, ...props }: ComponentProps<'pre'>) {
       setMessage('Copied code.')
     } catch { setMessage('Copy unavailable. Select the code to copy it.') }
   }
-  return <div className="code-block"><div className="code-toolbar"><span>{language ?? 'Code'}</span><button type="button" onClick={copy} aria-label="Copy code">Copy</button></div><pre {...props} ref={pre} tabIndex={0}>{children}</pre><span role="status" className="copy-status">{message}</span></div>
+  return <div className="code-block" data-print-keep={contentText(children).length <= 800 && contentText(children).split('\n').length <= 13 ? '' : undefined}><div className="code-toolbar"><span>{language ?? 'Code'}</span><button type="button" onClick={copy} aria-label="Copy code">Copy</button></div><pre {...props} ref={pre} tabIndex={0}>{children}</pre><span role="status" className="copy-status">{message}</span></div>
 }
 export function InlineCode({ className, ...props }: ComponentProps<'code'>) {
   const language = className?.match(/language-([\w+-]+)/)?.[1]
@@ -61,7 +61,7 @@ export function InlineCode({ className, ...props }: ComponentProps<'code'>) {
 type ImageVariant = { src: string; format: string; width: number; height: number }
 type ImageEntry = { width: number; height: number; variants: ImageVariant[] }
 const images: Record<string, ImageEntry> = imageData
-export function ArticleImage({ src, alt = '', loading = 'lazy', decoding = 'async', sizes = '(max-width: 800px) calc(100vw - 32px), 768px', ...props }: ComponentProps<'img'>) {
+export function ArticleImage({ src, alt = '', loading = 'eager', decoding = 'async', sizes = '(max-width: 800px) calc(100vw - 32px), 768px', ...props }: ComponentProps<'img'>) {
   const safe = safeContentUrl(src, true)
   if (!safe) return <span>{alt || 'Image unavailable'}</span>
   const entry = images[safe.split(/[?#]/)[0]]

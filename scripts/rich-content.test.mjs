@@ -27,7 +27,7 @@ test('rich MDX fixture compiles, prerenders and hydrates through both publishing
       { type: 'table_row', table_row: { cells: [[rt('Enabled')], [rt('Yes')]] } },
     ] },
   ], async () => '/images/rich-fixture.svg')
-  await writeFile(join(root, 'src/content/blog/rich-content-fixture.mdx'), await readFile('tests/fixtures/rich-content.mdx', 'utf8') + '\n' + generated)
+  await writeFile(join(root, 'src/content/blog/rich-content-fixture.mdx'), await readFile('tests/fixtures/rich-content.mdx', 'utf8') + '\n' + generated + '\n\n## Long print examples\n\n```print-example\n' + Array.from({ length: 100 }, (_, i) => `line ${i}: readable example`).join('\n') + '\n```\n\n<Callout variant="warning" title="Long print example">\n\n' + 'Long callout content. '.repeat(500) + '\n\n</Callout>\n\nPRINT CONTENT END\n')
   await writeFile(join(root, 'public/images/rich-fixture.svg'), '<svg xmlns="http://www.w3.org/2000/svg" width="960" height="320" viewBox="0 0 960 320"><rect width="960" height="320" fill="#176344"/><text x="60" y="175" fill="white" font-size="32">Markdown + Notion → shared renderer</text></svg>')
   try { await exec('npm', ['run', 'build'], { cwd: root, env: { ...process.env, SMOKE_BUILD_SHA: (await exec('git', ['rev-parse', 'HEAD'])).stdout.trim() }, maxBuffer: 3e6 }) } catch (error) { throw new Error(error.stdout + error.stderr) }
   const html = await readFile(join(root, 'dist/blog/rich-content-fixture/index.html'), 'utf8')
@@ -45,7 +45,7 @@ test('rich MDX fixture compiles, prerenders and hydrates through both publishing
   assert.match(html, /&lt;script&gt;alert/)
   assert.doesNotMatch(html, /<iframe|<script>alert/)
   try {
-    await exec(resolve('node_modules/.bin/playwright'), ['test', 'rich-content.spec.ts', '--workers=2'], { cwd: root, env: { ...process.env, RICH_FIXTURE: '1' }, maxBuffer: 3e6 })
+    await exec(resolve('node_modules/.bin/playwright'), ['test', 'rich-content.spec.ts', 'article-print.spec.ts', '--project=desktop-chromium', '--project=mobile-chromium', '--workers=2'], { cwd: root, env: { ...process.env, RICH_FIXTURE: '1' }, maxBuffer: 3e6 })
   } catch (error) {
     await cp(join(root, 'test-results'), 'artifacts/rich-content', { recursive: true }).catch(() => {})
     await cp(join(root, 'playwright-report'), 'artifacts/rich-content/report', { recursive: true }).catch(() => {})

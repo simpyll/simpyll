@@ -56,9 +56,10 @@ before using these settings for clinical figures. No crops are performed.
 
 The typed renderer emits picture/source/img, MIME types, srcset, intrinsic
 width/height and sizes matching the 768px article column. Narrow screens use
-viewport minus 32px. Figure accepts loading and fetchPriority: use eager/high
-only for a genuine above-the-fold LCP candidate. Ordinary body images default
-to lazy/async. There are currently no article/card hero image fields to migrate.
+viewport minus 32px. Figure accepts loading and fetchPriority; reserve high priority for a genuine
+above-the-fold LCP candidate. Article images default to eager/async so offscreen
+figures are available to native printing without a scroll or JavaScript. Explicit
+loading overrides remain supported. There are currently no article/card hero image fields to migrate.
 
 SVGs remain trusted repository assets served externally, never injected as HTML;
 Notion downloads reject SVG. Animated images remain original to avoid dropping

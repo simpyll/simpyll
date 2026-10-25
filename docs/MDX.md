@@ -232,7 +232,7 @@ on `#f6f8fa`. Markdown headings use the literal blue rather than the older dark
 GitHub theme's lower-contrast `#1f6feb`. Selection explicitly sets foreground and
 background for every token. Print resets all code tokens to dark ink on white,
 including nested spans and diffs, hides copy controls and preserves existing wrapping.
-This is code-only print support; broader article print layout remains #17.
+Whole-article print support is described below.
 
 When adjusting a role, measure every meaningful text color against its actual
 background (including diff/selection), requiring at least 4.5:1. The rich fixture
@@ -315,3 +315,61 @@ Review gallery: [dark](screenshots/callouts/after-dark.png) and
 [light](screenshots/callouts/after-light.png). Comparison images restore the previous
 CSS treatment on the same article content: [dark before](screenshots/callouts/before-dark.png)
 and [light before](screenshots/callouts/before-light.png).
+
+
+## Printing and saving as PDF
+
+Use the browser's **Print** command (Ctrl/Cmd+P), then select a printer or **Save
+as PDF**. Choose Letter or A4; CSS leaves paper size to the reader and requests
+18mm vertical / 16mm horizontal margins. Browser margins, scaling, headers/footers
+and background graphics remain user settings. Disable browser headers/footers for
+the cleanest document. No PDF service, extra route, button or runtime library is used.
+
+The existing reveal, TOC, code-copy hiding, neutral syntax and wrapping rules are
+retained. Before #17, global controls/footer, dark surfaces, screen spacing and
+minimum table widths still leaked into print; attribution and pagination were absent.
+The article now keeps title, author, publication date, reading time, introduction,
+body, references and a static site/canonical URL line. The current metadata has no
+updated-date field; none is invented. Navigation, taxonomy controls, recommendations
+and site footer disappear. Screen styling and saved themes are unchanged.
+
+Print uses dark ink on white regardless of theme or background printing. Code keeps
+language labels, indentation and literal syntax with neutral token colors and wrapped
+lines. Tables wrap within page width with borders and repeating headers where the
+browser supports them. Callouts retain semantic labels and neutral borders. Short
+callouts (up to 600 text characters) and code samples (up to 12 lines / 800 characters)
+request intact pagination; larger blocks can fragment. Headings request following
+content, with three-line widows/orphans. These requests are browser hints, not rigid
+pagination. Images preserve aspect ratio and fit within width / 210mm height;
+article images default to eager loading so offscreen figures do not depend on
+scrolling or JavaScript before printing. Existing explicit loading overrides remain
+available. Disclosures expose their content through print CSS without changing
+screen state. External HTTP(S) text links append their destination; same-site,
+fragment and image links do not. Long URLs wrap; references keep their markup.
+
+Validate using `npx playwright test article-print` after the normal build. The
+existing `npm run test:mdx` isolated rich-content build also runs print tests; it
+covers tables, syntax, all callouts, figures, closed disclosures and oversized content
+without publishing fixtures. Tests emulate print, check computed layout and preserve
+no-JS content. Chromium desktop exports Letter/A4 PDFs as review artifacts, without
+adding another build or a PDF dependency. Inspect pagination, blank pages, clipping,
+figures and the final paragraph in the PDFs as well as light/dark screenshots.
+Browser print-dialog settings, physical printers, WebKit/Firefox PDF export and
+mobile OS share/print flows still require manual browser/device validation. Engines
+may differ in header repetition and fragmentation; disclosure expansion uses modern
+`::details-content` with a child-display fallback for older engines.
+
+Print review evidence (Chromium 153, backgrounds disabled):
+[before](screenshots/print/before-dark-Letter.pdf) and
+[after](screenshots/print/the-art-of-reading-code-Letter.pdf) on the same published
+technical article; the before sample reconstructs main's print CSS by removing the
+new whole-article print rules. [Before screenshot](screenshots/print/before-dark.png)
+and [after screenshot](screenshots/print/after-dark.png) use print-media emulation.
+The short [Hello, World](screenshots/print/hello-world-Letter.pdf) is one page;
+[Python fundamentals](screenshots/print/001-python-fundamentals-Letter.pdf) spans
+seven pages. A4 samples sit beside the Letter PDFs. The isolated
+[stress fixture](screenshots/print/technical-dark-Letter.pdf) includes a 100-line
+code block and a multipage callout, both continuing to the final marker and footnote.
+All reviewed pages retain content without blank pages or horizontal clipping.
+Legacy authored duplicate presentation titles and screen-oriented instructional
+copy are preserved rather than editing published content in a print-style change.
