@@ -55,8 +55,19 @@ for (const [route, title] of pages) {
 test('404 document is noindex and has no article metadata', async () => {
   const html = await readFile('dist/404.html', 'utf8')
   assert.match(html, /<title>Page not found \| Simpyll<\/title>/)
-  assert.match(html, /name="robots" content="noindex"/)
+  assert.match(html, /name="robots" content="noindex, follow"/)
   assert.doesNotMatch(html, /rel="canonical"|application\/ld\+json/)
+  assert.equal((html.match(/name="robots"/g) || []).length, 1)
+  assert.match(html, /The page you’re looking for may have moved/)
+  const { parseHTML } = await import('linkedom')
+  const { document } = parseHTML(html)
+  assert.equal(document.querySelectorAll('main h1').length, 1)
+  for (const href of ['/', '/blog', '/projects', '/explore']) {
+    assert.ok(document.querySelector(`main a[href="${href}"]`))
+    await readFile(`dist${href === '/' ? '' : href}/index.html`, 'utf8')
+  }
+  assert.equal(document.querySelectorAll('main a[href="#"], main button').length, 0)
+  assert.doesNotMatch(await readFile('dist/sitemap.xml', 'utf8'), /\/404|missing-post/)
   if (process.env.PREVIEW_URL) {
     for (const path of ['/blog/missing-post', '/missing', '/blog/missing/']) {
       const response = await fetch(process.env.PREVIEW_URL + path)

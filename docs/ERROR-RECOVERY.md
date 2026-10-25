@@ -22,14 +22,11 @@ empty success, and retry. Do not present request errors as empty results.
 
 ## Current feature audit
 
-Routes and all MDX modules are synchronous/eager. There is no search UI/index,
-project archive/detail/filter implementation (#53 remains separate), lazy route,
-or live client API widget. Therefore there are no pending requests, rejected
-request paths, or asynchronous loading states to implement or mock today. Do not
-add Suspense loaders or connectivity banners around static content: once loaded,
-client navigation to bundled articles works offline. A new offline document load
-still depends on the browser cache; no service worker is introduced. Unknown
-project paths use the wildcard 404, rather than implying an archive exists.
+Routes and MDX modules reuse the existing route boundary. Global search (#11),
+the `/explore` search/filter page, and Projects/About are implemented. Search
+handles loading, failure, empty results and retries within its own interface.
+Client navigation to bundled articles remains usable offline; a new offline
+document load depends on the browser cache. No service worker is introduced.
 
 The journal and latest-writing section already explain when no articles exist.
 Those legitimate empty states remain distinct from unknown slugs (NotFound) and
@@ -60,3 +57,35 @@ without production hooks, and tests recovery, bounded retry, route reset, shell
 isolation, keyboard focus, mobile fit, missing resources, and offline static
 navigation. Existing browser tests cover direct article loads, hydration, theme,
 motion, and navigation. `npm test` includes content/Notion/prerender suites.
+
+## Missing pages and GitHub Pages
+
+Unknown routes and unknown article/project slugs render the existing `NotFound`.
+`scripts/prerender.mjs` renders `/404` into `dist/404.html`; the existing Pages
+workflow uploads all of `dist`. Pages serves that document with HTTP 404 for
+unknown paths. React cannot choose an HTTP status for client navigation.
+The preview middleware also serves the document with 404 for unknown route paths;
+Vite dev mode is not a hosting-status test.
+
+The static head contains one `noindex, follow` directive, no canonical and no
+article structured data. The sitemap lists only valid public routes. Home,
+Journal and Projects are native anchors in static HTML. Search links to the
+existing `/explore` route; its live filtering requires JavaScript, but its
+prerendered article links remain useful without it. Global search is unchanged.
+No redirect converts a missing URL into a successful homepage response.
+
+Header/footer route-dependent markup must match `/404` during hydration, then
+update to the requested URL (see AGENTS.md). The fallback never echoes the URL.
+
+Validate with `npm run build`, `node --test scripts/prerender.test.mjs` and
+`npx playwright test missing-page`. For actual hosting status use
+`curl -sS -o /tmp/404.html -w '%{http_code}\n' https://simpyll.com/a-nonexistent-path`
+and inspect that document. Also check known article/project URLs return 200.
+GitHub Pages controls statuses, redirects and propagation; local preview is
+separate evidence from deployed HTTP verification.
+
+Audit on October 25, 2026: production `/issue-39-nonexistent-audit` returned 404
+with the prior custom heading and noindex. Before this change, static generation,
+Home/Journal recovery and canonical omission already worked. Verified gaps were
+missing Projects/page-level search links and focused no-JS/cross-browser recovery
+coverage. The production response cannot verify this PR until it is deployed.
