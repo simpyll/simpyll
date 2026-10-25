@@ -310,3 +310,8 @@ To modify a variant, update both theme token sets (including OS fallback), the
 shared component label/icon map, variant selector, this table and fixture/browser
 expectations. Measure text at 4.5:1 and meaningful indicators at 3:1 against their
 actual surfaces. Keep the publisher mapping stable unless separately authorized.
+
+Review gallery: [dark](screenshots/callouts/after-dark.png) and
+[light](screenshots/callouts/after-light.png). Comparison images restore the previous
+CSS treatment on the same article content: [dark before](screenshots/callouts/before-dark.png)
+and [light before](screenshots/callouts/before-light.png).
