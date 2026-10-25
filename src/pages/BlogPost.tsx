@@ -1,3 +1,5 @@
+import { ArticleEditorialHistory } from '../components/ArticleEditorialHistory'
+import { formatArticleDate } from '../lib/editorial.mjs'
 import { Breadcrumbs } from '../components/Breadcrumbs'
 import { contentBreadcrumbs } from '../lib/breadcrumbs'
 import { getSiteUrl, siteConfig } from '../config/site'
@@ -61,15 +63,11 @@ export function BlogPost() {
                 <span>{metadata.author}</span>
                 <span aria-hidden="true">·</span>
 
-                <time dateTime={metadata.date}>
-                  {new Date(
-                    `${metadata.date}T12:00:00`
-                  ).toLocaleDateString('en-US', {
-                    month: 'long',
-                    day: 'numeric',
-                    year: 'numeric',
-                  })}
-                </time>
+                <span>Published <time dateTime={metadata.date}>{formatArticleDate(metadata.date)}</time></span>
+                {metadata.updatedAt && metadata.updatedAt !== metadata.date && <>
+                  <span aria-hidden="true">·</span>
+                  <span>Updated <time dateTime={metadata.updatedAt}>{formatArticleDate(metadata.updatedAt)}</time></span>
+                </>}
                 <span aria-hidden="true">·</span>
                 <span>{post.readingTimeMinutes} min read</span>
               </div>
@@ -80,6 +78,8 @@ export function BlogPost() {
             <div className="prose article-content mt-12 max-w-none">
               <MDXProvider components={mdxComponents}><Content /></MDXProvider>
             </div>
+
+            <ArticleEditorialHistory metadata={metadata} />
 
             <div className="article-tags mt-16 flex flex-wrap gap-2 border-t border-outline pt-8">
               {metadata.tags.map((tag) => (

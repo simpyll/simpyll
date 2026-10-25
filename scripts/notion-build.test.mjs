@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { mkdtemp, readdir, cp, symlink, rm, readFile } from 'node:fs/promises'
+import { mkdtemp, readdir, cp, symlink, rm, readFile, writeFile, mkdir } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { promisify } from 'node:util'
@@ -19,7 +19,14 @@ test('Notion fixture reaches built HTML, metadata, sitemap and durable image thr
   await symlink(resolve('.git'), join(root, '.git'), 'dir')
   await rm(join(root, 'src/content/blog/publishing-test.mdx'), { force: true })
   await symlink(resolve('node_modules'), join(root, 'node_modules'), 'dir')
-  const options = { root, pageId: ROOT, api: fixture().api, imageDownloader: async () => ({ bytes: png, extension: 'png' }), validate: compile }
+  const editorial = page()
+  editorial.properties['Updated Date'] = { type: 'date', date: { start: '2026-10-25' } }
+  editorial.properties['Revision Notes'] = { type: 'rich_text', rich_text: [rt(JSON.stringify([{ date: '2026-10-25', description: 'Updated the React examples.' }]))] }
+  editorial.properties.Corrections = { type: 'rich_text', rich_text: [rt(JSON.stringify([{ date: '2026-10-24', description: 'Corrected hydration behavior.', id: 'hydration' }, { date: '2026-10-23', description: 'Corrected the command name.' }]))] }
+  const manual = { articleId: 'manual:editorial-fixture', title: 'Editorial metadata fixture', description: 'Manual editorial metadata example.', date: '2026-10-20', updatedAt: '2026-10-25', author: 'David Becker', category: 'Technology', tags: [], revisions: [{ date: '2026-10-25', description: 'Updated the React examples.' }], corrections: [{ date: '2026-10-24', description: 'Corrected hydration behavior.', id: 'hydration' }, { date: '2026-10-23', description: 'Corrected the command name.' }] }
+  await writeFile(join(root, 'src/content/blog/editorial-fixture.mdx'), `export const metadata = ${JSON.stringify(manual)}\n\n## Example\n\nThis is an isolated editorial example.\n`)
+  await writeFile(join(root, 'src/content/blog/editorial-same-day.mdx'), `export const metadata = ${JSON.stringify({ ...manual, articleId: 'manual:editorial-same-day', updatedAt: manual.date, revisions: [], corrections: [] })}\n\nSame-day example.\n`)
+  const options = { root, pageId: ROOT, api: fixture({ pages: [editorial] }).api, imageDownloader: async () => ({ bytes: png, extension: 'png' }), validate: compile }
   const renamed = page()
   for (const slug of ['notion-original', 'notion-middle']) {
     renamed.properties.Slug.rich_text = [rt(slug)]
@@ -47,8 +54,23 @@ test('Notion fixture reaches built HTML, metadata, sitemap and durable image thr
   const schema = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1])
   assert.equal(schema.headline, 'Notion fixture article')
   assert.equal(schema.datePublished, '2026-10-20')
+  assert.equal(schema.dateModified, '2026-10-25')
+  assert.match(html, /id="editorial-correction-hydration"/)
+  assert.match(html, /Revision history/)
+  const beforeRebuild = await readFile(join(root, 'src/content/blog/notion-fixture.mdx'), 'utf8')
+  assert.equal((await synchronize(options)).changed, false)
+  assert.equal(await readFile(join(root, 'src/content/blog/notion-fixture.mdx'), 'utf8'), beforeRebuild)
+  const manualHtml = await readFile(join(root, 'dist/blog/editorial-fixture/index.html'), 'utf8')
+  assert.match(manualHtml, /Updated <time dateTime="2026-10-25"/)
+  assert.match(await readFile(join(root, 'dist/sitemap.xml'), 'utf8'), /<lastmod>2026-10-25<\/lastmod>/)
   assert.match(await readFile(join(root, 'dist/sitemap.xml'), 'utf8'), /https:\/\/simpyll.com\/blog\/notion-fixture/)
   assert.equal((await synchronize(options)).changed, false)
-  await exec(resolve('node_modules/.bin/playwright'), ['test', 'redirects.spec.ts', '--workers=2'], { cwd: root, env: { ...process.env, REDIRECT_FIXTURE: '1', PLAYWRIGHT_PREVIEW_PORT: '4174' }, maxBuffer: 3e6 })
+  try { await exec(resolve('node_modules/.bin/playwright'), ['test', 'redirects.spec.ts', 'editorial.spec.ts', '--project=desktop-chromium', '--project=mobile-chromium', '--workers=2'], { cwd: root, env: { ...process.env, REDIRECT_FIXTURE: '1', EDITORIAL_FIXTURE: '1', PLAYWRIGHT_PREVIEW_PORT: '4174' }, maxBuffer: 3e6 }) } catch (error) {
+    await mkdir('artifacts/editorial', { recursive: true })
+    await cp(join(root, 'test-results'), 'artifacts/editorial', { recursive: true }).catch(() => {})
+    throw new Error(error.stdout + error.stderr)
+  }
+  await mkdir('artifacts/editorial', { recursive: true })
+  await cp(join(root, 'test-results'), 'artifacts/editorial', { recursive: true })
   assert.ok((await readdir(join(root, 'dist/blog'))).includes('hello-world'))
 })

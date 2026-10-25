@@ -1,3 +1,5 @@
+import { readMetadata } from './redirects.mjs'
+import { normalizeEditorial } from '../src/lib/editorial.mjs'
 import { readFileSync } from 'node:fs'
 const policyRoutes = JSON.parse(readFileSync(new URL('../src/content/policies.json', import.meta.url), 'utf8')).map(({ slug }) => `/${slug}`)
 import { caseStudyRoutes } from './project-routes.mjs'
@@ -49,13 +51,11 @@ async function generateSitemap() {
 
         const slug = file.replace(/\.mdx$/, '')
 
-        const dateMatch = content.match(
-          /date:\s*['"](\d{4}-\d{2}-\d{2})['"]/
-        )
+        const metadata = normalizeEditorial(await readMetadata(content))
 
         return {
           path: `/blog/${slug}`,
-          date: dateMatch?.[1],
+          date: metadata.updatedAt ?? metadata.date,
         }
       })
   )

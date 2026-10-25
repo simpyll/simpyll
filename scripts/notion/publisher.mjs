@@ -1,3 +1,4 @@
+import { normalizeEditorial } from '../../src/lib/editorial.mjs'
 import { ownedPath } from './ownership.mjs'
 import { advanceHistory, normalizeSlug, resolveRegistry, readMetadata, manualHistory } from '../redirects.mjs'
 import { readdir, lstat } from 'node:fs/promises'
@@ -240,10 +241,22 @@ export function metadataFor(page, previous, blocks) {
   const explicit = plain(p.Slug?.rich_text).trim()
   const slug = explicit || previous?.slug || title.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || `post-${id(page.id)}`
   if (!slugPattern.test(slug) || slug.length > 100) throw new Error('Slug must be 1–100 lowercase letters/digits separated by hyphens')
-  const date = (p['Published Date']?.date?.start || previous?.date || page.created_time || '').slice(0, 10)
+  const date = (previous?.date || p['Published Date']?.date?.start || page.created_time || '').slice(0, 10)
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !Number.isFinite(Date.parse(date)) || new Date(date).toISOString().slice(0, 10) !== date) throw new Error('Invalid Published Date')
   const description = plain(p.Description?.rich_text).trim() || plain(blocks.find(b => b.type === 'paragraph')?.paragraph.rich_text).replace(/\s+/g, ' ').trim().slice(0, 160) || title
-  return { title, description, slug, date, category: p.Category?.select?.name || p.Category?.multi_select?.[0]?.name || plain(p.Category?.rich_text) || 'Journal', author: 'David Becker', tags: (p.Tags?.multi_select ?? []).map(t => t.name).sort() }
+  const editorial = {}
+  const updated = p['Updated Date']
+  if (updated && updated.type !== 'date') throw new Error('Updated Date must be a Notion date property')
+  if (updated?.date?.end) throw new Error('Updated Date must be a single date without a range')
+  if (updated?.date) editorial.updatedAt = updated.date.start
+  for (const [property, field] of [['Revision Notes', 'revisions'], ['Corrections', 'corrections']]) {
+    if (p[property] && p[property].type !== 'rich_text') throw new Error(`${property} must be a Notion text property containing a JSON array`)
+    const text = plain(p[property]?.rich_text).trim()
+    if (text) {
+      try { editorial[field] = JSON.parse(text) } catch { throw new Error(`${property} must contain a JSON array of { date, description, id? } objects`) }
+    }
+  }
+  return normalizeEditorial({ title, description, slug, date, ...editorial, category: p.Category?.select?.name || p.Category?.multi_select?.[0]?.name || plain(p.Category?.rich_text) || 'Journal', author: 'David Becker', tags: (p.Tags?.multi_select ?? []).map(t => t.name).sort() })
 }
 const manifestPath = '.notion/published.json'
 async function readOptional(path) {

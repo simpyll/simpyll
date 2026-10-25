@@ -195,3 +195,47 @@ required metadata/date and search publication flags. For malformed entries, run
 are removed and metadata is XML-escaped. There is no live Notion request or summary
 service. The journal's native subscription anchor and prerendered head autodiscovery
 work without JavaScript. No sync, weekly audit or monthly recovery schedule changes.
+
+### Explicit editorial update metadata (#62)
+
+The Simpyll Blog schema was inspected and these optional properties added:
+
+| Property | Notion type | Value |
+| --- | --- | --- |
+| Updated Date | Date | Date only; disable time and date range |
+| Revision Notes | Text | JSON array of `{ "date", "description" }` objects |
+| Corrections | Text | JSON array of `{ "date", "description", "id"? }` objects |
+
+For another database, add properties with these exact names/types via **Add
+property**. Missing properties and blank values are supported. The publisher's
+integration remains read-only; it does not create schema during sync. No existing
+article values were populated. To record a meaningful editorial update, set
+Updated Date explicitly. Notion `last_edited_time` is used only for safe read
+consistency, never as an editorial date.
+
+Example **Corrections** text (plain JSON, no Markdown fences):
+
+```json
+[{"date":"2026-10-24","id":"hydration","description":"Corrected the hydration explanation."}]
+```
+
+Example **Revision Notes** text:
+
+```json
+[{"date":"2026-10-25","description":"Updated the React examples."}]
+```
+
+Set **Updated Date** to `2026-10-25` for this example. Empty optional fields are
+omitted; malformed JSON, wrong property types or invalid editorial dates abort
+before any writes and preserve the last published output. Text from Notion is
+JSON-escaped into literal MDX metadata, never evaluated as code. The first
+publication retains the existing Published Date / page creation-date fallback;
+subsequent syncs prioritize the stored original date even if Published Date is
+changed or cleared. Date corrections to an already published original date
+require a deliberate reviewed manifest migration; ordinary edits cannot reset it.
+
+Editorial metadata participates in the existing generated-file hash. Reordering
+notes alone normalizes to the same output, unchanged reruns create no commits,
+and no sync schedule, audit, recovery workflow, alias or article identity changes.
+See [MDX editorial guidance](MDX.md#editorial-dates-revisions-and-corrections) for
+validation, correction links, SEO, RSS and tests.

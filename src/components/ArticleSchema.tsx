@@ -14,6 +14,7 @@ export function ArticleSchema({ post }: ArticleSchemaProps) {
     headline: post.metadata.title,
     description: post.metadata.description,
     datePublished: post.metadata.date,
+    ...(post.metadata.updatedAt ? { dateModified: post.metadata.updatedAt } : {}),
     author: {
       '@type': 'Person',
       name: post.metadata.author,

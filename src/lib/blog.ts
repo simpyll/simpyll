@@ -1,15 +1,16 @@
+import { normalizeEditorial } from './editorial.mjs'
+import type { EditorialMetadata } from './editorial.mjs'
 import related from '../generated/related-articles.json' with { type: 'json' }
 import navigation from '../generated/article-navigation.json' with { type: 'json' }
 
 import type { ComponentType } from 'react'
 
-export type BlogPostMetadata = {
+export type BlogPostMetadata = EditorialMetadata & {
   articleId?: string
   redirectFrom?: string[]
   status?: 'published'
   title: string
   description: string
-  date: string
   category: string
   author: string
   tags: string[]
@@ -48,7 +49,7 @@ export const posts: BlogPost[] = Object.entries(modules)
     return {
       slug,
       sourcePath: path.replace('../', 'src/'),
-      metadata: module.metadata,
+      metadata: normalizeEditorial(module.metadata),
       Content: module.default,
       headings: module.headings,
       readingTimeMinutes: module.readingTimeMinutes,

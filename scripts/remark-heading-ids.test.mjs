@@ -45,3 +45,10 @@ test('duplicate manual IDs and reserved landmark IDs fail compilation', () => {
     assert.throws(() => remarkHeadingIds()(tree), /Duplicate or reserved article ID/)
   }
 })
+
+test('editorial namespace cannot collide with body headings or explicit IDs', async () => {
+  const { compile } = await import('@mdx-js/mdx')
+  const result = await compile('## Editorial corrections heading', { remarkPlugins: [remarkHeadingIds] })
+  assert.match(String(result), /article-editorial-corrections-heading/)
+  await assert.rejects(compile('<h2 id="editorial-correction-hydration">Title</h2>', { remarkPlugins: [remarkHeadingIds] }), /reserved article ID/)
+})

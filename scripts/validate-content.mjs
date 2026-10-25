@@ -1,3 +1,4 @@
+import { editorialErrors } from '../src/lib/editorial.mjs'
 import { readFileSync } from 'node:fs'
 const policyRoutes = JSON.parse(readFileSync(new URL('../src/content/policies.json', import.meta.url), 'utf8')).map(({ slug }) => `/${slug}`)
 import { readdir, readFile, lstat, realpath } from 'node:fs/promises'
@@ -88,7 +89,7 @@ export async function validateContent({ root = process.cwd() } = {}) {
       for (const field of ['title', 'description', 'date', 'category', 'author']) {
         if (typeof metadata[field] !== 'string' || !metadata[field].trim()) report(`metadata.${field} must be a non-empty string`)
       }
-      if (typeof metadata.date === 'string' && (!/^\d{4}-\d{2}-\d{2}$/.test(metadata.date) || !Number.isFinite(Date.parse(metadata.date)) || new Date(metadata.date).toISOString().slice(0, 10) !== metadata.date)) report('metadata.date must be a real calendar date in YYYY-MM-DD format')
+      for (const error of editorialErrors(metadata)) report(error)
       if (!Array.isArray(metadata.tags) || metadata.tags.some(tag => typeof tag !== 'string' || !tag.trim())) report('metadata.tags must be an array of non-empty strings (an empty array is allowed)')
       if (metadata.status !== undefined && metadata.status !== 'published' || metadata.draft === true || metadata.published === false) report('Private manual MDX must be moved outside src/content/blog; this directory is public-only')
       if (metadata.slug !== undefined && metadata.slug !== article.slug) report(`metadata.slug must match filename slug "${article.slug}"`)
@@ -100,6 +101,8 @@ export async function validateContent({ root = process.cwd() } = {}) {
       if (['link', 'image'].includes(node.type)) references.push({ value: node.url, image: node.type === 'image', node })
       if (['linkReference', 'imageReference'].includes(node.type)) references.push({ value: definitions.get(node.identifier), image: node.type === 'imageReference', node })
       if (['mdxJsxFlowElement', 'mdxJsxTextElement'].includes(node.type)) {
+        const authoredId = node.attributes?.find(a => a.name === 'id')?.value
+        if (typeof authoredId === 'string' && authoredId.startsWith('editorial-')) report('IDs beginning editorial- are reserved for editorial disclosures', node)
         for (const attribute of node.attributes) {
           if (!['href', 'src', 'to', 'poster'].includes(attribute.name)) continue
           let value = attribute.value

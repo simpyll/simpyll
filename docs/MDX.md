@@ -373,3 +373,75 @@ code block and a multipage callout, both continuing to the final marker and foot
 All reviewed pages retain content without blank pages or horizontal clipping.
 Legacy authored duplicate presentation titles and screen-oriented instructional
 copy are preserved rather than editing published content in a print-style change.
+
+## Editorial dates, revisions and corrections
+
+`metadata.date` is the original public publication date; keep it unchanged when
+editing, moving, rebuilding or deploying an article. Optional `updatedAt` records
+an explicitly authored meaningful editorial update: revised facts, technical
+instructions, recommendations or substantial new sections. Formatting, CSS,
+dependency updates, Git commits and synchronization do not count. Neither dates
+nor disclosure text are inferred from content differences or technical timestamps.
+
+Use the existing literal metadata export (not YAML frontmatter):
+
+```mdx
+export const metadata = {
+  articleId: 'manual:example',
+  title: 'Example', description: 'An example article.',
+  date: '2026-10-10', updatedAt: '2026-10-25',
+  category: 'Technology', author: 'David Becker', tags: [],
+  revisions: [
+    { date: '2026-10-25', description: 'Updated the React examples.' },
+  ],
+  corrections: [
+    { id: 'hydration', date: '2026-10-24', description: 'Corrected the hydration explanation.' },
+  ],
+}
+```
+
+Revision notes explain substantial changes; corrections disclose previously
+inaccurate or misleading information. Both are optional plain-text descriptions,
+rendered as static sections after the body and retained in print/PDF. No author is
+required to add notes for every edit. Entries can exist without `updatedAt`; no
+modification date is inferred from them. When recording an editorial update, set
+`updatedAt` explicitly to the latest meaningful change.
+
+All dates must be real calendar dates in `YYYY-MM-DD` form (date-only, no time or
+range). Updated and entry dates cannot precede publication. When `updatedAt` is
+present, no entry may be later than it. Descriptions must be non-empty. Arrays
+are normalized newest-first with deterministic ties; source order is not mutated.
+Same-day updates keep their explicit SEO date but do not repeat the visible date.
+Date formatting uses UTC, avoiding timezone-dependent day shifts.
+
+A correction with `id: 'hydration'` links to `#editorial-correction-hydration`.
+Keep the ID when editing its text or date. Without an ID, a deterministic date
+and description hash forms the fragment: additions and reordering keep it stable,
+but editing that correction's description/date changes it. Prefer explicit IDs
+for durable externally shared links. Duplicate IDs (including fallback collisions)
+are rejected; add distinct explicit IDs to resolve them. IDs must be lowercase
+letters/digits separated by hyphens. The `editorial-` DOM ID namespace is reserved;
+manual explicit body IDs cannot use it, and generated heading IDs avoid it.
+
+JSON-LD retains `datePublished: date` and emits `dateModified` only for explicit
+`updatedAt`. Sitemap `lastmod` uses `updatedAt` when available, otherwise `date`.
+RSS item GUID, canonical URL, order and `pubDate` remain based on identity, slug
+and original publication; only channel `lastBuildDate` may reflect an explicit
+update. No new feed or runtime request is added.
+
+Verify with `npm run lint`, `npm run build`, `node --test scripts/editorial.test.mjs
+scripts/validate-content.test.mjs scripts/notion/publisher.test.mjs scripts/rss.test.mjs`,
+and `npm run test:notion:build`. The existing isolated Notion build now also includes
+manual editorial fixtures, same-day updates, static schema/sitemap checks and
+`editorial.spec.ts` browser checks (light/dark, mobile, no JS, keyboard anchors,
+axe, print, hydration). Screenshots/PDFs are retained in `artifacts/editorial/`
+and the existing CI fixture artifact. Fixtures never enter production content.
+
+Implementation audit for #62: the registry previously supported `date` alone;
+article metadata used an unlabeled time; JSON-LD emitted only `datePublished`.
+The publisher preserved dates only as a fallback after Notion's Published Date,
+so a property edit could reset publication. It now prioritizes the stored manifest
+date, including after withdrawal/republication and slug changes. No historical
+article dates were migrated. Existing identity, alias history, ownership hashes,
+weekly audits and monthly recovery remain unchanged. The RSS generator's unused
+`updated` hook now reads the same `updatedAt` contract instead of a parallel field.

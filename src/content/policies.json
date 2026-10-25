@@ -119,7 +119,7 @@
       },
       {
         "title": "Publication and updates",
-        "text": "Article publication dates identify original publication and should not be treated as a clinical review date. Substantive corrections should be explained and distinguished from original publication. Consistent article update metadata remains follow-up work in issue #62. Policy drafts carry a separate review date; Git history records source changes."
+        "text": "Article publication dates identify original publication and should not be treated as a clinical review date. Substantive corrections should be explained and distinguished from original publication. Meaningful updates use explicit editorial dates; optional revision histories and correction notices disclose changes separately from original publication. Automated synchronization and deployments do not change editorial dates. Policy drafts carry a separate review date; Git history records source changes."
       },
       {
         "title": "Material interests",

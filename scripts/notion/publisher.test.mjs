@@ -206,3 +206,48 @@ test('article headings start at h2 and preserve nesting without skipped ranks', 
   const literal = await convertBlocks([block('code','<h3>literal</h3>')],async () => '')
   assert.equal(JSON.parse(literal.slice(literal.indexOf('{') + 1, literal.lastIndexOf('}'))), '<h3>literal</h3>')
 })
+
+test('technical edits do not revise dates; explicit editorial metadata is deterministic and publication stays immutable', async t => {
+  const { root, sync } = await setup(t)
+  await sync()
+  const before = await snapshot(root)
+  const technical = page({ last_edited_time: '2026-10-25T12:00:00Z' })
+  technical.properties['Published Date'].date.start = '2026-10-25'
+  assert.equal((await sync({ api: fixture({ pages: [technical] }).api })).changed, false)
+  assert.deepEqual(await snapshot(root), before)
+  technical.properties['Updated Date'] = { type: 'date', date: { start: '2026-10-25' } }
+  technical.properties['Revision Notes'] = { type: 'rich_text', rich_text: [rt(JSON.stringify([{ date: '2026-10-25', description: 'Updated examples.' }]))] }
+  technical.properties.Corrections = { type: 'rich_text', rich_text: [rt(JSON.stringify([{ date: '2026-10-24', description: 'Corrected the explanation.', id: 'explanation' }]))] }
+  assert.equal((await sync({ api: fixture({ pages: [technical] }).api })).changed, true)
+  const source = await readFile(join(root, 'src/content/blog/notion-fixture.mdx'), 'utf8')
+  const { metadata } = await evaluate(source, runtime)
+  assert.equal(metadata.date, '2026-10-20')
+  assert.equal(metadata.updatedAt, '2026-10-25')
+  assert.equal(metadata.articleId, `notion:${PAGE}`)
+  assert.equal(metadata.corrections[0].id, 'explanation')
+  assert.equal(metadata.revisions[0].description, 'Updated examples.')
+  const after = await snapshot(root)
+  technical.last_edited_time = '2026-10-26T12:00:00Z'
+  assert.equal((await sync({ api: fixture({ pages: [technical] }).api })).changed, false)
+  assert.deepEqual(await snapshot(root), after)
+  technical.properties.Corrections.rich_text = [rt('{invalid')]
+  await assert.rejects(sync({ api: fixture({ pages: [technical] }).api }), /Corrections must contain a JSON array/)
+  assert.deepEqual(await snapshot(root), after)
+})
+test('optional Notion editorial fields fail clearly for invalid shapes, dates and property types', () => {
+  const p = page()
+  assert.equal(metadataFor(p, undefined, []).updatedAt, undefined)
+  p.properties['Updated Date'] = { type: 'date', date: null }
+  assert.equal(metadataFor(p, undefined, []).updatedAt, undefined)
+  for (const value of ['2026-10-19', '2026-02-30', '2026-10-25T01:00:00Z']) {
+    p.properties['Updated Date'].date = { start: value }
+    assert.throws(() => metadataFor(p, undefined, []), /metadata.updatedAt/)
+  }
+  p.properties['Updated Date'] = { type: 'rich_text', rich_text: [] }
+  assert.throws(() => metadataFor(p, undefined, []), /Updated Date must be a Notion date/)
+  delete p.properties['Updated Date']
+  p.properties.Corrections = { type: 'rich_text', rich_text: [rt('{}')] }
+  assert.throws(() => metadataFor(p, undefined, []), /corrections must be an array/)
+  p.properties.Corrections = { type: 'select' }
+  assert.throws(() => metadataFor(p, undefined, []), /Corrections must be a Notion text/)
+})
