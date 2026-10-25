@@ -758,3 +758,12 @@ main { overflow-wrap: anywhere; }
   .article-content summary { list-style: none; }
   .article-content summary::marker { content: ""; }
 }
+
+/* Editorial disclosures stay in the document, including print and no-JS views. */
+.editorial-history { overflow-wrap: anywhere; }
+.editorial-history :target { outline: 2px solid var(--color-accent); outline-offset: 6px; }
+@media print {
+  .print-article .editorial-history { color: #18251f; background: white; font-size: 10pt; margin-top: 18pt; padding-top: 10pt; }
+  .print-article .editorial-history li { border-color: #68717b; }
+  .print-article .editorial-history p, .print-article .editorial-history li { color: #18251f; }
+}

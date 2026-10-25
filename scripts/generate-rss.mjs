@@ -30,7 +30,7 @@ export function renderRss(articles, site) {
     if (seen.has(article.id) || slugs.has(article.slug)) throw new Error('Duplicate RSS article identity or canonical slug')
     seen.add(article.id); slugs.add(article.slug)
   }
-  const dates = entries.flatMap(({ metadata: m }) => [m.date, ...(validDate(m.updated) ? [m.updated] : [])]).sort()
+  const dates = entries.flatMap(({ metadata: m }) => [m.date, ...(validDate(m.updatedAt) ? [m.updatedAt] : [])]).sort()
   const element = (name, value) => `    <${name}>${escape(value)}</${name}>`
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',

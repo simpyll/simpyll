@@ -1,3 +1,4 @@
+import { formatArticleDate } from '../lib/editorial.mjs'
 import { TaxonomyLink } from '../components/TaxonomyLink'
 import { Link } from 'react-router-dom'
 import { Container } from '../components/Container'
@@ -52,13 +53,7 @@ export function Blog() {
                           dateTime={post.metadata.date}
                           className="text-xs tracking-widest text-subtle"
                         >
-                          {new Date(
-                            `${post.metadata.date}T12:00:00`
-                          ).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                          })}
+                          {formatArticleDate(post.metadata.date, 'short')}
                         </time>
                       <span className="text-xs text-subtle">{post.readingTimeMinutes} min read</span>
                       </div>

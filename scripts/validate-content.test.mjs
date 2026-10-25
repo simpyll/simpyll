@@ -129,3 +129,11 @@ test('CLI exits nonzero and identifies each invalid article', async t => {
   assert.match(result.stderr, /two.mdx/)
   assert.match(result.stdout, /2 error\(s\)/)
 })
+
+test('manual editorial metadata is validated through the existing content gate', async t => {
+  const data = { ...metadata, updatedAt: '2026-10-25', revisions: [{ date: '2026-10-25', description: 'Updated instructions.' }], corrections: [{ id: 'example', date: '2026-10-24', description: 'Corrected an example.' }] }
+  const root = await fixture(t, { 'valid.mdx': article('', data) })
+  assert.deepEqual((await validateContent({ root })).errors, [])
+  await writeFile(join(root, 'src/content/blog/valid.mdx'), article('', { ...data, updatedAt: '2024-02-28' }))
+  assert.match((await validateContent({ root })).errors.join('\n'), /updatedAt must not precede/)
+})

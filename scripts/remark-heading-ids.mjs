@@ -21,7 +21,7 @@ export function remarkHeadingIds() {
     const reserve = node => {
       const id = explicit(node)
       if (typeof id === 'string') {
-        if (used.has(id)) throw new Error(`Duplicate or reserved article ID: ${id}`)
+        if (id.startsWith('editorial-') || used.has(id)) throw new Error(`Duplicate or reserved article ID: ${id}`)
         used.add(id)
       }
       node.children?.forEach(reserve)
@@ -31,7 +31,8 @@ export function remarkHeadingIds() {
       const depth = node.type === 'heading' ? node.depth : /^h[1-6]$/.test(node.name ?? '') ? Number(node.name[1]) : 0
       if (depth) {
         const title = text(node)
-        const base = title.toLowerCase().replace(/[^\p{L}\p{N}\s_-]/gu, '').trim().replace(/\s+/g, '-') || 'section'
+        const rawBase = title.toLowerCase().replace(/[^\p{L}\p{N}\s_-]/gu, '').trim().replace(/\s+/g, '-') || 'section'
+        const base = rawBase.startsWith('editorial-') ? `article-${rawBase}` : rawBase
         let id = explicit(node)
         if (typeof id !== 'string') {
           id = base
