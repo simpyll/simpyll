@@ -35,6 +35,12 @@ test('rich MDX fixture compiles, prerenders and hydrates through both publishing
   for (const language of ['javascript', 'typescript', 'tsx', 'json', 'bash', 'python', 'css', 'html', 'markdown', 'sql', 'diff']) {
     assert.match(html, new RegExp(`class="[^"]*hljs[^"]*language-${language}`))
   }
+  for (const variant of ['note', 'tip', 'information', 'warning', 'important']) {
+    assert.match(html, new RegExp(`data-variant="${variant}"`))
+  }
+  assert.match(html, /Note: Fallback contract/)
+  assert.doesNotMatch(html, /data-variant="unknown"/)
+  assert.match(html, /aria-hidden="true" focusable="false"/)
   assert.match(html, /scope="row"/)
   assert.match(html, /&lt;script&gt;alert/)
   assert.doesNotMatch(html, /<iframe|<script>alert/)

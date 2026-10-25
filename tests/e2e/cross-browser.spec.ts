@@ -164,3 +164,19 @@ test('deferred case study preserves SPA navigation and destination focus', async
   await page.goto('/projects/unknown-performance-fixture')
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
 })
+
+test('semantic callouts retain five distinct accents across themes and engines', async ({ page }) => {
+  await page.goto('/blog/the-art-of-reading-code/')
+  for (const theme of ['light', 'dark']) {
+    await page.evaluate(theme => document.documentElement.dataset.theme = theme, theme)
+    const accents = []
+    for (const variant of ['note', 'tip', 'information', 'warning', 'important']) {
+      const callout = page.locator(`.article-callout[data-variant="${variant}"]`).first()
+      await expect(callout).toBeVisible()
+      await expect(callout.locator('svg')).toHaveAttribute('aria-hidden', 'true')
+      accents.push(await callout.evaluate(el => getComputedStyle(el).borderInlineStartColor))
+    }
+    expect(new Set(accents).size).toBe(5)
+    await noOverflow(page)
+  }
+})
