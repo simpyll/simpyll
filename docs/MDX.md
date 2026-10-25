@@ -136,3 +136,27 @@ scripts/remark-heading-ids.test.mjs scripts/prerender.test.mjs`, and
 integration also exercises the publisher mapping; the full E2E suite covers TOC,
 fragment navigation, themes and accessibility. Review generated HTML and both
 themes at narrow widths; automated checks do not replace screen-reader/device QA.
+
+## Estimated reading time
+
+The existing MDX compilation pass exports `readingTimeMinutes`; the article
+registry, journal, homepage writing previews and article header use this integer.
+Discovery cards receive the same calculation during search-index generation.
+`scripts/reading-time.mjs` owns the policy: `Math.max(1, Math.ceil(words / 225))`.
+Change `WORDS_PER_MINUTE` there to adjust the speed. Empty or prose-free articles
+also receive the one-minute display minimum.
+
+The AST traversal counts headings, paragraphs, lists, quotes, table cells, link
+labels, inline code and literal Notion text expressions. Formatting and link
+URLs do not count. It excludes imports/exports, frontmatter nodes, attributes,
+comments, dynamic expressions, hidden elements, scripts/styles and fenced/native
+code blocks. No MDX or expression is executed to obtain the estimate. Existing
+articles use metadata exports; YAML frontmatter authoring remains unsupported by
+the existing MDX pipeline.
+
+Estimates describe prose reading, not coding exercises or tutorial completion.
+Unicode letter/number runs count as words, with internal apostrophes and hyphens
+preserved; languages without spaces have approximate counts. Custom component
+output and prose passed only through attributes cannot be inferred statically.
+Notion synchronization needs no new properties: each ordinary rebuild derives
+fresh estimates from the updated article source. RSS, dates and URLs are unchanged.

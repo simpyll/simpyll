@@ -47,18 +47,21 @@ export function Blog() {
                     <article
                       className="group grid gap-4 py-10 transition-colors sm:grid-cols-[140px_1fr_auto] sm:items-start sm:gap-8"
                     >
-                      <time
-                        dateTime={post.metadata.date}
-                        className="text-xs tracking-widest text-subtle"
-                      >
-                        {new Date(
-                          `${post.metadata.date}T12:00:00`
-                        ).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                        })}
-                      </time>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <time
+                          dateTime={post.metadata.date}
+                          className="text-xs tracking-widest text-subtle"
+                        >
+                          {new Date(
+                            `${post.metadata.date}T12:00:00`
+                          ).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })}
+                        </time>
+                      <span className="text-xs text-subtle">{post.readingTimeMinutes} min read</span>
+                      </div>
 
                       <div>
                         <p className="mb-3 text-xs font-medium uppercase tracking-widest text-accent">

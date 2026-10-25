@@ -1,3 +1,5 @@
+import { readingTime } from './reading-time.mjs'
+import remarkGfm from 'remark-gfm'
 import { compile } from '@mdx-js/mdx'
 import { readdir, readFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
@@ -6,7 +8,7 @@ import { literal } from './validate-content.mjs'
 
 export async function searchDocument(source, slug) {
   let tree
-  await compile(source, { remarkPlugins: [() => node => { tree = node }] })
+  await compile(source, { remarkPlugins: [remarkGfm, () => node => { tree = node }] })
   let metadata
   for (const node of tree.children.filter(node => node.type === 'mdxjsEsm')) {
     for (const statement of node.data.estree.body) {
@@ -39,7 +41,7 @@ export async function searchDocument(source, slug) {
     for (const child of node.children ?? []) visit(child)
   }
   visit(tree)
-  return { slug, title: metadata.title, description: metadata.description ?? '', category: metadata.category ?? '',
+  return { readingTimeMinutes: readingTime(tree), slug, title: metadata.title, description: metadata.description ?? '', category: metadata.category ?? '',
     tags: metadata.tags ?? [], date: metadata.date ?? '', id: typeof metadata.articleId === 'string' && metadata.articleId ? metadata.articleId : `blog:${slug}`, type: 'blog', url: `/blog/${slug}`, body: prose.join(' ').replace(/\s+/gu, ' ').trim() }
 }
 
