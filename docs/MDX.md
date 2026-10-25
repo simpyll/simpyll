@@ -245,3 +245,25 @@ Contrast reports and light/dark screenshots are in `artifacts/rich-content/`.
 Run `npm run build`, `npm run lint`, and `npx playwright test theme accessibility`
 for the shared theme/accessibility contract. Browser zoom/text scaling and automated
 axe checks do not constitute a complete WCAG audit or real-device verification.
+
+Verified contrast ratios on the actual code backgrounds:
+
+| Role | Light | Dark |
+| --- | ---: | ---: |
+| Foreground | 13.76 | 12.26 |
+| Comments | 4.66 | 6.15 |
+| Keywords | 5.03 | 7.51 |
+| Strings | 12.03 | 12.31 |
+| Functions | 4.74 | 9.72 |
+| Classes / built-ins | 6.94 | 9.77 |
+| Literals | 7.13 | 9.73 |
+| Tags | 6.94 | 12.32 |
+| Selection | 9.87 | 8.50 |
+
+Reviewed [light](screenshots/syntax/desktop-light.png) and
+[dark](screenshots/syntax/desktop-dark.png) screenshots, with
+[mobile light](screenshots/syntax/mobile-light.png) and
+[mobile dark](screenshots/syntax/mobile-dark.png) evidence. Long lines scroll inside
+the code surface rather than wrapping. Local Chromium 153 passed all ten rich
+fixture browser journeys and 132 shared theme/accessibility browser checks.
+The normal CI runner uses the repository's pinned Playwright browsers.
