@@ -101,7 +101,7 @@ test('Python MDX renders headings, code, lists and resource links', async ({ pag
   await expect(page.locator('pre code').first()).toHaveText('print("Hello, world!")\n')
   await expect(page.locator('.article-content ol li')).toHaveCount(5)
   await expect(page.getByRole('link', { name: 'Python 3 Documentation' })).toHaveAttribute('href', 'https://docs.python.org/3/')
-  await expect(page.locator('article time')).toHaveAttribute('datetime', '2026-10-20')
+  await expect(page.locator('article > [data-reveal] time')).toHaveAttribute('datetime', '2026-10-20')
 })
 
 test('checked-in MDX includes a working durable image', async ({ page }) => {

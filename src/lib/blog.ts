@@ -1,3 +1,4 @@
+import related from '../generated/related-articles.json' with { type: 'json' }
 import navigation from '../generated/article-navigation.json' with { type: 'json' }
 
 import type { ComponentType } from 'react'
@@ -71,4 +72,11 @@ export function getAdjacentArticles(id: string) {
     previous: neighbors?.previous ? postsById.get(neighbors.previous) : undefined,
     next: neighbors?.next ? postsById.get(neighbors.next) : undefined,
   }
+}
+
+export function getRelatedArticles(id: string): BlogPost[] {
+  return ((related as Record<string, string[]>)[id] ?? []).flatMap(id => {
+    const post = postsById.get(id)
+    return post ? [post] : []
+  })
 }
