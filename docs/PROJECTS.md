@@ -145,7 +145,7 @@ The Project Lab archive uses `getPublicProjects()` for both Board and Grid.
 than repeating it in frontmatter. That association asserts available content, not
 an implemented route: its renderer must validate content existence and public
 visibility before creating routes/canonicals/structured data/sitemap entries.
-No project detail URLs are generated; `/projects` is in the sitemap. #34 owns status
+Project detail URLs follow the case-study association below. #34 owns status
 presentation using the shared labels above. No GitHub metrics/API is introduced.
 
 ## Project Lab (`/projects`)
@@ -281,3 +281,30 @@ milestone associations contradict the scaffold's unpublished/no-issues prose.
 Issue #1 checks the script-building task but leaves acceptance/evidence pending.
 Board configuration could not be verified; do not claim a configured board.
 Refresh the dated snapshot against NOW, tracking, and issues when editing it.
+
+## Shared status presentation (#34)
+
+`content/projects.json` is authoritative for each project's `workflowStage` and
+`lifecycleStatus`. Canonical IDs, labels and derived TypeScript unions live in
+`src/projects/schema.ts` (`workflowStages` and `lifecycleStatuses`); the supported
+values and meanings are listed above. Workflow describes development progress,
+while lifecycle describes ongoing work/maintenance. Neither implies a completion
+date or measured activity.
+
+Home featured work, Hub board/grid cards and the shared case-study layout render
+`ProjectStatus` with the registry record. It uses a semantic definition list,
+visible field names, canonical capitalization and one stylesheet with existing
+light/dark tokens. Labels are informational: no focus stops or live announcements.
+The Hub explains the distinction; publication remains separate on detail pages.
+
+For a new project, assign both canonical IDs in its JSON record. To change status,
+edit those fields there only; do not copy labels into page or editorial data.
+Future published case studies inherit the record automatically. Publishing a case
+study never marks a project shipped or changes its lifecycle. This change preserves
+all existing assignments (including In Progress / Active for Simpyll and AI Engineering).
+
+`npm run validate:projects` rejects missing/unsupported values and unrecognized
+fields before emitting the public manifest; a failure removes stale generated
+output. TypeScript rejects unsupported component values and label overrides.
+Status tests cover every canonical value, invalid inputs and registry-derived
+markup across surfaces. No runtime fallback masks invalid authoring data.

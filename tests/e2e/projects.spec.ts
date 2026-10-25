@@ -12,7 +12,9 @@ test('homepage projects match the shared public manifest after hydration', async
   await expect(work.locator('h3')).toHaveText(featured.map(p => p.title))
   for (const project of featured) {
     await expect(work.getByText(project.summary, {exact:true})).toBeVisible()
-    await expect(work.locator('.ui-card').filter({has: page.getByRole('heading', {name:project.title,exact:true})}).getByText(`${workflowStages[project.workflowStage].toUpperCase()} · ${lifecycleStatuses[project.lifecycleStatus]}`, {exact:true})).toBeVisible()
+    const status = work.locator('.ui-card').filter({has: page.getByRole('heading', {name:project.title,exact:true})}).locator('.project-status')
+    await expect(status.locator('dd')).toHaveText([workflowStages[project.workflowStage], lifecycleStatuses[project.lifecycleStatus]])
+    await expect(status).toBeVisible()
     for (const label of [...project.technologies.map(t => technologies[t]), ...(project.tags ?? [])]) await expect(work.getByText(label,{exact:true})).toBeVisible()
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)

@@ -1,10 +1,11 @@
+import { ProjectStatus } from './ProjectStatus'
 import { Link } from 'react-router-dom'
 import { Badge } from './Badge'
 import { Card } from './Card'
 import { Container } from './Container'
 import { Reveal } from './Reveal'
 
-import { getFeaturedProjects, getCaseStudyPath, workflowStages, lifecycleStatuses, technologies } from '../projects'
+import { getFeaturedProjects, getCaseStudyPath, technologies } from '../projects'
 
 export function FeaturedWork() {
   const projects = getFeaturedProjects()
@@ -41,9 +42,7 @@ export function FeaturedWork() {
                     {String(index + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}
                   </span>
 
-                  <span className="text-xs tracking-widest text-accent">
-                    {workflowStages[project.workflowStage].toUpperCase()} · {lifecycleStatuses[project.lifecycleStatus]}
-                  </span>
+                  <ProjectStatus project={project} />
                 </div>
 
                 <h3 className="text-2xl font-semibold tracking-tight">
