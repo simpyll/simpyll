@@ -77,7 +77,7 @@ test('journal links, client navigation and history work without document reloads
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Learning journal.')
   await page.goForward()
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Hello, World.')
-  await page.getByRole('link', { name: 'Back to journal' }).click()
+  await page.getByRole('navigation', { name: 'Breadcrumb', exact: true }).getByRole('link', { name: 'Blog', exact: true }).click()
   await expect(page).toHaveTitle('Learning Journal | Simpyll')
   expect(documents).toEqual([])
 })
@@ -90,7 +90,7 @@ for (const slug of articles) {
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `https://simpyll.com/blog/${slug}`)
     await expectNoHorizontalOverflow(page)
     expect((await page.reload())?.status()).toBe(200)
-    await page.getByRole('link', { name: 'Back to journal' }).click()
+    await page.getByRole('navigation', { name: 'Breadcrumb', exact: true }).getByRole('link', { name: 'Blog', exact: true }).click()
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Learning journal.')
   })
 }
@@ -171,7 +171,7 @@ test('keyboard skip link, primary navigation and journal controls are usable', a
   await expect(page).toHaveURL(articlePath!)
   // Route navigation focuses the article h1; the return link precedes it.
   await expect(page.getByRole('heading', { level: 1 })).toBeFocused()
-  await tabTo(page, page.getByRole('link', { name: 'Back to journal' }), true)
+  await tabTo(page, page.getByRole('navigation', { name: 'Breadcrumb', exact: true }).getByRole('link', { name: 'Blog', exact: true }), true)
   await page.keyboard.press('Enter')
   await expect(page).toHaveURL('/blog')
 })

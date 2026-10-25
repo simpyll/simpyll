@@ -1,0 +1,11 @@
+.breadcrumbs { min-width: 0; margin-bottom: 2.5rem; color: var(--color-muted); font-size: .875rem; line-height: 1.5; }
+.breadcrumbs ol { display: flex; flex-wrap: wrap; align-items: center; gap: 0 .625rem; list-style: none; margin: 0; padding: 0; }
+.breadcrumbs li { display: flex; align-items: center; gap: .625rem; min-width: 0; }
+.breadcrumbs li:last-child { flex: 0 1 auto; max-width: 100%; }
+.breadcrumbs a { display: inline-flex; align-items: center; min-height: 44px; text-decoration: underline; text-underline-offset: .25em; }
+.breadcrumbs a:hover { color: var(--color-foreground); }
+.breadcrumbs a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; border-radius: 2px; }
+.breadcrumb-separator { flex-shrink: 0; }
+.breadcrumb-current { color: var(--color-foreground); overflow-wrap: anywhere; }
+@media (max-width: 640px) { .breadcrumb-current { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } }
+@media print { .breadcrumbs { display: none !important; } }

@@ -18,6 +18,7 @@ test.describe('published slug history', () => {
       await page.goto(`/blog/${alias}`)
       await expect(page).toHaveURL('https://simpyll.com/blog/notion-fixture')
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Notion fixture article')
+      await expect(page.getByRole('navigation', { name: 'Breadcrumb', exact: true }).locator('[aria-current="page"]')).toHaveText('Notion fixture article')
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://simpyll.com/blog/notion-fixture')
     }
     await page.goto('/blog/notion-fixture')

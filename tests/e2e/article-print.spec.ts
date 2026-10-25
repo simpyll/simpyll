@@ -11,7 +11,7 @@ for (const theme of ['light', 'dark'] as const) {
     await expect(page.locator('.article-content')).toBeVisible()
     await expect(page.locator('.article-metadata time')).toBeVisible()
     await expect(page.locator('.article-metadata')).toContainText('min read')
-    for (const selector of ['.floating-header', '.navigation-slot', '#root > footer', '.article-back', '.article-tags']) {
+    for (const selector of ['.floating-header', '.navigation-slot', '#root > footer', '.breadcrumbs', '.article-tags']) {
       await expect(page.locator(selector)).toBeHidden()
     }
     await expect(page.locator('.print-attribution')).toBeVisible()

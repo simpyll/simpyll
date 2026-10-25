@@ -2,8 +2,8 @@ import { defineConfig, devices } from '@playwright/test'
 import process from 'node:process'
 
 const crossBrowserMatch = process.env.PLAYWRIGHT_FULL_MATRIX
-  ? /(?:cross-browser|navigation|heading-permalinks|project-detail|about|footer|recovery|related-articles|article-print)\.spec\.ts/
-  : /(?:cross-browser|related-articles|article-print)\.spec\.ts/
+  ? /(?:cross-browser|breadcrumbs|navigation|heading-permalinks|project-detail|about|footer|recovery|related-articles|article-print)\.spec\.ts/
+  : /(?:cross-browser|breadcrumbs|related-articles|article-print)\.spec\.ts/
 
 const previewPort = Number(process.env.PLAYWRIGHT_PREVIEW_PORT ?? 4173)
 
