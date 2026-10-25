@@ -23,15 +23,16 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
+  // Native sharding follows project order. Interleave engine-specific work with
+  // Chromium so the required axe scans and new smoke do not pile onto one runner.
   projects: [
-    { name: 'desktop-chromium', use: { ...devices['Desktop Chrome'], launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : undefined } },
-    { name: 'mobile-chromium', use: { ...devices['Pixel 7'], launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : undefined } },
+    { name: 'accessibility-firefox', testMatch: /accessibility\.spec\.ts/, use: { ...devices['Desktop Firefox'] } },
     { name: 'desktop-firefox', testMatch: crossBrowserMatch, use: { ...devices['Desktop Firefox'], viewport: { width: 1440, height: 900 } } },
+    { name: 'desktop-chromium', use: { ...devices['Desktop Chrome'], launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : undefined } },
+    { name: 'accessibility-webkit', testMatch: /accessibility\.spec\.ts/, use: { ...devices['Desktop Safari'] } },
     { name: 'desktop-webkit', testMatch: crossBrowserMatch, use: { ...devices['Desktop Safari'], viewport: { width: 1440, height: 900 } } },
     { name: 'mobile-webkit', testMatch: crossBrowserMatch, use: { ...devices['iPhone SE'] } },
-    // Bounded coverage across engines; full feature journeys remain in Chromium.
-    { name: 'accessibility-firefox', testMatch: /accessibility\.spec\.ts/, use: { ...devices['Desktop Firefox'] } },
-    { name: 'accessibility-webkit', testMatch: /accessibility\.spec\.ts/, use: { ...devices['Desktop Safari'] } },
+    { name: 'mobile-chromium', use: { ...devices['Pixel 7'], launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : undefined } },
   ],
   webServer: {
     command: `npm run preview -- --host 127.0.0.1 --port ${previewPort} --strictPort`,
