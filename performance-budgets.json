@@ -1,0 +1,12 @@
+{
+  "initialJS": 160000,
+  "routeJS": 16000,
+  "css": 16000,
+  "images": 1650000,
+  "fonts": 32768,
+  "total": 240000,
+  "mediaTotal": 1900000,
+  "individualImage": 1600000,
+  "individualAsset": 600000,
+  "pageJS": 180000
+}

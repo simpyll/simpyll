@@ -1,6 +1,7 @@
+import './pages/project-detail.css'
 import { Policy } from './pages/Policy'
 import policyLinks from './content/policies.json'
-import { ProjectDetail } from './pages/ProjectDetail'
+import { ProjectDetailRoute } from './projects/ProjectDetailRoute'
 import { Projects } from './pages/Projects'
 import { Explore } from './pages/Explore'
 import { ErrorBoundary } from './recovery/ErrorBoundary'
@@ -29,7 +30,7 @@ export function AppContent() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<Projects />} />
-          <Route path="/projects/:slug" element={<ProjectDetail />} />
+          <Route path="/projects/:slug" element={<ProjectDetailRoute />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/blog" element={<Blog />} />

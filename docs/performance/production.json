@@ -1,0 +1,73 @@
+{
+  "sha": "aa242d0beae364291761272d0cd99f70773d3bad",
+  "buildSha": "aa242d0beae364291761272d0cd99f70773d3bad",
+  "productionSha": "43fb8cd4bda16b037a04b37ec0dabf9525af1f6b",
+  "origin": "https://simpyll.com",
+  "timestamp": "2026-10-25T02:22:09.771Z",
+  "elapsedSeconds": 13.947,
+  "environment": {
+    "node": "v24.21.0",
+    "platform": "linux",
+    "arch": "x64",
+    "ci": true
+  },
+  "fieldINP": null,
+  "summaries": [
+    {
+      "route": "/",
+      "profile": "mobile",
+      "runs": 1,
+      "scores": {
+        "performance": 1,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "lcp": 982.6355,
+      "cls": 0.0156454618065962,
+      "fcp": 982.6355,
+      "tbt": 63,
+      "speedIndex": 982.6355,
+      "jsExecution": 188.28400000000028,
+      "resources": {
+        "total": 188849,
+        "script": 158299,
+        "stylesheet": 13840,
+        "other": 10823,
+        "document": 5887,
+        "image": 0,
+        "media": 0,
+        "font": 0,
+        "third-party": 0
+      }
+    },
+    {
+      "route": "/",
+      "profile": "desktop",
+      "runs": 1,
+      "scores": {
+        "performance": 1,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "lcp": 369.6913,
+      "cls": 0.004787245234635286,
+      "fcp": 369.6913,
+      "tbt": 0,
+      "speedIndex": 369.6913,
+      "jsExecution": 1002.4979999999773,
+      "resources": {
+        "total": 188514,
+        "script": 158298,
+        "stylesheet": 13982,
+        "other": 10532,
+        "document": 5702,
+        "image": 0,
+        "media": 0,
+        "font": 0,
+        "third-party": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,354 @@
+{
+  "initialJS": 147931,
+  "routeChunks": [
+    {
+      "path": "/assets/ProjectDetail-BggqLvZv.js",
+      "raw": 27347,
+      "estimated": 9403
+    }
+  ],
+  "pages": [
+    {
+      "route": "/404.html",
+      "html": 3662,
+      "initialJS": 147931,
+      "css": 13317,
+      "images": 0,
+      "fonts": 0,
+      "total": 164910,
+      "resources": [
+        "/assets/index-CtwoBbCV.js",
+        "/assets/index-BhFPPDzx.css"
+      ]
+    },
+    {
+      "route": "/about",
+      "html": 6583,
+      "initialJS": 147931,
+      "css": 13317,
+      "images": 0,
+      "fonts": 0,
+      "total": 167831,
+      "resources": [
+        "/assets/index-CtwoBbCV.js",
+        "/assets/index-BhFPPDzx.css"
+      ]
+    },
+    {
+      "route": "/accessibility",
+      "html": 5061,
+      "initialJS": 147931,
+      "css": 13317,
+      "images": 0,
+      "fonts": 0,
+      "total": 166309,
+      "resources": [
+        "/assets/index-CtwoBbCV.js",
+        "/assets/index-BhFPPDzx.css"
+      ]
+    },
+    {
+      "route": "/blog/001-python-fundamentals",
+      "html": 8326,
+      "initialJS": 147931,
+      "css": 13317,
+      "images": 0,
+      "fonts": 0,
+      "total": 169574,
+      "resources": [
+        "/assets/index-CtwoBbCV.js",
+        "/assets/index-BhFPPDzx.css"
+      ]
+    },
+    {
+      "route": "/blog/a-hospital-is-the-most-complicated-computer-ive-ever-used",
+      "html": 14486,
+      "initialJS": 147931,
+      "css": 13317,
+      "images": 0,
+      "fonts": 0,
+      "total": 175734,
+      "resources": [
+        "/assets/index-CtwoBbCV.js",
+        "/assets/index-BhFPPDzx.css"
+      ]
+    },
+    {
+      "route": "/blog/hello-world",
+      "html": 4513,
+      "initialJS": 147931,
+      "css": 13317,
+      "images": 0,
+      "fonts": 0,
+      "total": 165761,
+      "resources": [
+        "/assets/index-CtwoBbCV.js",
+        "/assets/index-BhFPPDzx.css"
+      ]
+    },
+    {
+      "route": "/blog",
+      "html": 5068,
+      "initialJS": 147931,
+      "css": 13317,
+      "images": 0,
+      "fonts": 0,
+      "total": 166316,
+      "resources": [
+        "/assets/index-CtwoBbCV.js",
+        "/assets/index-BhFPPDzx.css"
+      ]
+    },
+    {
+      "route": "/blog/starting-over-without-starting-from-zero",
+      "html": 10504,
+      "initialJS": 147931,
+      "css": 13317,
+      "images": 0,
+      "fonts": 0,
+      "total": 171752,
+      "resources": [
+        "/assets/index-CtwoBbCV.js",
+        "/assets/index-BhFPPDzx.css"
+      ]
+    },
+    {
+      "route": "/blog/the-art-of-reading-code",
+      "html": 9552,
+      "initialJS": 147931,
+      "css": 13317,
+      "images": 1411834,
+      "fonts": 0,
+      "total": 1582634,
+      "resources": [
+        "/assets/index-CtwoBbCV.js",
+        "/assets/index-BhFPPDzx.css",
+        "/images/optimized/the-simpyll-publishing-pipeline-from-an-idea-in-notion-to-a-statically-p-3fbf530d27-1600.png"
+      ]
+    },
+    {
+      "route": "/blog/why-simpyll",
+      "html": 9159,
+      "initialJS": 147931,
+      "css": 13317,
+      "images": 0,
+      "fonts": 0,
+      "total": 170407,
+      "resources": [
+        "/assets/index-CtwoBbCV.js",
+        "/assets/index-BhFPPDzx.css"
+      ]
+    },
+    {
+      "route": "/disclaimers",
+      "html": 5075,
+      "initialJS": 147931,
+      "css": 13317,
+      "images": 0,
+      "fonts": 0,
+      "total": 166323,
+      "resources": [
+        "/assets/index-CtwoBbCV.js",
+        "/assets/index-BhFPPDzx.css"
+      ]
+    },
+    {
+      "route": "/editorial-standards",
+      "html": 5412,
+      "initialJS": 147931,
+      "css": 13317,
+      "images": 0,
+      "fonts": 0,
+      "total": 166660,
+      "resources": [
+        "/assets/index-CtwoBbCV.js",
+        "/assets/index-BhFPPDzx.css"
+      ]
+    },
+    {
+      "route": "/explore",
+      "html": 28077,
+      "initialJS": 147931,
+      "css": 13317,
+      "images": 0,
+      "fonts": 0,
+      "total": 189325,
+      "resources": [
+        "/assets/index-CtwoBbCV.js",
+        "/assets/index-BhFPPDzx.css"
+      ]
+    },
+    {
+      "route": "/",
+      "html": 5493,
+      "initialJS": 147931,
+      "css": 13317,
+      "images": 0,
+      "fonts": 0,
+      "total": 166741,
+      "resources": [
+        "/assets/index-CtwoBbCV.js",
+        "/assets/index-BhFPPDzx.css"
+      ]
+    },
+    {
+      "route": "/privacy",
+      "html": 5838,
+      "initialJS": 147931,
+      "css": 13317,
+      "images": 0,
+      "fonts": 0,
+      "total": 167086,
+      "resources": [
+        "/assets/index-CtwoBbCV.js",
+        "/assets/index-BhFPPDzx.css"
+      ]
+    },
+    {
+      "route": "/projects/ai-engineering",
+      "html": 9262,
+      "initialJS": 157334,
+      "css": 13317,
+      "images": 0,
+      "fonts": 0,
+      "total": 179913,
+      "resources": [
+        "/assets/index-CtwoBbCV.js",
+        "/assets/index-BhFPPDzx.css",
+        "/assets/ProjectDetail-BggqLvZv.js"
+      ]
+    },
+    {
+      "route": "/projects",
+      "html": 6621,
+      "initialJS": 147931,
+      "css": 13317,
+      "images": 0,
+      "fonts": 0,
+      "total": 167869,
+      "resources": [
+        "/assets/index-CtwoBbCV.js",
+        "/assets/index-BhFPPDzx.css"
+      ]
+    },
+    {
+      "route": "/projects/simpyll",
+      "html": 7457,
+      "initialJS": 157334,
+      "css": 13317,
+      "images": 0,
+      "fonts": 0,
+      "total": 178108,
+      "resources": [
+        "/assets/index-CtwoBbCV.js",
+        "/assets/index-BhFPPDzx.css",
+        "/assets/ProjectDetail-BggqLvZv.js"
+      ]
+    },
+    {
+      "route": "/terms",
+      "html": 5057,
+      "initialJS": 147931,
+      "css": 13317,
+      "images": 0,
+      "fonts": 0,
+      "total": 166305,
+      "resources": [
+        "/assets/index-CtwoBbCV.js",
+        "/assets/index-BhFPPDzx.css"
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "path": "/assets/index-CtwoBbCV.js",
+      "raw": 516516,
+      "estimated": 147931
+    },
+    {
+      "path": "/assets/index-BhFPPDzx.css",
+      "raw": 69512,
+      "estimated": 13317
+    },
+    {
+      "path": "/assets/ProjectDetail-BggqLvZv.js",
+      "raw": 27347,
+      "estimated": 9403
+    },
+    {
+      "path": "/images/optimized/the-simpyll-publishing-pipeline-from-an-idea-in-notion-to-a-statically-p-3fbf530d27-768.avif",
+      "raw": 47911,
+      "estimated": 47911
+    },
+    {
+      "path": "/images/optimized/the-simpyll-publishing-pipeline-from-an-idea-in-notion-to-a-statically-p-3fbf530d27-1200.avif",
+      "raw": 93621,
+      "estimated": 93621
+    },
+    {
+      "path": "/images/optimized/the-simpyll-publishing-pipeline-from-an-idea-in-notion-to-a-statically-p-3fbf530d27-320.avif",
+      "raw": 11458,
+      "estimated": 11458
+    },
+    {
+      "path": "/images/optimized/the-simpyll-publishing-pipeline-from-an-idea-in-notion-to-a-statically-p-3fbf530d27-480.avif",
+      "raw": 22502,
+      "estimated": 22502
+    },
+    {
+      "path": "/images/optimized/the-simpyll-publishing-pipeline-from-an-idea-in-notion-to-a-statically-p-3fbf530d27-1600.avif",
+      "raw": 141607,
+      "estimated": 141607
+    },
+    {
+      "path": "/images/optimized/the-simpyll-publishing-pipeline-from-an-idea-in-notion-to-a-statically-p-3fbf530d27-320.webp",
+      "raw": 54226,
+      "estimated": 54226
+    },
+    {
+      "path": "/images/optimized/the-simpyll-publishing-pipeline-from-an-idea-in-notion-to-a-statically-p-3fbf530d27-480.webp",
+      "raw": 113732,
+      "estimated": 113732
+    },
+    {
+      "path": "/images/optimized/the-simpyll-publishing-pipeline-from-an-idea-in-notion-to-a-statically-p-3fbf530d27-768.webp",
+      "raw": 277728,
+      "estimated": 277728
+    },
+    {
+      "path": "/images/optimized/the-simpyll-publishing-pipeline-from-an-idea-in-notion-to-a-statically-p-3fbf530d27-320.png",
+      "raw": 74925,
+      "estimated": 74925
+    },
+    {
+      "path": "/images/optimized/the-simpyll-publishing-pipeline-from-an-idea-in-notion-to-a-statically-p-3fbf530d27-1200.webp",
+      "raw": 626000,
+      "estimated": 626000
+    },
+    {
+      "path": "/images/optimized/the-simpyll-publishing-pipeline-from-an-idea-in-notion-to-a-statically-p-3fbf530d27-480.png",
+      "raw": 158451,
+      "estimated": 158451
+    },
+    {
+      "path": "/images/optimized/the-simpyll-publishing-pipeline-from-an-idea-in-notion-to-a-statically-p-3fbf530d27-1600.webp",
+      "raw": 994230,
+      "estimated": 994230
+    },
+    {
+      "path": "/images/optimized/the-simpyll-publishing-pipeline-from-an-idea-in-notion-to-a-statically-p-3fbf530d27-1600.png",
+      "raw": 1411834,
+      "estimated": 1411834
+    },
+    {
+      "path": "/images/optimized/the-simpyll-publishing-pipeline-from-an-idea-in-notion-to-a-statically-p-3fbf530d27-768.png",
+      "raw": 381243,
+      "estimated": 381243
+    },
+    {
+      "path": "/images/optimized/the-simpyll-publishing-pipeline-from-an-idea-in-notion-to-a-statically-p-3fbf530d27-1200.png",
+      "raw": 861175,
+      "estimated": 861175
+    }
+  ]
+}

@@ -1,0 +1,353 @@
+{
+  "sha": "85a49aec62699e0fb21ecda91034225a6ab01f00",
+  "buildSha": "85a49aec62699e0fb21ecda91034225a6ab01f00",
+  "productionSha": null,
+  "origin": "http://127.0.0.1:4175",
+  "timestamp": "2026-10-25T02:31:58.619Z",
+  "elapsedSeconds": 220.055,
+  "environment": {
+    "node": "v24.22.1",
+    "platform": "linux",
+    "arch": "x64",
+    "ci": false
+  },
+  "fieldINP": null,
+  "summaries": [
+    {
+      "route": "/",
+      "profile": "mobile",
+      "runs": 3,
+      "scores": {
+        "performance": 0.99,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "lcp": 1657.212,
+      "cls": 0.015645461806596202,
+      "fcp": 1657.212,
+      "tbt": 7.5,
+      "speedIndex": 1657.212,
+      "jsExecution": 116.35200000000022,
+      "resources": {
+        "total": 168518,
+        "script": 148928,
+        "stylesheet": 13765,
+        "document": 5825,
+        "image": 0,
+        "media": 0,
+        "font": 0,
+        "other": 0,
+        "third-party": 0
+      }
+    },
+    {
+      "route": "/",
+      "profile": "desktop",
+      "runs": 3,
+      "scores": {
+        "performance": 1,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "lcp": 405.461,
+      "cls": 0.004787245234635286,
+      "fcp": 405.461,
+      "tbt": 0,
+      "speedIndex": 405.461,
+      "jsExecution": 0,
+      "resources": {
+        "total": 168518,
+        "script": 148928,
+        "stylesheet": 13765,
+        "document": 5825,
+        "image": 0,
+        "media": 0,
+        "font": 0,
+        "other": 0,
+        "third-party": 0
+      }
+    },
+    {
+      "route": "/blog",
+      "profile": "mobile",
+      "runs": 3,
+      "scores": {
+        "performance": 0.99,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "lcp": 1655.7631,
+      "cls": 0.015645461806596202,
+      "fcp": 1655.7631,
+      "tbt": 12,
+      "speedIndex": 1655.7631,
+      "jsExecution": 127.51600000000056,
+      "resources": {
+        "total": 168093,
+        "script": 148928,
+        "stylesheet": 13765,
+        "document": 5400,
+        "image": 0,
+        "media": 0,
+        "font": 0,
+        "other": 0,
+        "third-party": 0
+      }
+    },
+    {
+      "route": "/blog",
+      "profile": "desktop",
+      "runs": 3,
+      "scores": {
+        "performance": 1,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "lcp": 408.5969,
+      "cls": 0.004787245234635286,
+      "fcp": 408.5969,
+      "tbt": 0,
+      "speedIndex": 408.5969,
+      "jsExecution": 0,
+      "resources": {
+        "total": 168093,
+        "script": 148928,
+        "stylesheet": 13765,
+        "document": 5400,
+        "image": 0,
+        "media": 0,
+        "font": 0,
+        "other": 0,
+        "third-party": 0
+      }
+    },
+    {
+      "route": "/blog/001-python-fundamentals",
+      "profile": "mobile",
+      "runs": 3,
+      "scores": {
+        "performance": 0.99,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "lcp": 1654.4928,
+      "cls": 0.015645461806596202,
+      "fcp": 1654.4928,
+      "tbt": 32,
+      "speedIndex": 1654.4928,
+      "jsExecution": 138.77600000000044,
+      "resources": {
+        "total": 171357,
+        "script": 148928,
+        "stylesheet": 13765,
+        "document": 8664,
+        "image": 0,
+        "media": 0,
+        "font": 0,
+        "other": 0,
+        "third-party": 0
+      }
+    },
+    {
+      "route": "/blog/001-python-fundamentals",
+      "profile": "desktop",
+      "runs": 3,
+      "scores": {
+        "performance": 1,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "lcp": 405.6147,
+      "cls": 0.004787245234635286,
+      "fcp": 405.6147,
+      "tbt": 0,
+      "speedIndex": 405.6147,
+      "jsExecution": 0,
+      "resources": {
+        "total": 171357,
+        "script": 148928,
+        "stylesheet": 13765,
+        "document": 8664,
+        "image": 0,
+        "media": 0,
+        "font": 0,
+        "other": 0,
+        "third-party": 0
+      }
+    },
+    {
+      "route": "/projects",
+      "profile": "mobile",
+      "runs": 3,
+      "scores": {
+        "performance": 0.99,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "lcp": 1655.3901,
+      "cls": 0.015645461806596202,
+      "fcp": 1655.3901,
+      "tbt": 6.5,
+      "speedIndex": 1655.3901,
+      "jsExecution": 122.00800000000054,
+      "resources": {
+        "total": 169650,
+        "script": 148928,
+        "stylesheet": 13765,
+        "document": 6957,
+        "image": 0,
+        "media": 0,
+        "font": 0,
+        "other": 0,
+        "third-party": 0
+      }
+    },
+    {
+      "route": "/projects",
+      "profile": "desktop",
+      "runs": 3,
+      "scores": {
+        "performance": 1,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "lcp": 404.4898,
+      "cls": 0.004787245234635286,
+      "fcp": 404.4898,
+      "tbt": 0,
+      "speedIndex": 404.4898,
+      "jsExecution": 0,
+      "resources": {
+        "total": 169650,
+        "script": 148928,
+        "stylesheet": 13765,
+        "document": 6957,
+        "image": 0,
+        "media": 0,
+        "font": 0,
+        "other": 0,
+        "third-party": 0
+      }
+    },
+    {
+      "route": "/projects/simpyll",
+      "profile": "mobile",
+      "runs": 3,
+      "scores": {
+        "performance": 0.98,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "lcp": 1805.5537,
+      "cls": 0.015645461806596202,
+      "fcp": 1805.5537,
+      "tbt": 0,
+      "speedIndex": 1805.5537,
+      "jsExecution": 99.38399999999993,
+      "resources": {
+        "total": 180390,
+        "script": 158709,
+        "stylesheet": 13892,
+        "document": 7789,
+        "image": 0,
+        "media": 0,
+        "font": 0,
+        "other": 0,
+        "third-party": 0
+      }
+    },
+    {
+      "route": "/projects/simpyll",
+      "profile": "desktop",
+      "runs": 3,
+      "scores": {
+        "performance": 1,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "lcp": 443.8933,
+      "cls": 0.004787245234635286,
+      "fcp": 443.8933,
+      "tbt": 0,
+      "speedIndex": 443.8933,
+      "jsExecution": 0,
+      "resources": {
+        "total": 180390,
+        "script": 158709,
+        "stylesheet": 13892,
+        "document": 7789,
+        "image": 0,
+        "media": 0,
+        "font": 0,
+        "other": 0,
+        "third-party": 0
+      }
+    },
+    {
+      "route": "/about",
+      "profile": "mobile",
+      "runs": 3,
+      "scores": {
+        "performance": 0.99,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "lcp": 1655.6779,
+      "cls": 0.015645461806596202,
+      "fcp": 1655.6779,
+      "tbt": 7.5,
+      "speedIndex": 1655.6779,
+      "jsExecution": 126.1520000000003,
+      "resources": {
+        "total": 169610,
+        "script": 148928,
+        "stylesheet": 13765,
+        "document": 6917,
+        "image": 0,
+        "media": 0,
+        "font": 0,
+        "other": 0,
+        "third-party": 0
+      }
+    },
+    {
+      "route": "/about",
+      "profile": "desktop",
+      "runs": 3,
+      "scores": {
+        "performance": 1,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "lcp": 405.4751,
+      "cls": 0.004787245234635286,
+      "fcp": 405.4751,
+      "tbt": 0,
+      "speedIndex": 405.4751,
+      "jsExecution": 0,
+      "resources": {
+        "total": 169610,
+        "script": 148928,
+        "stylesheet": 13765,
+        "document": 6917,
+        "image": 0,
+        "media": 0,
+        "font": 0,
+        "other": 0,
+        "third-party": 0
+      }
+    }
+  ]
+}

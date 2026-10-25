@@ -4,7 +4,6 @@ import { Figure } from '../components/mdx/components'
 import { getCaseStudyPath, getProjectBySlug, lifecycleStatuses, technologies, workflowStages, type Project } from '../projects'
 import { caseStudies, type CaseStudy } from '../projects/case-studies'
 import { NotFound } from './NotFound'
-import './project-detail.css'
 
 export function ProjectDetailLayout({ project: p, study }: { project: Project; study: CaseStudy }) {
   return <>

@@ -96,6 +96,7 @@ Simpyll is evolving. Browse the [feature roadmap](docs/ROADMAP.md) and [open Git
 - [Architecture, prerendering and hydration](docs/ARCHITECTURE.md)
 - [Static full-text search and floating navigation](docs/SEARCH.md)
 - [Deployment and GitHub Pages](docs/DEPLOYMENT.md)
+- [Performance budgets, Lighthouse and measured results](docs/PERFORMANCE.md)
 - [Notion publishing and troubleshooting](docs/NOTION.md)
 - [Roadmap](docs/ROADMAP.md)
 

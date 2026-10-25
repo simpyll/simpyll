@@ -1,3 +1,4 @@
+import { projectHead } from './performance/route-assets.mjs'
 import { readFileSync } from 'node:fs'
 const policyRoutes = JSON.parse(readFileSync(new URL('../src/content/policies.json', import.meta.url), 'utf8')).map(({ slug }) => `/${slug}`)
 import { caseStudyRoutes } from './project-routes.mjs'
@@ -21,6 +22,7 @@ async function prerender() {
     'utf8'
   )
 
+  const clientManifest = JSON.parse(await readFile(join(distDirectory, '.vite/manifest.json'), 'utf8'))
   const templateHead = template.match(/<head>([\s\S]*?)<\/head>/)?.[1]
   if (!templateHead || !/<body>\s*<div id="root"><\/div>\s*<\/body>/.test(template)) {
     throw new Error('Expected a fresh Vite client build. Run npm run build before prerendering.')
@@ -35,7 +37,7 @@ async function prerender() {
   const routes = [...policyRoutes, '/', '/blog', '/about', '/explore', '/projects', ...blogRoutes, ...await caseStudyRoutes()]
 
   for (const route of routes) {
-    const pageHtml = render(route).replace('<head>', `<head>${templateHead}`)
+    const pageHtml = render(route).replace('<head>', `<head>${templateHead}${projectHead(clientManifest, route)}`)
 
     const outputDirectory =
       route === '/'
