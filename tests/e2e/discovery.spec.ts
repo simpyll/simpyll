@@ -35,7 +35,7 @@ test('taxonomy links, combined URL state, chips, reset and browser history', asy
   await expect(page).toHaveURL('/explore')
   await expect(page.getByLabel('Sort articles')).toHaveValue('newest')
   await page.getByRole('heading', { level: 2, name: /Learning Python/ }).getByRole('link').click()
-  await page.locator('article').getByRole('link', { name: 'CS50P', exact: true }).click()
+  await page.locator('article > .mt-16').getByRole('link', { name: 'CS50P', exact: true }).click()
   await expect(page).toHaveURL('/explore?tag=cs50p')
   expect(errors).toEqual([])
 })
