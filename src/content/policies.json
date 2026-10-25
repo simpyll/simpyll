@@ -6,7 +6,7 @@
     "sections": [
       {
         "title": "About this website",
-        "text": "Simpyll is a personal portfolio and educational publication. Public operator and private contact details are awaiting owner approval. This draft describes the inspected source configuration; production behavior and provider settings still require verification."
+        "text": "Simpyll is a personal portfolio and educational publication. For privacy questions or requests, contact simpyll.com@gmail.com. This policy describes the website practices identified in the October 2026 source audit; hosting-provider settings and retention details have not been independently verified."
       },
       {
         "title": "Hosting and connection information",
@@ -26,7 +26,7 @@
       },
       {
         "title": "Privacy requests and international visitors",
-        "text": "Depending on your location and applicable law, rights may include access, correction, deletion or objection. This draft does not determine which laws apply or promise a universal rights procedure. A verified private request channel, identity-verification process and response procedure are pending owner approval. Public GitHub issues are not a suitable substitute for private rights requests. Third-party processing may occur outside your country; provider arrangements require review."
+        "text": "For privacy questions or requests, email simpyll.com@gmail.com rather than posting sensitive information in a public GitHub issue. Describe your request and the information concerned; identity verification and response handling will depend on the request and applicable law. Depending on your location and applicable law, rights may include access, correction, deletion or objection. This policy does not claim that every jurisdiction's rules apply. Third-party processing may occur outside your country; provider arrangements and retention practices have not been independently verified."
       },
       {
         "title": "Children and future changes",
@@ -34,18 +34,18 @@
       },
       {
         "title": "Policy updates",
-        "text": "Changes will be reflected on this page and in its review date and source history. No email notification system exists. This draft has no effective date until approved."
+        "text": "Changes will be reflected on this page and in source history. For questions about changes, email simpyll.com@gmail.com. No email notification system exists."
       }
     ]
   },
   {
     "slug": "terms",
     "title": "Terms of Use",
-    "description": "Draft conditions for using this personal publication.",
+    "description": "Conditions for using this personal publication.",
     "sections": [
       {
         "title": "Use of the website",
-        "text": "These proposed terms describe use of Simpyll as a personal portfolio and educational publication. They remain a draft pending owner and legal review; no acceptance or effective date is asserted."
+        "text": "These terms describe use of Simpyll as a personal portfolio and educational publication. They are published by the site operator for informational use; no claim is made that an attorney reviewed them."
       },
       {
         "title": "Permitted use",
@@ -61,7 +61,7 @@
       },
       {
         "title": "Changes and contact",
-        "text": "Substantive changes should update the review date and remain traceable in Git history. Public factual or technical corrections can use the page-specific GitHub link below. A private contact method remains pending. No governing-law, arbitration or indemnification provision has been selected."
+        "text": "Substantive changes are recorded in source history. Public factual or technical corrections can use the page-specific GitHub link. For private legal or policy questions, email simpyll.com@gmail.com. No governing-law, arbitration or indemnification provision has been selected."
       }
     ]
   },
@@ -72,7 +72,7 @@
     "sections": [
       {
         "title": "General education",
-        "text": "Healthcare and nursing content is for general educational and informational purposes. It is not individualized medical advice, diagnosis or treatment. Reading or interacting with this website does not establish a clinician\u2013patient relationship."
+        "text": "Healthcare and nursing content is for general educational and informational purposes. It is not individualized medical advice, diagnosis or treatment. Reading or interacting with this website does not establish a clinician–patient relationship."
       },
       {
         "title": "Independent clinical judgment",
@@ -92,7 +92,7 @@
       },
       {
         "title": "Report an inaccuracy",
-        "text": "Use the page-specific correction link for non-sensitive clinical or technical errors, including the public URL and supporting reference. Never put patient details in the report. Private contact and healthcare liability language remain subject to owner and qualified legal review."
+        "text": "Use the page-specific correction link for non-sensitive clinical or technical errors, including the public URL and supporting reference. Never put patient details in a report. For private questions, email simpyll.com@gmail.com. Healthcare liability and applicable legal language may require qualified review."
       }
     ]
   },
@@ -103,7 +103,7 @@
     "sections": [
       {
         "title": "Mission and scope",
-        "text": "Simpyll documents practical engineering, technology, healthcare perspectives and learning in public. Personal experience and experiments should be distinguished from established evidence. These draft standards propose a maintainable approach; they are not proof of a formal review process for every existing article."
+        "text": "Simpyll documents practical engineering, technology, healthcare perspectives and learning in public. Personal experience and experiments should be distinguished from established evidence. These standards describe editorial goals, not a claim that every existing article underwent a formal review."
       },
       {
         "title": "Research and verification",
@@ -111,11 +111,11 @@
       },
       {
         "title": "AI assistance",
-        "text": "AI tools may assist with brainstorming, organizing research, drafting, editing, coding, debugging and testing. AI output can be incorrect or omit context. Assistance is distinct from independent human verification, source checking and executable tests. This page does not claim that every statement or code change has been personally verified. The owner must confirm the precise editorial workflow and any article-specific disclosures before approval. No visitor-facing AI service was found in the inspected application."
+        "text": "AI tools may assist with brainstorming, organizing research, drafting, editing, coding, debugging and testing. AI output can be incorrect or omit context. Assistance is distinct from independent human verification, source checking and executable tests. No blanket claim is made that every statement or code change has been personally verified. No visitor-facing AI service was found in the inspected application."
       },
       {
         "title": "Corrections and contributions",
-        "text": "Use the contextual GitHub link below each page to suggest a correction. Report factual errors, broken links, outdated guidance, clinical inaccuracies or software defects with the public page URL and evidence. Some article links open a correction issue because Notion is their editorial source; accepted corrections must be applied there before synchronization. Public reports require a GitHub account. Review and response times are not guaranteed; a non-GitHub feedback method remains unresolved."
+        "text": "Use the contextual GitHub link below each page to suggest a correction. Report factual errors, broken links, outdated guidance, clinical inaccuracies or software defects with the public page URL and evidence. Some article links open a correction issue because Notion is their editorial source; accepted corrections must be applied there before synchronization. Public reports require a GitHub account. Review and response times are not guaranteed; private feedback is available at simpyll.com@gmail.com."
       },
       {
         "title": "Publication and updates",
@@ -123,7 +123,7 @@
       },
       {
         "title": "Material interests",
-        "text": "No sponsorship or affiliate arrangement was established by the source audit. This is not verification of the owner\u2019s off-site relationships. The owner must confirm material interests. If present or introduced, sponsorships and affiliate relationships should be disclosed clearly beside the relevant content or links, as well as reflected in these standards."
+        "text": "No sponsorship or affiliate arrangement was established by the website source audit, which cannot verify off-site relationships. Material connections, if present or introduced, should be disclosed beside the relevant content or links. Questions about potential conflicts can be sent to simpyll.com@gmail.com."
       }
     ]
   },
@@ -142,11 +142,11 @@
       },
       {
         "title": "Known limitations",
-        "text": "Manual NVDA, VoiceOver and TalkBack testing, physical-device touch and virtual-keyboard checks, actual 200%/400% browser zoom and human visual/motion review remain pending in issue #43. Mobile emulation and text enlargement are not equivalent to real-device or assistive-technology validation. The current audit ledger is linked below."
+        "text": "Manual NVDA, VoiceOver and TalkBack testing, physical-device touch and virtual-keyboard checks, actual 200%/400% browser zoom and human visual/motion review were not documented as completed when issue #43 was closed. Mobile emulation and text enlargement are not equivalent to real-device or assistive-technology validation. See the accessibility audit for known limitations."
       },
       {
         "title": "Feedback and follow-up",
-        "text": "For non-sensitive accessibility problems, use the page-specific GitHub contribution link, describing the URL, browser, device, assistive technology if applicable, and the blocked task. Do not submit personal health information. Feedback can be triaged through repository issues, with fixes and retests recorded there; no response deadline is promised. A verified private and non-GitHub channel remains an owner decision and blocks final approval of this statement."
+        "text": "For accessibility problems, email simpyll.com@gmail.com or use the page-specific GitHub contribution link for non-sensitive reports. Include the affected URL, browser, device, assistive technology if applicable, and the blocked task. Do not submit personal health information. No response deadline or full WCAG conformance claim is made."
       }
     ]
   }
