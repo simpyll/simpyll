@@ -9,12 +9,13 @@ import { pathToFileURL } from 'node:url'
 const compare = (a,b) => a < b ? -1 : a > b ? 1 : 0
 const severity = value => value === 'Critical' ? 'critical' : value === 'High' || value === 'Medium' ? 'warning' : 'informational'
 const category = code => /title|description|social|registry/.test(code) ? 'Metadata' : /canonical|redirect/.test(code) ? 'Canonicals' : /sitemap|robots/.test(code) ? 'Sitemap & indexing' : /schema|jsonld/.test(code) ? 'Structured data' : /heading|h1|static/.test(code) ? 'Content structure' : /image/.test(code) ? 'Images' : 'Internal links'
+/** @returns {import('../src/pulse/data').PulseSnapshot} */
 export function projectPublic(audit, registry, reportDate) {
   const pages = audit.pages.filter(p => p.indexable)
   const publicRoutes = new Set(pages.map(p => p.route))
   const articles = registry.filter(a => a.status === 'published' && publicRoutes.has(`/blog/${a.slug}`)).map(a => {
     const m = a.metadata
-    return { route: `/blog/${a.slug}`, title: m.title, category: m.category ?? 'Uncategorized', tags: [...new Set(m.tags ?? [])].sort(compare), published: m.date, updates: [...new Set([...(m.revisions ?? []).map(r => r.date), ...(m.corrections ?? []).map(r => r.date), ...(m.updatedAt ? [m.updatedAt] : [])])].filter(d => d > m.date).sort(compare) }
+    return { route: `/blog/${a.slug}`, title: m.title, category: m.category ?? 'Uncategorized', tags: [...new Set(m.tags ?? [])].sort(compare), published: m.date, updates: [...new Set([...(m.revisions ?? []).map(r => r.date), ...(m.corrections ?? []).map(r => r.date), ...(m.updatedAt && m.updatedAt > m.date ? [m.updatedAt] : [])])].filter(d => d >= m.date).sort(compare) }
   }).sort((a,b) => compare(a.route,b.route))
   const routes = new Set(articles.map(a => a.route))
   const edges = pages.filter(p => routes.has(p.route)).flatMap(p => p.contextualOutbound.filter(to => routes.has(to) && to !== p.route).map(to => ({ from: p.route, to }))).sort((a,b) => compare(a.from,b.from) || compare(a.to,b.to))
@@ -46,10 +47,22 @@ export function validatePublic(s) {
   return s
 }
 const fixes = code => /title|description|registry/.test(code) ? 'Correct the authoritative MDX/Notion metadata or shared SEO template; rebuild and inspect rendered output.' : /fragment/.test(code) ? 'Update the source anchor to an existing target ID; preserve established heading permalinks.' : /link|orphan/.test(code) ? 'Review source links against canonical public routes. Add contextual links only when useful to readers.' : /schema|jsonld/.test(code) ? 'Correct shared structured-data generation to match visible page content and authoritative metadata.' : /sitemap|robots|canonical|redirect/.test(code) ? 'Correct the route inventory, redirect registry or shared indexing configuration, then regenerate output.' : 'Inspect the rendered element and its source template; correct the reported structure and rerun the audit.'
+/** @returns {import('../src/pulse/audit').PrivatePulseReport} */
 export function privateReport(audit, baseline = null) {
   const previous = new Set((baseline?.findings ?? []).map(i => i.id))
-  const findings = audit.issues.map(i => ({ id: createHash('sha256').update(JSON.stringify([i.route,i.code,i.evidence])).digest('hex').slice(0,16), rule: i.code, severity: severity(i.severity), route: i.route, field: i.code, explanation: i.evidence, remediation: fixes(i.code), status: baseline ? undefined : 'baseline' })).map(i => ({ ...i, status: baseline ? previous.has(i.id) ? 'existing' : 'new' : 'baseline' })).sort((a,b) => ['critical','warning','informational'].indexOf(a.severity)-['critical','warning','informational'].indexOf(b.severity) || compare(a.id,b.id))
-  return { schemaVersion: 1, findings, resolved: (baseline?.findings ?? []).filter(i => !findings.some(f => f.id === i.id)).map(i => i.id), routes: audit.pages.filter(p => p.indexable).map(p => ({ route:p.route, crawlDepth:p.crawlDepth, siteNavigationOrphan:p.route !== '/' && p.crawlDepth === null, contextualInbound:[...new Set(audit.pages.filter(a => a.indexable && a.pageType === 'article' && a.contextualOutbound.includes(p.route)).map(a => a.route))], links:p.links, outbound:p.outbound })) }
+  const findings = audit.issues.map(i => ({ id: createHash('sha256').update(JSON.stringify([i.route,i.code,i.evidence])).digest('hex').slice(0,16), rule: i.code, severity: severity(i.severity), route: i.route, field: i.code, gate: i.level ?? 'warning', explanation: i.evidence, remediation: fixes(i.code), status: baseline ? undefined : 'baseline' })).map(i => ({ ...i, status: baseline ? previous.has(i.id) ? 'existing' : 'new' : 'baseline' })).sort((a,b) => ['critical','warning','informational'].indexOf(a.severity)-['critical','warning','informational'].indexOf(b.severity) || compare(a.id,b.id))
+  return { schemaVersion: 1, findings, resolved: (baseline?.findings ?? []).filter(i => !findings.some(f => f.id === i.id)).map(i => i.id), routes: audit.pages.filter(p => p.indexable).map(p => {
+    const contextualInbound = [...new Set(audit.pages.filter(a => a.indexable && a.pageType === 'article' && a.route !== p.route && a.contextualOutbound.includes(p.route)).map(a => a.route))].sort(compare)
+    const destinations = new Map()
+    for (const link of p.links.filter(l => l.contextual)) {
+      try { const url = new URL(link.href, `https://simpyll.com${p.route}`); if (url.origin === 'https://simpyll.com') { const destination = url.pathname.replace(/\/$/,'') || '/'; destinations.set(destination,(destinations.get(destination) ?? 0)+1) } } catch { /* Shared validator reports malformed links. */ }
+    }
+    return { route:p.route, crawlDepth:p.crawlDepth, siteNavigationOrphan:p.route !== '/' && p.crawlDepth === null,
+      contextualLinkOrphan:p.pageType === 'article' && !contextualInbound.length, contextualInbound,
+      duplicateContextualDestinations:[...destinations].filter(([,count]) => count > 1).sort(([a],[b]) => compare(a,b)).map(([destination,count]) => ({destination,count})),
+      links:p.links, outbound:p.outbound }
+  }) }
+
 }
 export async function generatePulse({ directory = 'dist', expectedRoutes, reportDate, baselinePath } = {}) {
   const registry = await collectArticles(process.cwd(), { history: new Map() })

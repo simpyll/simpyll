@@ -105,6 +105,7 @@ jobs:
             test-results/
             artifacts/toc/
             docs/discovery/
+            docs/pulse/
 
   fixtures:
     needs: build

@@ -66,7 +66,7 @@ test('native homepage navigation remains useful without JavaScript', async ({ br
   const page = await context.newPage()
   await page.goto('/')
   await expect(page.locator('h1')).toBeVisible()
-  await page.getByRole('link', { name: 'View Case Study for Simpyll' }).click()
+  await page.getByRole('link', { name: 'View Case Study for Simpyll', exact: true }).click()
   await expect(page.locator('h1')).toHaveText('Simpyll.')
   await page.goto('/')
   if (staticWriting.length) {

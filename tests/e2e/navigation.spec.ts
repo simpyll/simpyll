@@ -123,7 +123,7 @@ test('capacity partitions all destinations uniquely and maximally across resize 
     counts.push(await assertPartition(page))
   }
   expect(new Set(counts).size).toBeGreaterThanOrEqual(2)
-  expect(counts).toContain(4)
+  expect(counts).toContain(labels.length)
 })
 
 test('text sizing and container width produce More-only layout and restore focus on resize', async ({ page }) => {
@@ -145,10 +145,10 @@ test('text sizing and container width produce More-only layout and restore focus
   await expect(page.locator('.floating-links a')).toHaveCount(0)
   await assertPartition(page)
   await page.locator('.floating-header').evaluate(el => el.style.width = '')
-  await expect(page.locator('.floating-links a')).toHaveCount(4)
+  await expect(page.locator('.floating-links a')).toHaveCount(labels.length)
   await page.setViewportSize({ width: 420, height: 800 })
   const typography = await page.addStyleTag({ content: '.floating-link { font-size: 2rem; letter-spacing: .1em; }' })
-  await expect(page.locator('.floating-links a')).not.toHaveCount(4)
+  await expect(page.locator('.floating-links a')).not.toHaveCount(labels.length)
   await assertPartition(page)
   await typography.evaluate(el => el.remove())
   await page.locator('html').evaluate(el => el.style.fontSize = '64px')

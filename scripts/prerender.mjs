@@ -68,6 +68,8 @@ async function prerender() {
 
   await mkdir(join(distDirectory, 'pulse'), { recursive: true })
   await writeFile(join(distDirectory, 'pulse/index.html'), render('/pulse').replace('<head>', `<head>${templateHead}${projectHead(clientManifest, '/pulse')}`))
+  // The snapshot link must resolve during its own audit; final validated data replaces this seed.
+  await writeFile(join(distDirectory, 'pulse.json'), '{}\n')
   const pulse = await generatePulse({ expectedRoutes: [...routes, '/pulse'], directory: distDirectory })
   await mkdir(join(distDirectory, 'pulse'), { recursive: true })
   await writeFile(join(distDirectory, 'pulse/index.html'), render('/pulse', pulse).replace('<head>', `<head>${templateHead}${projectHead(clientManifest, '/pulse')}`))

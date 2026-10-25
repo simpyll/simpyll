@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
+import { destination } from './helpers/navigation'
 import { mkdir } from 'node:fs/promises'
 test('Pulse renders real data, supports keyboard graph exploration, filters and accessible alternatives',async({page},testInfo)=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message))
@@ -27,6 +28,7 @@ test('Pulse renders real data, supports keyboard graph exploration, filters and 
   const result=await new AxeBuilder({page}).include('main').withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze()
   expect(result.violations).toEqual([])
   if(testInfo.project.name==='desktop-chromium'||testInfo.project.name==='mobile-chromium'){
+   await page.evaluate(() => { (document.activeElement as HTMLElement)?.blur(); window.scrollTo(0,0) });
    await mkdir('docs/pulse',{recursive:true});await page.screenshot({path:`docs/pulse/${testInfo.project.name}-${theme}.png`,fullPage:true})
   }
  }
@@ -42,7 +44,26 @@ test('Pulse keeps meaningful content and article links without JavaScript',async
 })
 test('client navigation loads the public snapshot',async({page})=>{
  await page.goto('/projects/simpyll-pulse')
- await page.getByRole('link',{name:'Explore Pulse',exact:true}).first().click()
+ await (await destination(page,'Pulse')).click()
  await expect(page.getByRole('heading',{level:1})).toHaveText('Simpyll Pulse.')
  await expect(page.locator('.pulse-node').first()).toBeVisible()
+})
+test('empty snapshots and connected graph fixtures retain usable alternatives',async({page})=>{
+ const real=await (await page.request.get('/pulse.json')).json()
+ await page.route('**/pulse.json',route=>route.fulfill({json:{...real,articles:[],edges:[],indexablePages:0}}))
+ await page.goto('/projects/simpyll-pulse')
+ await (await destination(page,'Pulse')).click()
+ await expect(page.getByText('The galaxy begins with the first published article.')).toBeVisible()
+ await expect(page.getByRole('status')).toHaveText('0 of 0 articles shown')
+ await page.unroute('**/pulse.json')
+ if(real.articles.length<2)return
+ await page.route('**/pulse.json',route=>route.fulfill({json:{...real,edges:[{from:real.articles[0].route,to:real.articles[1].route}]}}))
+ await page.goto('/projects/simpyll-pulse')
+ await (await destination(page,'Pulse')).click()
+ await expect(page.locator('.pulse-edge')).toHaveCount(1)
+ await page.locator('.pulse-node').first().focus();await page.keyboard.press('Space')
+ await expect(page.locator('.pulse-edge.active')).toHaveCount(1)
+ await expect(page.locator('.pulse-inspector')).toContainText(real.articles[1].title)
+ await page.getByLabel('Without contextual inbound links').check()
+ await expect(page.locator('.pulse-node')).toHaveCount(real.articles.length-1)
 })
