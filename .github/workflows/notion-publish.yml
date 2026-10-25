@@ -65,7 +65,7 @@ jobs:
         run: |
           npm run build
           npm run lint
-          node --test scripts/prerender.test.mjs scripts/remark-heading-ids.test.mjs scripts/article-toc.test.mjs
+          node --test scripts/rss.test.mjs scripts/prerender.test.mjs scripts/remark-heading-ids.test.mjs scripts/article-toc.test.mjs
       - name: Commit only publisher-owned changes
         id: commit
         if: steps.changes.outputs.changed == 'true'

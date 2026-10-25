@@ -28,6 +28,7 @@ export function SEO({
   return (
     <Helmet>
       <html lang={siteConfig.language} />
+      <link rel="alternate" type="application/rss+xml" title="Simpyll RSS Feed" href={getSiteUrl('/rss.xml')} />
 
       <title>{pageTitle}</title>
 
