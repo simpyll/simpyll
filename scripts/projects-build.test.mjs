@@ -10,7 +10,7 @@ const exec = promisify(execFile)
 test('real production build excludes unpublished metadata and fails on invalid records', {timeout:120000}, async () => {
   const root = await mkdtemp(join(tmpdir(),'project-build-'))
   try {
-    for (const path of ['content','src','public','scripts','package.json','package-lock.json','index.html','vite.config.ts','tsconfig.json','tsconfig.app.json','tsconfig.node.json']) await cp(path,join(root,path),{recursive:true})
+    for (const path of ['content','src','public','scripts','package.json','performance-budgets.json', 'package-lock.json','index.html','vite.config.ts','tsconfig.json','tsconfig.app.json','tsconfig.node.json']) await cp(path,join(root,path),{recursive:true})
     await symlink(resolve('node_modules'),join(root,'node_modules'),'dir')
     await symlink(resolve('.git'),join(root,'.git'),'dir')
     const data = JSON.parse(await readFile(join(root,'content/projects.json'),'utf8'))

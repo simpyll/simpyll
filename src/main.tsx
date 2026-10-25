@@ -1,3 +1,4 @@
+import { preloadProjectDetail } from './projects/detail-loader'
 import { ErrorBoundary } from './recovery/ErrorBoundary'
 
 import React from 'react'
@@ -23,8 +24,13 @@ const app = (
   </React.StrictMode>
 )
 
-if (container.hasChildNodes()) {
-  hydrateRoot(container, app)
-} else {
-  createRoot(container).render(app)
+async function start() {
+  await preloadProjectDetail(window.location.pathname)
+  if (container.hasChildNodes()) {
+    hydrateRoot(container, app)
+  } else {
+    createRoot(container).render(app)
+  }
 }
+// A failed startup chunk leaves the readable static page and native links intact.
+void start().catch(error => console.error('Unable to start project navigation', error))

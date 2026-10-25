@@ -28,6 +28,8 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
+      - name: Run deterministic performance budget tests
+        run: npm run test:performance
       - run: npm run test:redirects
       - run: npm run test:notion
       - run: npm run test:images
@@ -137,6 +139,43 @@ jobs:
             test-results/
             artifacts/rich-content/
             artifacts/toc/
+
+  # Variable lab measurements do not join the required validate dependency list.
+  # PRs sample the homepage; weekly/manual runs cover all six templates.
+  performance:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: validated-build
+      - name: Verify artifact revision
+        run: test "$(cat ci-revision.txt)" = "$(git rev-parse HEAD)"
+      - uses: ./.github/actions/browsers
+        with:
+          browsers: chromium
+      - name: Audit mobile and desktop performance
+        env:
+          PERF_RUNS: ${{ github.event_name == 'pull_request' && '1' || '3' }}
+          PERF_ROUTES: ${{ github.event_name == 'pull_request' && '/' || '' }}
+        run: npm run perf:lighthouse
+      - name: Retain Lighthouse reports even when collection fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-performance
+          retention-days: 14
+          if-no-files-found: error
+          path: artifacts/performance/
 
   # Preserve the existing branch-protection context. Never let a failed or
   # skipped dependency turn this required check green.

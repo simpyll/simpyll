@@ -1,3 +1,6 @@
+import { ProjectDetail } from './pages/ProjectDetail'
+import { registerProjectDetail } from './projects/detail-loader'
+registerProjectDetail(ProjectDetail)
 import { HelmetProvider } from 'react-helmet-async'
 import { StaticRouter } from 'react-router-dom/server'
 import { renderToString } from 'react-dom/server'

@@ -92,15 +92,17 @@ export function RouteNavigation() {
     // Queries and repeated links to the current route preserve focus and scroll.
     if (!routeChanged && !needsHash && !saved) return
 
+    let headingPending = false
     if (routeChanged && action !== 'POP') {
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
       if (!needsHash) {
         const heading = document.querySelector<HTMLElement>('main h1')
         if (heading) focus(heading) // The heading itself announces the destination; no duplicate live region.
+        else headingPending = true
       }
     }
 
-    if (!saved && !needsHash) return
+    if (!saved && !needsHash && !headingPending) return
     let frame = 0
     let attempts = 0
     let cancelled = false
@@ -110,6 +112,11 @@ export function RouteNavigation() {
     }
     const restore = () => {
       if (cancelled) return
+      if (headingPending) {
+        const heading = document.querySelector<HTMLElement>('main h1')
+        if (heading) { focus(heading); headingPending = false }
+        if (!headingPending && !saved && !needsHash) return
+      }
       const target = fragmentTarget(location.hash)
       const ready = document.querySelector('.floating-header')?.getAttribute('data-nav-ready') === 'true' && document.fonts.status === 'loaded'
       const enoughHeight = !saved || document.documentElement.scrollHeight - innerHeight >= saved.y
