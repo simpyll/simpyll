@@ -56,7 +56,7 @@ Firefox/WebKit accessibility suites. Five functional projects run bounded smoke.
 Main, weekly schedule and full manual dispatch add portable regression journeys
 in Firefox, desktop WebKit and mobile WebKit. Existing tests are never moved to
 weaker triggers. Fixture-only tests retain their dedicated gates. #46 runtime
-performance budgets remain separate.
+performance budgets remain separate; see [visitor-performance budgets and Lighthouse](PERFORMANCE.md).
 
 ## Reproduce locally
 

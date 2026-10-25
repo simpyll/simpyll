@@ -23,16 +23,16 @@ transfer, while individual Lighthouse HTML/JSON reports are CI artifacts.
 ## Hard resource gates
 
 `performance-budgets.json` uses **bytes**, not KiB. Text is estimated gzip at level
-9; images and fonts are raw. These are reproducible asset ceilings, not observed
+9; raster images and fonts are raw (SVG uses gzip text). These are reproducible asset ceilings, not observed
 HTTP transfer. Pages/CDNs choose their own compression. Lighthouse resource
 summary reports observed transfer, including response overhead, separately.
 
 | Limit | Bytes | Rationale |
 |---|---:|---|
-| Shared initial JS | 160,000 | baseline 155,649; optimized shared 148,020, modest growth |
-| Per-page required JS | 180,000 | project shared + deferred code ~157,424; ~14% growth |
+| Shared initial JS | 160,000 | baseline 155,649; optimized shared 147,931, modest growth |
+| Per-page required JS | 180,000 | project shared + deferred code ~157,334; ~14% growth |
 | Individual deferred JS chunk | 16,000 | measured project chunk ~9,400; bounded feature growth |
-| CSS per page | 16,000 | baseline 13,310; optimized project CSS ~13,680 |
+| CSS per page | 16,000 | baseline 13,310; final CSS 13,317 |
 | Images per page | 1,650,000 | largest existing media page ~1,411,834 |
 | Fonts per page | 32,768 | current 0; small explicit allowance, review new typography |
 | Total without images | 240,000 | baseline maximum 197,034 (Explore) |
@@ -50,14 +50,16 @@ Referenced assets are deduplicated per page. JS code loaded only after unrelated
 interactions is classified as deferred, with individual hard ceilings.
 
 Image accounting deliberately includes offscreen/lazy images and the largest
-candidate per source, including alternative formats; it is a conservative ceiling,
+candidate per picture across alternative formats; every referenced variant is
+inspected for missing files and individual limits, but alternatives are not summed.
+Raster/font bytes are raw; SVG is gzip text. This is a conservative ceiling,
 not a browser's viewport-specific selection. Original unused image sources and
 unused generated variants are not charged to visitor transfer. Whole-site disk
 size is not a useful page-weight budget. Client-only future fetches/third-party
 integrations require extending the accounting; Lighthouse supplements static
 inspection. The existing responsive image pipeline is preserved, not rebuilt.
-The current article with the largest media footprint uses a large PNG and is a
-follow-up candidate for source-reference/variant review. No LCP image is made lazy.
+The largest existing diagram has a 1.4 MB PNG fallback with smaller AVIF/WebP
+variants already available; the budget conservatively charges the PNG. No LCP image is made lazy.
 
 ## Reproduce
 
@@ -110,10 +112,12 @@ gate only after multiple comparable CI runs demonstrate stable variance/headroom
 
 ## Optimization and regression protection
 
-Project case-study content and CSS now load only on detail routes. Server rendering
+Project case-study content now loads only on detail routes. Its small stylesheet
+remains shared: splitting it added a render-blocking request and increased the
+measured mobile case-study LCP by ~302ms in an intermediate audit. Server rendering
 registers the synchronous component; direct client visits load it before hydration.
-Prerendering adds that route's CSS/module preload from the manifest, avoiding a
-flash of unstyled content. SPA navigation uses an accessible Suspense status and
+Prerendering adds that route's module preload from the manifest; shared CSS
+preserves the original first-paint styling. SPA navigation uses an accessible Suspense status and
 the existing route error boundary. Navigation focus waits for the deferred heading.
 A delayed-chunk journey checks client routing, history, initial request avoidance,
 direct loads and missing project URLs across the existing browser matrix.

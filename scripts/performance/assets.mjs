@@ -55,13 +55,27 @@ export async function measureAssets(dist = 'dist') {
       if (url.origin !== 'https://simpyll.com') throw new Error(`${htmlFile}: unbudgeted external resource ${url.href}`)
       files.add(decodeURIComponent(url.pathname))
     }
-    for (const el of document.querySelectorAll('script[src],link[rel="stylesheet"],link[rel="modulepreload"],link[rel="preload"],img,source')) {
-      if (el.hasAttribute('srcset')) {
-        // Largest candidate per source: conservative all-page media ceiling.
-        // Counts alternative formats and lazy images, unlike observed transfer.
-        const candidates = el.getAttribute('srcset').split(',').map(v => v.trim().split(/\s+/)).sort((a,b) => parseInt(b[1] || '0') - parseInt(a[1] || '0'))
-        add(candidates[0]?.[0])
-      } else add(el.getAttribute('src') || el.getAttribute('href'))
+    for (const el of document.querySelectorAll('script[src],link[rel="stylesheet"],link[rel="modulepreload"],link[rel="preload"]')) add(el.getAttribute('src') || el.getAttribute('href'))
+    const groups = [...document.querySelectorAll('picture'), ...[...document.querySelectorAll('img,source')].filter(el => !el.closest('picture'))]
+    for (const group of groups) {
+      const elements = group.tagName.toLowerCase() === 'picture' ? [...group.querySelectorAll('source,img')] : [group]
+      const candidates = new Set()
+      for (const el of elements) {
+        // linkedom preserves React SSR's srcSet spelling; browsers normalize it.
+        const set = el.getAttribute('srcset') || el.getAttribute('srcSet')
+        const urls = [el.getAttribute('src'), ...(set ? set.split(',').map(v => v.trim().split(/\s+/)[0]) : [])]
+        for (const raw of urls.filter(Boolean)) {
+          if (raw.startsWith('data:')) continue
+          const url = new URL(raw, `https://simpyll.com/${htmlFile}`)
+          if (url.origin !== 'https://simpyll.com') throw new Error(`${htmlFile}: unbudgeted external image ${url.href}`)
+          candidates.add(decodeURIComponent(url.pathname))
+        }
+      }
+      // Inspect every variant for individual limits/missing output, but charge
+      // one worst-case candidate per picture, never all alternative formats.
+      const variants = await Promise.all([...candidates].map(size))
+      const largest = variants.sort((a,b) => b.estimated - a.estimated)[0]
+      if (largest) files.add(largest.path)
     }
     for (const path of [...files]) if (path.endsWith('.css')) {
       const css = await readFile(resolve(root, '.' + path), 'utf8')

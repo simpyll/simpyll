@@ -18,7 +18,7 @@
     "validate:content": "node scripts/validate-content.mjs",
     "test:mdx": "node --test scripts/article-heading.test.mjs scripts/mdx.test.mjs scripts/rich-content.test.mjs",
     "test:content": "node --test scripts/validate-content.test.mjs",
-    "test": "npm run build && npm run test:images && node --test scripts/*.test.mjs scripts/notion/*.test.mjs && npm run test:smoke && npm run test:e2e:built",
+    "test": "npm run build && npm run test:images && npm run test:performance && node --test scripts/*.test.mjs scripts/notion/*.test.mjs && npm run test:smoke && npm run test:e2e:built",
     "test:e2e": "npm run build && npm run test:e2e:built",
     "test:e2e:built": "playwright test",
     "test:e2e:smoke": "playwright test cross-browser",

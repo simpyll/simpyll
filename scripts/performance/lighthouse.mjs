@@ -55,6 +55,7 @@ for (const route of selected) for (const profile of ['mobile', 'desktop']) {
   const scores = Object.fromEntries(Object.keys(sample[0].scores).map(k => [k, median(sample.map(r => r.scores[k]))]))
   const resources = Object.fromEntries(Object.keys(sample[0].resources).map(k => [k, median(sample.map(r => r.resources[k]))]))
   summaries.push({ route, profile, runs, scores, ...metrics, resources })
+  for (const category of ['accessibility', 'best-practices', 'seo']) if (scores[category] < .95) console.warn(`ADVISORY ${profile} ${route}: ${category}=${scores[category]}; inspect HTML report (not a conformance claim)` )
   if (scores.performance < (profile === 'mobile' ? .9 : .95) || metrics.lcp > 2500 || metrics.cls > .1) console.warn(`ADVISORY ${profile} ${route}: performance=${scores.performance}, LCP=${metrics.lcp}ms, CLS=${metrics.cls}; inspect HTML report`)
 }
 const deployment = JSON.parse(await readFile('dist/deployment.json', 'utf8'))

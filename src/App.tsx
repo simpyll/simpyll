@@ -1,3 +1,4 @@
+import './pages/project-detail.css'
 import { Policy } from './pages/Policy'
 import policyLinks from './content/policies.json'
 import { ProjectDetailRoute } from './projects/ProjectDetailRoute'
