@@ -34,8 +34,8 @@ export function SEO({
 
       <meta name="description" content={description} />
 
-      {robots && <meta name="robots" content={robots} />}
-      {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonicalUrl} />}
+      {(noindex || robots) && <meta name="robots" content={noindex ? "noindex, follow" : robots} />}
+      {!noindex && <link rel="canonical" href={canonicalUrl} />}
 
       <meta property="og:type" content={type} />
       <meta

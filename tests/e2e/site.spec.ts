@@ -119,7 +119,7 @@ for (const path of ['/missing-e2e-page', '/blog/missing-e2e-article/']) {
   test(`404 response and recovery: ${path}`, async ({ page }) => {
     expect((await page.goto(path))?.status()).toBe(404)
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Page not found.')
-    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex')
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, follow')
     await expect(page.locator('link[rel="canonical"]')).toHaveCount(0)
     await page.getByRole('link', { name: 'Back to journal' }).click()
     await expect(page).toHaveURL('/blog')
