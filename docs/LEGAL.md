@@ -1,8 +1,7 @@
 # Legal and transparency maintenance — issue #79
 
 Source audit: October 24, 2026; baseline main `3fe55d5ab08d924f5f71a6f8b3315bc67baedffa`.
-All five documents are **drafts**, with no effective date or attorney approval.
-Do not remove the draft notice merely because tests pass. Refs #79; leave #88 open.
+All five policy pages were published October 25, 2026 at the owner's direction, with private contact simpyll.com@gmail.com. Publication does not imply attorney review, a jurisdictional legal determination, or verification of provider settings. Issue #88 remains open.
 
 ## Architecture and review
 
@@ -10,8 +9,7 @@ Do not remove the draft notice merely because tests pass. Refs #79; leave #88 op
 `src/pages/Policy.tsx` uses existing Container/SEO and semantic page structure.
 App routes, sitemap, content validation and prerender consume the same slugs.
 Footer links preserve socials and contextual contributions; policy edits target the JSON.
-Git history is the change record. Update the draft review date only after actual review;
-set an effective date only after explicit owner approval. No approval is inferred from merging code.
+Git history is the change record. Update the review date only after actual review. The October 25, 2026 publication date records the owner's direction to finalize the documents; it does not establish attorney approval.
 
 Before analytics, forms, newsletters, comments, executable embeds, visitor-facing AI,
 clinical tools, new processors or tracking/data-handling changes: repeat source and
@@ -22,7 +20,7 @@ Do not use this document as a legal determination about applicable jurisdictions
 ## Data-practices inventory
 
 Active below means implemented in inspected main source/configuration. Production homepage HTTP headers and HTML were retrieved with curl (200, GitHub/ Fastly headers, no Set-Cookie in that response). The homepage and live sitemap contained no policy routes. The search web tool could not retrieve production. Full browser network behavior, deployment parity, provider account settings and individual live legal routes remain unverified.
-The five new routes are implemented on this feature branch only, not deployed.
+The five routes were merged in PR #136; deployment status and production parity have not been independently reverified in this update.
 
 | Technology / status | Purpose and potential data | Processing / retention or deletion | Verification / unresolved questions |
 | --- | --- | --- | --- |
@@ -46,9 +44,7 @@ It describes provider processing, not a verified site-specific retention guarant
 
 ## Approval blockers and follow-up
 
-- Approve public operator identity (existing biography does not itself approve legal identity),
-  private/non-GitHub contact method and privacy request handling (#55/#83). Public GitHub
-  corrections are verified in source but are unsuitable for sensitive requests.
+- Private/non-GitHub contact: simpyll.com@gmail.com, provided by the owner October 25, 2026. Public GitHub corrections remain unsuitable for sensitive requests. Public operator identity and request handling procedures should be reviewed as needed (#55/#83).
 - Confirm intended audience, actual AI/editorial workflow, source-checking depth,
   correction handling and commercial interests; draft aspirations are not historical claims.
 - Determine applicable law/rights with qualified counsel; approve healthcare boundaries,
@@ -61,8 +57,7 @@ It describes provider processing, not a verified site-specific retention guarant
 - Confirm GitHub private vulnerability reporting availability before advertising it as
   verified (#78/#83). Existing template destination alone does not prove availability.
   Never redirect sensitive vulnerability reports to public issues.
-- Finish manual AT/device/real zoom review under #43. Read `docs/ACCESSIBILITY.md` for
-  evidence and limitations; historical CI is not certification of this branch.
+- #43 was closed at owner direction without a claim that manual AT/device/real zoom review occurred. Read `docs/ACCESSIBILITY.md` for evidence and limitations; historical CI is not certification of this branch.
 - #74 controls must precede executable embeds; #72 privacy review precedes analytics;
   #70 needs separate validation/licensing/legal review; #62 owns article update metadata.
 
