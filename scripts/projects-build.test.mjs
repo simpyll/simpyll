@@ -16,7 +16,7 @@ test('real production build excludes unpublished metadata and fails on invalid r
     const data = JSON.parse(await readFile(join(root,'content/projects.json'),'utf8'))
     for (const visibility of ['draft','private']) data.push({...data[0],id:`hidden-${visibility}`,slug:`hidden-${visibility}`,title:`UNPUBLISHED_SENTINEL_${visibility}`,visibility})
     await writeFile(join(root,'content/case-studies/unassociated.json'),JSON.stringify({sections:[{id:'private',title:'UNPUBLISHED_SENTINEL_editorial',paragraphs:['Not public'] }]}))
-    data.push({...data[0],id:'fixture-second',slug:'fixture-unique-slug',title:'Fixture second study',featured:{enabled:false,order:99},caseStudy:{contentKey:'fixture-editorial'}})
+    data.push({...data[0],id:'fixture-second',slug:'fixture-unique-slug',title:'Fixture second study',seoDescription:'An independent second case study used to verify canonical project associations.',featured:{enabled:false,order:99},caseStudy:{contentKey:'fixture-editorial'}})
     await writeFile(join(root,'content/case-studies/fixture-editorial.json'),JSON.stringify({sections:[{id:'overview',title:'Fixture overview',paragraphs:['Second study fixture content.']}]}))
     for (const visibility of ['draft','private']) data.push({...data[0],id:`study-${visibility}`,slug:`study-${visibility}`,featured:{enabled:false,order:99},caseStudy:{contentKey:`unpublished-editorial-${visibility}`,visibility}})
     await writeFile(join(root,'content/projects.json'),JSON.stringify(data))

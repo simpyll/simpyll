@@ -179,7 +179,7 @@ test('keyboard skip link, primary navigation and journal controls are usable', a
 test.describe('prerendered documents without JavaScript', () => {
   test.use({ javaScriptEnabled: false })
   const routes = [
-    ['/', 'From Bedside to Build | Simpyll'],
+    ['/', 'Software Engineering & AI from a Critical Care Nurse | Simpyll'],
     ['/blog', 'Learning Journal | Simpyll'],
     ['/blog/hello-world', 'Hello, World. | Simpyll'],
     ['/blog/why-simpyll', 'Why Simpyll? A Name, a Philosophy, and the Beauty of Doing Less | Simpyll'],

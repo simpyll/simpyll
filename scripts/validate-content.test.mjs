@@ -152,3 +152,13 @@ for (const [url, expected] of [
   else assert.deepEqual(errors, [])
   assert.doesNotMatch(errors.join('\n'), /user:secret/)
 })
+
+test('public project hub and canonical case studies are valid article destinations', async t => {
+  const root = await fixture(t, { 'valid.mdx': article('[Projects](/projects) <a href={"/projects/simpyll"}>Simpyll case study</a>') })
+  await mkdir(join(root, 'src/generated'), { recursive: true })
+  // Model the public registry contract without depending on a prior project build.
+  await writeFile(join(root, 'src/generated/projects.json'), JSON.stringify([{ slug: 'simpyll', visibility: 'public', caseStudy: { contentKey: 'simpyll' } }]))
+  assert.deepEqual((await validateContent({ root })).errors, [])
+  await writeFile(join(root, 'src/content/blog/valid.mdx'), article('[Missing project](/projects/nonexistent)'))
+  assert.match((await validateContent({ root })).errors.join('\n'), /Broken internal link/)
+})

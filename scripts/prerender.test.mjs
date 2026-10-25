@@ -5,7 +5,7 @@ import { test } from 'node:test'
 const policies = JSON.parse(await readFile('src/content/policies.json', 'utf8'))
 const pages = [
   ...policies.map(p => [`/${p.slug}`, `${p.title.replaceAll('&', '&amp;')} | Simpyll`]),
-  ['/', 'From Bedside to Build | Simpyll'],
+  ['/', 'Software Engineering &amp; AI from a Critical Care Nurse | Simpyll'],
   ['/blog', 'Learning Journal | Simpyll'],
   ['/explore', 'Explore articles | Simpyll'],
   ['/projects', 'Projects | Simpyll'],
