@@ -68,6 +68,7 @@ remain hypotheses needing Search Console/usage data and editorial review.
 | Missing / duplicate descriptions | 0 / 0 | 0 / 0 |
 | Invalid / duplicate canonicals | 0 / 0 | 0 / 0 |
 | Heading hierarchy findings | 0 | 0 |
+| Redundant presentational article H1s | 2 | 0 |
 | JSON-LD findings | 0 | 0 |
 | Sitemap inconsistencies | 0 | 0 |
 | Broken local links / fragments | 0 / 0 | 0 / 0 |
@@ -76,21 +77,25 @@ remain hypotheses needing Search Console/usage data and editorial review.
 | Empty prerendered pages/articles | 0 | 0 |
 | Editorial warnings | 7 | 7 |
 
-This is a healthy baseline, not eighteen broken pages. Most SEO infrastructure was
-already compliant. Existing successes were preserved rather than rebuilt.
+This is a healthy baseline, not eighteen broken pages. Two redundant body titles were confirmed during browser validation. Most SEO
+infrastructure was already compliant. Existing successes were preserved rather than rebuilt.
 
 ### Evidence and changes
 
 | Severity / category | Evidence | Resolution / ownership |
 | --- | --- | --- |
 | Medium confirmed tooling defect | `validate-content.mjs` allowed `/`, `/blog`, `/about`, `/explore`, policies and articles, but omitted `/projects` and public case studies. A valid authored project link failed publication. | Reuse `caseStudyRoutes(root)` and the generated public project registry; regression covers valid hub/detail links and a nonexistent project. |
+| Medium confirmed heading defect | `hello-world.mdx` and `001-python-fundamentals.mdx` repeated their exact template-owned titles as body H1s with `role="presentation"`. Browser checks exposed the duplicate elements. | Remove those two inspected redundant headings, retain all prose and template H1s, and reject presentational body H1s in the artifact gate. |
 | Low editorial opportunity | Homepage title “From Bedside to Build” describes a slogan but omits the subjects already stated in the visible introduction. | “Software Engineering & AI from a Critical Care Nurse” adds truthful subject context. Visible headline and URLs preserved. This is a clarity improvement, not a proven traffic lift. |
 | Medium preventive validation gap | Existing checks sampled templates but lacked a complete static-output graph, cross-route metadata uniqueness and registry-to-output comparison. | Bounded offline artifact gate added to existing build, with malformed-output tests and browser coverage. No baseline indexing defect invented. |
 | Low deferred editorial | Five of six articles have no body links to another internal page; navigation/related/previous-next links prevent orphaning. | Review relevant connections under #152; do not insert automatic links here. |
 | Low deferred editorial | `hello-world` and `/terms` descriptions each have 47 characters. | Review specificity if useful; do not pad or overwrite author-written descriptions to satisfy a threshold. |
 
 No Critical/High baseline defect was established. No slug, author claim, publication
-date, article text, citation or image pipeline was rewritten.
+date, article prose, citation or image pipeline was rewritten; only the two redundant
+body title headings were removed. The scaffold `hello-world` byline still says
+“Your Name”; author attribution needs editorial verification before replacement.
+This is a deferred editorial task, not a fabricated attribution.
 
 ## Route inventory and editorial review
 
@@ -169,7 +174,7 @@ manual MDX and Notion. No new service, runtime dependency, AI call or SEO framew
 ## Validation record
 
 Production build (including TypeScript, static output checks and asset budgets),
-lint, 47 content tests and 22 SEO regression tests passed locally. A focused run
+lint, 47 content tests and 23 SEO regression tests passed locally. A focused run
 of existing prerender, CI-contract, content and SEO tests also passed (88 tests
 before the additional sitemap-date regression). Full existing
 Node tests initially exposed copied duplicate metadata in two publishing fixtures;
@@ -183,3 +188,8 @@ actual no-JS visibility and hydration are separately exercised in Playwright.
 Existing keyboard, responsive, light/dark and axe suites remain enabled. Lighthouse
 lab measurements reuse the existing CI performance job. Field LCP/INP/CLS cannot be
 established from a static build or one lab run; no field-performance claim is made.
+
+Browser validation follow-up: the first full run passed build, publisher fixtures,
+axe/theme journeys and Lighthouse, but new SEO journeys detected two redundant
+presentational H1s. Both source headings were removed and a targeted artifact
+regression was added. Final CI results are recorded in PR #156.

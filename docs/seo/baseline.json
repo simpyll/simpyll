@@ -3,11 +3,12 @@
     "pages": 19,
     "indexablePages": 18,
     "canonicalUrls": 18,
-    "errors": 0,
+    "errors": 2,
     "warnings": 7,
     "counts": {
       "contextual-links": 5,
-      "description-review": 2
+      "description-review": 2,
+      "duplicate-article-title": 2
     }
   },
   "issues": [
@@ -59,6 +60,20 @@
       "severity": "Low",
       "level": "warning",
       "evidence": "47 characters; editorial review only"
+    },
+    {
+      "route": "/blog/001-python-fundamentals",
+      "code": "duplicate-article-title",
+      "severity": "Medium",
+      "level": "error",
+      "evidence": "Body H1 repeats a template-owned heading: Learning Python #001: Functions, Variables, and My First CLI Tool"
+    },
+    {
+      "route": "/blog/hello-world",
+      "code": "duplicate-article-title",
+      "severity": "Medium",
+      "level": "error",
+      "evidence": "Body H1 repeats a template-owned heading: Hello, World."
     }
   ],
   "pages": [
@@ -199,7 +214,8 @@
       "prerendered": true,
       "articleText": "",
       "articleCharacters": 0,
-      "sitemapIncluded": false
+      "sitemapIncluded": false,
+      "presentationalHeadings": []
     },
     {
       "route": "/about",
@@ -475,7 +491,8 @@
       "prerendered": true,
       "articleText": "",
       "articleCharacters": 0,
-      "sitemapIncluded": true
+      "sitemapIncluded": true,
+      "presentationalHeadings": []
     },
     {
       "route": "/accessibility",
@@ -700,7 +717,8 @@
       "prerendered": true,
       "articleText": "",
       "articleCharacters": 0,
-      "sitemapIncluded": true
+      "sitemapIncluded": true,
+      "presentationalHeadings": []
     },
     {
       "route": "/blog/001-python-fundamentals",
@@ -1272,7 +1290,10 @@
       "prerendered": true,
       "articleText": "Learning Python #001: Functions, Variables, and My First CLI Tool I'm starting something new: a long-term journey to become a proficient software engineer, with",
       "articleCharacters": 7688,
-      "sitemapIncluded": true
+      "sitemapIncluded": true,
+      "presentationalHeadings": [
+        "Learning Python #001: Functions, Variables, and My First CLI Tool"
+      ]
     },
     {
       "route": "/blog/a-hospital-is-the-most-complicated-computer-ive-ever-used",
@@ -1838,7 +1859,8 @@
       "prerendered": true,
       "articleText": "A Hospital Is the Most Complicated Computer I've Ever Used What more than a decade in critical care taught me about software, systems, and the humans holding ev",
       "articleCharacters": 24726,
-      "sitemapIncluded": true
+      "sitemapIncluded": true,
+      "presentationalHeadings": []
     },
     {
       "route": "/blog/hello-world",
@@ -2214,7 +2236,10 @@
       "prerendered": true,
       "articleText": "Hello, World. Every website starts somewhere. This is the first post on my new corner of the internet, built with Simpyll. Why I Built This I wanted a place to ",
       "articleCharacters": 414,
-      "sitemapIncluded": true
+      "sitemapIncluded": true,
+      "presentationalHeadings": [
+        "Hello, World."
+      ]
     },
     {
       "route": "/blog",
@@ -2598,7 +2623,8 @@
       "prerendered": true,
       "articleText": "",
       "articleCharacters": 0,
-      "sitemapIncluded": true
+      "sitemapIncluded": true,
+      "presentationalHeadings": []
     },
     {
       "route": "/blog/starting-over-without-starting-from-zero",
@@ -3109,7 +3135,8 @@
       "prerendered": true,
       "articleText": "Starting Over Without Starting From Zero On learning something new after spending years getting good at something else. There’s a strange feeling that comes wit",
       "articleCharacters": 13973,
-      "sitemapIncluded": true
+      "sitemapIncluded": true,
+      "presentationalHeadings": []
     },
     {
       "route": "/blog/the-art-of-reading-code",
@@ -3734,7 +3761,8 @@
       "prerendered": true,
       "articleText": "A field guide to the details that make technical writing worth exploring. A good developer blog tells you what someone built. A great developer blog makes you w",
       "articleCharacters": 7356,
-      "sitemapIncluded": true
+      "sitemapIncluded": true,
+      "presentationalHeadings": []
     },
     {
       "route": "/blog/why-simpyll",
@@ -4217,7 +4245,8 @@
       "prerendered": true,
       "articleText": "On Jekyll, Unix, and the idea that complexity is best managed through simplicity. Every project needs a name. Some names are carefully engineered. Others emerge",
       "articleCharacters": 10188,
-      "sitemapIncluded": true
+      "sitemapIncluded": true,
+      "presentationalHeadings": []
     },
     {
       "route": "/disclaimers",
@@ -4460,7 +4489,8 @@
       "prerendered": true,
       "articleText": "",
       "articleCharacters": 0,
-      "sitemapIncluded": true
+      "sitemapIncluded": true,
+      "presentationalHeadings": []
     },
     {
       "route": "/editorial-standards",
@@ -4703,7 +4733,8 @@
       "prerendered": true,
       "articleText": "",
       "articleCharacters": 0,
-      "sitemapIncluded": true
+      "sitemapIncluded": true,
+      "presentationalHeadings": []
     },
     {
       "route": "/explore",
@@ -5077,7 +5108,8 @@
       "prerendered": true,
       "articleText": "",
       "articleCharacters": 0,
-      "sitemapIncluded": true
+      "sitemapIncluded": true,
+      "presentationalHeadings": []
     },
     {
       "route": "/",
@@ -5328,7 +5360,8 @@
       "prerendered": true,
       "articleText": "",
       "articleCharacters": 0,
-      "sitemapIncluded": true
+      "sitemapIncluded": true,
+      "presentationalHeadings": []
     },
     {
       "route": "/privacy",
@@ -5589,7 +5622,8 @@
       "prerendered": true,
       "articleText": "",
       "articleCharacters": 0,
-      "sitemapIncluded": true
+      "sitemapIncluded": true,
+      "presentationalHeadings": []
     },
     {
       "route": "/projects/ai-engineering",
@@ -6005,7 +6039,8 @@
       "prerendered": true,
       "articleText": "",
       "articleCharacters": 0,
-      "sitemapIncluded": true
+      "sitemapIncluded": true,
+      "presentationalHeadings": []
     },
     {
       "route": "/projects",
@@ -6290,7 +6325,8 @@
       "prerendered": true,
       "articleText": "",
       "articleCharacters": 0,
-      "sitemapIncluded": true
+      "sitemapIncluded": true,
+      "presentationalHeadings": []
     },
     {
       "route": "/projects/simpyll",
@@ -6633,7 +6669,8 @@
       "prerendered": true,
       "articleText": "",
       "articleCharacters": 0,
-      "sitemapIncluded": true
+      "sitemapIncluded": true,
+      "presentationalHeadings": []
     },
     {
       "route": "/terms",
@@ -6867,7 +6904,8 @@
       "prerendered": true,
       "articleText": "",
       "articleCharacters": 0,
-      "sitemapIncluded": true
+      "sitemapIncluded": true,
+      "presentationalHeadings": []
     }
   ]
 }

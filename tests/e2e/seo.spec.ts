@@ -10,7 +10,8 @@ for (const javaScriptEnabled of [true, false]) {
       page.on('console', message => { if (/hydrati|Minified React error/i.test(message.text())) errors.push(message.text()) })
       for (const route of routes) {
         await page.goto(route)
-        await expect(page.locator('main h1')).toBeVisible()
+        await expect(page.getByRole('main').getByRole('heading', { level: 1 })).toBeVisible()
+        await expect(page.locator('main h1')).toHaveCount(1)
         await expect(page.locator('title')).toHaveCount(1)
         await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/)
         if (route === '/404') {

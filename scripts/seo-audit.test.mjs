@@ -44,6 +44,7 @@ for (const [name, markup, code] of [
   ['missing title', html().replace(/<title>.*?<\/title>/, ''), 'title'],
   ['duplicated description', html({ head: '<meta name="description" content="duplicate">' }), 'description'],
   ['staging canonical', html().replace('rel="canonical" href="https://simpyll.com/', 'rel="canonical" href="https://staging.invalid/'), 'canonical'],
+  ['duplicated presentational title', html({ body: '<h1>Example page</h1><h1 role="presentation">Example page</h1>' }), 'duplicate-article-title'],
   ['missing primary heading', html({ body: '<p>Body without a primary heading</p>' }), 'h1'],
   ['broken local destination', html({ body: '<h1>Example</h1><a href="/missing">Missing article</a>' }), 'broken-link'],
   ['broken fragment', html({ body: '<h1>Example</h1><a href="#absent">Absent section</a>' }), 'broken-fragment'],

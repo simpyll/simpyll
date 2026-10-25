@@ -78,6 +78,7 @@
           "text": "Page not found."
         }
       ],
+      "presentationalHeadings": [],
       "social": {
         "og:title": "Page not found | Simpyll",
         "og:description": "The requested page could not be found.",
@@ -292,6 +293,7 @@
           "text": "Have an idea, question, or something worth building?"
         }
       ],
+      "presentationalHeadings": [],
       "social": {
         "og:title": "About David Becker — Critical Care Nurse & Curious Builder | Simpyll",
         "og:description": "Meet David Becker, a critical care nurse exploring software engineering, AI, and healthcare technology. Learn about the person and ideas behind Simpyll.",
@@ -513,6 +515,7 @@
           "text": "Feedback and follow-up"
         }
       ],
+      "presentationalHeadings": [],
       "social": {
         "og:title": "Accessibility Statement | Simpyll",
         "og:description": "Accessibility goals, tested scope and remaining limitations.",
@@ -791,6 +794,7 @@
           "text": "Why Simpyll? A Name, a Philosophy, and the Beauty of Doing Less"
         }
       ],
+      "presentationalHeadings": [],
       "social": {
         "og:title": "Learning Python #001: Functions, Variables, and My First CLI Tool | Simpyll",
         "og:description": "Starting my journey into software and AI engineering with Harvard CS50P, Python fundamentals, and my first command-line application.",
@@ -1273,9 +1277,9 @@
       ],
       "contextualOutbound": [],
       "prerendered": true,
-      "articleText": "Learning Python #001: Functions, Variables, and My First CLI Tool I'm starting something new: a long-term journey to become a proficient software engineer, with",
+      "articleText": "I'm starting something new: a long-term journey to become a proficient software engineer, with the ultimate goal of specializing in artificial intelligence and ",
       "crawlDepth": 2,
-      "articleCharacters": 7688,
+      "articleCharacters": 7622,
       "sitemapIncluded": true
     },
     {
@@ -1372,6 +1376,7 @@
           "text": "Why Simpyll? A Name, a Philosophy, and the Beauty of Doing Less"
         }
       ],
+      "presentationalHeadings": [],
       "social": {
         "og:title": "A Hospital Is the Most Complicated Computer I've Ever Used | Simpyll",
         "og:description": "What more than a decade in critical care taught me about software, systems, and the humans holding everything together.",
@@ -1887,6 +1892,7 @@
           "text": "Why Simpyll? A Name, a Philosophy, and the Beauty of Doing Less"
         }
       ],
+      "presentationalHeadings": [],
       "social": {
         "og:title": "Hello, World. | Simpyll",
         "og:description": "The first post on a new corner of the internet.",
@@ -2217,9 +2223,9 @@
       ],
       "contextualOutbound": [],
       "prerendered": true,
-      "articleText": "Hello, World. Every website starts somewhere. This is the first post on my new corner of the internet, built with Simpyll. Why I Built This I wanted a place to ",
+      "articleText": "Every website starts somewhere. This is the first post on my new corner of the internet, built with Simpyll. Why I Built This I wanted a place to share my proje",
       "crawlDepth": 2,
-      "articleCharacters": 414,
+      "articleCharacters": 400,
       "sitemapIncluded": true
     },
     {
@@ -2264,6 +2270,7 @@
           "text": "Hello, World."
         }
       ],
+      "presentationalHeadings": [],
       "social": {
         "og:title": "Learning Journal | Simpyll",
         "og:description": "A critical care nurse’s public learning journal: notes on programming, software engineering, AI, and the questions connecting healthcare and technology.",
@@ -2685,6 +2692,7 @@
           "text": "Why Simpyll? A Name, a Philosophy, and the Beauty of Doing Less"
         }
       ],
+      "presentationalHeadings": [],
       "social": {
         "og:title": "Starting Over Without Starting From Zero | Simpyll",
         "og:description": "On learning something new after spending years getting good at something else.",
@@ -3213,6 +3221,7 @@
           "text": "A Hospital Is the Most Complicated Computer I've Ever Used"
         }
       ],
+      "presentationalHeadings": [],
       "social": {
         "og:title": "The Art of Reading Code: Inside Simpyll’s New Journal Experience | Simpyll",
         "og:description": "A hands-on tour of code highlighting, responsive tables, callouts, figures, disclosures, footnotes, and the details that make technical writing a pleasure to read.",
@@ -3811,6 +3820,7 @@
           "text": "A Hospital Is the Most Complicated Computer I've Ever Used"
         }
       ],
+      "presentationalHeadings": [],
       "social": {
         "og:title": "Why Simpyll? A Name, a Philosophy, and the Beauty of Doing Less | Simpyll",
         "og:description": "On Jekyll, Unix, and the idea that complexity is best managed through simplicity.",
@@ -4271,6 +4281,7 @@
           "text": "Report an inaccuracy"
         }
       ],
+      "presentationalHeadings": [],
       "social": {
         "og:title": "Medical & Educational Disclaimers | Simpyll",
         "og:description": "Boundaries for healthcare education and experimental tools.",
@@ -4515,6 +4526,7 @@
           "text": "Material interests"
         }
       ],
+      "presentationalHeadings": [],
       "social": {
         "og:title": "Editorial Standards & AI Disclosure | Simpyll",
         "og:description": "Research, learning in public, AI assistance and corrections.",
@@ -4759,6 +4771,7 @@
           "text": "Hello, World."
         }
       ],
+      "presentationalHeadings": [],
       "social": {
         "og:title": "Explore articles | Simpyll",
         "og:description": "Search the learning journal and explore articles by category and tag.",
@@ -5142,6 +5155,7 @@
           "text": "About."
         }
       ],
+      "presentationalHeadings": [],
       "social": {
         "og:title": "Software Engineering & AI from a Critical Care Nurse | Simpyll",
         "og:description": "A critical care nurse learning software engineering and AI. A public journal of technical writing, experiments, and the journey from bedside to build.",
@@ -5394,6 +5408,7 @@
           "text": "Policy updates"
         }
       ],
+      "presentationalHeadings": [],
       "social": {
         "og:title": "Privacy Policy | Simpyll",
         "og:description": "How the current static website handles information.",
@@ -5664,6 +5679,7 @@
           "text": "Follow the evidence as it develops"
         }
       ],
+      "presentationalHeadings": [],
       "social": {
         "og:title": "AI Engineering — Project case study | Simpyll",
         "og:description": "Explore a five-hour weekly AI engineering learning workflow: start with NOW.md, build the assigned deliverable, assess understanding, and record evidence.",
@@ -6145,6 +6161,7 @@
           "text": "Archived"
         }
       ],
+      "presentationalHeadings": [],
       "social": {
         "og:title": "Projects | Simpyll",
         "og:description": "Explore Simpyll’s living project lab: active engineering, upcoming tools, and educational software ideas.",
@@ -6379,6 +6396,7 @@
           "text": "A living project archive"
         }
       ],
+      "presentationalHeadings": [],
       "social": {
         "og:title": "Simpyll — Project case study | Simpyll",
         "og:description": "How Simpyll combines a personal website, technical journal, and living project portfolio with static publishing and automated checks.",
@@ -6691,6 +6709,7 @@
           "text": "Changes and contact"
         }
       ],
+      "presentationalHeadings": [],
       "social": {
         "og:title": "Terms of Use | Simpyll",
         "og:description": "Conditions for using this personal publication.",

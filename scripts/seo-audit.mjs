@@ -25,6 +25,7 @@ export async function auditSeo({ directory = 'dist', expectedRoutes, articles } 
         const redirect = !!doc.querySelector('meta[http-equiv="refresh"]')
         const indexable = !/\bnoindex\b/i.test(robots) && !redirect && route !== '/404'
         const canonicals = [...doc.querySelectorAll('link[rel="canonical"]')].map(n => n.getAttribute('href'))
+        const presentationalHeadings = [...doc.querySelectorAll('main h1[role="presentation"]')].map(text)
         const headings = [...doc.querySelectorAll('main h1,main h2,main h3,main h4,main h5,main h6')].filter(n => n.getAttribute('role') !== 'presentation').map(n => ({ level: Number(n.localName[1]), text: text(n) }))
         const schemas = []
         for (const node of doc.querySelectorAll('script[type="application/ld+json"]')) {
@@ -34,7 +35,7 @@ export async function auditSeo({ directory = 'dist', expectedRoutes, articles } 
         const links = [...doc.querySelectorAll('a[href]')].map(n => ({ href: n.getAttribute('href'), anchor: n.getAttribute('aria-label') || text(n), contextual: !!n.closest('.article-content') }))
         const images = [...doc.querySelectorAll('img')].map(n => ({ src: n.getAttribute('src'), alt: n.getAttribute('alt'), width: n.getAttribute('width'), height: n.getAttribute('height'), loading: n.getAttribute('loading'), srcset: n.getAttribute('srcset') }))
         const social = Object.fromEntries(['og:title','og:description','og:url','og:type','og:image','twitter:title','twitter:description','twitter:card','twitter:image'].map(key => [key, content(doc, `meta[${key.startsWith('og:') ? 'property' : 'name'}="${key}"]`)]))
-        const page = { route, url: origin + route, pageType: redirect ? 'redirect' : route === '/404' ? '404' : route.startsWith('/blog/') ? 'article' : route.startsWith('/projects/') ? 'case-study' : 'page', indexable, httpStatus: null, robots, canonicals, title: text(doc.querySelector('title')), description: content(doc, 'meta[name="description"]'), headings, social, schemas, links, images, inbound: [], outbound: [], contextualOutbound: [], prerendered: !!doc.querySelector('main') && !!text(doc.querySelector('main')), articleText: text(doc.querySelector('.article-content')), ids: [...doc.querySelectorAll('[id]')].map(n => n.id) }
+        const page = { route, url: origin + route, pageType: redirect ? 'redirect' : route === '/404' ? '404' : route.startsWith('/blog/') ? 'article' : route.startsWith('/projects/') ? 'case-study' : 'page', indexable, httpStatus: null, robots, canonicals, title: text(doc.querySelector('title')), description: content(doc, 'meta[name="description"]'), headings, presentationalHeadings, social, schemas, links, images, inbound: [], outbound: [], contextualOutbound: [], prerendered: !!doc.querySelector('main') && !!text(doc.querySelector('main')), articleText: text(doc.querySelector('.article-content')), ids: [...doc.querySelectorAll('[id]')].map(n => n.id) }
         pages.push(page)
         if (!indexable) {
           if (!/\bnoindex\b/i.test(robots)) add(route, 'special-indexability', 'High', '404/redirect must declare noindex')
@@ -45,6 +46,7 @@ export async function auditSeo({ directory = 'dist', expectedRoutes, articles } 
           if (!value || doc.querySelectorAll(selector).length !== 1) add(route, code, 'High', `Expected one nonempty ${code}`)
         }
         if (headings.filter(h => h.level === 1).length !== 1) add(route, 'h1', 'Medium', 'Expected one primary heading')
+        if (presentationalHeadings.length) add(route, 'duplicate-article-title', 'Medium', `Body H1 repeats a template-owned heading: ${presentationalHeadings.join('; ')}`)
         let previous = 0
         for (const heading of headings) {
           if (heading.level > previous + 1) add(route, 'heading-order', 'Medium', `H${previous} → H${heading.level}: ${heading.text}`, 'warning')
