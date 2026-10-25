@@ -43,3 +43,5 @@ artifacts/
 /src/generated/case-studies.json
 
 /public/rss.xml
+
+/src/generated/article-navigation.json

@@ -160,3 +160,22 @@ preserved; languages without spaces have approximate counts. Custom component
 output and prose passed only through attributes cannot be inferred statically.
 Notion synchronization needs no new properties: each ordinary rebuild derives
 fresh estimates from the updated article source. RSS, dates and URLs are unchanged.
+
+### Chronological article navigation
+
+Article footers link to the immediately older **Previous article** and immediately
+newer **Next article** in the existing public MDX registry. Chronology uses the
+original `metadata.date`, then immutable `articleId` in ascending ASCII order for
+equal dates. Updates do not move posts. The index keeps its existing ordering.
+`createArticleAdjacency` builds a lookup during the existing redirect generation step without mutating
+posts; rendering only looks up the current identity, with no browser sorting. Links use current canonical slugs,
+never historical aliases. Duplicates and incomplete/nonpublic metadata are excluded
+defensively; the existing build validation rejects invalid public source content.
+Private manual articles belong outside the public directory. Notion withdrawals
+remove public MDX through the existing sync contract. Publishing, removing, or
+renaming a Notion article updates navigation on the next normal build; no new
+workflow or CMS field is involved. Boundaries omit unavailable links, and single
+or empty publications have no navigation. Links are prerendered and work without JS.
+
+After `npm run build`, run `node --test scripts/article-adjacency.test.mjs` and
+`npx playwright test article-navigation accessibility theme` for regression checks.
