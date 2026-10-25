@@ -129,8 +129,8 @@ jobs:
       - run: npm run test:notion:build
       - name: Test rich MDX and Notion rendering
         run: npm run test:mdx
-      - name: Preserve fixture failure diagnostics
-        if: failure()
+      - name: Preserve fixture diagnostics and syntax screenshots
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: publishing-fixture-results

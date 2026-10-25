@@ -53,7 +53,7 @@ use explicit `headers`/`id` associations for multilevel headers.
 Code preserves source whitespace; the toolbar shows the language and provides a
 keyboard-accessible copy button with live success/failure feedback. Copy requires
 JavaScript and Clipboard API permission; selecting code remains the fallback.
-Highlight colors reuse the semantic palette. No article animation is introduced.
+Highlight colors use the GitHub-style syntax roles described below. No article animation is introduced.
 
 ## Notion compatibility and safety
 
@@ -109,7 +109,7 @@ client-only code rendering, highlighting here stays static and readable without 
 
 The [article TOC](ARTICLE-TOC.md) uses the shared heading compiler and navigation
 clearance. #9 reading progress remains separate.
-This implements the basic copy/highlighting needed by #58 without closing #13/#16;
+This implements the basic copy/highlighting needed by #58 without closing #13;
 further language themes/copy refinements can build on it. GFM footnotes render,
 while bibliography, clinical reference authoring and Notion citations remain #63.
 No screen-reader user study, real-device testing, or complete WCAG audit is claimed.
@@ -200,3 +200,70 @@ chronological neighbors; relevance is literal taxonomy overlap, not semantic mat
 
 Run `npm run build`, `node --test scripts/related-articles.test.mjs`, and
 `npx playwright test related-articles article-navigation accessibility theme`.
+
+### GitHub-style syntax palettes (#16)
+
+Before this refinement, comments used site-muted text, keywords/titles used the
+mint accent, and strings/numbers used body text. `rehype-highlight` still runs with
+`detect: false, ignoreMissing: true` in the existing MDX build. Labeled supported
+fences emit highlight.js `hljs-*` spans; unlabelled/plain-text/unknown fences retain
+readable source and existing labels/copy controls. No browser grammar is shipped.
+
+`src/index.css` defines `--code-*` roles alongside existing theme tokens. Dark is
+the root default; light values follow both `data-theme="light"` and the existing
+`prefers-color-scheme` fallback for a root without a theme attribute. The existing
+head bootstrap alone resolves saved preferences before hydration. No code-specific
+state, toggle, dependency or additional build is introduced.
+
+The mapping follows highlight.js's established
+[GitHub](https://github.com/highlightjs/highlight.js/blob/main/src/styles/github.css)
+and [GitHub Dark](https://github.com/highlightjs/highlight.js/blob/main/src/styles/github-dark.css)
+themes using the requested updated reference hues. Keywords/types use red;
+function titles purple; class titles/built-ins/symbols orange; literals/numbers/
+attributes/operators/variables blue; strings/regex navy or pale blue; comments gray;
+tags/selectors green. Properties, params and punctuation inherit foreground.
+Nested substitutions reset to foreground; meta strings/keywords retain their roles.
+Markdown emphasis/strong retain their font semantics; diffs retain literal +/-
+markers and use readable addition/deletion foreground/background pairs. Syntax
+remains understandable as source text without color. Inline code keeps site tokens.
+
+Light comments are conservatively darkened from `#6e7781` to `#68717b` to meet 4.5:1
+on `#f6f8fa`. Markdown headings use the literal blue rather than the older dark
+GitHub theme's lower-contrast `#1f6feb`. Selection explicitly sets foreground and
+background for every token. Print resets all code tokens to dark ink on white,
+including nested spans and diffs, hides copy controls and preserves existing wrapping.
+This is code-only print support; broader article print layout remains #17.
+
+When adjusting a role, measure every meaningful text color against its actual
+background (including diff/selection), requiring at least 4.5:1. The rich fixture
+now covers JS, TS, TSX, JSON, Bash, Python, CSS, HTML, Markdown, SQL, diff, plain text,
+unknown languages and long lines. `npm run test:mdx` reuses the existing isolated
+fixture build; browser checks inspect computed colors, all rendered text-token
+contrast, theme switching/reload, selection colors, no-JS OS themes, narrow
+viewports, 200% text scaling, print, copy controls, keyboard scrolling and axe.
+Contrast reports and light/dark screenshots are in `artifacts/rich-content/`.
+Run `npm run build`, `npm run lint`, and `npx playwright test theme accessibility`
+for the shared theme/accessibility contract. Browser zoom/text scaling and automated
+axe checks do not constitute a complete WCAG audit or real-device verification.
+
+Verified contrast ratios on the actual code backgrounds:
+
+| Role | Light | Dark |
+| --- | ---: | ---: |
+| Foreground | 13.76 | 12.26 |
+| Comments | 4.66 | 6.15 |
+| Keywords | 5.03 | 7.51 |
+| Strings | 12.03 | 12.31 |
+| Functions | 4.74 | 9.72 |
+| Classes / built-ins | 6.94 | 9.77 |
+| Literals | 7.13 | 9.73 |
+| Tags | 6.94 | 12.32 |
+| Selection | 9.87 | 8.50 |
+
+Reviewed [light](screenshots/syntax/desktop-light.png) and
+[dark](screenshots/syntax/desktop-dark.png) screenshots, with
+[mobile light](screenshots/syntax/mobile-light.png) and
+[mobile dark](screenshots/syntax/mobile-dark.png) evidence. Long lines scroll inside
+the code surface rather than wrapping. Local Chromium 153 passed all ten rich
+fixture browser journeys and 132 shared theme/accessibility browser checks.
+The normal CI runner uses the repository's pinned Playwright browsers.
