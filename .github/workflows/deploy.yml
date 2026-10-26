@@ -20,6 +20,7 @@ concurrency:
 
 jobs:
   build:
+    if: github.ref == 'refs/heads/main'
     timeout-minutes: 30
     env:
       VITE_GA4_ENABLED: ${{ vars.GA4_TRACKING_ENABLED }}
@@ -35,6 +36,9 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ inputs.ref || github.sha }}
+
+      - name: Reject revisions outside main
+        run: git merge-base --is-ancestor HEAD origin/main
 
       - name: Record checked-out deployment identity
         id: revision

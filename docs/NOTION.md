@@ -269,3 +269,90 @@ build's content validator also apply to publisher-generated reference links.
 The [recovery audit and local-change safeguards](NOTION-RECOVERY.md#follow-up-audit-and-local-change-protection-october-26-2026)
 explain dry-run conflict reporting, staged/unstaged protection and shared manifest
 validation. Preserve local work before an explicit recovery apply.
+
+## Private local draft preview (#64)
+
+Use a trusted local checkout, Node 24, Git with full history, and `npm ci`.
+The integration needs read access to the selected article. This command is
+forbidden in CI, including manual Actions dispatch. It never writes Notion,
+commits, pushes, or enables a public tunnel.
+
+Read the token without placing its value in shell history (bash/zsh):
+
+```sh
+read -rs NOTION_API_TOKEN
+export NOTION_API_TOKEN
+npm run preview:notion -- --page 0123456789abcdef0123456789abcdef --allow-unpublished
+unset NOTION_API_TOKEN
+```
+
+Paste the token at the silent prompt, press Enter, then run the remaining lines.
+Use the article's page ID, not the database ID. Only active **Draft** or **Ready**
+pages are accepted; there is no workspace browsing or bulk preview. The explicit
+`--allow-unpublished` argument acknowledges access to private content. Missing
+credentials, inaccessible pages and invalid IDs fail closed. Keep Slug and
+Published Date filled with intended values; invalid/missing metadata or a slug
+reserved by an existing article/alias stops the preview. Name and other supported
+metadata use the exact production metadata rules, including production defaults
+for author, category and excerpt. This does not reserve any identity or route.
+
+After the private production build succeeds, open the printed
+`http://127.0.0.1:PORT/blog/SLUG/` address. The article uses the existing MDX
+compiler, headings, syntax highlighting, figures, TOC, citations, themes,
+responsive typography and print styles. A restrained **Draft Preview — Not
+Published** indicator identifies the local copy. Review keyboard navigation,
+images, captions, links and Print → Save as PDF. Normal public links may navigate
+to the real site; the article's canonical/structured data still use production
+URLs, so these URLs do not prove publication.
+
+For mobile layout, use desktop browser device emulation. This command has no LAN
+mode. For a physical device, an independently configured authenticated SSH tunnel
+to the loopback port is possible; never bind it publicly or use a public tunnel.
+The command does not set up device networking or authentication.
+
+Stop with Ctrl+C, edit Notion, then rerun to refresh. There is deliberately no
+watcher, live Notion polling, or automatic status transition. The workflow
+rechecks status/revision after reading. Edits made later require a fresh run.
+When satisfied, explicitly change Notion status to **Published** and let the
+existing main-only publisher deploy normally. A preview is not publication
+approval and cannot bypass the Published-only sync gate.
+
+### Privacy boundary and troubleshooting
+
+A mode-0700 OS temporary workspace holds a separate source/Git/dependency copy,
+downloaded images and the entire private production build. The original content,
+`.notion/published.json`, media, generated registries and `dist` are untouched.
+The private copy uses normal generators, so it contains local sitemap/search/RSS/
+related-link datasets containing the preview; **none are production artifacts**.
+Never upload, commit, share, or deploy this temporary directory. No Actions
+workflow runs a real private preview; CI uses synthetic fixtures only. Production
+builds cannot discover the directory. The local static server exposes only its
+`dist`, rejects host rebinding/hidden paths/traversal, sets no-store/noindex
+headers and blocks API/analytics connections and frames. No secrets are passed
+to the build process; raw compiler/build output is withheld because it can quote
+private prose. This is not a sandbox for untrusted repository source or plugins.
+
+For errors, verify token/access, explicit page selection, active Draft/Ready
+status, Slug/Published Date, Name, editorial metadata and conflicts with existing
+routes. Consult [block compatibility](NOTION-BLOCKS.md), [MDX](MDX.md) and
+[images](IMAGES.md) for unsupported blocks, missing image accessibility markers,
+unsafe links, attachment restrictions, citations and media failures. Fix Notion
+and retry; errors do not replace the published version. Build failure output is
+intentionally withheld, which limits line-level diagnostics.
+
+Notion-hosted images reuse production download/type/size/security checks and
+are optimized only in the temporary copy; expired URLs/download failures abort.
+Ordinary external HTTPS images remain remote, as in production: loading them can
+contact that host and reveal your IP. External links are not crawled for liveness.
+No permanent private media archive is created.
+
+Successful exit, common errors, SIGINT and SIGTERM remove temporary data. SIGKILL,
+power loss, process crashes or OS/filesystem deletion failures can leave a
+`simpyll-private-preview-*` directory in the OS temporary location. After confirming
+no preview process is running, delete the exact leftover directory using your file
+manager. OS swap, backups, browser memory/history and screenshots are outside this
+cleanup guarantee. Stopping deletes the served files; already-open browser pages
+may retain rendered content until closed. Local users with your account or root
+access are within the trust boundary. The build can be slower and require more
+disk space than the public dev server because it copies dependencies and performs
+the full production build.
