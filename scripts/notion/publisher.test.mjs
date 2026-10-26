@@ -112,7 +112,7 @@ test('manual changes to generated files and unsafe manifest paths are rejected',
   await sync()
   await writeFile(join(root, 'src/content/blog/notion-fixture.mdx'), 'manual modification')
   await assert.rejects(sync(), /manually changed/)
-  await writeFile(join(root, '.notion/published.json'), JSON.stringify({ version: 1, articles: {}, files: { '../private': 'hash' } }))
+  await writeFile(join(root, '.notion/published.json'), JSON.stringify({ version: 1, sourceId: SOURCE, articles: {}, files: { '../private': 'f'.repeat(64) } }))
   await assert.rejects(sync(), /Unsafe manifest/)
 })
 test('missing optional metadata has stable defaults, dates are validated, and select Status works', async t => {
@@ -266,4 +266,40 @@ test('withdrawal and republication preserve original publication and slug aliase
   assert.equal(metadata.articleId, `notion:${PAGE}`)
   assert.equal(metadata.date, '2026-10-20')
   assert.equal(metadata.updatedAt, undefined)
+})
+
+test('revoked credentials at discovery or query preserve every previously published byte', async t => {
+  const { root, sync } = await setup(t)
+  await sync()
+  const before = await snapshot(root)
+  for (const status of [401, 403]) {
+    for (const queryOnly of [false, true]) {
+      const source = fixture()
+      await assert.rejects(sync({ api: async (path, body) => {
+        if (!queryOnly || path.endsWith('/query')) {
+          const error = new Error(`Notion request failed (HTTP ${status})`)
+          error.status = status; throw error
+        }
+        return source.api(path, body)
+      } }), /HTTP/)
+      assert.deepEqual(await snapshot(root), before)
+    }
+  }
+})
+
+test('incomplete manifest identities and conflicting aliases abort before API calls or writes', async t => {
+  const { root, sync } = await setup(t)
+  await sync()
+  const original = JSON.parse(await readFile(join(root, '.notion/published.json')))
+  for (const mode of ['mapping', 'slug', 'identity', 'alias']) {
+    const m = structuredClone(original)
+    if (mode === 'mapping') delete m.files['src/content/blog/notion-fixture.mdx']
+    if (mode === 'slug') m.articles[PAGE].slug = '../outside'
+    if (mode === 'identity') { m.articles.invalid = m.articles[PAGE]; delete m.articles[PAGE] }
+    if (mode === 'alias') m.articles['f'.repeat(32)] = { ...m.articles[PAGE], status: 'unpublished' }
+    await writeFile(join(root, '.notion/published.json'), JSON.stringify(m))
+    const before = await snapshot(root)
+    await assert.rejects(sync({ api: async () => { assert.fail('invalid manifest must be rejected before API access') } }), /mapping|slug|identity|collision/i)
+    assert.deepEqual(await snapshot(root), before)
+  }
 })

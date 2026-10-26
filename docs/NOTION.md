@@ -264,3 +264,7 @@ hyperlinks instead. Native GFM footnotes are supported in manually authored MDX.
 Do not use code blocks or raw HTML to bypass this safety boundary. Citation
 accuracy remains the author's responsibility. Existing URL safety checks and the
 build's content validator also apply to publisher-generated reference links.
+
+The [recovery audit and local-change safeguards](NOTION-RECOVERY.md#follow-up-audit-and-local-change-protection-october-26-2026)
+explain dry-run conflict reporting, staged/unstaged protection and shared manifest
+validation. Preserve local work before an explicit recovery apply.

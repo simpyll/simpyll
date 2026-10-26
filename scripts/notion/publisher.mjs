@@ -1,3 +1,4 @@
+import { manifest } from './manifest.mjs'
 import { normalizeEditorial } from '../../src/lib/editorial.mjs'
 import { ownedPath } from './ownership.mjs'
 import { advanceHistory, normalizeSlug, resolveRegistry, readMetadata, manualHistory } from '../redirects.mjs'
@@ -267,7 +268,7 @@ async function readOptional(path) {
 // Build a complete plan before touching disk. Any API/conversion/collision error aborts it.
 export async function synchronize({ root, api, pageId, imageDownloader = downloadImage, validate = async () => {} , dryRun = false }) {
   const oldBytes = await readOptional(join(root, manifestPath))
-  const old = oldBytes ? JSON.parse(oldBytes.toString()) : { version: 1, articles: {}, files: {} }
+  const old = oldBytes ? manifest(oldBytes) : { version: 1, articles: {}, files: {} }
   if (old.version !== 1 || !old.files || !old.articles) throw new Error('Invalid publisher manifest')
   for (const [path, digest] of Object.entries(old.files)) {
     if (!ownedPath(path)) throw new Error('Unsafe manifest path')

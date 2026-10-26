@@ -1,15 +1,14 @@
-import { ownedPath as owned } from './ownership.mjs'
+import { manifest, claims } from './manifest.mjs'
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { readFile, lstat, readdir, mkdir, writeFile, unlink, realpath } from 'node:fs/promises'
 import { join, dirname, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { readMetadata, normalizeSlug, resolveRegistry, manualHistory } from '../redirects.mjs'
+import { readMetadata, resolveRegistry, manualHistory } from '../redirects.mjs'
 
 const manifestPath = '.notion/published.json'
 const digest = bytes => createHash('sha256').update(bytes).digest('hex')
 const articlePath = a => `src/content/blog/${a.slug}.mdx`
-const object = v => v && typeof v === 'object' && !Array.isArray(v)
 function git(root, args) {
   return execFileSync('git', args, { cwd: root, maxBuffer: 64 * 1024 * 1024, stdio: ['ignore', 'pipe', 'pipe'] })
 }
@@ -18,27 +17,6 @@ function revision(root, ref) {
   try { return git(root, ['rev-parse', '--verify', '--end-of-options', `${ref}^{commit}`]).toString().trim() }
   catch { throw new Error('Unavailable Git revision; fetch the requested history first') }
 }
-function manifest(bytes) {
-  let m
-  try { m = JSON.parse(bytes) } catch { throw new Error('Invalid publisher manifest JSON') }
-  if (m.version !== 1 || !/^[a-f0-9]{32}$/.test(m.sourceId) || !object(m.articles) || !object(m.files)) throw new Error('Invalid publisher manifest structure')
-  for (const [p, hash] of Object.entries(m.files)) if (!owned(p) || !/^[a-f0-9]{64}$/.test(hash)) throw new Error('Unsafe manifest path or digest')
-  for (const [id, a] of Object.entries(m.articles)) {
-    if (!/^[a-f0-9]{32}$/.test(id) || !object(a) || !['published', 'unpublished'].includes(a.status)) throw new Error('Invalid immutable identity/status')
-    if (normalizeSlug(a.slug) !== a.slug || !/^\d{4}-\d{2}-\d{2}$/.test(a.date)) throw new Error('Invalid article slug/date')
-    for (const field of ['history', 'redirectFrom']) {
-      if (a[field] !== undefined && !Array.isArray(a[field])) throw new Error('Invalid alias history')
-      for (const s of a[field] ?? []) if (normalizeSlug(s) !== s) throw new Error('Invalid alias')
-    }
-    if (a.assets !== undefined && !object(a.assets)) throw new Error('Invalid image mapping')
-    for (const asset of Object.values(a.assets ?? {})) if (!object(asset) || !asset.path?.startsWith(`public/images/notion/${id}/`) || !m.files[asset.path]) throw new Error('Missing historical asset mapping')
-    if (a.status === 'published' && !m.files[articlePath(a)]) throw new Error('Missing published article mapping')
-  }
-  for (const p of Object.keys(m.files).filter(p => p.endsWith('.mdx'))) if (!Object.values(m.articles).some(a => a.status === 'published' && articlePath(a) === p)) throw new Error('Orphan article mapping')
-  resolveRegistry(claims(m))
-  return m
-}
-const claims = m => Object.entries(m.articles).map(([id, a]) => ({ id: `notion:${id}`, slug: a.slug, status: a.status, aliases: [...(a.history ?? []), ...(a.redirectFrom ?? [])] }))
 async function safe(root, path, directory = false) {
   // Every component is checked, including the destination leaf. Never follow links.
   let current = root
@@ -77,7 +55,8 @@ async function validateFiles(m, files) {
     // Parsing/compiling to an AST never evaluates historical JavaScript or MDX.
     const metadata = await readMetadata(bytes.toString())
     if (metadata.articleId !== `notion:${id}` || metadata.slug !== a.slug || metadata.date !== a.date) throw new Error('Article metadata disagrees with immutable identity/slug/date')
-    const refs = bytes.toString().match(/\/images\/notion\/[^\s"'<>\\})]+/g) ?? []
+    if (metadata.draft === true || metadata.published === false || metadata.test === true || metadata.status !== undefined && (typeof metadata.status !== 'string' || metadata.status.toLowerCase() !== 'published')) throw new Error('Published article has nonpublic metadata')
+    const refs = bytes.toString().match(/(?<![a-zA-Z0-9:/])\/images\/[^\s"'<>\\})]+/g) ?? []
     for (const ref of refs) if (!m.files[`public${ref}`] || !files.has(`public${ref}`)) throw new Error(`Missing image reference: ${ref}`)
     for (const asset of Object.values(a.assets ?? {})) if (!files.has(asset.path)) throw new Error('Missing historical asset')
   }
@@ -167,6 +146,18 @@ export async function recover({ root = process.cwd(), ref, articles = [], all = 
     if (!before) deletes.delete(p)
     else backups.set(p, before)
   }
+  const changedPaths = new Set([...writes, ...deletes])
+  // Include staged, unstaged and untracked destinations. Never discard local work.
+  const localChanges = new Set([
+    ...git(root, ['diff', '--name-only', '-z', 'HEAD', '--']).toString().split('\0'),
+    ...(changedPaths.size ? git(root, ['ls-files', '--others', '-z', '--', ...changedPaths]).toString().split('\0') : []),
+  ].filter(Boolean))
+  const conflicts = [...changedPaths].filter(p => localChanges.has(p)).sort()
+  const articleChanges = [...new Set([...Object.keys(current.articles), ...Object.keys(next.articles)])].sort()
+    .filter(id => JSON.stringify(current.articles[id]) !== JSON.stringify(next.articles[id]))
+    .map(id => ({ id, before: current.articles[id] ?? null, after: next.articles[id] ?? null }))
+  const untouched = git(root, ['ls-files', '-z']).toString().split('\0').filter(p => p && !changedPaths.has(p)).sort()
+  if (apply && conflicts.length) throw new Error(`Uncommitted recovery conflicts: ${conflicts.join(', ')}. Preserve local work in a separate commit or use a clean checkout; rerun dry-run before apply.`)
   if (apply) {
     try {
       for (const p of writes) { await safe(root, p); await mkdir(dirname(join(root, p)), { recursive: true }); await writeFile(join(root, p), files.get(p)) }
@@ -179,7 +170,7 @@ export async function recover({ root = process.cwd(), ref, articles = [], all = 
       throw error
     }
   }
-  return { revision: sha, mode: apply ? 'apply' : 'dry-run', articles: ids, recoverableFiles: [...files.keys()], writes, deletes: [...deletes], note: 'Review changes, validate content/build, and open a PR. No push or deployment performed.' }
+  return { revision: sha, mode: apply ? 'apply' : 'dry-run', articles: ids, recoverableFiles: [...files.keys()], writes, deletes: [...deletes], untouched, conflicts, articleChanges, manifestChanged: writes.includes(manifestPath), missingAssets: [], validationFailures: [], note: 'Review changes, validate content/build, and open a PR. No push or deployment performed.' }
 }
 
 export function parseArgs(args) {

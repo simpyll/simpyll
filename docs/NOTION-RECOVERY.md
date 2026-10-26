@@ -240,3 +240,103 @@ the checkout after interruption before committing anything.
   accessibility/browser gates are unchanged and will run in PR CI; no local
   browser rerun was needed for this source-tooling-only change.
 - No production restoration or deployment was performed.
+
+## Follow-up audit and local-change protection (October 26, 2026)
+
+Issue #84 was already implemented in commit `0ea16e0`. This audit retains the
+existing manifest, CLI, runbook, monthly drill, publishing schedule and normal
+review/deployment process. No restoration was applied to the project checkout.
+The follow-up closes verified gaps:
+
+- Publisher and recovery now share `scripts/notion/manifest.mjs` validation.
+  Invalid structures, identities, owned paths, missing article mappings and
+  route/alias conflicts fail before synchronization requests or writes.
+- Dry-run JSON includes `untouched`, `conflicts`, `manifestChanged` and
+  `articleChanges` with complete before/after records (including status, canonical
+  slug, history and explicit aliases). Review these when selecting an older
+  snapshot: newer aliases and publication changes can deliberately be rolled back.
+  `writes`/`deletes` identify file changes; missing assets or invalid snapshots
+  produce an actionable refusal and nonzero exit before any apply.
+- Apply refuses staged, unstaged or untracked changes at any destination it would
+  change. Unrelated manual edits remain untouched. Repeated apply is a no-op when
+  the desired bytes are already present, even before committing the restoration.
+- Local image references outside the manifest allowlist are refused; external
+  media still cannot be restored from Git unless separately committed.
+
+If the dry-run reports local conflicts, **do not discard those edits**. Preserve
+that work in a separate local commit/branch and use a separate clean checkout of
+that commit for recovery. Never push a damaged checkpoint to main. If its
+manifest is corrupt, supply the reviewed `--ownership-revision` explicitly. The
+fixture drill commits its synthetic damage locally before recovery to exercise
+this exact path. Recovery makes no automatic commit, push or publication.
+
+Example plan excerpt (paths and IDs shortened here for readability):
+
+```json
+{
+  "revision": "<resolved reviewed commit SHA>",
+  "mode": "dry-run",
+  "writes": ["src/content/blog/recovered.mdx"],
+  "deletes": [],
+  "untouched": ["src/content/blog/manual.mdx"],
+  "conflicts": [],
+  "articleChanges": [],
+  "manifestChanged": false,
+  "missingAssets": [],
+  "validationFailures": []
+}
+```
+
+The command and apply sequence remain:
+
+```bash
+npm run recover:notion -- --revision GOOD_SHA --article PAGE_ID
+npm run recover:notion -- --revision GOOD_SHA --article PAGE_ID --apply
+```
+
+An intentionally withdrawn or sensitive article requires an explicit editorial
+decision **before apply or publication**. Disable the publisher while investigating;
+reconcile its Notion Published status, slug and aliases, then run the existing
+publisher dry-run before re-enabling sync. Restoration never changes Notion.
+GitHub Pages deployment and CDN caches may take time to reflect approved changes.
+
+### Evidence map
+
+| Requirement | Existing implementation / follow-up evidence |
+| --- | --- |
+| MDX, manifest, IDs, aliases and local assets restored together | `recovery.mjs`, `recovery-fixture.mjs`, `recovery.test.mjs` |
+| Revoked access preserves committed output | `publisher.test.mjs`: 401/403 at discovery and query preserve every byte |
+| Wrong status / withdrawal | Publisher withdrawal/republication and recovery accidental-unpublish tests; reconciliation above |
+| Manifest corruption and unsafe paths | Shared `manifest.mjs`, snapshot hash/metadata validation and corruption/traversal tests |
+| Missing media and alias conflicts | Missing asset/hash/reference, duplicate canonical route and alias collision tests |
+| Manual preservation, preview, explicit apply | Recovery ownership checks, dry-run fingerprint, conflict refusal and idempotence tests |
+| Clean-checkout restoration and production build | `scripts/recovery-build.test.mjs`: independent local clone, committed damage, offline restore, production build and route checks |
+| Monitoring and deployment unchanged | `publishing-health.mjs`, existing Actions failure notifications, existing publisher/Pages/monthly drill workflows |
+| Private drafts and public-history limitations | Limits and security section above |
+
+Run the additional clean-checkout build proof with:
+
+```bash
+node --test scripts/recovery-build.test.mjs
+```
+
+It is also included by the existing `scripts/*.test.mjs` test glob. It makes an
+independent temporary local clone, removes managed MDX/media and corrupts the
+manifest there, commits that synthetic damage, previews and applies restoration,
+checks manual bytes and idempotence, then builds with the installed locked
+dependencies. It never contacts Notion, pushes or deploys. The existing synthetic
+fixture separately proves historical aliases and a valid local raster image.
+
+The clean-clone fixture reduces unrelated branding rasters before its baseline
+commit to avoid duplicating expensive image encoding in this recovery check.
+Publisher-managed article/media bytes are unchanged. The normal production build
+gate retains full-size assets and performance budgets.
+
+Follow-up validation: 38 publisher/recovery tests, 75 related content/redirect/
+image/monitoring checks, the clean-clone recovery/build test, the seven-check
+monthly drill, ESLint and workflow YAML parsing passed. The full-size production
+build passed TypeScript, client/server compilation, prerender and asset budgets;
+SEO reported zero errors and seven editorial warnings. A dry-run from audited
+main `e6617dcd621ea6cb5770b61d176046ca9c87b715` proposed no writes, deletions,
+conflicts or article changes. No production apply, push to main or deployment was
+performed. Browser execution remains with normal PR CI.
