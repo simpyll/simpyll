@@ -13,8 +13,12 @@ export function Contact() {
     const form = event.currentTarget
     if (!form.reportValidity()) return
     const data = new FormData(form)
-    // Honeypot: discard automated submissions without forwarding their content.
-    if (String(data.get('_gotcha') || '').trim()) { setStatus('success'); form.reset(); return }
+    // Do not claim delivery when the submission is discarded.
+    if (String(data.get('_gotcha') || '').trim()) {
+      setStatus('error')
+      setError('Your message could not be sent. Please try again or use the email link below.')
+      return
+    }
     setStatus('sending')
     setError('')
     try {
