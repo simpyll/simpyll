@@ -8,10 +8,16 @@ test('Pulse renders real data, supports keyboard graph exploration, filters and 
  const response=await page.request.get('/pulse.json');const snapshot=await response.json()
  await page.goto('/pulse')
  await expect(page.getByRole('heading',{level:1})).toHaveText('Simpyll Pulse.')
- await expect(page.getByText('Not connected. No measurements available.',{exact:false})).toHaveCount(2)
+ const analytics = await (await page.request.get('/google-analytics.json')).json()
+ for (const [key, title] of [['searchConsole', 'Google Search performance'], ['ga4', 'Website traffic (GA4)']]) {
+  const expected = analytics[key].status === 'unavailable' ? /Not connected\. No measurements available\./
+   : analytics[key].status === 'error' ? /Latest refresh failed\./
+   : /Connected; no reported rows in this period\.|Validated Google reporting data\./
+  await expect(page.getByRole('region', { name: title, exact: true }).locator('p').first()).toContainText(expected)
+ }
  await page.getByLabel('Analytics period').selectOption('7')
  await expect(page.getByRole('heading',{name:'Google Search performance'})).toBeVisible()
- await expect(page.getByRole('table').first().getByRole('row')).toHaveCount(snapshot.articles.length+1)
+ await expect(page.locator('#pulse-galaxy table').getByRole('row')).toHaveCount(snapshot.articles.length+1)
  if(snapshot.articles.length){
   const node=page.locator('.pulse-node').first();await node.focus();await page.keyboard.press('Enter')
   await expect(page.locator('.pulse-inspector h3')).toHaveText(snapshot.articles[0].title)
