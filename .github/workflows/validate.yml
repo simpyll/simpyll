@@ -33,6 +33,8 @@ jobs:
       - run: node --test scripts/internal-links.test.mjs
       - run: npm run test:redirects
       - run: npm run test:notion
+      - name: Prove recovery in a clean local clone and build restored content
+        run: node --test scripts/recovery-build.test.mjs
       - name: Test weekly publishing audit
         run: node --test scripts/publishing-health.test.mjs
       - run: npm run test:images

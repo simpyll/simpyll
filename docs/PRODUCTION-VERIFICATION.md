@@ -215,3 +215,9 @@ For lost/corrupt Notion publishing sources, use the
 [Git-based disaster recovery runbook](NOTION-RECOVERY.md). Its monthly isolated
 drill cannot modify production, push or deploy. Source restoration requires an
 explicit operator apply followed by a reviewed PR and normal deployment checks.
+
+For source recovery validation, `node --test scripts/recovery-build.test.mjs`
+restores a damaged independent local Git clone and runs the production build.
+The [recovery audit](NOTION-RECOVERY.md#follow-up-audit-and-local-change-protection-october-26-2026)
+maps failure scenarios to tests and documents local-change refusal. This proof
+never deploys; verify production separately after a reviewed recovery PR lands.
