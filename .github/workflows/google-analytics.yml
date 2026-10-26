@@ -1,0 +1,68 @@
+name: Refresh Google analytics
+on:
+  schedule:
+    - cron: '41 10 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: google-analytics-ingestion
+  cancel-in-progress: false
+jobs:
+  ingest:
+    if: github.ref == 'refs/heads/main' && vars.GOOGLE_REPORTING_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      id-token: write
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
+      revision: ${{ steps.commit.outputs.revision }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - name: Authenticate with short-lived read-only Google token
+        id: auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ vars.GOOGLE_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GOOGLE_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/webmasters.readonly,https://www.googleapis.com/auth/analytics.readonly
+          create_credentials_file: false
+      - name: Validate existing snapshot and mocked ingestion contracts
+        run: node --test scripts/analytics/core.test.mjs scripts/analytics/refresh.test.mjs
+      - name: Refresh allowlisted daily aggregates
+        env:
+          GOOGLE_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+          GA4_PROPERTY_ID: ${{ vars.GA4_PROPERTY_ID }}
+          GSC_SITE_URL: ${{ vars.GSC_SITE_URL }}
+        run: node scripts/analytics/ingest.mjs
+      - name: Commit reviewed snapshot if changed
+        id: commit
+        run: |
+          git add -- public/google-analytics.json
+          git diff --cached --quiet && exit 0
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'data: refresh privacy-safe Google aggregates'
+          # Rejected concurrent pushes are retried on the next run; never force push.
+          git push origin HEAD:main
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "revision=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+  deploy:
+    needs: ingest
+    if: needs.ingest.outputs.changed == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/deploy.yml
+    with:
+      ref: ${{ needs.ingest.outputs.revision }}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "searchConsole": {
+    "status": "unavailable",
+    "updated": null,
+    "timezone": "America/Los_Angeles",
+    "days": []
+  },
+  "ga4": {
+    "status": "unavailable",
+    "updated": null,
+    "timezone": null,
+    "days": []
+  }
+}
