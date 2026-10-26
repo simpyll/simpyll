@@ -27,6 +27,11 @@
         "kind": "repository",
         "label": "GitHub",
         "url": "https://github.com/simpyll/simpyll"
+      },
+      {
+        "kind": "article",
+        "label": "Read how the journal is built",
+        "url": "/blog/the-art-of-reading-code"
       }
     ],
     "featured": {
@@ -55,6 +60,11 @@
         "kind": "repository",
         "label": "AI Engineering learning repository",
         "url": "https://github.com/simpyll/ai-engineering-learning"
+      },
+      {
+        "kind": "article",
+        "label": "Read the first Python learning milestone",
+        "url": "/blog/001-python-fundamentals"
       }
     ],
     "featured": {

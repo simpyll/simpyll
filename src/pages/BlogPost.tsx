@@ -1,3 +1,4 @@
+import { RelatedProjects } from '../components/RelatedProjects'
 import { ArticleEditorialHistory } from '../components/ArticleEditorialHistory'
 import { formatArticleDate } from '../lib/editorial.mjs'
 import { Breadcrumbs } from '../components/Breadcrumbs'
@@ -86,6 +87,7 @@ export function BlogPost() {
                 <TaxonomyLink key={tag} kind="tag" label={tag} />
               ))}
             </div>
+            <RelatedProjects articlePath={`/blog/${post.slug}`} />
             <RelatedArticles articles={getRelatedArticles(metadata.articleId!)} />
             <ArticlePagination {...getAdjacentArticles(metadata.articleId!)} />
           </article>
