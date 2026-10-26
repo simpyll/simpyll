@@ -101,6 +101,9 @@ test('unsupported blocks, image failures, compiler errors and mid-read status ch
   for (const options of [
     { api: fixture({ content: [block('child_page', 'Private')] }).api },
     { imageDownloader: async () => { throw new Error('Download failure') } },
+    { api: fixture({ content: [block('paragraph', 'Valid first block'), { type: 'image', image: { caption: [] } }] }).api },
+    { api: fixture({ content: [{ type: 'file', file: { type: 'file' } }] }).api },
+    { api: fixture({ content: [block('paragraph', 'Valid first block'), { type: 'embed' }] }).api },
     { validate: async () => { throw new Error('Compile failure') } },
     { api: fixture({ latest: draft }).api },
     { api: fixture({ latest: page({ last_edited_time: 'new revision' }) }).api },
@@ -162,8 +165,8 @@ test('downloads Notion files without credentials; validates hosts, size, MIME, r
 test('Notion-hosted external images are localized, ordinary HTTPS images stay external', async t => {
   const { root, sync } = await setup(t)
   const content = [
-    { type: 'image', image: { type: 'external', external: { url: 'https://secure.notion-static.com/upload.png?signed=secret' }, caption: [] } },
-    { type: 'image', image: { type: 'external', external: { url: 'https://example.com/public.png' }, caption: [] } },
+    { type: 'image', image: { type: 'external', external: { url: 'https://secure.notion-static.com/upload.png?signed=secret' }, caption: [rt('Decorative\n')] } },
+    { type: 'image', image: { type: 'external', external: { url: 'https://example.com/public.png' }, caption: [rt('Decorative\n')] } },
   ]
   let downloads = 0
   await sync({ api: fixture({ content }).api, imageDownloader: async () => { downloads++; return { bytes: png, extension: 'png' } } })

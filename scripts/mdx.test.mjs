@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { compile } from '@mdx-js/mdx'
+import highlight from 'rehype-highlight'
 import { safeContentUrl } from '../src/components/mdx/urls.ts'
 import { remarkRichContent } from './remark-rich-content.mjs'
 import { remarkHeadingIds } from './remark-heading-ids.mjs'
@@ -39,7 +40,7 @@ test('Notion tables preserve row and column headers, rich text and reject malfor
   assert.doesNotMatch(content, /<img onerror/)
   await compile(content)
   await assert.rejects(convertBlocks([{ ...table, table: { table_width: 3 } }], async () => ''), /Invalid Notion table/)
-  await assert.rejects(convertBlocks([block('embed', 'private input')], async () => ''), /Unsupported Notion block type: embed/)
+  await assert.rejects(convertBlocks([block('embed', 'private input')], async () => ''), /Notion block embed .*Unsupported Notion block type/)
 })
 
 test('publisher headings use the shared heading components after ID generation', async () => {
@@ -50,4 +51,15 @@ test('publisher headings use the shared heading components after ID generation',
   assert.match(result, /qué\/manual/)
   assert.match(result, /rich-code-link/)
   assert.match(result, /notion-detail/)
+})
+
+test('captioned publisher code retains highlighting through literal-only shared normalization', async () => {
+  const content = await convertBlocks([{ type: 'code', code: { language: 'javascript', rich_text: [rt('const value = "safe"')], caption: [rt('Example caption')] } }])
+  const result = String(await compile(content, { remarkPlugins: [remarkRichContent], rehypePlugins: [highlight] }))
+  assert.match(result, /hljs-keyword/)
+  assert.match(result, /Example caption/)
+  globalThis.captionedCodeExecuted = false
+  await compile('<figure>\n\n<pre><code>{globalThis.captionedCodeExecuted = true}</code></pre>\n\n</figure>', { remarkPlugins: [remarkRichContent] })
+  assert.equal(globalThis.captionedCodeExecuted, false)
+  delete globalThis.captionedCodeExecuted
 })

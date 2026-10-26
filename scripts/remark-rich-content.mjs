@@ -5,7 +5,7 @@ export function remarkRichContent() {
     function walk(node) {
       if (node.type === 'mdxJsxFlowElement' && node.name === 'pre' && node.children?.length === 1) {
         const code = node.children[0]
-        if (code.name === 'code' && code.children?.length === 1 && code.children[0].type === 'mdxTextExpression') {
+        if (code.name === 'code' && code.children?.length === 1 && ['mdxTextExpression', 'mdxFlowExpression'].includes(code.children[0].type)) {
           try {
             const value = JSON.parse(code.children[0].value)
             if (typeof value === 'string') {

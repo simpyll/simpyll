@@ -7,7 +7,7 @@ import { promisify } from 'node:util'
 import { execFile } from 'node:child_process'
 import { compile } from '@mdx-js/mdx'
 import { synchronize } from './notion/publisher.mjs'
-import { fixture, ROOT, png, page, rt } from './notion/fixtures/api.mjs'
+import { fixture, ROOT, png, page, rt, blocks } from './notion/fixtures/api.mjs'
 const exec = promisify(execFile)
 
 test('Notion fixture reaches built HTML, metadata, sitemap and durable image through real pipeline', { timeout: 120_000 }, async t => {
@@ -26,7 +26,16 @@ test('Notion fixture reaches built HTML, metadata, sitemap and durable image thr
   const manual = { articleId: 'manual:editorial-fixture', title: 'Editorial metadata fixture', description: 'Manual editorial metadata example.', date: '2026-10-20', updatedAt: '2026-10-25', author: 'David Becker', category: 'Technology', tags: [], revisions: [{ date: '2026-10-25', description: 'Updated the React examples.' }], corrections: [{ date: '2026-10-24', description: 'Corrected hydration behavior.', id: 'hydration' }, { date: '2026-10-23', description: 'Corrected the command name.' }] }
   await writeFile(join(root, 'src/content/blog/editorial-fixture.mdx'), `export const metadata = ${JSON.stringify(manual)}\n\n## Example\n\nThis is an isolated editorial example.\n`)
   await writeFile(join(root, 'src/content/blog/editorial-same-day.mdx'), `export const metadata = ${JSON.stringify({ ...manual, articleId: 'manual:editorial-same-day', title: 'Same-day editorial metadata fixture', description: 'A separate example with publication and revision on the same day.', updatedAt: manual.date, revisions: [], corrections: [] })}\n\nSame-day example.\n`)
-  const options = { root, pageId: ROOT, api: fixture({ pages: [editorial] }).api, imageDownloader: async () => ({ bytes: png, extension: 'png' }), validate: compile }
+  const richBlocks = [
+    ...blocks,
+    { type: 'bookmark', bookmark: { url: 'https://example.com/reference', caption: [rt('Rich block reference')] } },
+    { type: 'file', file: { type: 'external', external: { url: 'https://example.com/report.pdf' } } },
+    { type: 'table', table: { table_width: 2, has_column_header: true, has_row_header: true }, children: [
+      { type: 'table_row', table_row: { cells: [[rt('Measure')], [rt('Value')]] } },
+      { type: 'table_row', table_row: { cells: [[rt('Row label')], [rt('Formatted value', { bold: true })]] } },
+    ] },
+  ]
+  const options = { root, pageId: ROOT, api: fixture({ pages: [editorial], content: richBlocks }).api, imageDownloader: async () => ({ bytes: png, extension: 'png' }), validate: compile }
   const renamed = page()
   for (const slug of ['notion-original', 'notion-middle']) {
     renamed.properties.Slug.rich_text = [rt(slug)]
@@ -44,6 +53,7 @@ test('Notion fixture reaches built HTML, metadata, sitemap and durable image thr
   assert.match(html, /<title>Notion fixture article \| Simpyll<\/title>/)
   assert.match(html, /rel="canonical" href="https:\/\/simpyll.com\/blog\/notion-fixture"/)
   assert.match(html, /Fixture intro/)
+  for (const expected of ['Rich block reference', 'report.pdf (PDF)', 'scope="col"', 'scope="row"', '<strong>Formatted value</strong>', 'alt="One-pixel fixture"', '<figcaption>Fixture image</figcaption>']) assert.ok(html.includes(expected), expected)
   assert.match(html, /<strong>Bold<\/strong>/)
   assert.match(html, /&lt;script&gt;/)
   assert.doesNotMatch(html, /signature=one|prod-files-secure/)

@@ -36,8 +36,10 @@ Name precedence is imageName, caption, alt, meaningful original basename, then
 article-slug-image-NN. Names are ASCII normalized, limited to 72 characters, and
 suffixed with a short content/configuration fingerprint to avoid collisions.
 The fallback describes article context, never guessed image contents. Empty alt
-stays empty. Use captions in Notion for naming and the publisher's existing alt
-behavior. Do not hand-edit publisher-owned articles or manifest files.
+stays empty. Use the explicit Notion `Alt: description` or `Decorative` first caption line,
+then a newline and optional visible caption. Alt is independent of that caption;
+missing markers fail safely. See [examples and compatibility](NOTION-BLOCKS.md).
+Only the visible caption contributes the caption naming hint. Do not hand-edit publisher-owned articles or manifest files.
 
 npm run dev and npm run build generate images before compilation. Manual
 regeneration: npm run generate:images. Originals are committed; generated files

@@ -57,7 +57,7 @@ pull requests.
 6. Edit the same Notion page to update the same post. A blank Slug keeps the
    previous URL; an explicit slug change preserves the old URL with an immediate static
    redirect to the new one (see [slug history](REDIRECTS.md)). Changing Status to Draft/Ready or
-   trashing the page removes its generated article and unused local images
+   trashing the page removes its generated article
    on the next successful sync. Previously published content remains in Git
    history and may remain in browser/search caches; unpublishing is not a
    way to erase sensitive information already made public.
@@ -73,14 +73,15 @@ Code preserves literal text. Notion text is encoded as string literals inside
 generated JSX, so pasted braces, HTML, Markdown, and import/export statements
 cannot execute as MDX code.
 
-Unsupported blocks (including subpages, database embeds, synced blocks, tables,
-bookmarks, and equations/mentions) stop the entire sync instead of silently
-publishing an incomplete article or traversing potentially private content.
-Replace them with supported blocks before publishing. Colors are not retained.
-Use PNG, JPEG, GIF, WebP, or AVIF images under 20 MiB; SVG is rejected. Uploaded
-Notion images are downloaded into `public/images/notion/<page-id>/` using
-content-hashed filenames. Expiring URLs are never saved. External HTTPS image
-URLs stay external; upload the image to Notion if it needs a durable local copy.
+The authoritative [block compatibility matrix](NOTION-BLOCKS.md) describes tables,
+bookmarks, public external file links, literal equations and explicit privacy
+boundaries. Unknown meaningful blocks stop synchronization. Synced blocks, child
+pages/databases, uploaded files and unrestricted embeds are not traversed or published.
+
+Images require an explicit `Alt: description` first caption line (or `Decorative`),
+followed by a newline and optional visible caption. Existing captions must be
+updated; missing metadata aborts without changing last known-good output. See the
+matrix for examples and [image processing](IMAGES.md) for download limits.
 
 Missing optional fields have deterministic defaults: title-based slug (then
 preserved on later runs), previously saved date or page creation date,
