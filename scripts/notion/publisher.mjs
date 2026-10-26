@@ -108,6 +108,7 @@ export async function discoverSource(api, configuredId) {
 
 export const plain = rich => (rich ?? []).map(part => part.plain_text ?? part.text?.content ?? '').join('')
 export function safeUrl(value, image = false) {
+  if (typeof value !== 'string' || /[\u0000-\u0020\u007f\\]/.test(value)) throw new Error('Unsafe content URL')
   let url
   try { url = new URL(value) } catch { throw new Error('Invalid content URL') }
   if (!(image ? ['https:'] : ['https:', 'http:', 'mailto:']).includes(url.protocol) || url.username || url.password) throw new Error('Unsafe content URL')
@@ -122,7 +123,7 @@ export function richText(parts = []) {
     if (part.type && part.type !== 'text') throw new Error('Unsupported rich text type; use plain text instead of mentions/equations')
     const value = part.plain_text ?? part.text?.content ?? ''
     if (!value) return ''
-    let text = `{${json(value)}}`
+    let text = value.split('\n').map(line => `{${json(line)}}`).join('<br />')
     const a = part.annotations ?? {}
     for (const [key, tag] of [['code', 'code'], ['bold', 'strong'], ['italic', 'em'], ['strikethrough', 'del'], ['underline', 'u']]) {
       if (a[key]) text = `<${tag}>${text}</${tag}>`
@@ -165,30 +166,52 @@ export async function readBlocks(api, parent, depth = 0, state = { count: 0, anc
 
 // Notion has no independent image-alt field in this API. Authors explicitly opt in.
 export function imageAccessibility(block) {
-  const parts = block.image.caption ?? []
-  const first = parts[0]
-  const value = first?.plain_text ?? first?.text?.content ?? ''
-  const match = /^(Alt: ([^\n]+)|Decorative)\n/.exec(value)
-  if (!match || (match[2] && !match[2].trim())) throw blockError(block, 'image caption must start with "Alt: descriptive text" or "Decorative", followed by a newline and optional visible caption')
-  const rest = value.slice(match[0].length)
-  const caption = [{ ...first, plain_text: rest, text: { ...first.text, content: rest } }, ...parts.slice(1)]
-  return { alt: match[2]?.trim() ?? '', caption }
+  try { return imageDescription(block.image.caption) } catch { throw blockError(block, 'image caption must start with "Alt: descriptive text" or "Decorative", followed by optional visible caption') }
 }
 
+export function imageDescription(caption = []) {
+  richText(caption) // Validate even metadata-only runs before removing the alt declaration.
+  const text = plain(caption), first = text.split('\n')[0]
+  const decorative = first === 'Decorative'
+  const alt = first.startsWith('Alt: ') ? first.slice(5).trim() : ''
+  if (!decorative && !alt) throw new Error('Image requires caption first line "Alt: description" or "Decorative"')
+  let offset = first.length + (text.includes('\n') ? 1 : 0)
+  const visible = caption.flatMap(part => {
+    const value = part.plain_text ?? part.text?.content ?? ''
+    const skip = Math.min(offset, value.length); offset -= skip
+    if (skip === value.length) return []
+    return [{ ...part, plain_text: value.slice(skip), text: { ...part.text, content: value.slice(skip) } }]
+  })
+  return { alt, caption: visible }
+}
+
+function publicResource(value, file = false) {
+  const url = new URL(safeUrl(value, true))
+  if (notionImageHost(url.hostname) || /(^|\.)(notion\.(so|site)|notion-static\.com|notionusercontent\.com)$/.test(url.hostname) || [...url.searchParams.keys()].some(key => /^(x-amz-|x-goog-|signature$|sig$|token$)/i.test(key)) || (file && (url.search || url.hash))) throw new Error('Resource requires a public HTTPS URL; attachments must have no query or fragment')
+  return url
+}
 function publicAttachment(data) {
   if (data.type !== 'external') throw new Error('Attachments require a permanent public external HTTPS URL; private Notion uploads are unsupported')
-  const url = new URL(safeUrl(data.external?.url, true))
-  if (notionImageHost(url.hostname) || /(^|\.)notion\.(so|site)$/.test(url.hostname) || url.search || url.hash) throw new Error('Attachments require a permanent public URL without signed queries')
+  if (typeof data.external?.url !== 'string' || /(?:\/|%2f)(?:\.|%2e){2}(?:\/|%2f|$)/i.test(data.external.url)) throw new Error('Invalid attachment path')
+  const url = publicResource(data.external.url, true)
   let filename
-  try { filename = decodeURIComponent(url.pathname.split('/').at(-1)) } catch { throw new Error('Invalid attachment path') }
+  try {
+    const path = decodeURIComponent(url.pathname)
+    if (/[\u0000-\u001f\u007f\\]/.test(path) || /%[0-9a-f]{2}/i.test(path) || /%2f|%5c/i.test(url.pathname)) throw new Error('Invalid attachment path')
+    filename = path.split('/').at(-1)
+  } catch { throw new Error('Invalid attachment path') }
   if (!/^[\p{L}\p{N} _.-]+\.(pdf|txt|csv)$/iu.test(filename) || filename.includes('..')) throw new Error('Unsupported attachment path/type; use a public PDF, TXT or CSV link')
-  return { url: url.href, filename, extension: filename.split('.').at(-1).toUpperCase() }
+  return { url: url.href, filename: typeof data.name === 'string' && data.name.trim() ? data.name : filename, extension: filename.split('.').at(-1).toUpperCase() }
 }
 
-export async function convertBlocks(blocks, image, headingStack = []) {
+export async function convertBlocks(blocks, image, headingStack = [], state = { depth: 0, budget: { count: 0 }, ancestors: new Set() }) {
+  if (state.depth > 30) throw blockError(blocks[0] ?? {}, 'Article nesting limit exceeded')
   const output = []
   let list = null
   for (const block of blocks) {
+    if (++state.budget.count > 10_000) throw blockError(block, 'Article block count limit exceeded')
+    if (state.ancestors.has(block)) throw blockError(block, 'Article block cycle detected')
+    if (['synced_block', 'child_page', 'child_database'].includes(block.type)) throw blockError(block, 'Unsupported privacy boundary; traversal is disabled')
     try {
       const type = block.type, data = block[type] ?? {}
       const current = type === 'bulleted_list_item' ? 'ul' : type === 'numbered_list_item' ? 'ol' : null
@@ -199,8 +222,10 @@ export async function convertBlocks(blocks, image, headingStack = []) {
       }
       if (type === 'table') {
         const rows = block.children ?? []
+        state.budget.count += rows.length
+        if (state.budget.count > 10_000) throw blockError(block, 'Article block count limit exceeded')
         const width = data.table_width
-        if (!Number.isInteger(width) || width < 1 || !rows.length || rows.some(row => row.type !== 'table_row' || row.table_row?.cells?.length !== width)) throw blockError(block, 'Invalid Notion table; require nonempty rectangular rows matching table_width')
+        if (!Number.isInteger(width) || width < 1 || !rows.length || rows.some(row => row.type !== 'table_row' || row.has_children || row.children?.length || !Array.isArray(row.table_row?.cells) || row.table_row.cells.length !== width || row.table_row.cells.some(cell => !Array.isArray(cell)))) throw blockError(block, 'Invalid Notion table; require nonempty rectangular rows matching table_width')
         const renderRow = (row, rowIndex) => `<tr>${row.table_row.cells.map((cell, colIndex) => {
           const header = data.has_column_header && rowIndex === 0 || data.has_row_header && colIndex === 0
           const tag = header ? 'th' : 'td'
@@ -220,7 +245,10 @@ export async function convertBlocks(blocks, image, headingStack = []) {
         headingStack.push({ rank, level: headingLevel })
       }
       const text = richText(data.rich_text)
-      const children = block.children?.length ? await convertBlocks(block.children, image, headingStack) : ''
+      if (block.children?.length && !['paragraph', 'heading_1', 'heading_2', 'heading_3', 'bulleted_list_item', 'numbered_list_item', 'to_do', 'quote', 'callout', 'toggle'].includes(type)) throw blockError(block, 'Unsupported nested block')
+      state.ancestors.add(block)
+      let children
+      try { children = block.children?.length ? await convertBlocks(block.children, image, headingStack, { ...state, depth: state.depth + 1 }) : '' } finally { state.ancestors.delete(block) }
       if (current) output.push(`<li>${text}${children}</li>`)
       else if (type === 'paragraph') output.push(`<p>${text}</p>${children}`)
       else if (/^heading_[123]$/.test(type)) {
@@ -228,16 +256,19 @@ export async function convertBlocks(blocks, image, headingStack = []) {
         output.push(`<h${level}>${text}</h${level}>${children}`)
       } else if (type === 'callout') output.push(`<Callout variant="note"><p>${text}</p>${children}</Callout>`)
       else if (type === 'quote') output.push(`<blockquote><p>${text}</p>${children}</blockquote>`)
-      else if (type === 'toggle') output.push(`<details><summary>${text}</summary>${children}</details>`)
+      else if (type === 'toggle') {
+        if (!plain(data.rich_text).trim()) throw blockError(block, 'Toggle requires a meaningful summary')
+        output.push(`<details><summary>${text}</summary>${children}</details>`)
+      }
       else if (type === 'code') {
         const language = /^[a-z0-9_+-]+$/i.test(data.language ?? '') ? data.language.toLowerCase() : 'plaintext'
-        output.push(`<figure><pre><code className="language-${language}">{${json(plain(data.rich_text))}}</code></pre>${data.caption?.length ? `<figcaption>${richText(data.caption)}</figcaption>` : ''}</figure>`)
+        const code = `<pre><code className="language-${language}">{${json(plain(data.rich_text))}}</code></pre>`
+        output.push(data.caption?.length ? `<figure>\n\n${code}\n\n<figcaption>${richText(data.caption)}</figcaption>\n\n</figure>` : code)
       }
       else if (type === 'divider') output.push('<hr />')
       else if (type === 'bookmark') {
         try {
-          const url = safeUrl(data.url, true)
-          if (notionImageHost(new URL(url).hostname)) throw new Error('Private media bookmark')
+          const url = publicResource(data.url).href
           const captionHasLinks = data.caption?.some(part => part.href || part.text?.link?.url)
           output.push(`<p><a href={${json(url)}}>${!captionHasLinks && plain(data.caption).trim() ? richText(data.caption) : `{${json(url)}}`}</a>${captionHasLinks ? ` — ${richText(data.caption)}` : ''}</p>`)
         } catch { throw blockError(block, 'bookmark requires a safe HTTPS URL and text caption') }

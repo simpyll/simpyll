@@ -20,8 +20,10 @@ test('rich MDX fixture compiles, prerenders and hydrates through both publishing
     block('heading_1', 'Notion heading'),
     block('paragraph', '<script>alert(1)</script> {globalThis.secret}'),
     block('callout', 'Notion informational content'),
-    block('code', 'def notion_example():\n    return "safe"', { code: { rich_text: [rt('def notion_example():\n    return "safe"')], language: 'python' } }),
-    { type: 'image', image: { caption: [rt('Alt: Shared renderer diagram\nNotion caption')] } },
+    { type: 'bookmark', bookmark: { url: 'https://example.com/guide?topic=notion', caption: [rt('Public reference')] } },
+    { type: 'file', file: { type: 'external', external: { url: 'https://example.com/guide.pdf' }, caption: [rt('Reference PDF')] } },
+    block('code', 'def notion_example():\n    return "safe"', { code: { rich_text: [rt('def notion_example():\n    return "safe"')], language: 'python', caption: [rt('Python example caption')] } }),
+    { type: 'image', image: { caption: [rt('Alt: Shared renderer illustration\nNotion caption')] } },
     { type: 'table', table: { table_width: 2, has_column_header: true, has_row_header: true }, children: [
       { type: 'table_row', table_row: { cells: [[rt('Setting')], [rt('Value')]] } },
       { type: 'table_row', table_row: { cells: [[rt('Enabled')], [rt('Yes')]] } },
@@ -42,6 +44,11 @@ test('rich MDX fixture compiles, prerenders and hydrates through both publishing
   assert.doesNotMatch(html, /data-variant="unknown"/)
   assert.match(html, /aria-hidden="true" focusable="false"/)
   assert.match(html, /scope="row"/)
+  assert.match(html, /alt="Shared renderer illustration"/)
+  assert.match(html, /<figcaption>Notion caption<\/figcaption>/)
+  assert.match(html, /<figcaption>Python example caption<\/figcaption>/)
+  assert.match(html, /href="https:\/\/example.com\/guide\?topic=notion"/)
+  assert.match(html.replace(/<!--.*?-->/g, ''), /guide.pdf \(PDF\)/)
   assert.match(html, /&lt;script&gt;alert/)
   assert.doesNotMatch(html, /<iframe|<script>alert/)
   try {

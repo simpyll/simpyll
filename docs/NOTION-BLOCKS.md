@@ -10,12 +10,12 @@ is inserted. Diagnostics identify block type and ID, never article excerpts or U
 | Bulleted / numbered lists | Native ul/ol/li, including nested supported blocks |
 | To-do | Static paragraph with authored checked/unchecked symbol, explicit state text and content; no editable control |
 | Quotes, dividers | Native blockquote/hr |
-| Code | Literal escaped pre/code and visible caption; shared code component supplies existing copy behavior |
+| Code | Literal escaped pre/code and visible caption with shared literal-only normalization; shared code component supplies existing copy behavior |
 | Callout | Existing Callout, note variant; Notion colors/icons are presentation only and not imported |
 | Toggle | Native details/summary with supported children |
 | Image | Existing ArticleImage/figure/figcaption; explicit alt convention below; existing local download/optimization |
 | Bookmark | HTTPS anchor, rich caption as link name or original URL; no metadata fetch, preview image or scripts |
-| File | Safe fallback link to author-designated public external HTTPS PDF/TXT/CSV; filename/type plus caption |
+| File | Safe fallback link to author-designated public external HTTPS PDF/TXT/CSV; author-provided name or URL filename, extension label and caption |
 | Uploaded/private file | Rejected; no signed Notion attachment link emitted or download attempted |
 | Video, embed, link_preview | Intentionally unsupported, publication rejected; use an authored public bookmark; consent/embed framework belongs to #74 |
 | Table / table_row | Native table/thead/tbody/tr/th/td with row/column scope; rows only inside table; nonempty rectangular shape required |
@@ -24,7 +24,7 @@ is inserted. Diagnostics identify block type and ID, never article excerpts or U
 | Equation (inline/block) | Safe literal TeX in labelled code; no math typesetter; author must verify this fallback conveys intended meaning |
 | Table of contents | Intentionally unsupported and rejected; site supplies its own TOC; remove Notion TOC block |
 | Unknown / unsupported | Rejected with structural diagnostic; replace before publishing |
-| Text annotations | Bold, italic, underline, strikethrough, inline code and nested combinations; Unicode and literals preserved |
+| Text annotations | Line breaks, bold, italic, underline, strikethrough, inline code and nested combinations; Unicode and literals preserved |
 | Text links | HTTP(S)/mailto, no credentials or executable schemes |
 | Mentions | Rejected; replace with explicit public text/link; no resolution of private pages or people |
 | Superscript/subscript | No Notion text annotation mapping; Unicode characters preserved; use explicit prose or TeX fallback |
@@ -45,9 +45,9 @@ an optional caption. This emits empty alt. Do not use filenames or captions as
 substitutes for a description. The importer does not invent descriptions. Missing
 or malformed markers stop synchronization with the image block ID. Existing
 Notion authors must update captions before their next successful sync; last known
-good output remains until then. Manual articles need no migration. Keep the marker
-in the first text run (avoid formatting/splitting its text); the remaining caption
-may use normal rich text. An empty visible caption is allowed after the newline.
+good output remains until then. Manual articles need no migration. The marker may span text runs; formatting and links on the remaining visible
+caption are preserved. A marker without a newline is allowed when there is no
+visible caption. No descriptive alt text is inferred.
 
 Notion-hosted images use the existing bounded downloader, ownership manifest,
 revision cache, and image optimizer. Failed/expired downloads abort synchronization
@@ -61,7 +61,9 @@ query is written into the generated article. See [images](IMAGES.md).
 A bookmark with URL `https://example.com/report` and caption `Read the report`
 becomes a normal named link without JavaScript. Without a caption the URL is the
 link name. Captions containing their own links render beside the URL link, avoiding
-nested anchors. Notion storage URLs are rejected. No title/description/image is inferred.
+nested anchors. Notion storage URLs are rejected. No title/description/image is inferred. Raw control characters/backslashes,
+Notion workspace/storage hosts and recognized signed/token query keys reject.
+Ordinary bookmark query parameters remain intact.
 
 Files are deliberately link-only: a public external `https://example.com/report.pdf`
 becomes `report.pdf (PDF)` with its caption beside it. TXT and CSV also work. No
@@ -77,7 +79,8 @@ The link follows ordinary browser navigation; cross-origin download is not force
 
 Article traversal allows only supported containers, at most 30 nested levels and
 10,000 blocks total. Each paginated result also has a 10,000 item ceiling; repeated
-cursors and ancestor cycles fail. Synced sources and child content are never fetched.
+cursors and ancestor cycles fail. The converter also enforces depth, cycle and aggregate
+count bounds on preloaded fixtures. Synced sources and child content are never fetched.
 Source-database discovery under the configured root remains a separate bounded
 read-only discovery step, not authorization to publish those child pages. Only
 queried pages with Status Published are converted and status/revision are rechecked.
@@ -100,3 +103,13 @@ Do not commit preview/draft material. Fixture verification uses `npm run test:no
 `npm run test:notion:build`, `npm run test:images` and `npm run test:mdx`. The shared
 rich-content browser suites cover keyboard focus, themes, mobile overflow, axe,
 no-JS and print. Automated checks do not establish a screen-reader listening review.
+
+### Additional regression audit
+
+Captioned code uses the existing literal-only normalization for both MDX flow and
+text expressions, retaining build-time syntax highlighting. Rich-text newlines
+become native br elements. Empty toggle summaries reject instead of emitting an
+unnamed disclosure. Malformed/nested table rows reject. Attachment path validation
+checks the complete decoded pathname, including encoded separators and multiple
+encoding; only approved public links are emitted. No media pipeline, dependency,
+manifest format or publication status behavior changes.
