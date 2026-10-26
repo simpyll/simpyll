@@ -45,7 +45,7 @@ jobs:
           key: images-${{ runner.os }}-${{ hashFiles('package-lock.json', 'scripts/images/**', 'scripts/publishing-media.mjs', 'src/content/blog/**', 'public/images/**') }}
       - name: Build and validate production output
         run: npm run build
-      - run: node --test scripts/citations.test.mjs scripts/editorial.test.mjs scripts/breadcrumbs.test.mjs scripts/related-articles.test.mjs scripts/article-adjacency.test.mjs scripts/reading-time.test.mjs scripts/rss.test.mjs scripts/ci-workflows.test.mjs scripts/discovery.test.mjs
+      - run: node --test scripts/citations.test.mjs scripts/editorial.test.mjs scripts/breadcrumbs.test.mjs scripts/related-articles.test.mjs scripts/article-adjacency.test.mjs scripts/reading-time.test.mjs scripts/rss.test.mjs scripts/ci-workflows.test.mjs scripts/discovery.test.mjs scripts/topics.test.mjs
       - run: npm run test:analytics
       - run: npm run test:pulse
       - run: npm run test:seo

@@ -12,7 +12,7 @@ test('owner assignments, honest destinations, and deterministic inventory',()=>{
  assert.equal(projects.filter(p=>p.workflowStage==='ideas').length,17)
  assert.equal(projects.filter(p=>['shipped','archived'].includes(p.workflowStage)).length,1)
  assert.equal(projects.find(p=>p.id==='ai-engineering').links[0].url,'https://github.com/simpyll/ai-engineering-learning')
- assert.deepEqual(projects.flatMap(p=>p.links.map(l=>l.url)),['https://simpyll.com/','https://github.com/simpyll/simpyll','https://github.com/simpyll/ai-engineering-learning','https://rntonp.com/','/pulse','https://github.com/simpyll/simpyll'])
+ assert.deepEqual(projects.flatMap(p=>p.links.map(l=>l.url)),['https://simpyll.com/','https://github.com/simpyll/simpyll','/blog/the-art-of-reading-code','https://github.com/simpyll/ai-engineering-learning','/blog/001-python-fundamentals','https://rntonp.com/','/pulse','https://github.com/simpyll/simpyll'])
  assert.deepEqual(createProjectSelectors(projects.toReversed()).getPublicProjects(),projects)
  assert.deepEqual(createProjectSelectors(projects).getFeaturedProjects().map(p=>p.id),['simpyll','ai-engineering'])
 })

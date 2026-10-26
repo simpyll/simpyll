@@ -1,3 +1,4 @@
+import { TopicReadingPaths } from '../components/TopicReadingPaths'
 import { formatArticleDate } from '../lib/editorial.mjs'
 import { TaxonomyLink } from '../components/TaxonomyLink'
 import { Link } from 'react-router-dom'
@@ -37,6 +38,7 @@ export function Blog() {
 
           <section className="pb-24 sm:pb-32">
             <Link className="mb-8 inline-block text-accent" to="/explore">Search and explore all articles →</Link>
+            <TopicReadingPaths />
             {posts.length === 0 ? (
               <p className="text-muted">
                 No articles yet. Check back soon.
