@@ -29,7 +29,9 @@ test('public release hydrates, navigates and renders established and newest arti
       await page.reload()
       await expect(page.locator('article .prose')).toBeVisible()
       await expect(page.locator('article .prose')).toContainText(article.body!)
-      await page.getByRole('link', { name: 'Back to journal' }).click()
+      // Articles use breadcrumb navigation; the recovery-only "Back to journal" link
+      // belongs to the 404 page, not to a successfully rendered article.
+      await page.getByRole('navigation', { name: 'Breadcrumb' }).locator('a[href="/blog"]').click()
       await expect(page.getByRole('heading', { level: 1 })).toHaveText(report.routes.find(x => x.path === '/blog')!.title)
     }
     await page.goto('/blog/__production-smoke-missing__')
