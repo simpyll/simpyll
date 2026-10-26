@@ -7,9 +7,9 @@
     "days": []
   },
   "ga4": {
-    "status": "error",
-    "updated": null,
-    "timezone": null,
+    "status": "ok",
+    "updated": "2026-10-26",
+    "timezone": "America/Chicago",
     "days": []
   }
 }
