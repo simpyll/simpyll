@@ -140,6 +140,7 @@ jobs:
         with:
           browsers: chromium
       - run: npm run test:projects
+      - run: node --test scripts/preview-notion-build.test.mjs
       - run: npm run test:notion:build
       - name: Test rich MDX and Notion rendering
         run: npm run test:mdx

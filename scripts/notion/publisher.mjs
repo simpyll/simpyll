@@ -293,7 +293,7 @@ export async function convertBlocks(blocks, image, headingStack = [], state = { 
   return output.join('\n')
 }
 
-function notionImageHost(hostname) {
+export function notionImageHost(hostname) {
   return ['s3.us-west-2.amazonaws.com', 'prod-files-secure.s3.us-west-2.amazonaws.com', 'secure.notion-static.com', 'attachment.notion-static.com'].includes(hostname) || hostname.endsWith('.notionusercontent.com')
 }
 
