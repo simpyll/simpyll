@@ -91,7 +91,9 @@ jobs:
         with:
           name: validated-build
       - name: Verify artifact revision
-        run: test "$(cat ci-revision.txt)" = "$(git rev-parse HEAD)"
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          test "$(cat ci-revision.txt)" = "$(git rev-parse HEAD)"
       # Pinned official image already contains Chromium, Firefox, WebKit and OS dependencies.
       # Avoid apt-based install-deps hanging across three parallel shards.
       - name: Enforce all browser and accessibility projects
