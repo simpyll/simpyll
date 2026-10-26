@@ -60,6 +60,7 @@ export async function paginate(api, path, body) {
       ? await api(path, { ...body, page_size: 100, ...(cursor ? { start_cursor: cursor } : {}) })
       : await api(`${path}?${query}`)
     if (!Array.isArray(response.results)) throw new Error('Invalid paginated Notion response')
+    if (results.length + response.results.length > 10000) throw new Error('Notion pagination block/result limit exceeded')
     results.push(...response.results)
     if (!response.has_more) break
     cursor = response.next_cursor
@@ -114,8 +115,14 @@ export function safeUrl(value, image = false) {
 }
 export function richText(parts = []) {
   return parts.map(part => {
+    if (part.type === 'equation') {
+      if (typeof part.equation?.expression !== 'string' || !part.equation.expression.trim()) throw new Error('Invalid equation expression')
+      return `<code aria-label="Equation (TeX)">{${json(part.equation.expression)}}</code>`
+    }
     if (part.type && part.type !== 'text') throw new Error('Unsupported rich text type; use plain text instead of mentions/equations')
-    let text = `{${json(part.plain_text ?? part.text?.content ?? '')}}`
+    const value = part.plain_text ?? part.text?.content ?? ''
+    if (!value) return ''
+    let text = `{${json(value)}}`
     const a = part.annotations ?? {}
     for (const [key, tag] of [['code', 'code'], ['bold', 'strong'], ['italic', 'em'], ['strikethrough', 'del'], ['underline', 'u']]) {
       if (a[key]) text = `<${tag}>${text}</${tag}>`
@@ -126,72 +133,130 @@ export function richText(parts = []) {
   }).join('')
 }
 
-export async function readBlocks(api, parent, depth = 0) {
+// Diagnostics contain structural locations only, never prose, filenames or signed URLs.
+function blockError(block, message) {
+  const type = /^[a-z_]+$/.test(block.type) ? block.type : 'unknown'
+  const location = /^[a-f0-9-]{32,36}$/i.test(block.id ?? '') ? block.id : 'unidentified'
+  return new Error(`Notion block ${type} (${location}): ${message}`)
+}
+
+export async function readBlocks(api, parent, depth = 0, state = { count: 0, ancestors: new Set() }) {
   if (depth > 30) throw new Error('Article nesting limit exceeded')
-  const blocks = await paginate(api, `blocks/${id(parent)}/children`)
-  for (const block of blocks) {
-    if (block.in_trash) continue
-    // Never traverse subpages, databases, or synced blocks: they can contain private content.
-    if (block.has_children) {
-      if (!['paragraph', 'heading_1', 'heading_2', 'heading_3', 'bulleted_list_item', 'numbered_list_item', 'quote', 'callout', 'toggle', 'table'].includes(block.type)) throw new Error('Unsupported nested block')
-      block.children = await readBlocks(api, block.id, depth + 1)
+  const key = id(parent)
+  if (state.ancestors.has(key)) throw new Error('Article block cycle detected')
+  state.ancestors.add(key)
+  try {
+    const blocks = await paginate(api, `blocks/${key}/children`)
+    state.count += blocks.length
+    if (state.count > 10000) throw new Error('Article total block limit exceeded')
+    for (const block of blocks) {
+      if (block.in_trash) continue
+      if (['synced_block', 'child_page', 'child_database'].includes(block.type)) {
+        throw blockError(block, 'privacy boundary; move explicitly public content into this article; traversal is disabled')
+      }
+      if (block.has_children) {
+        if (!['paragraph', 'heading_1', 'heading_2', 'heading_3', 'bulleted_list_item', 'numbered_list_item', 'to_do', 'quote', 'callout', 'toggle', 'table'].includes(block.type)) throw blockError(block, 'Unsupported nested block; replace with supported content')
+        block.children = await readBlocks(api, block.id, depth + 1, state)
+      }
     }
-  }
-  return blocks.filter(block => !block.in_trash)
+    return blocks.filter(block => !block.in_trash)
+  } finally { state.ancestors.delete(key) }
+}
+
+// Notion has no independent image-alt field in this API. Authors explicitly opt in.
+export function imageAccessibility(block) {
+  const parts = block.image.caption ?? []
+  const first = parts[0]
+  const value = first?.plain_text ?? first?.text?.content ?? ''
+  const match = /^(Alt: ([^\n]+)|Decorative)\n/.exec(value)
+  if (!match || (match[2] && !match[2].trim())) throw blockError(block, 'image caption must start with "Alt: descriptive text" or "Decorative", followed by a newline and optional visible caption')
+  const rest = value.slice(match[0].length)
+  const caption = [{ ...first, plain_text: rest, text: { ...first.text, content: rest } }, ...parts.slice(1)]
+  return { alt: match[2]?.trim() ?? '', caption }
+}
+
+function publicAttachment(data) {
+  if (data.type !== 'external') throw new Error('Attachments require a permanent public external HTTPS URL; private Notion uploads are unsupported')
+  const url = new URL(safeUrl(data.external?.url, true))
+  if (notionImageHost(url.hostname) || /(^|\.)notion\.(so|site)$/.test(url.hostname) || url.search || url.hash) throw new Error('Attachments require a permanent public URL without signed queries')
+  let filename
+  try { filename = decodeURIComponent(url.pathname.split('/').at(-1)) } catch { throw new Error('Invalid attachment path') }
+  if (!/^[\p{L}\p{N} _.-]+\.(pdf|txt|csv)$/iu.test(filename) || filename.includes('..')) throw new Error('Unsupported attachment path/type; use a public PDF, TXT or CSV link')
+  return { url: url.href, filename, extension: filename.split('.').at(-1).toUpperCase() }
 }
 
 export async function convertBlocks(blocks, image, headingStack = []) {
   const output = []
   let list = null
   for (const block of blocks) {
-    const type = block.type, data = block[type] ?? {}
-    const current = type === 'bulleted_list_item' ? 'ul' : type === 'numbered_list_item' ? 'ol' : null
-    if (current !== list) {
-      if (list) output.push(`</${list}>`)
-      if (current) output.push(`<${current}>`)
-      list = current
+    try {
+      const type = block.type, data = block[type] ?? {}
+      const current = type === 'bulleted_list_item' ? 'ul' : type === 'numbered_list_item' ? 'ol' : null
+      if (current !== list) {
+        if (list) output.push(`</${list}>`)
+        if (current) output.push(`<${current}>`)
+        list = current
+      }
+      if (type === 'table') {
+        const rows = block.children ?? []
+        const width = data.table_width
+        if (!Number.isInteger(width) || width < 1 || !rows.length || rows.some(row => row.type !== 'table_row' || row.table_row?.cells?.length !== width)) throw blockError(block, 'Invalid Notion table; require nonempty rectangular rows matching table_width')
+        const renderRow = (row, rowIndex) => `<tr>${row.table_row.cells.map((cell, colIndex) => {
+          const header = data.has_column_header && rowIndex === 0 || data.has_row_header && colIndex === 0
+          const tag = header ? 'th' : 'td'
+          const scope = header ? ` scope="${data.has_column_header && rowIndex === 0 ? 'col' : 'row'}"` : ''
+          return `<${tag}${scope}>${richText(cell)}</${tag}>`
+        }).join('')}</tr>`
+        output.push(`<table>${data.has_column_header && rows.length ? `<thead>${renderRow(rows[0], 0)}</thead>` : ''}<tbody>${rows.slice(data.has_column_header ? 1 : 0).map((row, i) => renderRow(row, i + (data.has_column_header ? 1 : 0))).join('')}</tbody></table>`)
+        continue
+      }
+      // The page owns h1. Preserve authored nesting without skipped heading levels,
+      // even when an author starts with Notion Heading 2/3 or skips a rank.
+      let headingLevel
+      if (/^heading_[123]$/.test(type)) {
+        const rank = Number(type.at(-1))
+        while (headingStack.length && headingStack.at(-1).rank >= rank) headingStack.pop()
+        headingLevel = (headingStack.at(-1)?.level ?? 1) + 1
+        headingStack.push({ rank, level: headingLevel })
+      }
+      const text = richText(data.rich_text)
+      const children = block.children?.length ? await convertBlocks(block.children, image, headingStack) : ''
+      if (current) output.push(`<li>${text}${children}</li>`)
+      else if (type === 'paragraph') output.push(`<p>${text}</p>${children}`)
+      else if (/^heading_[123]$/.test(type)) {
+        const level = headingLevel
+        output.push(`<h${level}>${text}</h${level}>${children}`)
+      } else if (type === 'callout') output.push(`<Callout variant="note"><p>${text}</p>${children}</Callout>`)
+      else if (type === 'quote') output.push(`<blockquote><p>${text}</p>${children}</blockquote>`)
+      else if (type === 'toggle') output.push(`<details><summary>${text}</summary>${children}</details>`)
+      else if (type === 'code') {
+        const language = /^[a-z0-9_+-]+$/i.test(data.language ?? '') ? data.language.toLowerCase() : 'plaintext'
+        output.push(`<figure><pre><code className="language-${language}">{${json(plain(data.rich_text))}}</code></pre>${data.caption?.length ? `<figcaption>${richText(data.caption)}</figcaption>` : ''}</figure>`)
+      }
+      else if (type === 'divider') output.push('<hr />')
+      else if (type === 'bookmark') {
+        try {
+          const url = safeUrl(data.url, true)
+          if (notionImageHost(new URL(url).hostname)) throw new Error('Private media bookmark')
+          const captionHasLinks = data.caption?.some(part => part.href || part.text?.link?.url)
+          output.push(`<p><a href={${json(url)}}>${!captionHasLinks && plain(data.caption).trim() ? richText(data.caption) : `{${json(url)}}`}</a>${captionHasLinks ? ` — ${richText(data.caption)}` : ''}</p>`)
+        } catch { throw blockError(block, 'bookmark requires a safe HTTPS URL and text caption') }
+      } else if (type === 'file') {
+        let attachment
+        try { attachment = publicAttachment(data) } catch (error) { throw blockError(block, error.message) }
+        output.push(`<p><a href={${json(attachment.url)}}>{${json(attachment.filename + ' (' + attachment.extension + ')')}}</a>${data.caption?.length ? ` — ${richText(data.caption)}` : ''}</p>`)
+      } else if (type === 'to_do') output.push(`<p>{${json(data.checked ? '☑ Completed: ' : '☐ Not completed: ')}}${text}</p>${children}`)
+      else if (type === 'equation') output.push(`<p>${richText([{ type: 'equation', equation: data }])}</p>`)
+      else if (type === 'image') {
+        const accessible = imageAccessibility(block)
+        const url = await image(block)
+        output.push(`<figure><img src={${json(url)}} alt={${json(accessible.alt)}} />${plain(accessible.caption) ? `<figcaption>${richText(accessible.caption)}</figcaption>` : ''}</figure>`)
+      } else throw blockError(block, 'Unsupported Notion block type; replace with supported blocks before publication')
+    } catch (error) {
+      if (error.message.startsWith('Notion block ')) throw error
+      // Do not relay compiler, downloader or malformed-payload details.
+      throw blockError(block, error.name === 'TypeError' ? 'invalid block payload; check rich text or table shape' : 'conversion failed; check rich text, URL, table shape or media availability')
     }
-    if (type === 'table') {
-      const rows = block.children ?? []
-      const width = data.table_width
-      if (!Number.isInteger(width) || width < 1 || rows.some(row => row.type !== 'table_row' || row.table_row?.cells?.length !== width)) throw new Error('Invalid Notion table')
-      const renderRow = (row, rowIndex) => `<tr>${row.table_row.cells.map((cell, colIndex) => {
-        const header = data.has_column_header && rowIndex === 0 || data.has_row_header && colIndex === 0
-        const tag = header ? 'th' : 'td'
-        const scope = header ? ` scope="${data.has_column_header && rowIndex === 0 ? 'col' : 'row'}"` : ''
-        return `<${tag}${scope}>${richText(cell)}</${tag}>`
-      }).join('')}</tr>`
-      output.push(`<table>${data.has_column_header && rows.length ? `<thead>${renderRow(rows[0], 0)}</thead>` : ''}<tbody>${rows.slice(data.has_column_header ? 1 : 0).map((row, i) => renderRow(row, i + (data.has_column_header ? 1 : 0))).join('')}</tbody></table>`)
-      continue
-    }
-    // The page owns h1. Preserve authored nesting without skipped heading levels,
-    // even when an author starts with Notion Heading 2/3 or skips a rank.
-    let headingLevel
-    if (/^heading_[123]$/.test(type)) {
-      const rank = Number(type.at(-1))
-      while (headingStack.length && headingStack.at(-1).rank >= rank) headingStack.pop()
-      headingLevel = (headingStack.at(-1)?.level ?? 1) + 1
-      headingStack.push({ rank, level: headingLevel })
-    }
-    const text = richText(data.rich_text)
-    const children = block.children?.length ? await convertBlocks(block.children, image, headingStack) : ''
-    if (current) output.push(`<li>${text}${children}</li>`)
-    else if (type === 'paragraph') output.push(`<p>${text}</p>${children}`)
-    else if (/^heading_[123]$/.test(type)) {
-      const level = headingLevel
-      output.push(`<h${level}>${text}</h${level}>${children}`)
-    } else if (type === 'callout') output.push(`<Callout variant="note"><p>${text}</p>${children}</Callout>`)
-    else if (type === 'quote') output.push(`<blockquote><p>${text}</p>${children}</blockquote>`)
-    else if (type === 'toggle') output.push(`<details><summary>${text}</summary>${children}</details>`)
-    else if (type === 'code') {
-      const language = /^[a-z0-9_+-]+$/i.test(data.language ?? '') ? data.language.toLowerCase() : 'plaintext'
-      output.push(`<pre><code className="language-${language}">{${json(plain(data.rich_text))}}</code></pre>`)
-    }
-    else if (type === 'divider') output.push('<hr />')
-    else if (type === 'image') {
-      const url = await image(block)
-      output.push(`<figure><img src={${json(url)}} alt={${json(plain(data.caption))}} loading="lazy" />${data.caption?.length ? `<figcaption>${richText(data.caption)}</figcaption>` : ''}</figure>`)
-    } else throw new Error(`Unsupported Notion block type: ${/^[a-z_]+$/.test(type) ? type : 'unknown'}`)
   }
   if (list) output.push(`</${list}>`)
   return output.join('\n')
@@ -309,7 +374,7 @@ export async function synchronize({ root, api, pageId, imageDownloader = downloa
         if (stored) { files.set(previous.path, stored); assets[assetKey] = previous; return '/' + previous.path.slice(7) }
       }
       const { bytes, extension } = await imageDownloader(url)
-      const name = imageName({ caption: plain(image.caption), article: metadata.slug, sequence: imageSequence })
+      const name = imageName({ caption: plain(imageAccessibility(block).caption), article: metadata.slug, sequence: imageSequence })
       const path = `public/images/notion/${pageKey}/${name}-${hash(bytes).slice(0, 12)}.${extension}`
       assets[assetKey] = { path, identity, revision: block.last_edited_time ?? null }
       files.set(path, bytes)

@@ -21,7 +21,7 @@ test('rich MDX fixture compiles, prerenders and hydrates through both publishing
     block('paragraph', '<script>alert(1)</script> {globalThis.secret}'),
     block('callout', 'Notion informational content'),
     block('code', 'def notion_example():\n    return "safe"', { code: { rich_text: [rt('def notion_example():\n    return "safe"')], language: 'python' } }),
-    { type: 'image', image: { caption: [rt('Notion caption')] } },
+    { type: 'image', image: { caption: [rt('Alt: Shared renderer diagram\nNotion caption')] } },
     { type: 'table', table: { table_width: 2, has_column_header: true, has_row_header: true }, children: [
       { type: 'table_row', table_row: { cells: [[rt('Setting')], [rt('Value')]] } },
       { type: 'table_row', table_row: { cells: [[rt('Enabled')], [rt('Yes')]] } },

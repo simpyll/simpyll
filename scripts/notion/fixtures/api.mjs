@@ -22,7 +22,7 @@ export const blocks = [
   block('heading_1', 'First heading'), block('heading_2', 'Second heading'), block('heading_3', 'Third heading'),
   block('bulleted_list_item', 'Bullet', { has_children: true }), block('numbered_list_item', 'Number'),
   block('quote', 'A quotation'), block('code', 'const value = `<tag>{notCode}</tag>`;\nexport default value;'),
-  { id: CHILD, type: 'image', has_children: false, image: { type: 'file', file: { url: 'https://prod-files-secure.s3.us-west-2.amazonaws.com/fixture.png?signature=one' }, caption: [rt('Fixture image')] } },
+  { id: CHILD, type: 'image', has_children: false, image: { type: 'file', file: { url: 'https://prod-files-secure.s3.us-west-2.amazonaws.com/fixture.png?signature=one' }, caption: [rt('Alt: One-pixel fixture\nFixture image')] } },
 ]
 export const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAADUlEQVQImWMwTpv5HwAENAIyeXoBdAAAAABJRU5ErkJggg==', 'base64')
 export function fixture({ pages = [page()], content = blocks, statusType = 'status', nested = false, latest, queryPages = false } = {}) {

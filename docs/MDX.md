@@ -520,3 +520,14 @@ production build and `npx playwright test citations`. Browser tests exercise nat
 anchors with/without JavaScript, themes, wrapping, focus and print. Axe incomplete
 results require inspection; they are neither passes nor violations. Automated
 semantics checks do not substitute for an actual screen-reader listening session.
+
+## Notion rich-block import contract (#65)
+
+See the authoritative [block matrix and author examples](NOTION-BLOCKS.md). The
+publisher reuses this component mapping for tables, images, links, code and
+callouts. It encodes all author text as literals; trusted manual MDX remains a
+separate authoring boundary. Bookmarks and approved external file blocks emit
+static links, equations emit literal labelled TeX, and to-do items preserve their
+state as static symbols. No iframe, remote preview fetch or new component is added.
+Notion images require explicit alt/decorative metadata independently of captions.
+Unsupported/private content aborts the full plan rather than emitting placeholders.
