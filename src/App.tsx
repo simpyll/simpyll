@@ -14,6 +14,7 @@ import { Header } from './components/Header'
 import { Footer } from './components/Footer'
 
 import { AboutPage } from './pages/About'
+import { Contact } from './pages/Contact'
 import { Home } from './pages/Home'
 import { Blog } from './pages/Blog'
 import { NotFound } from './pages/NotFound'
@@ -41,6 +42,7 @@ export function AppContent() {
           <Route path="/projects/:slug" element={<ProjectDetailRoute />} />
           <Route path="/pulse" element={<PulseRoute />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
