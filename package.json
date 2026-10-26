@@ -9,7 +9,7 @@
     "build:client": "npm run validate:projects && tsc -b && vite build",
     "build:server": "npm run validate:projects && vite build --ssr src/entry-server.tsx --outDir dist-server",
     "prerender": "node scripts/prerender.mjs",
-    "build": "npm run validate:projects && npm run generate:redirects && npm run validate:content && npm run generate:images && npm run generate:search && npm run generate:sitemap && npm run generate:rss && npm run build:client && npm run build:server && npm run prerender && node scripts/smoke/generate.mjs && npm run perf:assets && npm run audit:seo",
+    "build": "npm run validate:projects && npm run validate:analytics && npm run generate:redirects && npm run validate:content && npm run generate:images && npm run generate:search && npm run generate:sitemap && npm run generate:rss && npm run build:client && npm run build:server && npm run prerender && node scripts/smoke/generate.mjs && npm run perf:assets && npm run audit:seo",
     "lint": "eslint .",
     "preview": "vite preview",
     "sync:notion": "node scripts/sync-notion.mjs",
@@ -18,7 +18,7 @@
     "validate:content": "node scripts/validate-content.mjs",
     "test:mdx": "node --test scripts/article-heading.test.mjs scripts/mdx.test.mjs scripts/rich-content.test.mjs",
     "test:content": "node --test scripts/validate-content.test.mjs",
-    "test": "npm run build && npm run test:images && npm run test:performance && node --test scripts/*.test.mjs scripts/notion/*.test.mjs && npm run test:smoke && npm run test:e2e:built",
+    "test": "npm run build && npm run test:images && npm run test:performance && node --test scripts/*.test.mjs scripts/notion/*.test.mjs && npm run test:analytics && npm run test:smoke && npm run test:e2e:built",
     "test:e2e": "npm run build && npm run test:e2e:built",
     "test:e2e:built": "playwright test",
     "test:e2e:smoke": "playwright test cross-browser",
@@ -46,7 +46,10 @@
     "audit:seo": "node scripts/seo-audit.mjs",
     "test:seo": "node --test scripts/seo-audit.test.mjs",
     "audit:pulse": "node scripts/pulse.mjs",
-    "test:pulse": "node --test scripts/pulse.test.mjs"
+    "test:pulse": "node --test scripts/pulse.test.mjs",
+    "test:analytics": "node --test scripts/analytics/*.test.mjs",
+    "ingest:analytics": "node scripts/analytics/ingest.mjs",
+    "validate:analytics": "node scripts/analytics/validate.mjs"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",

@@ -13,7 +13,7 @@ export default defineConfig([
     languageOptions: { globals: globals.browser },
   },
   {
-    files: ['scripts/validate-content*.mjs', 'scripts/smoke/*.mjs', 'scripts/publishing-health*.mjs', 'scripts/notion/recovery*.mjs'],
+    files: ['scripts/validate-content*.mjs', 'scripts/smoke/*.mjs', 'scripts/analytics/*.mjs', 'scripts/publishing-health*.mjs', 'scripts/notion/recovery*.mjs'],
     extends: [js.configs.recommended],
     languageOptions: { globals: globals.node },
   },

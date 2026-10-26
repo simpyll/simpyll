@@ -14,7 +14,11 @@
       },
       {
         "title": "Cookies and browser storage",
-        "text": "The inspected application does not set cookies or include analytics trackers. It stores an explicit theme choice in localStorage under simpyll-theme, until changed or cleared through browser settings. Session storage under simpyll-scroll-v1 holds up to 100 navigation entries, including paths, queries, fragments and scroll positions, to restore reading position. Session storage normally lasts for the tab session; browser session restoration can extend it. These values are read in your browser and are not sent to an application backend by this code. Blocking storage leaves fallback behavior available."
+        "text": "Optional Google Analytics 4 is disabled until owner activation and visitor opt-in on this page. Before opt-in no Google analytics script loads. If enabled and allowed, Google processes canonical page paths and engagement using analytics cookies (configured lifetime 90 days); queries, fragments, page titles and referrers are excluded from manual page views. Google receives connection information. Advertising consent remains denied. The simpyll-analytics-consent preference is stored locally until changed or cleared. Withdraw on this page to stop collection and remove accessible GA cookies; already processed data is not automatically deleted. It stores an explicit theme choice in localStorage under simpyll-theme, until changed or cleared through browser settings. Session storage under simpyll-scroll-v1 holds up to 100 navigation entries, including paths, queries, fragments and scroll positions, to restore reading position. Session storage normally lasts for the tab session; browser session restoration can extend it. These values are read in your browser and are not sent to an application backend by this code. Blocking storage leaves fallback behavior available."
+      },
+      {
+        "title": "Public aggregate reporting",
+        "text": "Pulse may publish daily site-wide Search Console and GA4 aggregates through authenticated publishing jobs. No raw search queries, visitor identifiers, IP addresses, demographic segments or per-visitor records are exported. Missing data is not zero. Daily public snapshots retain up to 730 days; repository history and public copies can persist longer. Detailed page-level breakdowns are omitted pending privacy review. Google account retention is separately configured by the owner; for requests contact simpyll.com@gmail.com."
       },
       {
         "title": "Search and third parties",
@@ -30,7 +34,7 @@
       },
       {
         "title": "Children and future changes",
-        "text": "The portfolio and professional education focus is not designed as a service for children; no child-specific submission feature was found. The intended audience needs owner confirmation. New forms, analytics, embeds, AI services or clinical tools require a fresh privacy and consent review before launch. No separate cookie banner or cookie policy has been added for the current source configuration; this is not a legal determination that consent is never required."
+        "text": "The portfolio and professional education focus is not designed as a service for children; no child-specific submission feature was found. The intended audience needs owner confirmation. New forms, analytics, embeds, AI services or clinical tools require a fresh privacy and consent review before launch. Analytics is optional and requires affirmative consent on this page. Owner activation remains contingent on reviewing applicable privacy duties, Google processing terms, retention and intended audience."
       },
       {
         "title": "Policy updates",
@@ -72,7 +76,7 @@
     "sections": [
       {
         "title": "General education",
-        "text": "Healthcare and nursing content is for general educational and informational purposes. It is not individualized medical advice, diagnosis or treatment. Reading or interacting with this website does not establish a clinician–patient relationship."
+        "text": "Healthcare and nursing content is for general educational and informational purposes. It is not individualized medical advice, diagnosis or treatment. Reading or interacting with this website does not establish a clinician\u2013patient relationship."
       },
       {
         "title": "Independent clinical judgment",

@@ -1,3 +1,4 @@
+import { Analytics } from './analytics/Analytics'
 import { PulseRoute } from './pulse/route'
 import { Policy } from './pages/Policy'
 import policyLinks from './content/policies.json'
@@ -30,6 +31,7 @@ export function AppContent() {
     <>
       <a href="#main-content" className="skip-link">Skip to content</a>
       <Header />
+      <Analytics />
       <RouteNavigation />
 
       <ErrorBoundary key={pathname} scope="route">

@@ -50,3 +50,7 @@ Semantic metrics, captions, row/column headers and actual article links are prer
 Route assets are included through the existing Vite manifest helper, including Pulse CSS on direct visits. Existing gzip budgets apply without changes. No article bodies, raw audit objects or new libraries ship in Pulse. Browser tests cover filtering, keyboard selection, no-JS output, hydration errors, horizontal layout and axe checks in both themes; screenshots are under `docs/pulse`. Automated axe results do not substitute for manual assistive-technology review.
 
 For larger collections the map shows at most 120 matching articles, with deterministic ring positions for that visible subset. Search and category/orphan filters narrow the subset; the accessible inventory table retains all matches. Counts are precomputed from the full edge set. There is no per-frame recalculation or physics loop. This bounded map is progressive disclosure, not an assertion that hidden articles have no relationships.
+
+## Optional Google reporting (#157)
+
+The separate versioned `/google-analytics.json` export extends this same dashboard with daily GSC and GA4 aggregates. `/pulse.json` remains the content/technical contract; its legacy analytics placeholders do not describe the independent Google dataset. See [owner setup and methodology](google-analytics.md) for OIDC permissions, opt-in browser tracking, persistence and disclosure limits. No credentials are required for builds or normal PR checks. Neither dataset depends on browser-side Google reporting calls.

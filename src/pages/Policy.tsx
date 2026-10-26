@@ -1,3 +1,4 @@
+import { AnalyticsChoice } from '../analytics/Analytics'
 import { Link } from 'react-router-dom'
 import { Container } from '../components/Container'
 import { SEO } from '../components/SEO'
@@ -18,6 +19,7 @@ export function Policy({ slug }: { slug: string }) {
           <p>Published <time dateTime="2026-10-25">October 25, 2026</time>. Last reviewed October 25, 2026.</p>
           <p>For private privacy, legal, or accessibility questions, email <a className="text-accent underline" href="mailto:simpyll.com@gmail.com">simpyll.com@gmail.com</a>. This information is not represented as attorney-reviewed.</p>
         </aside>
+        {slug === 'privacy' && <AnalyticsChoice />}
         <nav aria-label="On this page" className="mb-10"><ul className="flex flex-wrap gap-x-6 gap-y-1">
           {policy.sections.map((section, i) => <li key={section.title}><a className="inline-flex min-h-11 items-center text-accent underline underline-offset-4" href={`#section-${i + 1}`}>{section.title}</a></li>)}
         </ul></nav>

@@ -20,6 +20,8 @@ concurrency:
 
 jobs:
   build:
+    env:
+      VITE_GA4_ENABLED: ${{ vars.GA4_TRACKING_ENABLED }}
     runs-on: ubuntu-latest
     outputs:
       revision: ${{ steps.revision.outputs.sha }}
