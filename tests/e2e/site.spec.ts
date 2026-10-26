@@ -67,7 +67,7 @@ test('journal links, client navigation and history work without document reloads
   await expect(page).toHaveURL('/blog')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Learning journal.')
   for (const slug of articles) {
-    await expect(page.locator(`main a[href="/blog/${slug}"]`)).toBeVisible()
+    await expect(page.locator(`main article h2 a[href="/blog/${slug}"]`)).toBeVisible()
   }
   await page.getByRole('link', { name: /Hello, World/ }).click()
   await expect(page).toHaveURL('/blog/hello-world')
