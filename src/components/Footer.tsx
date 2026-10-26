@@ -29,7 +29,7 @@ export function Footer() {
             <div className="footer-socials">
               {socials.map(social => <a key={social.name} href={social.url} aria-label={social.name} target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d={social.path} /></svg></a>)}
             </div>
-            <a className="text-sm text-muted underline underline-offset-4" href="mailto:simpyll.com@gmail.com">Email Simpyll</a>
+            <Link className="text-sm text-muted underline underline-offset-4" to="/contact">Contact</Link>
           </div>
           <a className="footer-contribution text-sm text-muted" href={contribution.href} target="_blank" rel="noopener noreferrer">{contribution.label} <span aria-hidden="true">↗</span></a>
           <nav aria-label="Legal and transparency" className="footer-legal">
