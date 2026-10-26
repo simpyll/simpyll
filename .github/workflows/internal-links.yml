@@ -1,0 +1,47 @@
+name: Internal link editorial review
+on:
+  push:
+    branches: [main]
+    paths: ['src/content/blog/**', '.notion/published.json', 'content/projects.json', 'content/internal-links/decisions.json']
+  workflow_call:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: internal-link-review
+  cancel-in-progress: false
+jobs:
+  discover:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: node scripts/internal-links/cli.mjs
+      - name: Update one review branch without overwriting owner edits
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git ls-remote --exit-code --heads origin editorial/internal-links >/dev/null; then
+            echo 'Existing review branch retained. Finish or delete it before generating another batch.'
+            exit 0
+          fi
+          node --input-type=module -e "import fs from 'node:fs'; if (!JSON.parse(fs.readFileSync('content/internal-links/suggestions.json')).suggestions.length) process.exit(1)" || exit 0
+          git add content/internal-links
+          git diff --cached --quiet && exit 0
+          git switch -c editorial/internal-links
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'editorial: propose internal links (all pending)'
+          git push origin HEAD
+          gh pr create --base main --head editorial/internal-links --title 'Editorial Review: Internal Linking Suggestions' --body-file content/internal-links/report.md
