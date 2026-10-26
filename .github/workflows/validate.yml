@@ -98,6 +98,7 @@ jobs:
       # Avoid apt-based install-deps hanging across three parallel shards.
       - name: Enforce all browser and accessibility projects
         env:
+          HOME: /root
           PLAYWRIGHT_FULL_MATRIX: ${{ (github.event_name == 'schedule' || inputs.full_matrix) && '1' || '' }}
         run: npm run test:e2e:built -- --shard=${{ matrix.shard }}/3
       - name: Preserve browser reports and layout evidence
