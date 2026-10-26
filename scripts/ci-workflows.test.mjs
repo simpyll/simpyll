@@ -54,5 +54,7 @@ test('extended matrix is available without weakening routine gates or rebuilding
   assert.equal((pr.match(/run: npm run build\n/g) ?? []).length, 1)
   assert.match(pr, /--shard=\$\{\{ matrix.shard \}\}\/3/)
   const deploy = await readFile('.github/workflows/deploy.yml', 'utf8')
-  assert.match(deploy, /PLAYWRIGHT_FULL_MATRIX: '1'/)
+  assert.doesNotMatch(deploy, /PLAYWRIGHT_FULL_MATRIX: '1'/)
+  assert.match(deploy, /timeout-minutes: 30/)
+  assert.match(pr, /browser:\n    needs: build\n    runs-on: ubuntu-latest\n    timeout-minutes: 30/)
 })
