@@ -35,7 +35,7 @@ export function Contact() {
   const field = 'mt-2 w-full rounded-lg border border-outline bg-canvas px-4 py-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
   return (
     <>
-      <SEO title="Contact | Simpyll" description="Contact Simpyll about software, writing, collaboration, and clinical technology projects." path="/contact" />
+      <SEO title="Contact" description="Contact Simpyll about software, writing, collaboration, and clinical technology projects." path="/contact" />
       <main id="main-content" tabIndex={-1} className="min-h-screen bg-canvas py-16 text-foreground sm:py-24">
         <Container>
           <div className="mx-auto max-w-2xl">
