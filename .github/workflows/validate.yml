@@ -70,6 +70,9 @@ jobs:
   browser:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
     strategy:
       fail-fast: false
       matrix:
@@ -88,10 +91,14 @@ jobs:
         with:
           name: validated-build
       - name: Verify artifact revision
-        run: test "$(cat ci-revision.txt)" = "$(git rev-parse HEAD)"
-      - uses: ./.github/actions/browsers
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          test "$(cat ci-revision.txt)" = "$(git rev-parse HEAD)"
+      # Pinned official image already contains Chromium, Firefox, WebKit and OS dependencies.
+      # Avoid apt-based install-deps hanging across three parallel shards.
       - name: Enforce all browser and accessibility projects
         env:
+          HOME: /root
           PLAYWRIGHT_FULL_MATRIX: ${{ (github.event_name == 'schedule' || inputs.full_matrix) && '1' || '' }}
         run: npm run test:e2e:built -- --shard=${{ matrix.shard }}/3
       - name: Preserve browser reports and layout evidence

@@ -20,6 +20,7 @@ concurrency:
 
 jobs:
   build:
+    timeout-minutes: 30
     env:
       VITE_GA4_ENABLED: ${{ vars.GA4_TRACKING_ENABLED }}
     runs-on: ubuntu-latest
@@ -93,9 +94,10 @@ jobs:
       - name: Test rich MDX and Notion rendering
         run: npm run test:mdx
 
+      # PR validation owns the extended cross-browser matrix; deployment retains
+      # Chromium coverage and focused cross-browser journeys without duplicating
+      # the full extended suite on every main push.
       - name: Enforce accessibility and browser regressions (desktop and mobile)
-        env:
-          PLAYWRIGHT_FULL_MATRIX: '1'
         run: npm run test:e2e:built
 
       - name: Upload browser test diagnostics
