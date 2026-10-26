@@ -30,6 +30,7 @@ jobs:
       - run: npm ci
       - name: Run deterministic performance budget tests
         run: npm run test:performance
+      - run: node --test scripts/internal-links.test.mjs
       - run: npm run test:redirects
       - run: npm run test:notion
       - name: Test weekly publishing audit

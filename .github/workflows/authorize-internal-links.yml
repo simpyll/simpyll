@@ -1,0 +1,43 @@
+name: Authorize internal links
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: internal-link-authorization
+  cancel-in-progress: false
+jobs:
+  authorize:
+    if: github.ref == 'refs/heads/main' && github.actor == github.repository_owner
+    environment: internal-link-editorial
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Bind owner identity to exact manifest and revision
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          INTERNAL_LINKS_PRIVATE_KEY: ${{ secrets.INTERNAL_LINKS_PRIVATE_KEY }}
+        run: node scripts/internal-links/authorize.mjs
+      - run: node scripts/internal-links/cli.mjs
+      - name: Propose signed decisions
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git switch -c editorial/authorized-${GITHUB_RUN_ID}
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add content/internal-links
+          git commit -m 'editorial: record owner-authorized link decisions'
+          git push origin HEAD
+          gh pr create --base main --title 'Apply owner-authorized internal links' --body 'Signed decisions bind the owner identity, exact manifest and source revision. Review and merge to publish.'

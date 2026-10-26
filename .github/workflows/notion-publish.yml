@@ -91,3 +91,11 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       ref: ${{ needs.sync.outputs.revision }}
+
+  internal-links:
+    needs: sync
+    if: needs.sync.outputs.changed == 'true'
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: ./.github/workflows/internal-links.yml

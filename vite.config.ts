@@ -10,6 +10,9 @@ import rehypeHighlight from 'rehype-highlight'
 import { remarkRichContent } from './scripts/remark-rich-content.mjs'
 import { remarkHeadingIds } from './scripts/remark-heading-ids.mjs'
 
+import { load, remarkInternalLinks } from './scripts/internal-links/repository.mjs'
+const internalLinks = await load()
+
 // Vite's SPA fallback otherwise serves the prerendered homepage at /blog.
 function prerenderedRoutes(): Plugin {
   return {
@@ -54,7 +57,7 @@ export default defineConfig({
       },
     },
     prerenderedRoutes(),
-    { enforce: 'pre', ...mdx({ providerImportSource: '@mdx-js/react', remarkPlugins: [remarkGfm, remarkReadingTime, remarkHeadingIds, remarkRichContent], rehypePlugins: [[rehypeHighlight, { detect: false, ignoreMissing: true }]] }) },
+    { enforce: 'pre', ...mdx({ providerImportSource: '@mdx-js/react', remarkPlugins: [remarkGfm, remarkInternalLinks(internalLinks), remarkReadingTime, remarkHeadingIds, remarkRichContent], rehypePlugins: [[rehypeHighlight, { detect: false, ignoreMissing: true }]] }) },
     react(),
     tailwindcss(),
   ],
