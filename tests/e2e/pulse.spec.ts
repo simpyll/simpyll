@@ -8,10 +8,18 @@ test('Pulse renders real data, supports keyboard graph exploration, filters and 
  const response=await page.request.get('/pulse.json');const snapshot=await response.json()
  await page.goto('/pulse')
  await expect(page.getByRole('heading',{level:1})).toHaveText('Simpyll Pulse.')
- await expect(page.getByText('Not connected. No measurements available.',{exact:false})).toHaveCount(2)
+ const analytics=await (await page.request.get('/google-analytics.json')).json()
+ for(const [key,title] of [['searchConsole','Google Search performance'],['ga4','Website traffic (GA4)']]) {
+  const source=analytics[key]
+  const section=page.getByRole('region',{name:title,exact:true})
+  const message=source.status==='unavailable'?'Not connected. No measurements available.':source.status==='error'?'Latest refresh failed. Any previous valid measurements are retained.':source.days.some((row:{date:string})=>source.updated&&row.date>=new Date(Date.parse(source.updated+'T00:00:00Z')-31*86400000).toISOString().slice(0,10)&&row.date<=new Date(Date.parse(source.updated+'T00:00:00Z')-4*86400000).toISOString().slice(0,10))?'Validated Google reporting data.':'Connected; no reported rows in this period.'
+  await expect(section).toContainText(message)
+  await expect(section).toContainText(`Timezone: ${source.timezone??'unavailable'}`)
+  if(source.updated) await expect(section).toContainText(`Last successful refresh: ${source.updated}`)
+ }
  await page.getByLabel('Analytics period').selectOption('7')
  await expect(page.getByRole('heading',{name:'Google Search performance'})).toBeVisible()
- await expect(page.getByRole('table').first().getByRole('row')).toHaveCount(snapshot.articles.length+1)
+ await expect(page.locator('#pulse-galaxy table').getByRole('row')).toHaveCount(snapshot.articles.length+1)
  if(snapshot.articles.length){
   const node=page.locator('.pulse-node').first();await node.focus();await page.keyboard.press('Enter')
   await expect(page.locator('.pulse-inspector h3')).toHaveText(snapshot.articles[0].title)
