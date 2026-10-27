@@ -1,3 +1,5 @@
+import { Suspense } from 'react'
+import { articleElement } from '../lib/article-loader'
 import { RelatedProjects } from '../components/RelatedProjects'
 import { ArticleEditorialHistory } from '../components/ArticleEditorialHistory'
 import { formatArticleDate } from '../lib/editorial.mjs'
@@ -28,7 +30,7 @@ export function BlogPost() {
 
   if (!post) return <NotFound />
 
-  const { metadata, Content } = post
+  const { metadata } = post
 
   return (
     <>
@@ -77,7 +79,7 @@ export function BlogPost() {
 
             {post.headings.length > 1 && <div className="toc-mobile-slot"><ArticleToc key={post.slug} headings={post.headings} /></div>}
             <div className="prose article-content mt-12 max-w-none">
-              <MDXProvider components={mdxComponents}><Content /></MDXProvider>
+              <Suspense fallback={<p role="status">Loading article…</p>}><MDXProvider components={mdxComponents}>{articleElement(post.slug)}</MDXProvider></Suspense>
             </div>
 
             <ArticleEditorialHistory metadata={metadata} />

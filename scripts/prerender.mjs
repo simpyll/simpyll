@@ -38,7 +38,7 @@ async function prerender() {
   const routes = [...policyRoutes, '/', '/blog', '/about', '/contact', '/explore', '/projects', '/tools/lipidpath', ...blogRoutes, ...await caseStudyRoutes()]
 
   for (const route of routes) {
-    const pageHtml = render(route).replace('<head>', `<head>${templateHead}${projectHead(clientManifest, route)}`)
+    const pageHtml = (await render(route)).replace('<head>', `<head>${templateHead}${projectHead(clientManifest, route)}`)
 
     const outputDirectory =
       route === '/'
@@ -64,15 +64,15 @@ async function prerender() {
     await writeFile(join(directory, 'index.html'), redirectHtml(getSiteUrl(`/blog/${target}`), siteConfig.language, siteConfig.url))
   }
 
-  await writeFile(join(distDirectory, '404.html'), render('/404').replace('<head>', `<head>${templateHead}`), 'utf8')
+  await writeFile(join(distDirectory, '404.html'), (await render('/404')).replace('<head>', `<head>${templateHead}`), 'utf8')
 
   await mkdir(join(distDirectory, 'pulse'), { recursive: true })
-  await writeFile(join(distDirectory, 'pulse/index.html'), render('/pulse').replace('<head>', `<head>${templateHead}${projectHead(clientManifest, '/pulse')}`))
+  await writeFile(join(distDirectory, 'pulse/index.html'), (await render('/pulse')).replace('<head>', `<head>${templateHead}${projectHead(clientManifest, '/pulse')}`))
   // The snapshot link must resolve during its own audit; final validated data replaces this seed.
   await writeFile(join(distDirectory, 'pulse.json'), '{}\n')
   const pulse = await generatePulse({ expectedRoutes: [...routes, '/pulse'], directory: distDirectory })
   await mkdir(join(distDirectory, 'pulse'), { recursive: true })
-  await writeFile(join(distDirectory, 'pulse/index.html'), render('/pulse', pulse).replace('<head>', `<head>${templateHead}${projectHead(clientManifest, '/pulse')}`))
+  await writeFile(join(distDirectory, 'pulse/index.html'), (await render('/pulse', pulse)).replace('<head>', `<head>${templateHead}${projectHead(clientManifest, '/pulse')}`))
 
   console.log(`Successfully prerendered ${routes.length} pages and 404.html.`)
 }

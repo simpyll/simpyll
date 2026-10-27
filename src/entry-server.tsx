@@ -1,3 +1,4 @@
+import { preloadArticle } from './lib/article-loader'
 import { LipidPath } from './features/lipidpath/LipidPath'
 import { registerLipidPath } from './features/lipidpath/loader'
 registerLipidPath(LipidPath)
@@ -17,7 +18,8 @@ import { registerPulse } from './pulse/loader'
 import { PulseData, type PulseSnapshot } from './pulse/data'
 registerPulse(Pulse)
 
-export function render(url: string, pulse: PulseSnapshot | null = null) {
+export async function render(url: string, pulse: PulseSnapshot | null = null) {
+  await preloadArticle(url)
   // Rendering the document lets React 19 hoist metadata into <head> while
   // keeping ordinary scripts (including JSON-LD) in the hydrated tree.
   return '<!doctype html>' + renderToString(

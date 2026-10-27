@@ -50,3 +50,5 @@ artifacts/
 
 # Pulse browser evidence is regenerated as PNG; reviewed WebP copies are committed.
 /docs/pulse/*.png
+
+/src/generated/articles.json

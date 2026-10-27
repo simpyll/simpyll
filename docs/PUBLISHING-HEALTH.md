@@ -109,3 +109,7 @@ injected clock/API client. It runs in the existing validation build job without
 another build. Local live read-only execution is optional with `GITHUB_REPOSITORY`
 and a securely supplied `GITHUB_TOKEN` granting contents/actions/deployments read:
 `node scripts/publishing-health.mjs`. Do not put a token in a command, file or PR.
+
+### Budget failure after import
+
+In the publisher's **sync** job, distinguish the import step from **Validate updated site before committing**. A failure in the latter (including `BUDGET FAILED`) is a failed synchronization even if the import step succeeded; no content commit or downstream deploy should be reported. Inspect the named failing budget and asset report, then reproduce with an isolated synthetic article and the production build. Do not raise budgets or publish a test article to clear the error. Correct the build, merge the reviewed change, and allow the normal authorized schedule to retry; confirm the resulting content commit and exact-revision deploy, followed by an unchanged no-op run. If the push was rejected, start a fresh run against current main rather than force-pushing. If the content commit exists but deployment failed, use the deployment recovery steps above.

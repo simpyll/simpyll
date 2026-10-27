@@ -34,11 +34,26 @@ test('budgets measure gzip text, raw media and deferred imports from manifest wi
 })
 test('Lighthouse reports remain advisory and reuse the exact validated artifact outside required gate', async () => {
   const workflow = await readFile('.github/workflows/validate.yml', 'utf8')
-  assert.match(workflow, /Run deterministic performance budget tests/)
-  assert.match(workflow, /PERF_ROUTES:.*github.event_name == 'pull_request'/)
+  assert.match(workflow, /run: npm run build/)
+  assert.match(workflow, /performance:\s*\n\s*if: github.event_name != 'pull_request'/)
+  const pkg = JSON.parse(await readFile('package.json', 'utf8'))
+  assert.match(pkg.scripts.build, /npm run perf:assets/)
   assert.match(workflow, /needs: build/)
   assert.match(workflow, /npm run perf:lighthouse/)
   assert.match(workflow, /needs: \[build, browser, fixtures\]/)
   const runner = await readFile('scripts/performance/lighthouse.mjs', 'utf8')
   assert.match(runner, /fieldINP: null/)
+})
+
+test('article routes preload and budget their own body without pulling in other articles', () => {
+  const manifest = {
+    'src/pages/article-style.ts': { file: 'article.css' },
+    'src/content/blog/one.mdx': { file: 'one.js', imports: ['shared'] },
+    'src/content/blog/two.mdx': { file: 'two.js' },
+    shared: { file: 'shared.js' },
+  }
+  const head = projectHead(manifest, '/blog/one/')
+  assert.match(head, /one.js/)
+  assert.match(head, /shared.js/)
+  assert.doesNotMatch(head, /two.js/)
 })

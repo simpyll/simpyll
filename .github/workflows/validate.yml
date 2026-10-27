@@ -184,6 +184,7 @@ jobs:
       - name: Verify recovery from a clean clone
         run: node --test scripts/recovery-build.test.mjs
       - run: npm run test:notion:build
+      - run: node --test scripts/notion-growth.test.mjs
       - name: Test rich MDX and Notion rendering
         run: npm run test:mdx
       - name: Preserve fixture diagnostics and syntax screenshots
