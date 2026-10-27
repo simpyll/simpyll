@@ -63,7 +63,7 @@ export function evaluate(p: Profile): Result {
     r.safety.push('Medication initiation and intensification are deferred until muscle symptoms are evaluated.');trace('muscle','Symptoms require assessment',`Muscle symptoms reported; severe symptoms ${p.severeMuscleSymptoms===undefined?'unknown':p.severeMuscleSymptoms}.`)
   }
   const currentStatin=p.statin!==undefined&&p.statin!=='none'
-  const canIntensify=currentStatin&&p.maxTolerated===true&&p.adherent===true&&!p.muscleSymptoms
+  const canIntensify=currentStatin&&p.maxTolerated===true&&p.adherent===true&&!p.muscleSymptoms&&!((p.tg??0)>=400&&p.fasting!==true)
   if(p.statin===undefined) r.missing.push('Current statin use and intensity')
   if(currentStatin) {need(p.maxTolerated===undefined,'Whether current statin is maximally tolerated');need(p.adherent===undefined,'Medication adherence')}
   if(p.adherent===false) add('adherence','Review adherence, access and response before considering additional medication.',['monitor'])
@@ -124,7 +124,7 @@ export function evaluate(p: Profile): Result {
       const category=r.riskCategory
       if(category==='Low') {
         if(p.age!<=59&&((p.baselineLdl??p.ldl!)>=160||(p.risk30??0)>=10)) {goal(100,130,'Low short-term risk with elevated long-term exposure',['low'],30);if(!p.muscleSymptoms)add('low','A moderate-intensity statin is reasonable to discuss because LDL exposure or 30-year risk meets the low-risk exception.');trace('low','Long-term risk exception',`LDL ${p.baselineLdl??p.ldl}; 30-year risk ${p.risk30??'unknown'}%.`)}
-        else {add('low','Continue individualized prevention and health-behavior counseling; low 10-year risk alone does not rule out long-term benefit.');if(p.age!<=59)need(p.risk30===undefined,'30-year PREVENT-ASCVD result to complete low-risk assessment')}
+        else {add('low-counseling','Continue individualized prevention and health-behavior counseling; low 10-year risk alone does not rule out long-term benefit.',['lifestyle']);if(p.age!<=59)need(p.risk30===undefined,'30-year PREVENT-ASCVD result to complete low-risk assessment')}
       } else {
         const id=category==='Borderline'?'borderline':category==='Intermediate'?'intermediate':'high'
         const goalId=category==='High'?'high-goals':'primary-goals'
@@ -153,6 +153,7 @@ export function evaluate(p: Profile): Result {
     else if(r.riskCategory==='High') {if(p.ezetimibe===false)add('high-add','Discuss adding ezetimibe when goals remain unmet on maximally tolerated statin.');else if(p.ezetimibe===undefined)need(true,'Current ezetimibe use');else medication('high-add-next','Discuss PCSK9 monoclonal antibody or bempedoic acid if goals remain unmet, accounting for existing therapy.')}
     if(severe&&p.ldl!>=100&&p.inclisiran===false)add('inclisiran','Inclisiran is an LDL-lowering option in this severe-LDL context. Cardiovascular outcomes trials were pending in the 2026 guideline; it is not interchangeable with proven outcome benefit.')
   }
+  if(p.tg!==undefined&&p.tg>=400&&p.fasting!==true) add('fasting-repeat','For a nonfasting or unconfirmed-fasting TG ≥400 mg/dL, confirm a fasting lipid profile and LDL assessment before medication intensification based on lipid levels.')
   if(p.tg!==undefined&&p.tg>=150) {
     r.pathways.push(p.tg>=500?'Severe triglyceride elevation':'Triglyceride risk assessment')
     const persistent=p.fasting===true&&p.persistentTg===true

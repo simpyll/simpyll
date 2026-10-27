@@ -1,4 +1,4 @@
-import { useRef, useState, type ReactNode } from 'react'
+import { cloneElement, isValidElement, useId, useRef, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { SEO } from '../../components/SEO'
 import { preventEligible } from './eligibility'
@@ -10,7 +10,12 @@ import './lipidpath.css'
 const steps=['Profile','Laboratory results','Current therapy','Risk assessment','Guideline results']
 const enhancerLabels=['Premature ASCVD in a parent or sibling (male <55, female <65)','Higher-risk ancestry (e.g., South Asian or Filipino)','Chronic inflammatory disease','Premature menopause or adverse pregnancy outcomes','Persistently elevated atherogenic lipids','Elevated hsCRP on repeat testing']
 function EvidenceLinks({ids}:{ids:string[]}) { return <span className="lp-evidence-links">{[...new Set(ids)].map(id=><a key={id} href={`#evidence-${id}`}>§{evidenceById[id]?.section} R{evidenceById[id]?.recommendation}</a>)}</span> }
-function Field({label,children,hint}:{label:string;children:ReactNode;hint?:string}) {return <div className="lp-field"><label>{label}{children}</label>{hint&&<p className="lp-hint">{hint}</p>}</div>}
+function Field({label,children,hint}:{label:string;children:ReactNode;hint?:string}) {
+  const descriptionId=useId()
+  const controlId=descriptionId+'-control'
+  const control=isValidElement<{id?:string;'aria-describedby'?:string}>(children)?cloneElement(children,{id:controlId,'aria-describedby':hint?descriptionId:undefined}):children
+  return <div className="lp-field"><label htmlFor={controlId}>{label}</label>{control}{hint&&<p id={descriptionId} className="lp-hint">{hint}</p>}</div>
+}
 function PathwayDiagram({result}:{result:Result}) {
   const branches=[
     {label:'Established ASCVD', active:result.pathways.some(p=>p.includes('secondary prevention')||p.startsWith('Secondary')), source:'secondary', text:'Established clinical disease selects secondary prevention; event and condition counts refine risk.'},
