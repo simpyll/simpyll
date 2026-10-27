@@ -2,6 +2,22 @@
 
 This guide covers third-party npm packages and GitHub Actions used by Simpyll. It complements [the security architecture](security-architecture.md), [Notion publishing guide](NOTION.md), and the separate [Issue #88 rights review](ISSUE-88-RIGHTS-REVIEW.md). A package's license does not license Simpyll's articles, clinical content, logos, screenshots, photographs, or other third-party media.
 
+## Assessment — October 27, 2026
+
+On main `e34aee3502d78331dc7d0237e819383fe3a558bc`, Node 24.22.1 / npm 11.9.0, the full audit reported four moderate package findings, zero high/critical; production-only reported two moderate package findings, zero high/critical. These are three root advisories across two paths, not four independent vulnerabilities. After the proposed updates both audits reported zero findings. Audit results reflect registry data on this date.
+
+| Advisory | Dependency path | Previous version | Final version/disposition | Verification |
+| --- | --- | --- | --- | --- |
+| [GHSA-wrjc-x8rr-h8h6](https://github.com/advisories/GHSA-wrjc-x8rr-h8h6) | react-router-dom → react-router | 6.30.6 | 7.18.4 | Audit no longer reports path; router journey validation required. |
+| [GHSA-337j-9hxr-rhxg](https://github.com/advisories/GHSA-337j-9hxr-rhxg) | react-router-dom → react-router | 6.30.6 | 7.18.4 | Audit no longer reports path; router journey validation required. |
+| [GHSA-rj75-hqrm-r3gf](https://github.com/advisories/GHSA-rj75-hqrm-r3gf) | @tailwindcss/typography → postcss-selector-parser (dev) | 6.0.10 | 6.1.5 via scoped override | Audit no longer reports path; generated style and browser validation required. |
+
+The router redirect requires an attacker-controlled destination; content URL validation narrows this exposure. Constructor injection requires data-router SSR error deserialization, which the static `StaticRouter` implementation does not use. Neither observation proves immunity. The parser advisory concerns CPU exhaustion with crafted selectors; typography runs at build time, not in the browser. The vulnerable parser is pinned exactly by typography 0.5.20. The override applies only to that parent and retains parser major version 6; remove it when a compatible upstream typography release resolves to a patched parser, then rerun audits and style checks. The router major upgrade preserves declarative routing and switches the server import to the v7 entry point. It requires Node 20+; CI uses Node 24. Full routing and visual browser validation remains required before merge.
+
+The updated parser, router, and new cookie dependencies carry MIT metadata. The inventory passes, but metadata is not a legal compatibility review or proof of ownership. Source/content boundaries in `LICENSE` and `LICENSING.md` remain unchanged. If regression requires rollback after merge, revert the dependency PR and restore its matching manifest, lockfile and server import together, then rerun the audits, tests, build and deployment checks; the advisories will return and must remain tracked.
+
+Historical measurements below refer to the earlier revision, not the current result.
+
 ## Audit baseline
 
 Reviewed on October 26, 2026, against `main` at `ac5d565` before this change:

@@ -1,5 +1,11 @@
 # Simpyll v1.0 — Production Stabilization & Handoff
 
+## Current scheduling and dependency update — October 27, 2026
+
+- #184 is closed as not planned; #43 is deferred by owner decision. Neither is a prerequisite for #82.
+- #82 remediation proposes React Router 7.18.4 and a scoped typography parser override; audits report zero findings on the proposed branch. Merge and final browser validation remain outstanding. See `docs/DEPENDENCY-MAINTENANCE.md`.
+- MIT source licensing was implemented in #195; separate asset-provenance work is not complete.
+
 ## A. Project mission
 A maintainable personal publication and portfolio connecting critical care, software engineering and AI. Finish reliable core publishing and existing tools; additional products, visual effects and growth infrastructure are outside v1.
 
