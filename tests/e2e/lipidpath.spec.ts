@@ -77,3 +77,14 @@ test('portfolio links launch tool and prerendered route hydrates on navigation',
   await expect(page.getByLabel('Age (years)',{exact:true})).toBeVisible()
   expect(errors).toEqual([])
 })
+test('nonanimated theme selection applies synchronously without waiting for an animation chunk',async({page})=>{
+  await page.goto('/tools/lipidpath');await ready(page)
+  const state=await page.getByRole('button',{name:/Switch to .* theme/}).evaluate(button=>{
+    const root=document.documentElement
+    const requested=root.dataset.theme==='dark'?'light':'dark'
+    ;(button as HTMLButtonElement).click()
+    return {requested,preference:root.dataset.themePreference,resolved:root.dataset.theme}
+  })
+  expect(state.preference).toBe(state.requested)
+  expect(state.resolved).toBe(state.requested)
+})

@@ -8,13 +8,20 @@ export function ThemeToggle() {
       title={`Switch to ${resolved === 'dark' ? 'light' : 'dark'} theme`}
       onClick={async event => {
         const button = event.currentTarget
-        // Keep optional animation off the shared initial bundle. The theme
-        // bootstrap and reduced-motion behavior remain available immediately.
+        const root = document.documentElement
+        const next = root.dataset.theme === 'dark' ? 'light' : 'dark'
+        const webkit = /AppleWebKit/.test(navigator.userAgent) && !/Chrome|Chromium|Edg/.test(navigator.userAgent)
+        // Nonanimated changes must remain synchronous: OS changes or a second
+        // interaction cannot race an optional animation chunk download.
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches || !document.startViewTransition || !root.animate || webkit) {
+          setPreference(next)
+          return
+        }
         try {
           const { revealTheme } = await import('../theme/transition')
-          revealTheme(button, setPreference)
+          revealTheme(button, setPreference, next)
         } catch {
-          setPreference(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark')
+          setPreference(next)
         }
       }}>
       <svg aria-hidden="true" className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
