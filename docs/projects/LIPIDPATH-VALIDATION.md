@@ -25,11 +25,12 @@ Boundary expected results were transcribed from recommendation text/figures, not
 
 ## Software commands and observations
 
-- `node --test scripts/lipidpath.test.mjs`: initially 108 passing cases (subsequent additions recorded in PR).
+- `node --test scripts/lipidpath.test.mjs`: 113 passing cases.
 - `npm run lint`: passes.
 - `npm run build`: passes, including TypeScript, static prerender, asset budgets and SEO audit (0 errors; 7 pre-existing editorial warnings).
+- Isolated regression run: 519 tests pass; clean production-build/recovery fixtures: 2 tests pass. Five additional targeted clinical tests also pass (113 clinical cases total).
 - Initial broad concurrent Node invocation conflicted with shared build-output fixture tests; rerun isolated/sequential checks for reliable results, do not treat that attempt as passed.
-- Local Playwright browser installation failed: the download returned an invalid/truncated archive. Browser suites are committed and run by the existing pinned CI container. Local browser, axe and visual checks are **not claimed passed**. Final CI outcomes belong in the PR and final handoff.
+- Local Playwright browser installation failed: the download returned an invalid/truncated archive. Browser suites are committed and run by the existing pinned CI container. Local browser, axe and visual checks are **not claimed passed**. Initial CI build/performance checks passed; the rich-MDX fixture exposed a 373-byte shared-bundle overrun. Optional theme-transition code is now deferred on interaction, preserving the budget. Final browser/fixture CI outcomes belong in the PR and final handoff.
 
 ## Browser verification contract
 

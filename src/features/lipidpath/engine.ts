@@ -131,7 +131,7 @@ export function evaluate(p: Profile): Result {
         goal(category==='High'?70:100,category==='High'?100:130,'Primary prevention if treatment is initiated',[goalId,id],category==='High'?50:30)
         if(!p.muscleSymptoms)add(id,category==='Borderline'?'Use shared decision-making; if treatment is selected, moderate-intensity statin is reasonable.':category==='Intermediate'?'Discuss at least moderate-intensity statin therapy; high intensity may benefit the higher end of this risk range.':'Discuss high-intensity statin therapy when lipid treatment is initiated.')
         trace(id,'Risk category',`${p.risk10}% is ${category.toLowerCase()} risk. Goals apply if treatment is initiated.`,[id,goalId])
-        if(p.riskEnhancers?.length) add('enhancers',`Selected risk enhancers: ${p.riskEnhancers.join(', ')}. These inform discussion; no numeric risk adjustment is applied.`)
+        if(category==='Borderline'&&p.riskEnhancers?.length) add('enhancers',`Selected risk enhancers: ${p.riskEnhancers.join(', ')}. These inform discussion; no numeric risk adjustment is applied.`)
       }
       if(p.cac===0&&cacAge&&(category==='Borderline'||category==='Intermediate')) {
         const noExceptions=p.smoking===false&&p.strongFamilyHistory===false&&!p.ckd&&!p.hiv
@@ -167,7 +167,10 @@ export function evaluate(p: Profile): Result {
   else if(p.lpa>=(p.lpaUnit==='mg/dL'?50:125)) {add('lpa','Elevated Lp(a) supports optimal control of modifiable cardiovascular risk factors. Do not convert mass and molar units or apply an automatic risk multiplier.');trace('lpa','Lp(a) risk enhancement',`${p.lpa} ${p.lpaUnit}; reported-unit threshold met.`);if(p.ascvd&&above&&canIntensify&&p.pcsk9===false)add('lpa-add','Discuss a PCSK9 monoclonal antibody with cardiovascular outcome benefit for ASCVD with elevated Lp(a) and unmet lipid goals; this is not a specific Lp(a) outcome-treatment claim.')}
   add('apob','ApoB measurement can clarify residual atherogenic particle risk, especially with diabetes, ASCVD or elevated triglycerides. No automatic apoB goal is assigned.')
   add('monitor','Review lipid response 4–12 weeks after therapy starts or changes and every 6–12 months thereafter, individualized to clinical circumstances.')
-  if(r.status==='review-required') {r.goals=[];r.considerations=r.considerations.filter(c=>!['severe-add','very-high-add','secondary-add','high-add','high-add-next','inclisiran','lpa-add','tg-ipe','tg-pancreatitis'].includes(c.id))}
+  if(r.status==='review-required') {
+    r.goals=[];r.riskCategory=undefined
+    r.considerations=r.considerations.filter(c=>['special','hefh-review','diabetes-age','ckd-review','hiv-review','cac-age','severe-alternate','fcs-review','muscle','muscle-discussion','tg-unconfirmed','tg-priority','monitor','lpa-test','apob'].includes(c.id))
+  }
   r.missing=[...new Set(r.missing)]
   return r
 }

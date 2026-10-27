@@ -11,6 +11,17 @@ const steps=['Profile','Laboratory results','Current therapy','Risk assessment',
 const enhancerLabels=['Premature ASCVD in a parent or sibling (male <55, female <65)','Higher-risk ancestry (e.g., South Asian or Filipino)','Chronic inflammatory disease','Premature menopause or adverse pregnancy outcomes','Persistently elevated atherogenic lipids','Elevated hsCRP on repeat testing']
 function EvidenceLinks({ids}:{ids:string[]}) { return <span className="lp-evidence-links">{[...new Set(ids)].map(id=><a key={id} href={`#evidence-${id}`}>§{evidenceById[id]?.section} R{evidenceById[id]?.recommendation}</a>)}</span> }
 function Field({label,children,hint}:{label:string;children:ReactNode;hint?:string}) {return <div className="lp-field"><label>{label}{children}</label>{hint&&<p className="lp-hint">{hint}</p>}</div>}
+function PathwayDiagram({result}:{result:Result}) {
+  const branches=[
+    {label:'Established ASCVD', active:result.pathways.some(p=>p.includes('secondary prevention')||p.startsWith('Secondary')), source:'secondary', text:'Established clinical disease selects secondary prevention; event and condition counts refine risk.'},
+    {label:'Severe LDL history', active:result.pathways.includes('Severe hypercholesterolemia'), source:'severe-causes', text:'Documented severe untreated LDL elevation adds a separate indication and secondary-cause review.'},
+    {label:'Diabetes', active:result.pathways.includes('Diabetes primary prevention'), source:'diabetes', text:'The supported diabetes pathway considers age and additional cardiovascular risks.'},
+    {label:'Coronary calcium', active:result.pathways.includes('Subclinical coronary atherosclerosis'), source:'cac-moderate', text:'Eligible subclinical disease follows score, percentile and incidental-finding pathways.'},
+    {label:'Risk-based prevention', active:result.pathways.includes('Primary prevention')&&!!result.riskCategory, source:'risk', text:'The eligible primary-prevention branch uses a confirmed manual PREVENT-ASCVD result.'},
+    {label:'Concurrent considerations', active:result.pathways.some(p=>/triglyceride|CKD|HIV|symptom/i.test(p)), source:'special', text:'Triglycerides, kidney disease, HIV and symptoms may add considerations or require individual review.'},
+  ]
+  return <section className="lp-diagram" aria-label="Pathway branch diagram"><h3>Pathway map</h3><p className="lp-diagram-root">Validated profile and scope → applicable branches</p><div className="lp-branch-grid">{branches.map(b=><details key={b.label} data-active={b.active}><summary><span>{b.active?'Triggered branch':'Not selected in this summary'}</span>{b.label}</summary><p>{b.text}</p><EvidenceLinks ids={[b.source]}/></details>)}</div><p className="lp-diagram-end">Selected indications → evidence-linked goals and considerations</p><p className="lp-hint">Branches may overlap. An unselected branch may be inapplicable, unsupported or awaiting information; it does not rule out disease. Read the missing-information and review messages.</p></section>
+}
 function Results({result:r,profile:p}:{result:Result;profile:Profile}) {
   const strict=r.goals.length?r.goals.reduce((a,b)=>a.ldl<=b.ldl?a:b):undefined
   return <div className="lp-results">
@@ -24,6 +35,7 @@ function Results({result:r,profile:p}:{result:Result;profile:Profile}) {
       <p>LDL-C reduction from untreated baseline: <strong>{r.reduction===undefined?'Unknown — baseline not supplied':`${r.reduction.toFixed(1)}%`}</strong>.</p>
       <ul>{r.goals.map((g,i)=><li key={i}>{g.context}: LDL-C &lt;{g.ldl}, non-HDL-C &lt;{g.nonHdl} mg/dL{g.reduction!==undefined?`; LDL reduction ${g.reduction===30?'≥30% (usual moderate-intensity response 30–49%)':`≥${g.reduction}%`}`:''}. <EvidenceLinks ids={g.evidence}/></li>)}</ul>
     </section>}
+    {r.trace.length>0&&<PathwayDiagram result={r}/>}
     {r.trace.length>0&&<section aria-label="Interactive decision pathway"><h3>How this result was reached</h3><p>Expand each decision node to inspect the entered facts and source. This original text-based pathway works with keyboard and screen readers.</p><ol className="lp-trace">{r.trace.map((t,i)=><li key={`${t.id}-${i}`}><details><summary><span>Decision {i+1}</span> {t.label}</summary><p>{t.facts}</p><EvidenceLinks ids={t.evidence}/></details></li>)}</ol></section>}
     {r.considerations.length>0&&<section><h3>Guideline-supported considerations</h3><div className="lp-considerations">{r.considerations.map(c=><article key={c.id}><p>{c.text}</p><EvidenceLinks ids={c.evidence}/></article>)}</div></section>}
     <p className="lp-hint">Guideline version {r.version}. {guideline.reviewStatus} Results reflect the entered information and the supported scope only.</p>
