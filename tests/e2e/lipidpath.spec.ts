@@ -179,3 +179,12 @@ test('engine loading failure offers recovery and explains reset',async({page})=>
   await ready(page)
   await expect(page.getByLabel('Age (years)',{exact:true})).toHaveValue('')
 })
+
+test('invalid numeric text is rejected rather than converted into a result',async({page})=>{
+  await page.goto('/tools/lipidpath');await ready(page)
+  await page.getByRole('button',{name:'Continue',exact:true}).click()
+  await page.getByLabel('Current LDL-C (mg/dL)',{exact:true}).fill('0x10')
+  await page.getByRole('button',{name:'See results so far',exact:true}).click()
+  await expect(page.getByRole('alert')).toContainText('ldl: enter a finite number')
+  await expect(page.getByRole('heading',{name:'What your information shows'})).toHaveCount(0)
+})
