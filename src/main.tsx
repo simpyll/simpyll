@@ -1,3 +1,4 @@
+import { preloadArticle } from './lib/article-loader'
 import { preloadLipidPath } from './features/lipidpath/loader'
 import { preloadProjectDetail } from './projects/detail-loader'
 import { ErrorBoundary } from './recovery/ErrorBoundary'
@@ -28,6 +29,7 @@ const app = (
 )
 
 async function start() {
+  await preloadArticle(window.location.pathname)
   await preloadProjectDetail(window.location.pathname)
   if (window.location.pathname.replace(/\/$/, '') === '/tools/lipidpath') await preloadLipidPath()
   if (window.location.pathname.replace(/\/$/, '') === '/pulse') await preloadPulse()
