@@ -23,7 +23,17 @@ test('required validate gate fails closed on build failures and other non-skippe
     assert.notEqual(run([['build', bad], ['browser', 'skipped'], ['fixtures', 'skipped']]), 0)
   }
   assert.notEqual(run([['build', 'success'], ['browser', 'failure'], ['fixtures', 'skipped']]), 0)
-  assert.notEqual(run([['build', 'success'], ['browser', 'skipped'], ['fixtures', 'skipped']], 'schedule'), 0)
+  for (const event of ['schedule', 'workflow_dispatch']) {
+    assert.equal(run([['build', 'success'], ['browser', 'success'], ['fixtures', 'success']], event), 0)
+    for (const name of ['browser', 'fixtures']) {
+      for (const bad of ['failure', 'cancelled', 'skipped']) {
+        const results = [['build', 'success'], ['browser', 'success'], ['fixtures', 'success']]
+        results.find(([job]) => job === name)[1] = bad
+        assert.notEqual(run(results, event), 0, `${event}: ${name} ${bad} must fail`)
+      }
+    }
+  }
+  assert.notEqual(run([['build', 'success'], ['browser', 'skipped'], ['fixtures', 'cancelled']]), 0)
   assert.match(pr, /validate:\n    if: always\(\)\n    needs: \[build, browser, fixtures\]/)
 })
 

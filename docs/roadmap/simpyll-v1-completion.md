@@ -25,8 +25,8 @@ None established. No verified outage, critical vulnerability or specific clinica
 
 ## E. Final stabilization — strict execution order
 1. [#184](https://github.com/simpyll/simpyll/issues/184) — independent clinical review and release acceptance for the already-live tool. Effort M. Dependency: final rule revision and browser evidence; request review first.
-2. [#67](https://github.com/simpyll/simpyll/issues/67) — restore content-growth publishing within budgets and prove recovery. Effort M. No code prerequisite; implementation can proceed while clinical review is arranged. **Implementation under review:** synthetic content-growth builds exercise the fix; final browser/CI and post-merge publishing evidence remain required.
-3. [#133](https://github.com/simpyll/simpyll/issues/133) — accept restored deterministic CI, inspect a full regression at the stabilized SHA, verify required checks and record timings. Effort S. Depends on this audit PR and final behavior from #67/#184.
+2. [#67](https://github.com/simpyll/simpyll/issues/67) — restore content-growth publishing within budgets and prove recovery. Effort M. No code prerequisite; implementation can proceed while clinical review is arranged. **Implemented in #193:** synthetic content-growth builds exercised the fix; live post-merge publishing acceptance remains open.
+3. [#133](https://github.com/simpyll/simpyll/issues/133) — accept restored deterministic CI, inspect a full regression at the stabilized SHA, verify required checks and record timings. Effort S. Fast PR samples passed in 65–84 seconds; full regression at the current revision and main protection acceptance remain open.
 4. [#88](https://github.com/simpyll/simpyll/issues/88) — finish approved MIT source-only licensing and deployed asset/content boundaries. Effort M. Owner rights/copyright decisions; can be prepared in parallel with publishing.
 5. [#43](https://github.com/simpyll/simpyll/issues/43) — bounded manual accessibility acceptance and serious-barrier fixes. Effort S. Depends on final core behavior and current automated matrix.
 
