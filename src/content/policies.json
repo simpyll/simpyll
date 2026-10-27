@@ -57,7 +57,7 @@
       },
       {
         "title": "Content and software rights",
-        "text": "Public visibility is not an unrestricted reuse license. Consult an explicit license for each repository or asset before reuse; absent one, do not assume permission beyond applicable law. Code, articles, images and third-party materials may have different rights. Licensing and attribution decisions remain open under issue #88; these terms do not select a license or override third-party rights."
+        "text": "Original Simpyll software source is copyright \u00a9 2026 David Becker and licensed under the MIT License in the repository LICENSE file. Original article prose and other editorial writing are all rights reserved unless a specific work states otherwise. Images, branding, screenshots, fonts, clinical materials and third-party works are not automatically covered by MIT; their respective rights and item-specific terms apply. See the repository LICENSING.md for scope and contribution terms. Public visibility or citation alone does not grant reuse rights."
       },
       {
         "title": "Accuracy, availability and external services",

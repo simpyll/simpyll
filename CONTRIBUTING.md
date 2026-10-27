@@ -119,3 +119,12 @@ GitHub issues require an account. A verified contact destination for readers
 without GitHub accounts remains tracked in #83/#55; no email address is invented.
 The security template points to GitHub private vulnerability reporting, whose
 availability depends on repository settings; do not submit vulnerabilities publicly.
+
+## Contribution licensing
+
+By submitting original software code, you agree to provide it under the
+repository's [MIT License](LICENSE), while retaining your copyright. Identify
+third-party code and preserve its license notices. Articles and media are not
+automatically MIT-licensed: state the publication permission, source, license
+and required attribution for contributed content. Do not submit material you
+lack authority to contribute. See [licensing and content boundaries](LICENSING.md).
