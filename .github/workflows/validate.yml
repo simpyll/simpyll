@@ -68,10 +68,8 @@ jobs:
             src/generated/
             public/images/optimized/
 
-  # Pull requests run the focused critical browser gate; scheduled, weekly and
-  # manual full-matrix dispatches keep the exhaustive seven-project inventory.
-  # Every matrix entry still reports into the required aggregate validate job, so
-  # a skipped tier can never turn the final check green.
+  # Browser jobs are skipped on PRs; scheduled and manual runs execute full shards.
+  # Inactive critical entries do no work; active full shards and fixtures must pass.
   browser:
     if: github.event_name != 'pull_request'
     needs: build
@@ -83,10 +81,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Critical PR gate: the required axe/keyboard accessibility suites on
-          # Firefox and WebKit, plus navigation, the clinical LipidPath calculator,
-          # missing-page hydration recovery, slug-history redirects, route
-          # restoration and pre-paint theme journeys on desktop and mobile Chromium.
+          # These critical entries are inactive because PRs skip the browser job.
           - { mode: critical, shard: 1 }
           - { mode: critical, shard: 2 }
           # Exhaustive inventory across the same three balanced shards as before.
@@ -202,7 +197,7 @@ jobs:
             artifacts/editorial/
 
   # Variable lab measurements do not join the required validate dependency list.
-  # PRs sample the homepage; weekly/manual runs cover all six templates.
+  # Weekly/manual runs cover all six templates; PRs skip this job.
   performance:
     if: github.event_name != 'pull_request'
     needs: build
