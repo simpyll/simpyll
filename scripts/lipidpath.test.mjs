@@ -118,3 +118,24 @@ test('missing and explicit negative are distinguished for PREVENT eligibility',(
   assert.equal(preventEligible({...base,ascvd:undefined}),false)
   assert.equal(preventEligible({...base,ascvd:false}),true)
 })
+
+test('ASCVD classification survives an unrelated missing HIV answer',()=>{
+  const r=evaluate({...base,ascvd:true,majorEvents:2,highRiskConditions:0,hiv:undefined})
+  assert.equal(r.status,'incomplete')
+  assert.ok(r.pathways.includes('Very-high-risk secondary prevention'))
+  assert.ok(r.goals.some(g=>g.ldl===55&&g.evidence.includes('very-high')))
+  assert.ok(r.missing.includes('HIV'))
+  assert.equal(evaluate({...base,ascvd:true,majorEvents:2,highRiskConditions:0,hiv:undefined,safetyReviewed:undefined}).goals.length,0)
+})
+test('missing event counts are requested before assigning an ASCVD goal',()=>{
+  const r=evaluate({age:50,ascvd:true})
+  assert.ok(r.missing.includes('Number of distinct major ASCVD events'))
+  assert.equal(r.goals.length,0)
+})
+
+test('partial ASCVD goal is withheld if an overlapping stricter indication is unresolved',()=>{
+  const p={...base,ascvd:true,majorEvents:1,highRiskConditions:0,hiv:undefined}
+  for(const change of [{severeHistory:undefined},{severeHistory:true},{ckd:undefined},{fh:'unknown'},{ldl:400}]) {
+    assert.equal(evaluate({...p,...change}).goals.length,0,JSON.stringify(change))
+  }
+})

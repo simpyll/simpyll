@@ -49,13 +49,28 @@ export function evaluate(p: Profile): Result {
   else if(p.ldl!==undefined&&p.ldl>=190) r.observations.push({code:'possible-severe-ldl',certainty:'possible',evidence:['severe-causes']})
   if(p.diabetes===true) r.observations.push({code:'diabetes',certainty:'possible',evidence:[p.multipleDiabetesRisks===true?'diabetes-risk':'diabetes'],treatmentDiscussion:safeDiscussion&&p.age!==undefined&&p.age>=40&&p.age<=75&&p.ascvd===false&&p.severeHistory===false&&!documentedSevere&&p.ldl!==undefined&&p.ldl<190&&p.multipleDiabetesRisks!==undefined})
   if(p.tg!==undefined&&p.tg>=150) r.observations.push({code:'triglycerides',certainty:'possible',evidence:['tg-lifestyle']})
+  const partial=()=>{
+    // An established ASCVD classification can be assessed independently of
+    // unrelated missing answers, but only after the shared scope/safety guard.
+    if(safeDiscussion&&p.ascvd===true&&p.majorEvents!==undefined&&p.highRiskConditions!==undefined&&p.ckd===false&&p.fh==='none'&&p.severeHistory===false&&(p.baselineLdl??0)<190&&p.ldl!==undefined&&p.ldl<190) {
+      const veryHigh=p.majorEvents>=2||(p.majorEvents===1&&p.highRiskConditions>=2)
+      const id=veryHigh?'very-high':'secondary'
+      r.pathways.push(veryHigh?'Very-high-risk secondary prevention':'Secondary prevention, not very high risk')
+      goal(veryHigh?55:70,veryHigh?85:100,'Secondary ASCVD prevention',[id],50)
+      trace(id,'Clinical ASCVD classification',`${p.majorEvents} distinct major events; ${p.highRiskConditions} high-risk conditions; very-high-risk criteria ${veryHigh?'met':'not met'}.`)
+      add(id,'Discuss high-intensity statin therapy, or the maximally tolerated regimen, for secondary prevention.')
+    }
+    r.missing=[...new Set(r.missing)]
+    return r
+  }
   if((p.tg??0)>=500) r.safety.push(`TG ${p.tg} mg/dL: prompt clinical evaluation for severe elevation and pancreatitis risk${p.tg!>=1000?'; at ≥1000, triglyceride lowering is a priority':''}. A laboratory result alone does not diagnose pancreatitis.`)
   need(p.age===undefined,'Age')
   need(p.reproductive===undefined,'Pregnancy, pregnancy planning or lactation status (or not applicable)')
   for(const [key,label] of [['ascvd','Established clinical ASCVD'],['diabetes','Diabetes'],['severeHistory','History of untreated LDL-C ≥190'],['ckd','Established CKD stage 3 or higher'],['hiv','HIV'],['complexCare','Complex care / limited life expectancy / active cancer therapy'],['safetyReviewed','Contraindication and interaction review']] as const) need(p[key]===undefined,label)
   need(p.fh===undefined||p.fh==='unknown','Known familial hypercholesterolemia status')
   need(p.ldl===undefined,'Current laboratory-reported LDL-C (no estimated LDL formula is supplied)')
-  if(r.missing.length) return r
+  if(p.ascvd===true) {need(p.majorEvents===undefined,'Number of distinct major ASCVD events');need(p.highRiskConditions===undefined,'Number of high-risk ASCVD conditions')}
+  if(r.missing.length) return partial()
   if(p.age!<18||p.age!>79||p.reproductive!=='none'||p.fh==='hofh'||p.complexCare||p.safetyReviewed!==true||p.dialysis===true) {
     r.status='review-required';r.pathways=['Individualized review'];
     add('special','Additional individualized clinical evaluation is required. This presentation is outside the automated treatment pathways; no treatment goal or medication selection is returned.')
@@ -68,7 +83,7 @@ export function evaluate(p: Profile): Result {
   if(!severe&&p.ldl!>=190) {r.safety.push('Current LDL-C ≥190 requires clarification of treatment and untreated history before classifying the severe-LDL pathway.');r.status='review-required';return r}
   if(severe&&!p.ascvd) need(p.additionalRisks===undefined,'Additional ASCVD risk factors for severe hypercholesterolemia')
   if(!p.ascvd&&p.diabetes&&p.age!>=40&&p.age!<=75) need(p.multipleDiabetesRisks===undefined,'Multiple ASCVD risk factors in diabetes')
-  if(r.missing.length) return r
+  if(r.missing.length) return partial()
   r.status='educational'
   if(p.muscleSymptoms) {
     r.pathways.push('Statin-associated symptom review')
