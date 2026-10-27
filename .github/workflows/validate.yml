@@ -37,6 +37,14 @@ jobs:
         run: npm run build
       - name: Lint
         run: npm run lint
+      - name: Fast deterministic regression suites
+        run: npm run test:unit
+      - name: Inventory dependency license metadata
+        run: npm run audit:licenses
+      - name: Verify dependency maintenance and publishing health contracts
+        run: |
+          npm run test:dependency-maintenance
+          node --test scripts/publishing-health.test.mjs
       - name: Verify LipidPath clinical scenarios and source traceability
         run: node --test scripts/lipidpath.test.mjs scripts/lipidpath-ui.test.mjs
       - name: Verify workflow, project and publishing contracts
@@ -173,6 +181,8 @@ jobs:
           browsers: chromium
       - run: npm run test:projects
       - run: node --test scripts/preview-notion-build.test.mjs
+      - name: Verify recovery from a clean clone
+        run: node --test scripts/recovery-build.test.mjs
       - run: npm run test:notion:build
       - name: Test rich MDX and Notion rendering
         run: npm run test:mdx

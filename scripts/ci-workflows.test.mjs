@@ -5,6 +5,7 @@ import { spawnSync } from 'node:child_process'
 
 const pr = await readFile('.github/workflows/validate.yml', 'utf8')
 const deploy = await readFile('.github/workflows/deploy.yml', 'utf8')
+const awaitPackage = await readFile('package.json', 'utf8')
 
 test('required validate gate fails closed on build failures and other non-skipped errors', () => {
   const match = pr.match(/node -e '([^']+)'/)
@@ -35,6 +36,10 @@ test('routine PRs do not schedule costly browser, fixture or Lighthouse jobs', (
   assert.match(pr, /workflow_dispatch:/)
   assert.match(pr, /run: npm run build/)
   assert.match(pr, /run: npm run lint/)
+  assert.match(pr, /run: npm run test:unit/)
+  assert.match(pr, /run: npm run audit:licenses/)
+  const pkg = JSON.parse(awaitPackage)
+  assert.doesNotMatch(pkg.scripts['test:unit'], /(?:preview-notion|projects|recovery)-build\.test/)
   assert.match(pr, /scripts\/lipidpath\.test\.mjs scripts\/lipidpath-ui\.test\.mjs/)
   assert.match(pr, /scripts\/projects\.test\.mjs/)
   assert.match(pr, /npm audit --audit-level=high/)
@@ -44,6 +49,8 @@ test('routine PRs do not schedule costly browser, fixture or Lighthouse jobs', (
 test('full browser regression and publishing fixture checks remain available off PRs', () => {
   assert.match(pr, /run: npm run test:e2e:built/)
   assert.match(pr, /run: npm run test:notion:build/)
+  assert.match(pr, /run: node --test scripts\/preview-notion-build.test.mjs/)
+  assert.match(pr, /run: node --test scripts\/recovery-build.test.mjs/)
   assert.match(pr, /run: npm run test:mdx/)
   assert.match(pr, /run: npm run perf:lighthouse/)
   assert.match(pr, /run: npm run test:projects/)
