@@ -1,3 +1,4 @@
+import { buildSeries } from '../src/lib/series.mjs'
 import { compile } from '@mdx-js/mdx'
 import remarkGfm from 'remark-gfm'
 import { readdir, readFile, writeFile } from 'node:fs/promises'
@@ -24,3 +25,5 @@ for (const file of (await readdir(directory)).filter(f => f.endsWith('.mdx')).so
   articles.push({ slug: file.slice(0, -4), sourcePath: `${directory}/${file}`, ...exports })
 }
 await writeFile('src/generated/articles.json', JSON.stringify(articles) + '\n')
+
+await writeFile('src/generated/series.json', JSON.stringify(buildSeries(articles)) + '\n')

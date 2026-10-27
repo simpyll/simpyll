@@ -1,3 +1,4 @@
+import { buildSeries, validateSeries } from '../../src/lib/series.mjs'
 import { manifest } from './manifest.mjs'
 import { approvedEmbed } from '../../src/lib/embeds.mjs'
 import { normalizeEditorial } from '../../src/lib/editorial.mjs'
@@ -362,7 +363,12 @@ export function metadataFor(page, previous, blocks) {
       try { editorial[field] = JSON.parse(text) } catch { throw new Error(`${property} must contain a JSON array of { date, description, id? } objects`) }
     }
   }
-  return normalizeEditorial({ title, description, slug, date, ...editorial, category: p.Category?.select?.name || p.Category?.multi_select?.[0]?.name || plain(p.Category?.rich_text) || 'Journal', author: 'David Becker', tags: (p.Tags?.multi_select ?? []).map(t => t.name).sort() })
+  for (const name of ['Series ID', 'Series Title']) if (p[name] && p[name].type !== 'rich_text') throw new Error(`${name} must be a Notion text property`)
+  if (p['Series Order'] && p['Series Order'].type !== 'number') throw new Error('Series Order must be a Notion number property')
+  const seriesId = plain(p['Series ID']?.rich_text).trim(), seriesTitle = plain(p['Series Title']?.rich_text).trim(), seriesOrder = p['Series Order']?.number
+  const series = seriesId || seriesTitle || seriesOrder != null ? { id: seriesId, title: seriesTitle, order: seriesOrder } : undefined
+  validateSeries(series)
+  return normalizeEditorial({ title, description, slug, date, ...editorial, ...(series ? { series } : {}), category: p.Category?.select?.name || p.Category?.multi_select?.[0]?.name || plain(p.Category?.rich_text) || 'Journal', author: 'David Becker', tags: (p.Tags?.multi_select ?? []).map(t => t.name).sort() })
 }
 const manifestPath = '.notion/published.json'
 async function readOptional(path) {
@@ -383,6 +389,7 @@ export async function synchronize({ root, api, pageId, imageDownloader = downloa
   const source = await discoverSource(api, pageId)
   const sourceId = id(source.id)
   if (old.sourceId && old.sourceId !== sourceId) throw new Error('Blog data source changed; review manifest before migrating')
+  const seriesArticles = []
   const pages = await paginate(api, `data_sources/${sourceId}/query`, { filter: { property: 'Status', [source.properties.Status.type]: { equals: 'Published' } } })
   const next = { version: 1, sourceId, articles: Object.fromEntries(Object.entries(old.articles).map(([key, article]) => [key, { slug: article.slug, date: article.date, history: article.history ?? [], status: 'unpublished' }])), files: {} }, files = new Map(), slugs = new Set(), seenPages = new Set()
   for (const page of pages.sort((a, b) => id(a.id).localeCompare(id(b.id)))) {
@@ -395,6 +402,7 @@ export async function synchronize({ root, api, pageId, imageDownloader = downloa
     if (slugs.has(metadata.slug)) throw new Error('Duplicate published slug; assign distinct Slug values')
     slugs.add(metadata.slug)
     metadata.articleId = `notion:${pageKey}`
+    seriesArticles.push({ slug: metadata.slug, metadata })
     const history = advanceHistory(old.articles[pageKey], metadata.slug)
     const aliasesText = plain(page.properties?.['Redirect From']?.rich_text).trim()
     const redirectFrom = aliasesText ? aliasesText.split(',').map(value => normalizeSlug(value.trim())) : []
@@ -437,9 +445,11 @@ export async function synchronize({ root, api, pageId, imageDownloader = downloa
     if (!file.endsWith('.mdx') || path in old.files) continue
     const source = await readFile(join(root, path), 'utf8')
     const metadata = source.includes('export const metadata') ? await readMetadata(source) : {}
+    seriesArticles.push({ slug: file.slice(0, -4), metadata })
     claims.push({ id: metadata.articleId ?? `manual:${file.slice(0, -4)}`, slug: file.slice(0, -4), status: metadata.status ?? 'published', aliases: [...(gitHistory.get(metadata.articleId) ?? [])].filter(slug => slug !== file.slice(0, -4)).concat(metadata.redirectFrom ?? []) })
   }
   resolveRegistry(claims)
+  buildSeries(seriesArticles)
   // Published media URLs are permanent compatibility assets, even after unpublish.
   for (const path of Object.keys(old.files).filter(p => p.startsWith('public/images/'))) {
     if (!files.has(path)) { const bytes = await readOptional(join(root, path)); if (bytes) files.set(path, bytes) }

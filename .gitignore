@@ -52,3 +52,4 @@ artifacts/
 /docs/pulse/*.png
 
 /src/generated/articles.json
+/src/generated/series.json

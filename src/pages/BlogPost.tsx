@@ -19,6 +19,7 @@ import { ArticleSchema } from '../components/ArticleSchema'
 import { NotFound } from './NotFound'
 import redirects from '../generated/redirects.json' with { type: 'json' }
 import { ArticlePagination } from '../components/ArticlePagination'
+import { SeriesNavigation } from '../components/SeriesNavigation'
 import { getAdjacentArticles, getPostBySlug, getRelatedArticles } from '../lib/blog'
 
 export function BlogPost() {
@@ -91,7 +92,7 @@ export function BlogPost() {
             </div>
             <RelatedProjects articlePath={`/blog/${post.slug}`} />
             <RelatedArticles articles={getRelatedArticles(metadata.articleId!)} />
-            <ArticlePagination {...getAdjacentArticles(metadata.articleId!)} />
+            {metadata.series ? <SeriesNavigation post={post} /> : <ArticlePagination {...getAdjacentArticles(metadata.articleId!)} />}
           </article>
           </div>
         </Container>
