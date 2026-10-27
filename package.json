@@ -44,6 +44,8 @@
     "generate:rss": "node scripts/generate-rss.mjs",
     "test:rss": "node --test scripts/rss.test.mjs",
     "audit:seo": "node scripts/seo-audit.mjs",
+    "audit:licenses": "node scripts/dependency-license-inventory.mjs",
+    "test:dependency-maintenance": "node --test scripts/dependency-maintenance.test.mjs",
     "test:seo": "node --test scripts/seo-audit.test.mjs",
     "audit:pulse": "node scripts/pulse.mjs",
     "test:pulse": "node --test scripts/pulse.test.mjs",
@@ -54,7 +56,6 @@
     "preview:notion": "node scripts/notion/preview.mjs"
   },
   "dependencies": {
-    "@fontsource-variable/inter": "^5.3.0",
     "@mdx-js/react": "^3.1.1",
     "@tailwindcss/vite": "^4.3.3",
     "motion": "^14.3.0",

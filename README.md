@@ -98,6 +98,7 @@ Simpyll is evolving. Browse the [feature roadmap](docs/ROADMAP.md) and [open Git
 - [Deployment and GitHub Pages](docs/DEPLOYMENT.md)
 - [Performance budgets, Lighthouse and measured results](docs/PERFORMANCE.md)
 - [Notion publishing and troubleshooting](docs/NOTION.md)
+- [Dependency updates, vulnerability triage and license inventory](docs/DEPENDENCY-MAINTENANCE.md)
 - [Roadmap](docs/ROADMAP.md)
 
 ---
