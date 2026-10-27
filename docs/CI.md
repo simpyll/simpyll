@@ -1,134 +1,85 @@
 # CI performance and validation
 
-## Architecture
+Current policy: October 27, 2026. This supersedes older present-tense tier claims
+in historical timing, cross-browser and dependency-maintenance reports.
 
-PRs run `build` (production generation, TypeScript, lint, unit and output checks),
-then two independent `browser` shards with the focused critical inventory and
-`fixtures` in parallel. Playwright's native sharding partitions the critical
-inventory (the required Firefox/WebKit axe and keyboard suites plus navigation,
-LipidPath, missing-page hydration, slug-history redirects, recovery,
-route-restoration and theme journeys on desktop and mobile Chromium), with two
-workers per runner. Each shard owns one preview server. Scheduled, weekly and
-manual full-matrix dispatches run the exhaustive seven-project inventory across
-the same three balanced shards as before, using `playwright.config.ts`.
-`fixtures` retains real project/Notion/rich-content builds and Chromium
-hydration/redirect journeys on every event.
-These builds intentionally modify input content; they cannot reuse the production
-HTML. They copy the already processed images, avoiding repeated cold transforms.
-The final `validate` job runs even when dependencies fail or skip and requires all
-tiers to succeed. Its existing check name remains available to branch protection.
-No path filters, new skips, retry changes, axe exclusions or optional checks.
-Matrix entries for the inactive mode (critical outside pull requests, full on
-pull requests) stop before `npm ci` and succeed with every test step skipped;
-the aggregate gate still requires the active tiers, so a skipped tier can never
-turn the final check green.
+| Event | Required / executed coverage | Expensive coverage |
+|---|---|---|
+| Normal PR | One production build (generation, TypeScript, client/server, prerender, asset budgets, SEO), lint, fast deterministic suites, clinical/UI contracts, dependency license metadata, workflow/dependency/health contracts, high/critical npm audit, aggregate validate | Browser, real-build fixtures and Lighthouse jobs skipped intentionally |
+| Weekly / manual validation | Same build and deterministic/security checks; build artifact bound to checked-out SHA; full browser/axe/keyboard matrix and isolated real-build fixtures; aggregate requires successful build/browser/fixtures | Lighthouse advisory, outside aggregate |
+| Main Pages deploy | Main ancestry check, one production build, Pages upload/deploy, exact-release HTTP and live Chromium smoke | No exhaustive predeployment browser matrix |
+| Notion publishing | Main-only public importer, safety tests, changed-site build/lint/output checks before committing; reusable deploy when changed | Existing publishing health/recovery schedules remain separate |
 
-`validated-build` is an immutable artifact from the same workflow run, retained
-one day; consumers verify the checked-out merge SHA. It contains dist, dist-server,
-generated manifests and optimized images, never dependencies or credentials.
-No cross-commit build reuse. Artifact transfer is a deliberate tradeoff for isolated
-runners and concurrent browser execution. npm ci remains reproducible in every job.
+The target normal PR duration is 1–3 minutes where measured feasible. Observed
+pre-audit samples: validation run 40557849914 took 88 seconds; Pages 40558192363
+including verification took 103 seconds. These are single samples, not medians.
+This audit restores missing fast tests; measure its actual hosted duration after
+CI finishes. Do not substitute old full-matrix timings for the current fast lane.
 
-Pages retains its `build`, `deploy`, `verify` names and serialized production
-concurrency. All production validation still precedes upload/deploy. Project fixture
-tests now follow generation to reuse image transformations. Verification retains
-HTTP identity checks and live Chromium checks. The identical Notion fixture
-integration runs once in the predeployment build gate at the same revision;
-its redundant second execution in verify is removed. Publishing and
-availability triggers/policies are unchanged. PR concurrency cancels superseded
-runs per PR only; it cannot cancel Pages deployments.
+## Fast tests and isolated build fixtures
 
-## Cache and security
+`npm run test:unit` regenerates cheap project/redirect/search data and runs 26 Node
+files, 378 tests at this audit baseline, approximately 20 seconds locally. It does
+not run real build fixtures, dist-output suites or browsers. Dependency/health
+contracts are also explicit workflow steps; their small overlap is retained for
+clear existing contracts. The separate clinical UI contract remains required.
 
-setup-node caches npm's download store using the lockfile; never node_modules.
-Image transformations use the existing content-addressed image generator and a
-exact source/generator/lockfile key, with no broad fallback across changed
-transformation code; all manifests are rebuilt. Content/image/generator changes
-can cause cold image processing by design. Inputs including posts, projects,
-case studies, images, scripts and dependencies always run the full build and gates.
-No compiled HTML/client/server cache or unsafe incremental build is introduced.
-Playwright binaries use an exact OS/architecture/engine-list/lockfile key; system
-libraries are always installed. Cache misses install pinned binaries normally.
-Cache restoration overhead versus downloading is recorded from Actions timings.
-PR caches are scoped by GitHub to the merge ref; privileged main workflows cannot
-restore those caches. PR jobs have contents:read, no secrets, no pull_request_target,
-and checkout does not persist credentials. Deployment permissions stay isolated.
+The scheduled/manual fixture job runs project build tests, private preview build,
+clean-clone recovery build, Notion build and rich-MDX tests in sequence. Those
+fixtures build different synthetic inputs; do not reuse production HTML or run
+workspace-snapshot tests concurrently with generation. The first audit experiment
+that overlapped preview isolation with production build failed correctly and was
+rerun in isolation. No assertion was weakened.
 
-## Test tiers and #77
+For UI behavior changes, run the full existing browser inventory locally or obtain
+manual full-matrix results at the proposed revision before merging. Weekly-only
+coverage can detect a regression after a fast merge; this is the deliberate
+tradeoff for inexpensive routine checks, not continuous browser protection.
+`npm run test:e2e:pr` is available locally but is not called by normal PR CI.
 
-See [cross-browser commands and tiers](CROSS-BROWSER.md) for the expanded
-functional smoke projects, scheduled/manual extended matrix, diagnostics and iOS
-limitations. All pre-existing required coverage remains.
-
-
-Every PR retains the required Firefox/WebKit accessibility suites and the
-critical Chromium desktop/mobile journeys (navigation, LipidPath, missing-page
-hydration, slug-history redirects, recovery, route restoration, theme). The
-exhaustive Chromium suite, five bounded functional smoke projects and the
-portable regression journeys in Firefox, desktop WebKit and mobile WebKit run on
-the weekly schedule, full manual dispatch and every main/Pages build; nothing
-is deleted and no trigger is weakened on those tiers. Fixture-only tests
-retain their dedicated gates on every event. #46 runtime performance budgets
-remain separate; see [visitor-performance budgets and Lighthouse](PERFORMANCE.md).
-
-## Reproduce locally
+## Reproduce
 
 ```sh
 npm ci
-npm run test:unit
-npx playwright install --with-deps chromium firefox webkit
 npm run build
 npm run lint
-npm run test:projects
-npm run test:redirects
-npm run test:notion
-npm run test:images
-npm run test:content
-npm run test:search
-npm run test:smoke
-node --test scripts/ci-workflows.test.mjs scripts/discovery.test.mjs scripts/ai-engineering.test.mjs scripts/contributions.test.mjs scripts/case-study.test.mjs scripts/prerender.test.mjs scripts/remark-heading-ids.test.mjs scripts/article-toc.test.mjs scripts/motion.test.mjs scripts/navigation.test.mjs
-npm run test:notion:build
-npm run test:mdx
-npm run test:e2e:built
+npm run test:unit
+npm run audit:licenses
+npm audit --audit-level=high
+node --test scripts/ci-workflows.test.mjs scripts/lipidpath-ui.test.mjs
 ```
 
-For cold generation remove only generated `public/images/optimized`, `src/generated`,
-`dist`, `dist-server` and `node_modules`, then repeat. For warm generation rerun with
-those image files present. Both must regenerate all output correctly. Do not delete
-source images. CI coverage-union testing verifies shard discovery equals the full
-suite and tests that the final gate rejects failed, skipped and cancelled tiers.
+For full acceptance, install pinned browser binaries/system dependencies and run
+`npm run test:e2e:built` plus the fixture commands from validate.yml sequentially,
+or use Actions → Validate Simpyll → Run workflow (full matrix). Do not report
+queued/pending jobs as passing. Inspect browser/fixture reports on failure.
 
-## Timing and troubleshooting
+## Cache, security and fail-closed aggregation
 
-[Measured evidence](ci/PERFORMANCE.md) uses Actions timestamps, not estimates.
-Collect completed runs (optionally set GH_TOKEN for API limits):
+npm download caching is keyed by lockfile; node_modules is never reused. Existing
+image-transform keys include source/generator/lockfile inputs. No cross-commit
+compiled HTML cache was added. Non-PR consumers verify the immutable build
+artifact revision. Separate full-validation runners install dependencies for
+isolation; PRs install once. Branch-scoped PR caches are not privileged inputs.
+The pinned Playwright container matches the lockfile version. PR checkout has no
+persisted credentials, secrets or pull_request_target. Deployment remains main-only.
 
-```sh
-node scripts/ci-timings.mjs RUN_ID RUN_ID > timings.json
-```
+The aggregate validate job always runs. Build must succeed on every event. Browser
+and fixtures may be skipped only for pull_request; their failure/cancellation must
+still fail. Scheduled/manual events require them to succeed. Lighthouse remains
+advisory. Repo settings must actually require validate; that setting could not be
+verified through this connector and no protection change is claimed.
 
-Compare runs with the same workflow, event, browser inventory and similar runner
-load. Use medians of at least five when available; keep cold and warm separate.
-Wall time is workflow created_at to last job completed_at, including queue and
-handoff gaps. Execution span starts at first job started_at; initial queue is the
-difference. The critical path is build → slowest downstream tier → validate;
-never sum parallel job times. Inspect job/step timestamps, browser install/cache
-restore, npm ci, build, fixtures, each shard and artifact upload/download separately.
-Watch for >20% median wall regression over five comparable runs; inspect queue/load
-before adding workers/shards. Full validation is always required before merging;
-`npm run test:e2e:built` runs all configured engines on demand locally;
-Actions → Validate Simpyll → Run workflow runs the same complete gate on demand.
+## Maintenance and rollback
 
-A red build identifies setup, generation, TypeScript, lint or named Node tests.
-A red shard identifies browser/axe/keyboard failures; download its 14-day failure
-artifact for report, traces, screenshots and JSON axe results. Fixture artifacts
-are separate. Successful PR reports are not uploaded. A red validate is an
-aggregate: inspect its named failed dependency. Pending/queued jobs are not passes.
-Pages verification failures are separate from completed deployment, as before.
+Publishing tests, source boundaries, slug safety and performance budgets remain
+required. The observed content-growth failure in Notion run 40513347386 is tracked
+in #67; never conceal it with unconditional success or blanket budget increases.
+#133 owns final hosted timing, full regression and protection acceptance.
+Collect per-step timings via scripts/ci-timings.mjs, compare like event/inventory
+samples, distinguish queues from execution, and use several runs before claiming
+a median. Preserve current check names when changing tiers.
 
-Rollback: revert this issue's workflow/action/test/documentation commit(s). The
-original validate and Pages contexts remain; no protection migration is intended.
-The public active-rules endpoint returns no ruleset rules for main; legacy branch
-protection returns 403 to the connected integration and requires admin inspection.
-Retaining names
-is not proof of the currently configured repository rules.
+Rollback this audit's CI change by reverting its workflow/package commit through a
+PR. No production feature or clinical rule is changed. Existing historical
+measurements remain under docs/ci; they describe their original revisions only.
