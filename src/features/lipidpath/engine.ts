@@ -42,7 +42,7 @@ export function evaluate(p: Profile): Result {
   if(p.tg!==undefined&&p.tg>=150) r.findings.push({code:'tg-elevated',evidence:['tg-lifestyle']})
   if(p.ascvd===true) r.findings.push({code:'ascvd-reported',evidence:['secondary']})
   if(p.diabetes===true) r.findings.push({code:'diabetes-reported',evidence:['diabetes']})
-  const safeDiscussion=p.age!==undefined&&p.age>=18&&p.age<=79&&p.reproductive==='none'&&p.fh!==undefined&&p.fh!=='unknown'&&p.fh!=='hofh'&&p.complexCare===false&&p.safetyReviewed===true&&(p.ckd===false||p.dialysis===false)&&(p.statin==='none'||p.muscleSymptoms===false)
+  const safeDiscussion=p.age!==undefined&&p.age>=18&&p.age<=79&&p.reproductive==='none'&&p.fh!==undefined&&p.fh!=='unknown'&&p.fh!=='hofh'&&p.complexCare===false&&p.safetyReviewed===true&&(p.ckd===false||p.dialysis===false)&&(p.statin==='none'||(p.statin!==undefined&&p.muscleSymptoms===false))
   if(p.ascvd===true) r.observations.push({code:'ascvd',certainty:'established-finding',evidence:['secondary'],treatmentDiscussion:safeDiscussion})
   const documentedSevere=p.severeHistory===true||(p.baselineLdl!==undefined&&p.baselineLdl>=190)||(p.ldl!==undefined&&p.ldl>=190&&p.lipidTreatment==='none')
   if(documentedSevere) r.observations.push({code:'severe-ldl',certainty:'established-finding',evidence:['severe-causes'],treatmentDiscussion:safeDiscussion})
@@ -96,9 +96,10 @@ export function evaluate(p: Profile): Result {
     r.safety.push('Medication initiation and intensification are deferred until muscle symptoms are evaluated.');trace('muscle','Symptoms require assessment',`Muscle symptoms reported; severe symptoms ${p.severeMuscleSymptoms===undefined?'unknown':p.severeMuscleSymptoms}.`)
   }
   const currentStatin=p.statin!==undefined&&p.statin!=='none'
-  const canIntensify=currentStatin&&p.maxTolerated===true&&p.adherent===true&&!p.muscleSymptoms&&!((p.tg??0)>=400&&p.fasting!==true)
+  const canDiscussMedication=p.statin==='none'||(currentStatin&&p.muscleSymptoms===false)
+  const canIntensify=currentStatin&&p.maxTolerated===true&&p.adherent===true&&p.muscleSymptoms===false&&!((p.tg??0)>=400&&p.fasting!==true)
   if(p.statin===undefined) r.missing.push('Current statin use and intensity')
-  if(currentStatin) {need(p.maxTolerated===undefined,'Whether current statin is maximally tolerated');need(p.adherent===undefined,'Medication adherence')}
+  if(currentStatin) {need(p.maxTolerated===undefined,'Whether current statin is maximally tolerated');need(p.adherent===undefined,'Medication adherence');need(p.muscleSymptoms===undefined,'Statin-associated muscle symptom status')}
   if(p.adherent===false) add('adherence','Review adherence, access and response before considering additional medication.',['monitor'])
   if(p.ascvd) {
     const veryHigh=p.majorEvents!>=2||(p.majorEvents===1&&p.highRiskConditions!>=2)
@@ -106,7 +107,7 @@ export function evaluate(p: Profile): Result {
     r.pathways.push(veryHigh?'Very-high-risk secondary prevention':'Secondary prevention, not very high risk')
     goal(veryHigh?55:70,veryHigh?85:100,'Secondary ASCVD prevention',[id],50)
     trace(id,'Clinical ASCVD classification',`${p.majorEvents} distinct major events; ${p.highRiskConditions} high-risk conditions; very-high-risk criteria ${veryHigh?'met':'not met'}.`)
-    if(!p.muscleSymptoms) add(id,'Discuss high-intensity statin therapy, or the maximally tolerated regimen, for secondary prevention.')
+    if(canDiscussMedication) add(id,'Discuss high-intensity statin therapy, or the maximally tolerated regimen, for secondary prevention.')
     if(!veryHigh) add('secondary-optional','An optional LDL/non-HDL target below 55/85 mg/dL may be considered with clinician judgment and patient preference.',['secondary-add'])
   }
   if(severe) {
@@ -116,20 +117,20 @@ export function evaluate(p: Profile): Result {
     goal(p.ascvd?55:enhanced?70:100,p.ascvd?85:enhanced?100:130,'Severe hypercholesterolemia',[id])
     trace('severe-causes','Severe LDL pathway',`History ≥190: ${p.severeHistory}; untreated baseline ${p.baselineLdl??'unknown'}; current ${p.ldl}; additional risks ${p.additionalRisks??'not required with ASCVD'}; HeFH ${p.fh==='hefh'}; coronary calcification ${enhanced}.`,['severe-causes',id])
     add('severe-causes','Review secondary causes such as thyroid, kidney/liver disease, diet and medications; evaluate possible FH with appropriate clinical criteria. LDL-C alone does not diagnose FH.')
-    if(!p.muscleSymptoms) add('severe-statin','Discuss maximally tolerated statin therapy; nonstatin choices depend on the applicable goal, current regimen and clinical assessment.')
+    if(canDiscussMedication) add('severe-statin','Discuss maximally tolerated statin therapy; nonstatin choices depend on the applicable goal, current regimen and clinical assessment.')
   }
   if(p.fh==='hefh'&&!severe) {r.pathways.push('HeFH specialist review');r.status='review-required';add('hefh-review','Known HeFH without a documented severe untreated LDL history requires individualized lipid-specialist evaluation; general-population PREVENT is excluded.',['special'])}
   if(!p.ascvd&&!severe&&p.diabetes) {
     if(p.age!<40||p.age!>75) {r.status='review-required';r.pathways.push('Diabetes outside core age range');add('diabetes-age','Additional individualized clinical evaluation is required for diabetes outside age 40–75; disease duration, complications and life expectancy require separate review.',['special'])}
-    else {const id=p.multipleDiabetesRisks?'diabetes-risk':'diabetes';r.pathways.push('Diabetes primary prevention');goal(p.multipleDiabetesRisks?70:100,p.multipleDiabetesRisks?100:130,'Diabetes',[id],p.multipleDiabetesRisks?50:30);trace(id,'Diabetes eligibility',`Age ${p.age}; multiple ASCVD risk factors ${p.multipleDiabetesRisks}.`);if(!p.muscleSymptoms)add(id,p.multipleDiabetesRisks?'Discuss high-intensity statin therapy with multiple ASCVD risk factors.':'Discuss moderate-intensity statin therapy (usual LDL reduction 30–49%).')}
+    else {const id=p.multipleDiabetesRisks?'diabetes-risk':'diabetes';r.pathways.push('Diabetes primary prevention');goal(p.multipleDiabetesRisks?70:100,p.multipleDiabetesRisks?100:130,'Diabetes',[id],p.multipleDiabetesRisks?50:30);trace(id,'Diabetes eligibility',`Age ${p.age}; multiple ASCVD risk factors ${p.multipleDiabetesRisks}.`);if(canDiscussMedication)add(id,p.multipleDiabetesRisks?'Discuss high-intensity statin therapy with multiple ASCVD risk factors.':'Discuss moderate-intensity statin therapy (usual LDL reduction 30–49%).')}
   }
   if(p.ckd) {
     if(p.ascvd) {goal(55,85,'CKD stage ≥3 with ASCVD',['ckd-ascvd'],50);trace('ckd-ascvd','CKD with ASCVD',`Established CKD, eGFR ${p.egfr}, no maintenance dialysis.`)}
-    else if(p.age!>=40&&p.age!<=75&&p.ldl!>=70&&p.ldl!<190) {r.pathways.push('CKD primary prevention');if(!p.muscleSymptoms)add('ckd','Discuss moderate statin or moderate statin plus ezetimibe; renal function and interaction review are required.');trace('ckd','CKD eligibility',`Age ${p.age}; LDL ${p.ldl}; established stage ≥3 CKD, eGFR ${p.egfr}.`)}
+    else if(p.age!>=40&&p.age!<=75&&p.ldl!>=70&&p.ldl!<190) {r.pathways.push('CKD primary prevention');if(canDiscussMedication)add('ckd','Discuss moderate statin or moderate statin plus ezetimibe; renal function and interaction review are required.');trace('ckd','CKD eligibility',`Age ${p.age}; LDL ${p.ldl}; established stage ≥3 CKD, eGFR ${p.egfr}.`)}
     else {r.status='review-required';add('ckd-review','CKD outside the supported primary-prevention age/lipid range requires individualized evaluation.',['special'])}
   }
   if(p.hiv&&!p.ascvd) {
-    if(p.age!>=40&&p.age!<=75&&p.stableArt===true){r.pathways.push('HIV primary prevention');if(!p.muscleSymptoms)add('hiv','Discuss statin therapy while reviewing antiretroviral drug interactions; this indication does not depend on a high calculated risk.');trace('hiv','HIV eligibility',`Age ${p.age}; stable combination ART confirmed.`)}
+    if(p.age!>=40&&p.age!<=75&&p.stableArt===true){r.pathways.push('HIV primary prevention');if(canDiscussMedication)add('hiv','Discuss statin therapy while reviewing antiretroviral drug interactions; this indication does not depend on a high calculated risk.');trace('hiv','HIV eligibility',`Age ${p.age}; stable combination ART confirmed.`)}
     else {r.status='review-required';add('hiv-review','HIV outside age 40–75 or without confirmed stable combination ART requires individualized evaluation.',['special']);need(p.stableArt===undefined,'Stable combination antiretroviral therapy status')}
   }
   const cacPresent=(p.cac??0)>0||p.incidentalCac==='mild'||p.incidentalCac==='moderate-severe'
@@ -145,7 +146,7 @@ export function evaluate(p: Profile): Result {
       else if(p.incidentalCac==='moderate-severe'){id='cac-incidental';target=70}
       else if(p.incidentalCac==='mild'||p.cac!==undefined&&p.cac>0&&p.cacPercentile!==undefined&&p.cacPercentile<75)id='cac-mild'
       else r.missing.push('Standardized CAC percentile for CAC 1–99')
-      if(id) {goal(target,target+30,'CAC pathway',[id],p.baselineLdl!==undefined&&p.baselineLdl<target?30:target===100?30:50);trace(id,'CAC classification',`CAC ${p.cac??'not scored'} AU; percentile ${p.cacPercentile??'unknown'}; incidental finding ${p.incidentalCac??'none'}.`);if(!p.muscleSymptoms)add(id,target===100?'Discuss moderate-intensity statin therapy for mild CAC.':'Discuss LDL-lowering therapy, with statins as the first-line consideration.');if((p.cac??0)>=300&&(p.cac??0)<1000)add('cac-optional','For CAC 300–999, a tighter LDL/non-HDL goal below 55/85 mg/dL can be considered.');if(p.baselineLdl!==undefined&&p.baselineLdl<target)add('cac-baseline','With untreated LDL already below the absolute CAC goal, the guideline caveat supports at least 30% reduction; individualized selection is required.',[id])}
+      if(id) {goal(target,target+30,'CAC pathway',[id],p.baselineLdl!==undefined&&p.baselineLdl<target?30:target===100?30:50);trace(id,'CAC classification',`CAC ${p.cac??'not scored'} AU; percentile ${p.cacPercentile??'unknown'}; incidental finding ${p.incidentalCac??'none'}.`);if(canDiscussMedication)add(id,target===100?'Discuss moderate-intensity statin therapy for mild CAC.':'Discuss LDL-lowering therapy, with statins as the first-line consideration.');if((p.cac??0)>=300&&(p.cac??0)<1000)add('cac-optional','For CAC 300–999, a tighter LDL/non-HDL goal below 55/85 mg/dL can be considered.');if(p.baselineLdl!==undefined&&p.baselineLdl<target)add('cac-baseline','With untreated LDL already below the absolute CAC goal, the guideline caveat supports at least 30% reduction; individualized selection is required.',[id])}
     }
   }
   const primary=!p.ascvd&&!severe&&p.fh==='none'&&!p.diabetes&&!cacPresent
@@ -156,13 +157,13 @@ export function evaluate(p: Profile): Result {
       r.riskCategory=riskCategory(p.risk10);trace('risk','Manual PREVENT-ASCVD result',`User-confirmed official ASCVD outcome: 10-year ${p.risk10}%; age ${p.age}; LDL ${p.ldl}; no clinical/subclinical ASCVD or FH. Not recalculated here.`)
       const category=r.riskCategory
       if(category==='Low') {
-        if(p.age!<=59&&((p.baselineLdl??p.ldl!)>=160||(p.risk30??0)>=10)) {goal(100,130,'Low short-term risk with elevated long-term exposure',['low'],30);if(!p.muscleSymptoms)add('low','A moderate-intensity statin is reasonable to discuss because LDL exposure or 30-year risk meets the low-risk exception.');trace('low','Long-term risk exception',`LDL ${p.baselineLdl??p.ldl}; 30-year risk ${p.risk30??'unknown'}%.`)}
+        if(p.age!<=59&&((p.baselineLdl??p.ldl!)>=160||(p.risk30??0)>=10)) {goal(100,130,'Low short-term risk with elevated long-term exposure',['low'],30);if(canDiscussMedication)add('low','A moderate-intensity statin is reasonable to discuss because LDL exposure or 30-year risk meets the low-risk exception.');trace('low','Long-term risk exception',`LDL ${p.baselineLdl??p.ldl}; 30-year risk ${p.risk30??'unknown'}%.`)}
         else {add('low-counseling','Continue individualized prevention and health-behavior counseling; low 10-year risk alone does not rule out long-term benefit.',['lifestyle']);if(p.age!<=59)need(p.risk30===undefined,'30-year PREVENT-ASCVD result to complete low-risk assessment')}
       } else {
         const id=category==='Borderline'?'borderline':category==='Intermediate'?'intermediate':'high'
         const goalId=category==='High'?'high-goals':'primary-goals'
         goal(category==='High'?70:100,category==='High'?100:130,'Primary prevention if treatment is initiated',[goalId,id],category==='High'?50:30)
-        if(!p.muscleSymptoms)add(id,category==='Borderline'?'Use shared decision-making; if treatment is selected, moderate-intensity statin is reasonable.':category==='Intermediate'?'Discuss at least moderate-intensity statin therapy; high intensity may benefit the higher end of this risk range.':'Discuss high-intensity statin therapy when lipid treatment is initiated.')
+        if(canDiscussMedication)add(id,category==='Borderline'?'Use shared decision-making; if treatment is selected, moderate-intensity statin is reasonable.':category==='Intermediate'?'Discuss at least moderate-intensity statin therapy; high intensity may benefit the higher end of this risk range.':'Discuss high-intensity statin therapy when lipid treatment is initiated.')
         trace(id,'Risk category',`${p.risk10}% is ${category.toLowerCase()} risk. Goals apply if treatment is initiated.`,[id,goalId])
         if(category==='Borderline'&&p.riskEnhancers?.length) add('enhancers',`Selected risk enhancers: ${p.riskEnhancers.join(', ')}. These inform discussion; no numeric risk adjustment is applied.`)
       }
@@ -194,7 +195,7 @@ export function evaluate(p: Profile): Result {
     add('tg-apob','Consider non-HDL-C or apoB rather than LDL-C alone when evaluating triglyceride-associated risk.')
     if(persistent)add('tg-lifestyle','Review secondary causes, reduced alcohol and added sugars, dietary pattern, activity and weight management; consider a registered dietitian.')
     else {need(p.fasting===undefined,'Fasting status for triglycerides');add('tg-unconfirmed','A single or nonfasting value does not establish persistent hypertriglyceridemia. Confirm fasting testing and persistence after 4–12 weeks of lifestyle/secondary-cause management and stable therapy if indicated.',['tg-lifestyle'])}
-    if(p.tg>=500) {if(persistent&&p.dietTrial===true&&!p.muscleSymptoms)add('tg-pancreatitis','After dietary intervention, persistent severe TG supports clinician discussion of fibrates or prescription omega-3 for pancreatitis risk reduction.');else need(p.dietTrial===undefined,'Dietary intervention status for severe triglycerides');if(p.tg>=1000)add('tg-priority','At TG ≥1000, prioritize prompt review and triglyceride-focused nutrition management to reduce pancreatitis risk.',['tg-pancreatitis']);if(p.fcs===true){r.status='review-required';add('fcs-review','Confirmed familial chylomicronemia syndrome requires a lipid-specialist pathway; drug selection is deferred.',['special'])}}
+    if(p.tg>=500) {if(persistent&&p.dietTrial===true&&canDiscussMedication)add('tg-pancreatitis','After dietary intervention, persistent severe TG supports clinician discussion of fibrates or prescription omega-3 for pancreatitis risk reduction.');else need(p.dietTrial===undefined,'Dietary intervention status for severe triglycerides');if(p.tg>=1000)add('tg-priority','At TG ≥1000, prioritize prompt review and triglyceride-focused nutrition management to reduce pancreatitis risk.',['tg-pancreatitis']);if(p.fcs===true){r.status='review-required';add('fcs-review','Confirmed familial chylomicronemia syndrome requires a lipid-specialist pathway; drug selection is deferred.',['special'])}}
     if(p.age!>=50&&(p.ascvd||p.diabetes&&p.additionalRisks===true)&&p.tg<500&&persistent&&p.ldl!<100&&canIntensify)add('tg-ipe','Icosapent ethyl may be discussed for residual ASCVD risk in this eligible context; this does not establish equivalent benefit for other omega-3 products.')
   }
   if(p.lpa===undefined)add('lpa-test','Consider once-in-adulthood Lp(a) measurement.')

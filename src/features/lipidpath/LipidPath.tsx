@@ -100,7 +100,7 @@ export function LipidPath() {
     if(key==='age'&&typeof value==='number'&&(value<30||value>59)) setRawNumbers(old=>({...old,risk30:undefined}))
     setP(old=>({...old,[key]:value,
       ...(key!=='riskConfirmed'?{riskConfirmed:undefined}:{}),
-      ...(key==='statin'&&value==='none'?{maxTolerated:undefined,adherent:undefined,muscleSymptoms:undefined,severeMuscleSymptoms:undefined}:{}),
+      ...(key==='statin'?{maxTolerated:undefined,adherent:undefined,muscleSymptoms:undefined,severeMuscleSymptoms:undefined}:{}),
       ...(key==='ascvd'&&value===false?{majorEvents:undefined,highRiskConditions:undefined}:{}),
       ...(key==='ckd'&&value===false?{dialysis:undefined,egfr:undefined}:{}),
       ...(key==='age'&&typeof value==='number'&&(value<30||value>59)?{risk30:undefined}:{}),
