@@ -71,7 +71,7 @@ The existing durable image downloader, manifest ownership, status recheck and
 idempotence rules remain in place. Generated articles are regenerated only by the
 publisher; do not hand-edit its owned files.
 
-Unsupported blocks (including embeds, synced blocks, subpages/databases, equations,
+Unsupported blocks (including synced blocks, subpages/databases,
 mentions and other non-text rich text) abort the complete synchronization with a
 block-type error and preserve the last published version. This existing fail-closed
 policy prevents silently losing meaningful or private content. Replace unsupported
@@ -84,8 +84,8 @@ explicit new-tab links get `noopener noreferrer` and screen-reader context.
 Root-relative internal links use React Router. Same-page anchors remain native,
 preserving the existing route/fragment behavior and navigation clearance.
 
-`Embed` is a safe extension point that renders an HTTPS fallback link only.
-No third-party iframe, scripts, tracking, raw HTML injection or remote evaluation
+`Embed` provides a link fallback and click-to-load YouTube playback; see [EMBEDS.md](EMBEDS.md).
+No third-party iframe is created before activation, and no raw HTML injection or remote evaluation
 is enabled. Future interactive providers must have a reviewed explicit provider
 allowlist, strict URL validation, sandbox/permissions, lazy loading, accessible
 names, privacy consent where needed, fallback links and CSP coordination.

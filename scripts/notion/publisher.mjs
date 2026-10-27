@@ -1,4 +1,5 @@
 import { manifest } from './manifest.mjs'
+import { approvedEmbed } from '../../src/lib/embeds.mjs'
 import { normalizeEditorial } from '../../src/lib/editorial.mjs'
 import { ownedPath } from './ownership.mjs'
 import { advanceHistory, normalizeSlug, resolveRegistry, readMetadata, manualHistory } from '../redirects.mjs'
@@ -272,6 +273,14 @@ export async function convertBlocks(blocks, image, headingStack = [], state = { 
           const captionHasLinks = data.caption?.some(part => part.href || part.text?.link?.url)
           output.push(`<p><a href={${json(url)}}>${!captionHasLinks && plain(data.caption).trim() ? richText(data.caption) : `{${json(url)}}`}</a>${captionHasLinks ? ` — ${richText(data.caption)}` : ''}</p>`)
         } catch { throw blockError(block, 'bookmark requires a safe HTTPS URL and text caption') }
+      } else if (type === 'embed' || type === 'video') {
+        const source = type === 'video' ? (data.type === 'external' ? data.external?.url : undefined) : data.url
+        let url
+        try { url = publicResource(source).href } catch { throw blockError(block, 'embed requires a permanent public HTTPS URL') }
+        const title = plain(data.caption).trim() || (type === 'video' ? 'External video' : 'External content')
+        richText(data.caption) // Validate caption runs before using their plain text.
+        if (!approvedEmbed(url)) console.warn(`Notion block ${type}: unsupported provider retained as an external link`)
+        output.push(`<Embed url={${json(url)}} title={${json(title)}} />`)
       } else if (type === 'file') {
         let attachment
         try { attachment = publicAttachment(data) } catch (error) { throw blockError(block, error.message) }

@@ -22,7 +22,7 @@
       },
       {
         "title": "Search and third parties",
-        "text": "Search downloads a same-origin search-index.json and matches queries in the browser. No query submission endpoint was found. Fonts are bundled locally. Social buttons and the current Embed component are links, not third-party widgets. Following an external link sends you to a separate service with its own practices. Article media may use external image URLs; loading those images can disclose connection information to their hosts. Notion publishing and GitHub Actions run during publishing, not as visitor-facing APIs."
+        "text": "Search downloads a same-origin search-index.json and matches queries in the browser. No query submission endpoint was found. Fonts are bundled locally. Social buttons are external links. Approved YouTube embeds load only after you choose to activate each one; YouTube may then collect connection and browser information under its own practices. Following an external link sends you to a separate service with its own practices. Article media may use external image URLs; loading those images can disclose connection information to their hosts. Notion publishing and GitHub Actions run during publishing, not as visitor-facing APIs."
       },
       {
         "title": "Messages, retention and choices",

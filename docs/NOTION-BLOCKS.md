@@ -17,7 +17,8 @@ is inserted. Diagnostics identify block type and ID, never article excerpts or U
 | Bookmark | HTTPS anchor, rich caption as link name or original URL; no metadata fetch, preview image or scripts |
 | File | Safe fallback link to author-designated public external HTTPS PDF/TXT/CSV; author-provided name or URL filename, extension label and caption |
 | Uploaded/private file | Rejected; no signed Notion attachment link emitted or download attempted |
-| Video, embed, link_preview | Intentionally unsupported, publication rejected; use an authored public bookmark; consent/embed framework belongs to #74 |
+| Video, embed | Public external HTTPS links use the consent-based Embed component; unsupported providers retain a link and diagnostic. Private uploads and unsafe URLs abort. See [EMBEDS.md](EMBEDS.md). |
+| link_preview | Unsupported; publication rejected. |
 | Table / table_row | Native table/thead/tbody/tr/th/td with row/column scope; rows only inside table; nonempty rectangular shape required |
 | Synced block (original or reference) | Rejected privacy boundary, including cycles; no traversal even if integration can read source |
 | Child page, child database | Rejected privacy boundary; no article traversal |

@@ -1,5 +1,6 @@
 import { useId, useRef, useState, isValidElement, Children, type ComponentProps, type ReactNode } from 'react'
 import { safeContentUrl } from './urls'
+import { approvedEmbed } from '../../lib/embeds.mjs'
 import imageData from '../../generated/images.json'
 import { Link } from 'react-router-dom'
 
@@ -82,10 +83,20 @@ export function Summary(props: ComponentProps<'summary'>) { return <summary {...
 export function Disclosure({ title, children }: { title: string; children?: ReactNode }) {
   return <details><summary>{title}</summary><div>{children}</div></details>
 }
-/** Privacy-preserving extension point: links only; no third-party execution. */
+/** A provider is contacted only after this individual embed is activated. */
 export function Embed({ url, title }: { url: string; title: string }) {
-  const safe = safeContentUrl(url)
-  if (!safe || !/^https:\/\//i.test(safe)) return <p>Embed unavailable.</p>
-  return <aside className="article-embed"><ArticleLink href={safe}>{title}</ArticleLink><p>Open the original resource to view this content.</p></aside>
+  const [active, setActive] = useState(false)
+  const approved = approvedEmbed(url)
+  const safe = typeof url === 'string' && /^https:\/\//i.test(url) && safeContentUrl(url)
+  const label = typeof title === 'string' && title.trim() ? title.trim() : 'External content'
+  if (!safe) return <p>Embed unavailable.</p>
+  return <aside className="article-embed">
+    <p><strong>{label}</strong></p>
+    {approved ? <>
+      <p>Loading this content contacts {approved.provider}, which may collect information about you.</p>
+      <button className="article-embed-load" type="button" onClick={() => setActive(true)}>{`Load ${label} from ${approved.provider}`}</button>
+      {active && <iframe className="article-embed-frame" src={approved.src} title={label} sandbox="allow-scripts allow-same-origin allow-presentation" referrerPolicy="strict-origin-when-cross-origin" loading="lazy" allowFullScreen />}
+    </> : <p>This provider is not supported for inline viewing.</p>}
+    <p><a href={safe} target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer">Open original content <span className="sr-only">(opens in a new tab)</span> ↗</a></p>
+  </aside>
 }
-
