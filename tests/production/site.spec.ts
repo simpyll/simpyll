@@ -21,7 +21,8 @@ test('public release hydrates, navigates and renders established and newest arti
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(report.routes.find(x => x.path === '/blog')!.title)
     expect(documents.length, 'Hydrated journal navigation must not fall back to a document reload').toBe(initialDocuments)
     for (const article of sample) {
-      await page.locator(`main a[href="${article.path}"]`).click()
+      // Reading suggestions may link to the same article. Select its journal card.
+      await page.locator(`main article h2 a[href="${article.path}"]`).click()
       await expect(page.getByRole('heading', { level: 1 })).toHaveText(article.title)
       await expect(page.locator('article .prose')).toContainText(article.body!)
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `https://simpyll.com${article.path}`)
@@ -45,4 +46,41 @@ test('public release hydrates, navigates and renders established and newest arti
   } finally {
     await testInfo.attach('browser-errors', { body: JSON.stringify(errors, null, 2), contentType: 'application/json' })
   }
+})
+
+test('public LipidPath calculates a fictional profile, retains inputs and resets after reload', async ({ page, baseURL }) => {
+  const errors = collectBrowserErrors(page, new URL(baseURL!).origin)
+  await page.goto('/projects/lipidpath')
+  await page.getByRole('link', { name: 'Launch the educational tool', exact: true }).click()
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('LipidPath')
+  // Exercise the Pages trailing-slash document and its hydration as well as client navigation.
+  await page.goto('/tools/lipidpath/')
+  const field = (label: string) => page.getByLabel(label, { exact: true })
+  await field('Age (years)').fill('50')
+  await field('Current reproductive context').selectOption('none')
+  for (const label of ['Established clinical ASCVD?', 'Diabetes?', 'History of untreated LDL-C ≥190 mg/dL?', 'Established CKD stage 3 or higher?', 'Living with HIV?', 'Complex care requiring individual review?']) {
+    await field(label).selectOption('false')
+  }
+  await field('Confirmed familial hypercholesterolemia').selectOption('none')
+  await field('Contraindications and drug interactions reviewed?').selectOption('true')
+  await page.getByRole('button', { name: 'Continue', exact: true }).click()
+  await field('Current LDL-C (mg/dL)').fill('120')
+  await field('Total cholesterol (optional) (mg/dL)').fill('220')
+  await field('HDL-C (optional) (mg/dL)').fill('50')
+  await expect(field('Current LDL-C (mg/dL)')).toHaveValue('120')
+  await page.getByRole('button', { name: 'Continue', exact: true }).click()
+  await field('Current statin intensity').selectOption('none')
+  await page.getByRole('button', { name: 'Continue', exact: true }).click()
+  await field('10-year PREVENT-ASCVD risk (%)').fill('5')
+  await field('These results are from the official PREVENT-ASCVD outcome?').selectOption('true')
+  await page.getByRole('button', { name: 'Review guideline results', exact: true }).click()
+  await expect(page.getByText('Intermediate 10-year ASCVD risk:', { exact: true })).toBeVisible()
+  await expect(page.getByText('below 100 mg/dL', { exact: true })).toBeVisible()
+  await page.getByRole('button', { name: /Laboratory results$/ }).click()
+  await expect(field('Current LDL-C (mg/dL)')).toHaveValue('120')
+  await page.getByRole('button', { name: 'Reset all inputs', exact: true }).click()
+  await expect(field('Age (years)')).toHaveValue('')
+  await page.reload()
+  await expect(field('Age (years)')).toHaveValue('')
+  expect(errors, 'LipidPath application, hydration and required asset errors').toEqual([])
 })

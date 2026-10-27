@@ -114,6 +114,19 @@ jobs:
           HOME: /root
           PLAYWRIGHT_FULL_MATRIX: ${{ (github.event_name == 'schedule' || inputs.full_matrix) && '1' || '' }}
         run: npm run test:e2e:built -- --shard=${{ matrix.shard }}/3
+      - name: Exercise production verification against the candidate release
+        if: matrix.shard == 1
+        env:
+          HOME: /root
+          SMOKE_BASE_URL: http://127.0.0.1:4174
+          SMOKE_MANIFEST: dist/deployment.json
+        run: |
+          export SMOKE_EXPECTED_SHA="$(cat ci-revision.txt)"
+          npm run preview -- --host 127.0.0.1 --port 4174 --strictPort > /tmp/production-preview.log 2>&1 &
+          preview_pid=$!
+          trap 'kill "$preview_pid"' EXIT
+          npm run smoke:http
+          npm run smoke:browser
       - name: Preserve browser reports and layout evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -127,6 +140,7 @@ jobs:
             artifacts/toc/
             docs/discovery/
             docs/pulse/
+            artifacts/production/
 
   fixtures:
     needs: build
