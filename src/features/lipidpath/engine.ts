@@ -11,7 +11,7 @@ export function validate(p: Profile): string[] {
     if (value!==undefined && (typeof value!=='number'||!Number.isFinite(value)||value<min||value>max)) errors.push(`${key}: enter a finite number between ${min} and ${max}.`)
   }
   for (const key of ['age','majorEvents','highRiskConditions'] as const) if(p[key]!==undefined&&!Number.isInteger(p[key])) errors.push(`${key}: enter a whole number.`)
-  const options: Partial<Record<keyof Profile, string[]>>={sex:['female','male'], reproductive:['none','pregnant','planning','lactating'],fh:['none','hefh','hofh','unknown'],lpaUnit:['mg/dL','nmol/L'],incidentalCac:['none','mild','moderate-severe'],statin:['none','low','moderate','high']}
+  const options: Partial<Record<keyof Profile, string[]>>={sex:['female','male'], reproductive:['none','pregnant','planning','lactating'],fh:['none','hefh','hofh','unknown'],lpaUnit:['mg/dL','nmol/L'],incidentalCac:['none','mild','moderate-severe'],statin:['none','low','moderate','high'],lipidTreatment:['none','current','unknown'],medicationNow:['yes','no','unknown']}
   for(const [key,values] of Object.entries(options)) if(p[key as keyof Profile]!==undefined&&!values.includes(p[key as keyof Profile] as string)) errors.push(`${key}: select a supported value.`)
   for(const key of ['ascvd','diabetes','multipleDiabetesRisks','severeHistory','additionalRisks','ckd','dialysis','hiv','stableArt','complexCare','safetyReviewed','smoking','strongFamilyHistory','fasting','persistentTg','dietTrial','fcs','avoidTherapy','riskConfirmed','maxTolerated','adherent','ezetimibe','pcsk9','bempedoic','inclisiran','muscleSymptoms','severeMuscleSymptoms'] as const) if(p[key]!==undefined&&typeof p[key]!=='boolean') errors.push(`${key}: select yes or no.`)
   if(p.cacPercentile!==undefined&&p.cac===undefined) errors.push('Enter the CAC score associated with the standardized percentile before interpreting either pathway.')
@@ -20,6 +20,7 @@ export function validate(p: Profile): string[] {
   if(p.ldl!==undefined&&nonHdl(p.total,p.hdl)!==undefined&&p.ldl>nonHdl(p.total,p.hdl)!+1) errors.push('LDL-C exceeds non-HDL-C; verify results from the same sample.')
   if(p.ascvd===false&&(p.majorEvents??0)>0) errors.push('Major ASCVD events conflict with no established ASCVD.')
   if(p.statin==='none'&&p.maxTolerated===true) errors.push('No current statin cannot establish maximally tolerated statin treatment in this tool.')
+  if(p.medicationNow==='no'&&(p.statin!==undefined&&p.statin!=='none'||p.ezetimibe===true||p.pcsk9===true||p.bempedoic===true||p.inclisiran===true)) errors.push('No current cholesterol medication conflicts with a reported current medication. Review both answers.')
   if(p.severeHistory===false&&p.baselineLdl!==undefined&&p.baselineLdl>=190) errors.push('Untreated baseline ≥190 conflicts with no severe LDL history.')
   if(p.lpa!==undefined&&!p.lpaUnit) errors.push('Select the reported Lp(a) unit.')
   if(p.risk30!==undefined&&p.age!==undefined&&(p.age<30||p.age>59)) errors.push('30-year PREVENT-ASCVD is supported only at ages 30–59.')
@@ -31,12 +32,23 @@ export function validate(p: Profile): string[] {
 }
 export { preventEligible } from './eligibility.ts'
 export function evaluate(p: Profile): Result {
-  const r:Result={version:guideline.version,status:'incomplete',pathways:[],goals:[],considerations:[],safety:[],missing:[],errors:validate(p),trace:[],nonHdl:nonHdl(p.total,p.hdl),reduction:ldlReduction(p.baselineLdl,p.ldl)}
+  const r:Result={version:guideline.version,status:'incomplete',pathways:[],goals:[],considerations:[],safety:[],missing:[],errors:validate(p),trace:[],nonHdl:nonHdl(p.total,p.hdl),reduction:ldlReduction(p.baselineLdl,p.ldl),findings:[],observations:[]}
   const add=(id:string,text:string,refs=[id])=>{if(!r.considerations.some(c=>c.id===id)) r.considerations.push({id,text,evidence:refs})}
   const trace=(id:string,label:string,facts:string,refs=[id])=>r.trace.push({id,label,facts,evidence:refs})
   const goal=(ldl:number,nonHdl:number,context:string,refs:string[],reduction?:number)=>r.goals.push({ldl,nonHdl,context,evidence:refs,reduction})
   const need=(condition:boolean,text:string)=>{if(condition)r.missing.push(text)}
   if(r.errors.length) return r
+  if(p.ldl!==undefined) r.findings.push({code:p.ldl>=190?'ldl-markedly-elevated':'ldl-entered',evidence:p.ldl>=190?['severe-causes']:[]})
+  if(p.tg!==undefined&&p.tg>=150) r.findings.push({code:'tg-elevated',evidence:['tg-lifestyle']})
+  if(p.ascvd===true) r.findings.push({code:'ascvd-reported',evidence:['secondary']})
+  if(p.diabetes===true) r.findings.push({code:'diabetes-reported',evidence:['diabetes']})
+  const safeDiscussion=p.age!==undefined&&p.age>=18&&p.age<=79&&p.reproductive==='none'&&p.fh!==undefined&&p.fh!=='unknown'&&p.fh!=='hofh'&&p.complexCare===false&&p.safetyReviewed===true&&(p.ckd===false||p.dialysis===false)&&(p.statin==='none'||p.muscleSymptoms===false)
+  if(p.ascvd===true) r.observations.push({code:'ascvd',certainty:'established-finding',evidence:['secondary'],treatmentDiscussion:safeDiscussion})
+  const documentedSevere=p.severeHistory===true||(p.baselineLdl!==undefined&&p.baselineLdl>=190)||(p.ldl!==undefined&&p.ldl>=190&&p.lipidTreatment==='none')
+  if(documentedSevere) r.observations.push({code:'severe-ldl',certainty:'established-finding',evidence:['severe-causes'],treatmentDiscussion:safeDiscussion})
+  else if(p.ldl!==undefined&&p.ldl>=190) r.observations.push({code:'possible-severe-ldl',certainty:'possible',evidence:['severe-causes']})
+  if(p.diabetes===true) r.observations.push({code:'diabetes',certainty:'possible',evidence:[p.multipleDiabetesRisks===true?'diabetes-risk':'diabetes'],treatmentDiscussion:safeDiscussion&&p.age!==undefined&&p.age>=40&&p.age<=75&&p.ascvd===false&&p.severeHistory===false&&!documentedSevere&&p.ldl!==undefined&&p.ldl<190&&p.multipleDiabetesRisks!==undefined})
+  if(p.tg!==undefined&&p.tg>=150) r.observations.push({code:'triglycerides',certainty:'possible',evidence:['tg-lifestyle']})
   if((p.tg??0)>=500) r.safety.push(`TG ${p.tg} mg/dL: prompt clinical evaluation for severe elevation and pancreatitis risk${p.tg!>=1000?'; at ≥1000, triglyceride lowering is a priority':''}. A laboratory result alone does not diagnose pancreatitis.`)
   need(p.age===undefined,'Age')
   need(p.reproductive===undefined,'Pregnancy, pregnancy planning or lactation status (or not applicable)')
@@ -52,8 +64,8 @@ export function evaluate(p: Profile): Result {
   }
   if(p.ckd) {need(p.dialysis===undefined,'Maintenance dialysis status');need(p.egfr===undefined,'eGFR in established CKD');if(p.egfr!==undefined&&p.egfr>=60) {r.safety.push('Stage ≥3 CKD status and eGFR ≥60 require reconciliation.');r.status='review-required';return r}}
   if(p.ascvd) {need(p.majorEvents===undefined,'Number of distinct major ASCVD events');need(p.highRiskConditions===undefined,'Number of high-risk ASCVD conditions')}
-  const severe=p.severeHistory===true||(p.baselineLdl??0)>=190||(p.statin==='none'&&p.ldl!>=190)
-  if(!severe&&p.ldl!>=190&&p.statin!=='none') {r.safety.push('Current LDL-C ≥190 on therapy requires confirmation of severe hypercholesterolemia / untreated history.');r.status='review-required';return r}
+  const severe=p.severeHistory===true||(p.baselineLdl??0)>=190||(p.lipidTreatment==='none'&&p.ldl!>=190)
+  if(!severe&&p.ldl!>=190) {r.safety.push('Current LDL-C ≥190 requires clarification of treatment and untreated history before classifying the severe-LDL pathway.');r.status='review-required';return r}
   if(severe&&!p.ascvd) need(p.additionalRisks===undefined,'Additional ASCVD risk factors for severe hypercholesterolemia')
   if(!p.ascvd&&p.diabetes&&p.age!>=40&&p.age!<=75) need(p.multipleDiabetesRisks===undefined,'Multiple ASCVD risk factors in diabetes')
   if(r.missing.length) return r

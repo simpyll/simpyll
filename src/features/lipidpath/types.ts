@@ -25,6 +25,8 @@ export interface Profile {
   hdl?: number
   ldl?: number
   baselineLdl?: number
+  lipidTreatment?: 'none' | 'current' | 'unknown'
+  medicationNow?: 'yes' | 'no' | 'unknown'
   tg?: number
   fasting?: boolean
   persistentTg?: boolean
@@ -58,9 +60,21 @@ export interface Evidence {
 export interface Consideration { id: string; text: string; evidence: string[] }
 export interface Goal { ldl: number; nonHdl: number; reduction?: number; evidence: string[]; context: string }
 export interface Trace { id: string; label: string; facts: string; evidence: string[] }
+export interface Finding {
+  code: 'ldl-markedly-elevated' | 'ldl-entered' | 'tg-elevated' | 'ascvd-reported' | 'diabetes-reported'
+  evidence: string[]
+}
+export interface PathwayObservation {
+  code: 'ascvd' | 'severe-ldl' | 'possible-severe-ldl' | 'diabetes' | 'triglycerides'
+  certainty: 'established-finding' | 'possible'
+  evidence: string[]
+  treatmentDiscussion?: boolean
+}
 export interface Result {
   version: string; status: 'incomplete' | 'review-required' | 'educational'
   pathways: string[]; riskCategory?: 'Low' | 'Borderline' | 'Intermediate' | 'High'
   goals: Goal[]; considerations: Consideration[]; safety: string[]; missing: string[]; errors: string[]
   trace: Trace[]; nonHdl?: number; reduction?: number
+  findings: Finding[]
+  observations: PathwayObservation[]
 }

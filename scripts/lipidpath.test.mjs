@@ -69,3 +69,52 @@ test('review-required presentations suppress medication outputs across concurren
 test('low-risk counseling and moderate-statin exception have distinct evidence grades',()=>{const general=result({risk10:2,risk30:5});assert.deepEqual(general.considerations.find(c=>c.id==='low-counseling').evidence,['lifestyle']);const exception=result({risk10:2,risk30:10});assert.deepEqual(exception.considerations.find(c=>c.id==='low').evidence,['low']);assert.equal(evidenceById.low.cor,'2a');assert.equal(evidenceById.low.loe,'C-LD')})
 test('nonfasting TG 400 threshold prompts repeat fasting testing and defers LDL-based add-ons',()=>{const p={risk10:10,statin:'high',maxTolerated:true,adherent:true,ezetimibe:false,fasting:false};assert.ok(!has(result({...p,tg:399.99}),'fasting-repeat'));for(const tg of [400,400.01]){const r=result({...p,tg});assert.ok(has(r,'fasting-repeat'));assert.ok(!has(r,'high-add'))}})
 test('CAC percentile without its score or discordant zero/high percentile cannot enter primary prevention',()=>{for(const patch of [{cacPercentile:75},{cac:0,cacPercentile:75}]){const r=result(patch);assert.ok(r.errors.length);assert.equal(r.goals.length,0);assert.equal(r.riskCategory,undefined)}})
+
+test('partial LDL finding remains visible without treatment prerequisites',()=>{
+  for(const lipidTreatment of ['none','current','unknown',undefined]) {
+    const r=evaluate({age:50,ldl:400,lipidTreatment})
+    assert.equal(r.status,'incomplete')
+    assert.ok(r.findings.some(f=>f.code==='ldl-markedly-elevated'))
+    assert.equal(r.goals.length,0)
+  }
+})
+test('LDL finding boundary distinguishes 189 and 190',()=>{
+  assert.equal(evaluate({ldl:189}).findings[0].code,'ldl-entered')
+  assert.equal(evaluate({ldl:190}).findings[0].code,'ldl-markedly-elevated')
+})
+test('no current statin does not establish an untreated current LDL',()=>{
+  const r=evaluate({...base,ldl:400,statin:'none',lipidTreatment:'unknown'})
+  assert.ok(!r.pathways.includes('Severe hypercholesterolemia'))
+  assert.ok(r.findings.some(f=>f.code==='ldl-markedly-elevated'))
+})
+
+test('independent observations survive missing unrelated data and scope stops',()=>{
+  const r=evaluate({age:50,ldl:400,lipidTreatment:'none',ascvd:true,diabetes:true,tg:600})
+  for(const code of ['severe-ldl','ascvd','diabetes','triglycerides']) assert.ok(r.observations.some(o=>o.code===code),code)
+  assert.equal(r.goals.length,0)
+  assert.equal(r.observations.find(o=>o.code==='severe-ldl').treatmentDiscussion,false)
+  const outOfScope=evaluate({...base,age:17,ldl:400,lipidTreatment:'none',risk30:undefined})
+  assert.equal(outOfScope.observations.find(o=>o.code==='severe-ldl').treatmentDiscussion,false)
+})
+test('partial treatment discussion requires an established severe baseline and safety review',()=>{
+  const safe={...base,ldl:400,lipidTreatment:'none',ascvd:undefined}
+  assert.equal(evaluate(safe).observations.find(o=>o.code==='severe-ldl').treatmentDiscussion,true)
+  assert.equal(evaluate({...safe,safetyReviewed:undefined}).observations.find(o=>o.code==='severe-ldl').treatmentDiscussion,false)
+  assert.ok(evaluate({...safe,lipidTreatment:'unknown'}).observations.some(o=>o.code==='possible-severe-ldl'))
+})
+test('contradictory current medication answers are rejected',()=>{
+  assert.ok(evaluate({medicationNow:'no',statin:'high'}).errors.length)
+  assert.equal(evaluate({medicationNow:'no',lipidTreatment:'current'}).errors.length,0)
+})
+
+test('partial concurrent indications retain facts while treatment discussion needs safety',()=>{
+  const r=evaluate({...base,ascvd:true,diabetes:true,severeHistory:true,baselineLdl:200,additionalRisks:undefined,majorEvents:undefined,highRiskConditions:undefined,hiv:undefined})
+  for(const code of ['ascvd','diabetes','severe-ldl']) assert.ok(r.observations.some(o=>o.code===code))
+  assert.equal(r.observations.find(o=>o.code==='ascvd').treatmentDiscussion,true)
+  assert.equal(r.observations.find(o=>o.code==='diabetes').treatmentDiscussion,false)
+  assert.equal(evaluate({...base,ascvd:true,safetyReviewed:false}).observations.find(o=>o.code==='ascvd').treatmentDiscussion,false)
+})
+test('missing and explicit negative are distinguished for PREVENT eligibility',()=>{
+  assert.equal(preventEligible({...base,ascvd:undefined}),false)
+  assert.equal(preventEligible({...base,ascvd:false}),true)
+})

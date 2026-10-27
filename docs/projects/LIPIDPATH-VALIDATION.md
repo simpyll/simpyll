@@ -39,3 +39,7 @@ Boundary expected results were transcribed from recommendation text/figures, not
 ## Manual release review still required
 
 Qualified clinician: examine every mapped recommendation and exception, test source-annotated scenarios independently, reconcile source ambiguities and sign off on output wording and supported populations. Owner: review privacy, IP boundaries, successful browser/CI evidence and release scope. Record findings and corrected cases; bump rule version if guidance changes. Do not merge/deploy while this review is pending.
+
+## Guided assessment changes
+
+Synthetic regression cases cover partial observations with unrelated data absent, LDL 189/190, LDL 400 with known and unknown treatment timing, concurrent ASCVD/diabetes/severe LDL, treatment-safety gates, contradictory medication entries, and PREVENT unknown versus explicit negative. Browser coverage exercises partial results, audience switching, retained inputs, numerical entry and unit switching, and risk confirmation invalidation. Browser results must be verified in CI if local browser installation is unavailable. Passing automated tests verifies software behavior only; independent qualified clinical review remains a release requirement.
