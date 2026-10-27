@@ -60,6 +60,8 @@ jobs:
       - run: npm run test:analytics
       - run: npm run test:pulse
       - run: npm run test:seo
+      - name: Verify LipidPath clinical scenarios and source traceability
+        run: node --test scripts/lipidpath.test.mjs
       - run: npm run lint
       - run: node --test scripts/ai-engineering.test.mjs scripts/contributions.test.mjs scripts/case-study.test.mjs scripts/prerender.test.mjs scripts/remark-heading-ids.test.mjs scripts/article-toc.test.mjs scripts/motion.test.mjs scripts/navigation.test.mjs
 

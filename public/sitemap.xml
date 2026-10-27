@@ -25,6 +25,9 @@
     <loc>https://simpyll.com/about</loc>
   </url>
   <url>
+    <loc>https://simpyll.com/contact</loc>
+  </url>
+  <url>
     <loc>https://simpyll.com/explore</loc>
   </url>
   <url>
@@ -32,6 +35,9 @@
   </url>
   <url>
     <loc>https://simpyll.com/pulse</loc>
+  </url>
+  <url>
+    <loc>https://simpyll.com/tools/lipidpath</loc>
   </url>
   <url>
     <loc>https://simpyll.com/blog/001-python-fundamentals</loc>
@@ -65,5 +71,8 @@
   </url>
   <url>
     <loc>https://simpyll.com/projects/simpyll-pulse</loc>
+  </url>
+  <url>
+    <loc>https://simpyll.com/projects/lipidpath</loc>
   </url>
 </urlset>

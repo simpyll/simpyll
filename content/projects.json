@@ -443,5 +443,43 @@
       "contentKey": "simpyll-pulse"
     },
     "seoDescription": "How Simpyll Pulse turns static site audits into an accessible public dashboard while keeping detailed diagnostics local."
+  },
+  {
+    "id": "lipidpath",
+    "slug": "lipidpath",
+    "title": "LipidPath",
+    "summary": "An educational dyslipidemia guideline explorer with deterministic adult pathways, transparent evidence and explicit clinical limits.",
+    "projectType": "Clinical Informatics / Educational Tool",
+    "workflowStage": "in-progress",
+    "lifecycleStatus": "active",
+    "visibility": "public",
+    "technologies": [
+      "react",
+      "typescript",
+      "vite"
+    ],
+    "links": [
+      {
+        "kind": "demo",
+        "label": "Explore LipidPath",
+        "url": "/tools/lipidpath"
+      },
+      {
+        "kind": "documentation",
+        "label": "Clinical source map and limitations",
+        "url": "https://github.com/simpyll/simpyll/blob/main/docs/projects/LIPIDPATH.md"
+      }
+    ],
+    "featured": {
+      "enabled": false,
+      "order": 23
+    },
+    "order": 23,
+    "caseStudy": {
+      "contentKey": "lipidpath"
+    },
+    "subtitle": "Explainable guideline pathways, with uncertainty made visible.",
+    "seoDescription": "How LipidPath maps the 2026 dyslipidemia guideline into an educational rule engine with clinical source traceability, privacy and explicit limits.",
+    "nextMilestone": "Independent qualified clinical review before deployment"
   }
 ]

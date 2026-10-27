@@ -50,6 +50,7 @@ test('built Journal and article relationships are useful without JavaScript; no 
   const project = parseHTML(await readFile('dist/projects/simpyll/index.html','utf8')).document
   assert.ok(project.querySelector('a[href="/blog/the-art-of-reading-code"]'))
   const sitemap = await readFile('dist/sitemap.xml','utf8')
-  assert.doesNotMatch(sitemap,/<loc>[^<]*\/(?:tools|topics|resources)(?:\/|<)/)
+  assert.doesNotMatch(sitemap,/<loc>[^<]*\/(?:topics|resources)(?:\/|<)/)
+  assert.deepEqual([...sitemap.matchAll(/<loc>([^<]*\/tools[^<]*)<\/loc>/g)].map(m=>m[1]),['https://simpyll.com/tools/lipidpath'])
   assert.match(sitemap,/<loc>https:\/\/simpyll.com\/blog<\/loc>/)
 })

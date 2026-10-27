@@ -1,3 +1,4 @@
+import { LipidPathRoute } from './features/lipidpath/route'
 import { Analytics } from './analytics/Analytics'
 import { PulseRoute } from './pulse/route'
 import { Policy } from './pages/Policy'
@@ -40,6 +41,7 @@ export function AppContent() {
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:slug" element={<ProjectDetailRoute />} />
+          <Route path="/tools/lipidpath" element={<LipidPathRoute />} />
           <Route path="/pulse" element={<PulseRoute />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<Contact />} />

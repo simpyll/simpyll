@@ -1,0 +1,27 @@
+# LipidPath source-to-code map (prepared before implementation)
+
+Source: Blumenthal et al., Circulation 2026;153:e1154–e1276, DOI 10.1161/CIR.0000000000001423. Page numbers below are printed journal pages. Uploaded PDF is private working source and must never enter git. Original paraphrases only; figures 1–18 inform the review and are not redistributed.
+
+| Rule family | Eligibility / source | Goals / exceptions | Verification |
+| --- | --- | --- | --- |
+| Risk eligibility | §4.2.3.2 R1, e1183; Table 11 e1184 | Age 30–79, LDL 70–189, no ASCVD/subclinical disease; exclude FH; manual ASCVD outcome only, 30-year age 30–59 | Source mapped; independent review pending |
+| Primary low | §4.2.3.7 R1–3, e1192; Fig 6 | Age 30–59: LDL 160–189 or 30-year risk ≥10 supports moderate statin; otherwise lifestyle; absent 30-year result does not imply low long-term risk | Source mapped; independent review pending |
+| Primary borderline/intermediate/high | §4.2.3.7 R4–10 e1192 | 3/5/10% boundaries; 100/130 goals if treated for borderline/intermediate; 70/100 high; statin intensity/reduction tracked separately from goal recommendation evidence | Source mapped; independent review pending |
+| Risk enhancers | §4.2.3.3 R1–2 e1186, Table 13; §4.2.3.4 | Personalize risk; do not numerically adjust PREVENT; hsCRP branch needs two measurements and alternative causes excluded, deferred | Source mapped; independent review pending |
+| Severe LDL | §4.2.4.3 R1–6 e1198–99; Fig 7 | Untreated/history LDL ≥190; 100/130 without additional risks, 70/100 with HeFH/risk factors/CAC, 55/85 with ASCVD; exclude secondary causes; no FH diagnosis from LDL alone | Source mapped; independent review pending |
+| Diabetes | §4.2.5 R1–3 e1204; Fig 9 | Age 40–75, 100/130 and 30–49%; multiple ASCVD risk factors 70/100 and ≥50%; younger/older and intensification via diabetes risk estimate deferred | Source mapped; independent review pending |
+| Secondary | §4.2.6 R1–7 e1208–09; Figs 10–12 | ≥2 major events OR 1 and ≥2 high-risk conditions; 55/85 very high, 70/100 otherwise; optional 55/85 for latter; no double-count of ACS/MI | Source mapped; independent review pending |
+| CAC | §4.2.7 R1–6 e1213; Fig 13 | Men ≥40, women ≥45; 1–99 needs percentile <75, ≥75 percentile or 100–999 70/100; ≥1000 55/85; 300–999 optional 55/85; baseline already below goal caveat §4.2.7 synopsis | Source mapped; independent review pending |
+| CAC zero | §4.2.3.6 R2 e1190 | Borderline/intermediate, preference to avoid therapy, no higher-risk exceptions; reassess 3–7 years; never overrides ASCVD/FH/diabetes/severe LDL/smoking/family history | Source mapped; independent review pending |
+| TG | §4.2.9 R1–7 e1227–28; Figs 14–17 | Persistent fasting elevation after 4–12 weeks lifestyle/secondary causes/stable therapy; ≥500 pancreatitis risk, ≥1000 priority TG lowering; IPE age ≥50, ASCVD or diabetes + risk, max statin, LDL <100, TG 150–499 | Source mapped; independent review pending |
+| Lp(a) | §3.4 R1 e1168; §4.2.10 R1–2 e1234 | ≥125 nmol/L OR ≥50 mg/dL, never interconvert; modifiable risk control; ASCVD and unmet goals on max statin supports PCSK9 mAb with outcomes evidence | Source mapped; independent review pending |
+| ApoB | §3.3 R1–2 e1167; §4.2.9 R7 | Residual-risk assessment, no automatic apoB target | Source mapped; independent review pending |
+| CKD | §4.2.8.8 R1–3 e1223–24 | Established stage ≥3 (not a single eGFR diagnosis), 40–75 LDL 70–189 moderate statin ±ezetimibe; ASCVD goals 55/85; dialysis deferred | Source mapped; independent review pending |
+| HIV | §4.2.8.9 R1 e1224–25 | Age 40–75 on stable combination ART; statin discussion plus interaction review; no invented lipid target | Source mapped; independent review pending |
+| Muscle symptoms | §4.2.11 R1–2 e1235; Fig 18 | Evaluate secondary causes/timing/strength; severe symptoms warrant CK evaluation; no automatic intolerance diagnosis or medication change | Source mapped; independent review pending |
+| Safety / scope stops | §4.2.8.1–4 and .10 | Children, HoFH, pregnancy/planning/lactation, dialysis, active cancer/complex interactions, frailty/limited life expectancy: individualized review, no automated treatment branch | Deliberately blocked |
+| Monitoring | §3.5 R1 e1169–70 | Lipid panel 4–12 weeks after start/change, 6–12 months thereafter, individualized | Source mapped; independent review pending |
+
+Evidence registry is machine-readable TypeScript. Each emitted recommendation/goal points to a stable recommendation-specific entry. Trace links the entered eligibility facts, output, evidence and scenario IDs. Numerical/lab validation is technical verification, not clinical validation. No independent qualified clinical review has occurred; owner must arrange it before deployment. Adult core coverage is intentionally distinct from comprehensive guideline coverage.
+
+Apparent source differences preserved: the severe-LDL footnote also mentions non-HDL/apoB criteria, while the recommendation headings use LDL ≥190. Those alternate-entry phenotypes are referred for review, not classified as ordinary primary prevention. The secondary-prevention table R5 is COR 1/A; do not take the older summary table's grade instead. Age >65 in Fig 10 is a strict boundary. Optional tighter targets remain optional and do not replace standard goals.
