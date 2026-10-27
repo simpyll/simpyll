@@ -24,6 +24,7 @@ test('guided primary-prevention result, trace, privacy and reset',async({page},i
   await page.getByRole('button',{name:'Continue',exact:true}).click()
   await page.getByLabel('10-year PREVENT-ASCVD risk (%)',{exact:true}).fill('5')
   await choose(page,'These results are from the official PREVENT-ASCVD outcome?','true')
+  await expect(page.getByLabel('10-year PREVENT-ASCVD risk (%)',{exact:true})).toHaveValue('5')
   await page.getByRole('button',{name:'Review guideline results',exact:true}).click()
   await expect(page.getByRole('heading',{name:'Guideline results',exact:true})).toBeFocused()
   await expect(page.getByText('Intermediate 10-year ASCVD risk:',{exact:true})).toBeVisible()
