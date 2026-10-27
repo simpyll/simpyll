@@ -65,7 +65,7 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-helmet-async": "^3.0.0",
-    "react-router-dom": "^6.30.6",
+    "react-router-dom": "^7.18.4",
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
@@ -97,5 +97,10 @@
     "unified": "^11.0.5",
     "vite": "^8.3.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "overrides": {
+    "@tailwindcss/typography": {
+      "postcss-selector-parser": "6.1.5"
+    }
+  }
 }

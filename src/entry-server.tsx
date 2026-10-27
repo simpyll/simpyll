@@ -6,7 +6,7 @@ import { ProjectDetail } from './pages/ProjectDetail'
 import { registerProjectDetail } from './projects/detail-loader'
 registerProjectDetail(ProjectDetail)
 import { HelmetProvider } from 'react-helmet-async'
-import { StaticRouter } from 'react-router-dom/server'
+import { StaticRouter } from 'react-router-dom'
 import { renderToString } from 'react-dom/server'
 import { siteConfig } from './config/site'
 import App from './App'
