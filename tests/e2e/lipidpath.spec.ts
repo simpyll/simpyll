@@ -194,3 +194,14 @@ test('invalid numeric text is rejected rather than converted into a result',asyn
   await expect(page.getByRole('alert')).toContainText('ldl: enter a finite number')
   await expect(page.getByRole('heading',{name:'What your information shows'})).toHaveCount(0)
 })
+
+test('apoB at the alternate severe threshold is shown without inventing untreated status',async({page})=>{
+  await page.goto('/tools/lipidpath');await ready(page)
+  await page.getByRole('button',{name:'Continue',exact:true}).click()
+  await page.getByText('More laboratory results (optional)',{exact:true}).click()
+  await page.getByLabel('ApoB (mg/dL, optional)',{exact:true}).fill('140')
+  await page.getByRole('button',{name:'See results so far',exact:true}).click()
+  await expect(page.getByText(/reported apolipoprotein B.*140 mg\/dL/)).toBeVisible()
+  await expect(page.getByText(/Treatment timing and other information need clinical review/)).toBeVisible()
+  await expect(page.getByRole('heading',{name:'Lipid goals for discussion'})).toHaveCount(0)
+})

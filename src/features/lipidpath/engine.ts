@@ -51,11 +51,12 @@ export function evaluate(p: Profile): Result {
   if(p.tg!==undefined&&p.tg>=150) r.observations.push({code:'triglycerides',certainty:'possible',evidence:['tg-lifestyle']})
   if((p.cac??0)>0||p.incidentalCac==='mild'||p.incidentalCac==='moderate-severe') r.observations.push({code:'cac',certainty:'possible',evidence:['cac-mild','cac-moderate']})
   if(p.lpa!==undefined&&p.lpaUnit!==undefined&&p.lpa>=(p.lpaUnit==='mg/dL'?50:125)) r.observations.push({code:'lpa',certainty:'possible',evidence:['lpa']})
+  if(p.apob!==undefined&&p.apob>=140) r.observations.push({code:'apob-severe-possible',certainty:'possible',evidence:['severe-causes']})
   const partial=()=>{
     if(p.ascvd===false&&p.cac!==undefined&&p.cac>0&&p.cac<100&&p.cacPercentile===undefined) need(true,'Standardized CAC percentile for CAC 1–99')
     // An established ASCVD classification can be assessed independently of
     // unrelated missing answers, but only after the shared scope/safety guard.
-    if(safeDiscussion&&p.ascvd===true&&p.majorEvents!==undefined&&p.highRiskConditions!==undefined&&p.ckd===false&&p.fh==='none'&&p.severeHistory===false&&(p.baselineLdl??0)<190&&p.ldl!==undefined&&p.ldl<190) {
+    if(safeDiscussion&&p.ascvd===true&&p.majorEvents!==undefined&&p.highRiskConditions!==undefined&&p.ckd===false&&p.fh==='none'&&p.severeHistory===false&&(p.baselineLdl??0)<190&&p.ldl!==undefined&&p.ldl<190&&(p.apob===undefined||p.apob<140)&&(r.nonHdl===undefined||r.nonHdl<=220)) {
       const veryHigh=p.majorEvents>=2||(p.majorEvents===1&&p.highRiskConditions>=2)
       const id=veryHigh?'very-high':'secondary'
       r.pathways.push(veryHigh?'Very-high-risk secondary prevention':'Secondary prevention, not very high risk')
@@ -178,7 +179,7 @@ export function evaluate(p: Profile): Result {
     }
   }
   if(p.cac===0&&(p.ascvd||severe||p.fh!=='none'||p.diabetes||p.smoking||p.strongFamilyHistory)) add('cac-zero-exception','CAC zero must not override the established indication or higher-risk condition.',['cac-zero'])
-  if((p.apob??0)>140&&!severe&&!currentStatin||(r.nonHdl??0)>220&&!severe&&!currentStatin){r.status='review-required';r.goals=[];add('severe-alternate','High untreated apoB/non-HDL may represent severe hypercholesterolemia even without LDL ≥190. This alternate-entry phenotype requires individualized review; PREVENT treatment output is withheld.',['severe-causes'])}
+  if(!severe&&((p.apob!==undefined&&p.apob>=140)||(r.nonHdl!==undefined&&r.nonHdl>220))){r.status='review-required';r.goals=[];add('severe-alternate','High reported apoB/non-HDL may be relevant to severe hypercholesterolemia. Review treatment timing and untreated history; this tool does not classify the alternate phenotype or assign a risk-based treatment goal.',['severe-causes'])}
   const above=r.goals.some(g=>p.ldl!>=g.ldl||(r.nonHdl!==undefined&&r.nonHdl>=g.nonHdl)||(r.reduction!==undefined&&g.reduction!==undefined&&r.reduction<g.reduction))
   if(canIntensify&&above&&r.status==='educational') {
     const medication=(id:string,text:string,ref=id)=>{if(p.ezetimibe===undefined||p.pcsk9===undefined||p.bempedoic===undefined||p.inclisiran===undefined) {need(true,'Current ezetimibe, PCSK9 monoclonal antibody, bempedoic acid and inclisiran use');return}add(id,text,[ref])}

@@ -66,6 +66,7 @@ function Results({result:r,profile:p,audience,edit}:{result:Result;profile:Profi
       {o.code==='triglycerides'&&<p>Elevated triglycerides may need a separate assessment. Fasting status, repeat measurements and possible causes affect interpretation.</p>}
       {o.code==='cac'&&<p>Reported coronary artery calcium may be relevant to a separate pathway. Age, the score and sometimes its percentile help interpret it.</p>}
       {o.code==='lpa'&&<p>The reported lipoprotein(a) result meets the guideline’s risk-enhancing threshold in the unit supplied. It can help inform a discussion of cardiovascular risk.</p>}
+      {o.code==='apob-severe-possible'&&<p>The reported apolipoprotein B (apoB) result is {p.apob} mg/dL. At or above 140 mg/dL, it may be relevant to severe cholesterol elevation. Treatment timing and other information need clinical review before classifying it.</p>}
       {audience==='clinical'&&<EvidenceLinks ids={o.evidence}/>}
     </article>)}</section>}
     {r.status!=='educational'&&r.observations.some(o=>o.code==='severe-ldl'&&o.treatmentDiscussion)&&<section><h3>What the guideline suggests discussing</h3><p>For adults with confirmed severe untreated LDL elevation, the guideline discusses statin treatment as a foundation. The right treatment depends on individual circumstances, current medicines and clinical review. Do not change a medicine based on this result.</p><EvidenceLinks ids={['severe-statin']}/></section>}

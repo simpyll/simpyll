@@ -181,3 +181,20 @@ test('unknown statin use cannot authorize a partial medication discussion',()=>{
   const r=evaluate({...base,ascvd:true,hiv:undefined,statin:undefined,muscleSymptoms:false})
   assert.equal(r.observations.find(o=>o.code==='ascvd').treatmentDiscussion,false)
 })
+
+test('apoB alternate phenotype includes 140 and never assumes treatment timing',()=>{
+  assert.ok(!result({apob:139.99}).observations.some(o=>o.code==='apob-severe-possible'))
+  for(const statin of ['none','high',undefined]) {
+    const r=result({apob:140,statin})
+    assert.ok(r.observations.some(o=>o.code==='apob-severe-possible'))
+    assert.equal(r.status,'review-required')
+    assert.equal(r.goals.length,0)
+    assert.match(r.considerations.find(c=>c.id==='severe-alternate').text,/treatment timing/)
+  }
+})
+
+test('high apoB prevents an incomplete overlapping ASCVD goal',()=>{
+  const r=evaluate({...base,ascvd:true,majorEvents:1,highRiskConditions:0,hiv:undefined,apob:140})
+  assert.ok(r.observations.some(o=>o.code==='apob-severe-possible'))
+  assert.equal(r.goals.length,0)
+})
