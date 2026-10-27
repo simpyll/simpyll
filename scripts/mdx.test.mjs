@@ -40,7 +40,7 @@ test('Notion tables preserve row and column headers, rich text and reject malfor
   assert.doesNotMatch(content, /<img onerror/)
   await compile(content)
   await assert.rejects(convertBlocks([{ ...table, table: { table_width: 3 } }], async () => ''), /Invalid Notion table/)
-  await assert.rejects(convertBlocks([block('embed', 'private input')], async () => ''), /Notion block embed .*Unsupported Notion block type/)
+  await assert.rejects(convertBlocks([block('embed', 'private input')], async () => ''), /Notion block embed .*requires a permanent public HTTPS URL/)
 })
 
 test('publisher headings use the shared heading components after ID generation', async () => {

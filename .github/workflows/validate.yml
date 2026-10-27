@@ -38,6 +38,7 @@ jobs:
         run: npm run test:performance
       - run: node --test scripts/internal-links.test.mjs
       - run: npm run test:redirects
+      - run: node --test scripts/embeds.test.mjs
       - run: npm run test:notion
       - name: Prove recovery in a clean local clone and build restored content
         run: node --test scripts/recovery-build.test.mjs

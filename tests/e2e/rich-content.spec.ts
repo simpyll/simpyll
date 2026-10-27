@@ -6,6 +6,8 @@ test.skip(!process.env.RICH_FIXTURE, 'Fixture exists only in the isolated integr
 
 test('rich manual and Notion content hydrates, scrolls and works by keyboard', async ({ page, context }, testInfo) => {
   const errors: string[] = []
+  const requests: string[] = []
+  page.on('request', request => { if (/youtube|youtu\.be/.test(request.url())) requests.push(request.url()) })
   page.on('pageerror', error => errors.push(error.message))
   page.on('console', message => { if (message.type() === 'error') errors.push(message.text()) })
   await context.route('https://example.com/**', route => route.abort())
@@ -26,6 +28,18 @@ test('rich manual and Notion content hydrates, scrolls and works by keyboard', a
   await expect(page.getByRole('link', { name: 'Optional new-tab resource' })).toContainText('opens in a new tab')
   await expect(page.locator('iframe, .article-content script')).toHaveCount(0)
   await expect(page.getByText('Embed unavailable.')).toBeVisible()
+  const load = page.getByRole('button', { name: 'Load Example video from YouTube' })
+  await load.focus()
+  await visibleFocus(load)
+  expect(requests).toEqual([])
+  await page.route('https://www.youtube-nocookie.com/**', route => route.fulfill({ status: 200, contentType: 'text/html', body: '<title>Fixture</title>' }))
+  await page.keyboard.press('Enter')
+  await expect(load).toBeFocused()
+  const frame = page.locator('iframe[title="Example video"]')
+  await expect(frame).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/abcdefghijk')
+  await expect(frame).toHaveAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation')
+  await expect(frame).toHaveAttribute('referrerpolicy', 'strict-origin-when-cross-origin')
+
   const disclosure = page.locator('details').filter({ hasText: 'Why use native disclosures?' })
   await disclosure.locator('summary').focus()
   await page.keyboard.press('Enter')
@@ -66,6 +80,8 @@ test('static content and disclosures work without JavaScript', async ({ browser 
   const page = await context.newPage()
   await page.goto('http://127.0.0.1:4173/blog/rich-content-fixture/')
   await expect(page.locator('.article-content table')).toHaveCount(2)
+  await expect(page.locator('iframe')).toHaveCount(0)
+  await expect(page.getByRole('link', { name: /Open original content/ }).last()).toHaveAttribute('href', 'https://youtu.be/abcdefghijk')
   await expect(page.getByRole('link', { name: 'Public reference', exact: true })).toHaveAttribute('href', 'https://example.com/guide?topic=notion')
   await expect(page.getByRole('link', { name: 'guide.pdf (PDF)' })).toHaveAttribute('href', 'https://example.com/guide.pdf')
   await expect(page.getByRole('img', { name: 'Shared renderer illustration' })).toBeVisible()

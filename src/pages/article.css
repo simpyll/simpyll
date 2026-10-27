@@ -246,3 +246,7 @@
   .article-content [data-footnotes] { color: #18251f; border-color: #68717b; }
   .article-content [data-footnotes] li:target { outline: none; }
 }
+
+.article-embed-frame { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; }
+.article-embed-load { min-height: 44px; padding: .65rem 1rem; border: 1px solid currentColor; border-radius: .4rem; background: var(--ui-surface); color: var(--ui-foreground); cursor: pointer; }
+.article-embed-load:focus-visible { outline: 3px solid var(--ui-accent); outline-offset: 3px; }

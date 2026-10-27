@@ -51,6 +51,8 @@ test('rich MDX fixture compiles, prerenders and hydrates through both publishing
   assert.match(html.replace(/<!--.*?-->/g, ''), /guide.pdf \(PDF\)/)
   assert.match(html, /&lt;script&gt;alert/)
   assert.doesNotMatch(html, /<iframe|<script>alert/)
+  assert.match(html, /href="https:\/\/youtu.be\/abcdefghijk"/)
+  assert.match(html, /Load Example video from YouTube/)
   try {
     await exec(resolve('node_modules/.bin/playwright'), ['test', 'rich-content.spec.ts', 'article-print.spec.ts', '--project=desktop-chromium', '--project=mobile-chromium', '--workers=2'], { cwd: root, env: { ...process.env, RICH_FIXTURE: '1' }, maxBuffer: 3e6 })
   } catch (error) {
