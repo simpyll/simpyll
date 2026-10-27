@@ -3,7 +3,9 @@ import assert from 'node:assert/strict'
 import { createServer } from 'vite'
 
 test('contribution resolver uses authoritative public sources and safe fallbacks', async () => {
-  const server = await createServer({ server: { middlewareMode: true } })
+  // server.ws:false disables Vite 8's standalone WebSocket transport, which otherwise
+  // binds the default port 24678 and collides across parallel node:test files.
+  const server = await createServer({ server: { middlewareMode: true, ws: false } })
   try {
     const { contributionForPage: resolve } = await server.ssrLoadModule('/src/lib/contributions.ts')
     const { posts } = await server.ssrLoadModule('/src/lib/blog.ts')

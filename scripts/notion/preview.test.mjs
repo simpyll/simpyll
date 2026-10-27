@@ -100,7 +100,11 @@ test('deployment remains main-only and CI uses synthetic preview fixture without
   assert.doesNotMatch(validate, /npm run preview:notion|NOTION_API_TOKEN/)
 })
 
-test('SIGINT during actual CLI preparation removes the private workspace', { timeout: 30_000 }, async () => {
+test('SIGINT during actual CLI preparation removes the private workspace', { timeout: 60_000 }, async () => {
+  // The child loads the real CLI module graph before the 50ms SIGINT lands; under
+  // a fully parallel local `npm test` run that preparation can exceed 30s on a
+  // loaded machine. The assertion is unchanged: the workspace must be removed.
+  // CI runs this in smaller batches and stays well inside either budget.
   const { execFile } = await import('node:child_process')
   const { promisify } = await import('node:util')
   const before = (await readdir(tmpdir())).filter(name => name.startsWith('simpyll-private-preview-')).sort()

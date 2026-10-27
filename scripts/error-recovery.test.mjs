@@ -5,7 +5,9 @@ import { createElement } from 'react'
 import { renderToString } from 'react-dom/server'
 
 test('render boundaries never conceal server/prerender failures', async () => {
-  const server = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
+  // server.ws:false disables Vite 8's standalone WebSocket transport, which otherwise
+  // binds the default port 24678 and collides across parallel node:test files.
+  const server = await createServer({ server: { middlewareMode: true, ws: false }, appType: 'custom' })
   try {
     const { ErrorBoundary } = await server.ssrLoadModule('/src/recovery/ErrorBoundary.tsx')
     function BrokenContent() { throw new Error('invalid article fixture') }
