@@ -90,8 +90,8 @@
     "remark-parse": "^11.0.0",
     "sharp": "^0.35.5",
     "typescript": "~6.0.2",
-    "typescript-eslint": "^8.69.0",
+    "typescript-eslint": "^8.72.0",
     "unified": "^11.0.5",
-    "vite": "^8.3.0"
+    "vite": "^8.3.5"
   }
 }
