@@ -64,7 +64,7 @@ jobs:
       - name: Record artifact revision
         run: git rev-parse HEAD > ci-revision.txt
       - name: Share this run's immutable production output
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: validated-build
           retention-days: 1
@@ -112,7 +112,7 @@ jobs:
         run: npm run test:e2e:built -- --shard=${{ matrix.shard }}/3
       - name: Preserve browser reports and layout evidence
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: playwright-results-${{ matrix.shard }}
           retention-days: 14
@@ -152,7 +152,7 @@ jobs:
         run: npm run test:mdx
       - name: Preserve fixture diagnostics and syntax screenshots
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: publishing-fixture-results
           retention-days: 14
@@ -201,7 +201,7 @@ jobs:
         run: npm run perf:lighthouse
       - name: Retain Lighthouse reports even when collection fails
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: lighthouse-performance
           retention-days: 14
