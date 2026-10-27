@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
-import { ready, scan, tabTo } from './helpers/accessibility'
+import { ready, scan, tabTo, visibleFocus } from './helpers/accessibility'
 async function choose(page:Page,label:string,value:string) {await page.getByLabel(label,{exact:true}).selectOption(value)}
 async function coreProfile(page:Page) {
   await page.getByLabel('Age (years)',{exact:true}).fill('50')
@@ -66,7 +66,11 @@ test('keyboard, light theme, evidence explorer and responsive layout',async({pag
   await page.addInitScript(()=>localStorage.setItem('simpyll-theme','light'))
   await page.goto('/tools/lipidpath');await ready(page)
   const explorer=page.getByText('Evidence & pathway explorer',{exact:true}).first()
-  await tabTo(page,explorer)
+  await tabTo(page,page.getByRole('button',{name:'Understand my results',exact:true}))
+  await page.getByRole('button',{name:'Reset all inputs',exact:true}).focus()
+  await page.keyboard.press('Tab')
+  await expect(explorer).toBeFocused()
+  await visibleFocus(explorer)
   await page.keyboard.press('Enter')
   await expect(page.getByRole('region',{name:'Guideline evidence'})).toBeVisible()
   const rule=page.locator('#evidence-very-high summary');await rule.scrollIntoViewIfNeeded();await rule.click()
