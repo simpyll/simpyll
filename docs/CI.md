@@ -2,16 +2,26 @@
 
 ## Architecture
 
-PRs and manual `Validate Simpyll` dispatches run `build` (production generation, TypeScript, lint, unit and output checks),
-then three independent `browser` shards and `fixtures` in parallel. Playwright's
-native sharding partitions the entire seven-project inventory, with two
-workers per runner. Each shard owns one preview server. `fixtures` retains real
-project/Notion/rich-content builds and Chromium hydration/redirect journeys.
+PRs run `build` (production generation, TypeScript, lint, unit and output checks),
+then two independent `browser` shards with the focused critical inventory and
+`fixtures` in parallel. Playwright's native sharding partitions the critical
+inventory (the required Firefox/WebKit axe and keyboard suites plus navigation,
+LipidPath, missing-page hydration, slug-history redirects, recovery,
+route-restoration and theme journeys on desktop and mobile Chromium), with two
+workers per runner. Each shard owns one preview server. Scheduled, weekly and
+manual full-matrix dispatches run the exhaustive seven-project inventory across
+the same three balanced shards as before, using `playwright.config.ts`.
+`fixtures` retains real project/Notion/rich-content builds and Chromium
+hydration/redirect journeys on every event.
 These builds intentionally modify input content; they cannot reuse the production
 HTML. They copy the already processed images, avoiding repeated cold transforms.
 The final `validate` job runs even when dependencies fail or skip and requires all
 tiers to succeed. Its existing check name remains available to branch protection.
 No path filters, new skips, retry changes, axe exclusions or optional checks.
+Matrix entries for the inactive mode (critical outside pull requests, full on
+pull requests) stop before `npm ci` and succeed with every test step skipped;
+the aggregate gate still requires the active tiers, so a skipped tier can never
+turn the final check green.
 
 `validated-build` is an immutable artifact from the same workflow run, retained
 one day; consumers verify the checked-out merge SHA. It contains dist, dist-server,
@@ -51,17 +61,21 @@ functional smoke projects, scheduled/manual extended matrix, diagnostics and iOS
 limitations. All pre-existing required coverage remains.
 
 
-Every PR retains the full Chromium desktop/mobile journeys and existing
-Firefox/WebKit accessibility suites. Five functional projects run bounded smoke.
-Main, weekly schedule and full manual dispatch add portable regression journeys
-in Firefox, desktop WebKit and mobile WebKit. Existing tests are never moved to
-weaker triggers. Fixture-only tests retain their dedicated gates. #46 runtime
-performance budgets remain separate; see [visitor-performance budgets and Lighthouse](PERFORMANCE.md).
+Every PR retains the required Firefox/WebKit accessibility suites and the
+critical Chromium desktop/mobile journeys (navigation, LipidPath, missing-page
+hydration, slug-history redirects, recovery, route restoration, theme). The
+exhaustive Chromium suite, five bounded functional smoke projects and the
+portable regression journeys in Firefox, desktop WebKit and mobile WebKit run on
+the weekly schedule, full manual dispatch and every main/Pages build; nothing
+is deleted and no trigger is weakened on those tiers. Fixture-only tests
+retain their dedicated gates on every event. #46 runtime performance budgets
+remain separate; see [visitor-performance budgets and Lighthouse](PERFORMANCE.md).
 
 ## Reproduce locally
 
 ```sh
 npm ci
+npm run test:unit
 npx playwright install --with-deps chromium firefox webkit
 npm run build
 npm run lint

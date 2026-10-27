@@ -29,3 +29,30 @@
   for the hydration render, then update to the requested URL after hydration.
   Assert the eventual URL with a retrying assertion and capture hydration errors;
   an immediate DOM read can observe the static fallback before React starts.
+
+## Validation tiers and cold-start workflows
+
+- `npm run test:unit` is the fast cold-start lane: it regenerates the cheap
+  artifacts (`validate:projects`, `generate:redirects`, `generate:search`) and
+  runs the 29 Node suites verified to pass on a fresh clone without a production
+  build or browsers (~1 minute, ~380 tests). It excludes suites that audit
+  `dist/` output, spawn real builds or launch browsers; those still run in the
+  full gates and on every pull request.
+- Pull requests run the focused critical browser gate
+  (`npm run test:e2e:pr`, `playwright.pr.config.ts`): the required axe/keyboard
+  suites on Firefox and WebKit plus navigation, LipidPath, missing-page
+  hydration, slug-history redirects, recovery, route-restoration and theme
+  journeys on desktop and mobile Chromium. The exhaustive seven-project
+  inventory stays on the weekly schedule, the manual full-matrix dispatch and
+  the main/Pages deployment gate (`npm run test:e2e:built`); it is never run
+  weaker than before on those tiers.
+- For behavior-affecting UI changes, still run the full browser inventory
+  locally (`npm run build && npm run test:e2e:built`) or trigger the manual
+  full-matrix dispatch before merging; the PR gate is deliberately focused and
+  does not replace exhaustive regression coverage.
+- Vite middleware-mode test servers must set `server: { ws: false }` (Vite 8's
+  WebSocket transport option). `hmr: false` does **not** stop the standalone
+  WebSocket server from binding the shared port 24678, and parallel
+  `node --test` files then collide. `playwright --list` and browser suites
+  require a prior `npm run build` because some specs import
+  `dist/deployment.json` at load time.

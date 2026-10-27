@@ -11,7 +11,10 @@ test('only published case studies produce routes and meaningful static SEO',asyn
 })
 test('optional timeline and gallery are omitted by the shared layout',async()=>{
  const { createServer }=await import('vite')
- const server=await createServer({server:{middlewareMode:true}})
+ // server.ws:false disables Vite 8's standalone WebSocket transport, which
+ // otherwise binds the default port 24678 and collides across parallel
+ // node:test files. This suite only needs ssrLoadModule, never live reloading.
+ const server=await createServer({server:{middlewareMode:true,ws:false}})
  try {
   const {ProjectDetailLayout}=await server.ssrLoadModule('/src/pages/ProjectDetail.tsx')
   const {createElement}=await import('react')
@@ -34,7 +37,7 @@ test('editorial validation rejects missing sections, duplicate IDs, unsafe links
 
 test('shared Hub card preserves optional disclosures and independent resource links', async () => {
  const { createServer } = await import('vite')
- const server = await createServer({server:{middlewareMode:true}, hmr:false})
+ const server = await createServer({server:{middlewareMode:true, ws:false}})
  try {
   const { ProjectCard } = await server.ssrLoadModule('/src/pages/Projects.tsx')
   const { createElement } = await import('react')

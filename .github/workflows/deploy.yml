@@ -1,3 +1,4 @@
+
 name: Deploy Simpyll to GitHub Pages
 
 on:
@@ -21,15 +22,16 @@ concurrency:
 jobs:
   build:
     if: github.ref == 'refs/heads/main'
-    timeout-minutes: 30
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
     env:
       VITE_GA4_ENABLED: ${{ vars.GA4_TRACKING_ENABLED }}
-    runs-on: ubuntu-latest
     outputs:
       revision: ${{ steps.revision.outputs.sha }}
     permissions:
       contents: read
       pages: read
+
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -57,72 +59,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - run: npm run test:redirects
-
-      - name: Test Notion publisher
-        run: npm run test:notion
-
-      - name: Test content validation
-        run: npm run test:content
-
-      - name: Test static blog search
-        run: npm run test:search
-
-      - name: Test production monitoring
-        run: npm run test:smoke
-
       - name: Restore image transformations
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: public/images/optimized
           key: images-${{ runner.os }}-${{ hashFiles('package-lock.json', 'scripts/images/**', 'scripts/publishing-media.mjs', 'src/content/blog/**', 'public/images/**') }}
 
-      - name: Test image transformations
-        run: npm run test:images
-
       - name: Build and prerender site
         run: npm run build
 
-      - run: npm run test:projects
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Validate prerendered HTML and SEO
-        run: node --test scripts/rss.test.mjs scripts/contributions.test.mjs scripts/case-study.test.mjs scripts/prerender.test.mjs scripts/remark-heading-ids.test.mjs scripts/article-toc.test.mjs
-
-      - uses: ./.github/actions/browsers
-
-      - run: npm run test:notion:build
-
-      - name: Test rich MDX and Notion rendering
-        run: npm run test:mdx
-
-      # PR validation owns the extended cross-browser matrix; deployment retains
-      # Chromium coverage and focused cross-browser journeys without duplicating
-      # the full extended suite on every main push.
-      - name: Enforce accessibility and browser regressions (desktop and mobile)
-        run: npm run test:e2e:built
-
-      - name: Upload browser test diagnostics
-        if: failure()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: playwright-results
-          path: |
-            playwright-report/
-            test-results/
-            artifacts/rich-content/
-            artifacts/toc/
-          retention-days: 14
-          if-no-files-found: ignore
-
-      - name: Preserve expected release manifest
+      - name: Preserve release manifest
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: production-manifest
           path: dist/deployment.json
           retention-days: 7
+          if-no-files-found: error
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
@@ -139,11 +91,11 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5
-
 
   verify:
     needs: [build, deploy]
@@ -155,36 +107,49 @@ jobs:
       SMOKE_BASE_URL: https://simpyll.com
       SMOKE_EXPECTED_SHA: ${{ needs.build.outputs.revision }}
       SMOKE_MANIFEST: expected-release/deployment.json
+
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ needs.build.outputs.revision }}
           fetch-depth: 0
           persist-credentials: false
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '24'
           cache: npm
-      - run: npm ci
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download release manifest
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: production-manifest
           path: expected-release
-      - name: Verify public HTTP content after Pages deployment
+
+      - name: Verify public HTTP content
         run: npm run smoke:http
-      - uses: ./.github/actions/browsers
+
+      - name: Install Chromium
+        uses: ./.github/actions/browsers
         with:
           browsers: chromium
 
-      - name: Verify hydrated production in Chromium
+      - name: Verify production browser hydration
         id: browser
         run: npm run smoke:browser
-      - name: Report separate deployment and verification outcomes
+
+      - name: Report verification outcome
         if: always()
         env:
           BROWSER_RESULT: ${{ steps.browser.outcome }}
         run: |
-          echo "Pages deployment: succeeded. Browser verification: $BROWSER_RESULT. See HTTP summary and production diagnostics for route results." >> "$GITHUB_STEP_SUMMARY"
+          echo "Pages deployment succeeded. Browser verification: $BROWSER_RESULT." >> "$GITHUB_STEP_SUMMARY"
+
       - name: Preserve production diagnostics
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

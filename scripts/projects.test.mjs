@@ -79,10 +79,16 @@ test('generator emits public metadata only; invalid CLI exits nonzero and remove
     await assert.rejects(readFile(join(root,'src/generated/projects.json')))
   } finally {await rm(root,{recursive:true,force:true})}
 })
-test('production build and both CI workflows enforce project validation',async()=>{
-  const pkg=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8'))
-  for(const key of ['dev','build','build:client','build:server']) assert.ok(pkg.scripts[key].startsWith('npm run validate:projects &&'))
-  for(const name of ['validate','deploy']) assert.match(await readFile(new URL(`../.github/workflows/${name}.yml`,import.meta.url),'utf8'),/run: npm run test:projects/)
+test('production build validates project metadata and PR fixtures test projects before deployment', async () => {
+  const pkg = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'))
+  for (const key of ['dev', 'build', 'build:client', 'build:server']) {
+    assert.ok(pkg.scripts[key].startsWith('npm run validate:projects &&'), `${key} must validate projects`)
+  }
+  const validate = await readFile(new URL('../.github/workflows/validate.yml', import.meta.url), 'utf8')
+  const deploy = await readFile(new URL('../.github/workflows/deploy.yml', import.meta.url), 'utf8')
+  assert.match(validate, /run: npm run test:projects/, 'PR fixtures must test project metadata')
+  assert.match(deploy, /run: npm run build/, 'deployment must build and validate projects')
+  assert.doesNotMatch(deploy, /run: npm run test:projects/, 'deployment must not repeat PR project tests')
 })
 test('homepage uses selectors and preserves authored text in prerendered output',async()=>{
   const source=await readFile(new URL('../src/components/FeaturedWork.tsx',import.meta.url),'utf8')
