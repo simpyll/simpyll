@@ -7,6 +7,8 @@ export function preventReasons(p: Profile): string[] {
   else if(p.ldl<70||p.ldl>=190) reasons.push('The supported risk-based treatment pathway uses current LDL cholesterol of 70–189 mg/dL.')
   if(p.ascvd===undefined) reasons.push('Established cardiovascular disease status is unknown.')
   else if(p.ascvd) reasons.push('Established cardiovascular disease is assessed in a separate pathway.')
+  if(p.diabetes===undefined) reasons.push('Diabetes status is unknown.')
+  else if(p.diabetes) reasons.push('Diabetes is assessed in a separate pathway.')
   if(p.fh===undefined||p.fh==='unknown') reasons.push('Known familial hypercholesterolemia status is unknown.')
   else if(p.fh!=='none') reasons.push('Known familial hypercholesterolemia is assessed separately.')
   if(p.severeHistory===undefined) reasons.push('Untreated severe LDL history is unknown.')

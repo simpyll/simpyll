@@ -155,3 +155,14 @@ test('CAC and high triglycerides remain visible with an incomplete profile',asyn
   await expect(page.getByText(/Reported coronary artery calcium/)).toBeVisible()
   await expect(page.getByText('Standardized CAC percentile for CAC 1–99',{exact:true})).toBeVisible()
 })
+
+test('known unsupported age is disclosed with a partial high LDL finding',async({page})=>{
+  await page.goto('/tools/lipidpath');await ready(page)
+  await page.getByLabel('Age (years)',{exact:true}).fill('17')
+  await page.getByRole('button',{name:'Continue',exact:true}).click()
+  await page.getByLabel('Current LDL-C (mg/dL)',{exact:true}).fill('400')
+  await page.getByRole('button',{name:'See results so far',exact:true}).click()
+  await expect(page.getByText('Individualized evaluation required',{exact:true})).toBeVisible()
+  await expect(page.getByText(/markedly elevated result/)).toBeVisible()
+  await expect(page.getByRole('heading',{name:'Lipid goals for discussion'})).toHaveCount(0)
+})

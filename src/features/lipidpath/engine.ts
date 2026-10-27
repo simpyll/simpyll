@@ -72,7 +72,14 @@ export function evaluate(p: Profile): Result {
   for(const [key,label] of [['ascvd','Established clinical ASCVD'],['diabetes','Diabetes'],['severeHistory','History of untreated LDL-C ≥190'],['ckd','Established CKD stage 3 or higher'],['hiv','HIV'],['complexCare','Complex care / limited life expectancy / active cancer therapy'],['safetyReviewed','Contraindication and interaction review']] as const) need(p[key]===undefined,label)
   need(p.fh===undefined||p.fh==='unknown','Known familial hypercholesterolemia status')
   need(p.ldl===undefined,'Current laboratory-reported LDL-C (no estimated LDL formula is supplied)')
+  if(p.ldl!==undefined&&p.ldl>=190&&!documentedSevere) need(true,'Treatment timing for this sample and any prior untreated LDL-C result')
   if(p.ascvd===true) {need(p.majorEvents===undefined,'Number of distinct major ASCVD events');need(p.highRiskConditions===undefined,'Number of high-risk ASCVD conditions')}
+  if((p.age!==undefined&&(p.age<18||p.age>79))||(p.reproductive!==undefined&&p.reproductive!=='none')||p.fh==='hofh'||p.complexCare===true||p.safetyReviewed===false||p.dialysis===true) {
+    r.status='review-required';r.pathways=['Individualized review']
+    add('special','Additional individualized clinical evaluation is required. This presentation is outside the automated treatment pathways; no treatment goal or medication selection is returned.')
+    trace('special','Scope and safety check',`Age ${p.age??'unknown'}; reproductive status ${p.reproductive??'unknown'}; FH ${p.fh??'unknown'}; complex care ${p.complexCare??'unknown'}; safety reviewed ${p.safetyReviewed??'unknown'}; dialysis ${p.dialysis??'unknown'}.`)
+    return r
+  }
   if(r.missing.length) return partial()
   if(p.age!<18||p.age!>79||p.reproductive!=='none'||p.fh==='hofh'||p.complexCare||p.safetyReviewed!==true||p.dialysis===true) {
     r.status='review-required';r.pathways=['Individualized review'];

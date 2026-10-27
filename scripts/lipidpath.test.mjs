@@ -147,3 +147,23 @@ test('partial CAC and Lp(a) observations do not fabricate their pathways',()=>{
   assert.ok(r.missing.includes('Standardized CAC percentile for CAC 1–99'))
   assert.equal(r.goals.length,0)
 })
+
+test('risk-based treatment pathway excludes diabetes and does not assume an unknown answer is no',()=>{
+  assert.equal(preventEligible({...base,diabetes:true}),false)
+  assert.equal(preventEligible({...base,diabetes:undefined}),false)
+  assert.equal(preventEligible({...base,diabetes:false}),true)
+})
+
+test('known unsupported scope is disclosed even when other information is missing',()=>{
+  const r=evaluate({age:17,ldl:400})
+  assert.equal(r.status,'review-required')
+  assert.ok(r.pathways.includes('Individualized review'))
+  assert.ok(r.findings.some(f=>f.code==='ldl-markedly-elevated'))
+  assert.equal(r.goals.length,0)
+})
+test('high current LDL with unknown treatment timing identifies the unresolved question',()=>{
+  const r=evaluate({age:50,ldl:400})
+  assert.ok(r.missing.some(x=>x.includes('Treatment timing')))
+  assert.ok(r.observations.some(o=>o.code==='possible-severe-ldl'))
+  assert.equal(r.goals.length,0)
+})
