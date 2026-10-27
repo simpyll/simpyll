@@ -58,7 +58,7 @@
   "dependencies": {
     "@mdx-js/react": "^3.1.1",
     "@tailwindcss/vite": "^4.3.3",
-    "motion": "^14.3.0",
+    "motion": "^14.6.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-helmet-async": "^3.0.0",
