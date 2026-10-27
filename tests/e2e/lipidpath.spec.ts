@@ -62,7 +62,7 @@ test('missing data and pregnancy stop unsupported treatment output',async({page}
   await expect(page.getByText('Individualized evaluation required',{exact:true})).toBeVisible()
   await expect(page.getByRole('heading',{name:'Lipid goals for discussion'})).toHaveCount(0)
 })
-test('keyboard, light theme, evidence explorer and responsive layout',async({page},info)=>{
+test('keyboard, light theme, evidence explorer and responsive layout',async({page})=>{
   await page.addInitScript(()=>localStorage.setItem('simpyll-theme','light'))
   await page.goto('/tools/lipidpath');await ready(page)
   const explorer=page.getByText('Evidence & pathway explorer',{exact:true}).first()
@@ -72,6 +72,12 @@ test('keyboard, light theme, evidence explorer and responsive layout',async({pag
   const rule=page.locator('#evidence-very-high summary');await rule.scrollIntoViewIfNeeded();await rule.click()
   await expect(page.locator('#evidence-very-high')).toContainText('COR 1 · LOE A')
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true)
+})
+test('light theme evidence explorer passes accessibility checks',async({page},info)=>{
+  await page.addInitScript(()=>localStorage.setItem('simpyll-theme','light'))
+  await page.goto('/tools/lipidpath');await ready(page)
+  await page.getByText('Evidence & pathway explorer',{exact:true}).first().click()
+  await page.locator('#evidence-very-high summary').click()
   await scan(page,info,'lipidpath-explorer')
   await page.screenshot({path:info.outputPath('lipidpath-explorer.png'),fullPage:true,scale:'css'})
 })
