@@ -131,6 +131,8 @@ jobs:
       # Avoid apt-based install-deps hanging across three parallel shards.
       - name: Enforce focused critical browser and accessibility projects
         if: matrix.mode == 'critical' && github.event_name == 'pull_request'
+        env:
+          HOME: /root
         run: npm run test:e2e:pr -- --shard=${{ matrix.shard }}/2
       - name: Enforce all browser and accessibility projects
         if: matrix.mode == 'full' && github.event_name != 'pull_request'
