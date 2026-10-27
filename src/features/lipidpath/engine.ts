@@ -81,12 +81,6 @@ export function evaluate(p: Profile): Result {
     return r
   }
   if(r.missing.length) return partial()
-  if(p.age!<18||p.age!>79||p.reproductive!=='none'||p.fh==='hofh'||p.complexCare||p.safetyReviewed!==true||p.dialysis===true) {
-    r.status='review-required';r.pathways=['Individualized review'];
-    add('special','Additional individualized clinical evaluation is required. This presentation is outside the automated treatment pathways; no treatment goal or medication selection is returned.')
-    trace('special','Scope and safety check',`Age ${p.age}; reproductive status ${p.reproductive}; FH ${p.fh}; complex care ${p.complexCare}; safety reviewed ${p.safetyReviewed}; dialysis ${p.dialysis}.`)
-    return r
-  }
   if(p.ckd) {need(p.dialysis===undefined,'Maintenance dialysis status');need(p.egfr===undefined,'eGFR in established CKD');if(p.egfr!==undefined&&p.egfr>=60) {r.safety.push('Stage ≥3 CKD status and eGFR ≥60 require reconciliation.');r.status='review-required';return r}}
   if(p.ascvd) {need(p.majorEvents===undefined,'Number of distinct major ASCVD events');need(p.highRiskConditions===undefined,'Number of high-risk ASCVD conditions')}
   const severe=p.severeHistory===true||(p.baselineLdl??0)>=190||(p.lipidTreatment==='none'&&p.ldl!>=190)
