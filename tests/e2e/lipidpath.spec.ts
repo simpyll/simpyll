@@ -38,7 +38,9 @@ test('guided primary-prevention result, trace, privacy and reset',async({page},i
   const stored=await page.evaluate(()=>({...localStorage,...sessionStorage}))
   expect(Object.keys(stored).filter(key=>/lipid|patient|clinical|risk|ldl/i.test(key))).toEqual([])
   expect(errors).toEqual([])
-  await page.screenshot({path:info.outputPath('lipidpath-results.png'),fullPage:true})
+  // High-DPI mobile captures can exceed WebKit's 32767-pixel image limit.
+  // CSS-pixel output retains the entire page and every behavior/axe assertion.
+  await page.screenshot({path:info.outputPath('lipidpath-results.png'),fullPage:true,scale:'css'})
   await page.getByRole('button',{name:'Reset all inputs',exact:true}).click()
   await expect(page.getByLabel('Age (years)',{exact:true})).toHaveValue('')
   await page.reload();await ready(page)
@@ -67,7 +69,7 @@ test('keyboard, light theme, evidence explorer and responsive layout',async({pag
   await expect(page.locator('#evidence-very-high')).toContainText('COR 1 · LOE A')
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true)
   await scan(page,info,'lipidpath-explorer')
-  await page.screenshot({path:info.outputPath('lipidpath-explorer.png'),fullPage:true})
+  await page.screenshot({path:info.outputPath('lipidpath-explorer.png'),fullPage:true,scale:'css'})
 })
 test('portfolio links launch tool and prerendered route hydrates on navigation',async({page})=>{
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error'&&/hydration|hydrated|server.rendered|#418/i.test(m.text()))errors.push(m.text())})
