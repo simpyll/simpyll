@@ -69,6 +69,7 @@ async function generateSitemap() {
     { path: '/explore' },
     { path: '/projects' },
     { path: '/pulse' },
+    { path: '/tools/lipidpath' },
     ...posts,
     ...(await caseStudyRoutes()).map(path => ({ path })),
   ]

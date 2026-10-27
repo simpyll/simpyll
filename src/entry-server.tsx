@@ -1,3 +1,6 @@
+import { LipidPath } from './features/lipidpath/LipidPath'
+import { registerLipidPath } from './features/lipidpath/loader'
+registerLipidPath(LipidPath)
 import { ProjectDetail } from './pages/ProjectDetail'
 import { registerProjectDetail } from './projects/detail-loader'
 registerProjectDetail(ProjectDetail)

@@ -3,11 +3,11 @@ import type { ThemePreference } from './store'
 let cancelActive: (() => void) | undefined
 
 /** One owner for deliberate theme transitions; automatic changes remain immediate. */
-export function revealTheme(button: HTMLElement, apply: (value: ThemePreference) => void) {
+export function revealTheme(button: HTMLElement, apply: (value: ThemePreference) => void, requested?: 'light' | 'dark') {
   // Finish a pending update before deriving the next state from the live DOM.
   if (cancelActive) return
   const root = document.documentElement
-  const next = root.dataset.theme === 'dark' ? 'light' : 'dark'
+  const next = requested ?? (root.dataset.theme === 'dark' ? 'light' : 'dark')
   const reduced = matchMedia('(prefers-reduced-motion: reduce)')
   // WebKit snapshots can drop backdrop-filter on the sticky navigation.
   const webkit = /AppleWebKit/.test(navigator.userAgent) && !/Chrome|Chromium|Edg/.test(navigator.userAgent)

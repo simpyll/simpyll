@@ -1,0 +1,70 @@
+{
+  "sections": [
+    {
+      "id": "overview",
+      "title": "Making clinical pathways inspectable",
+      "paragraphs": [
+        "LipidPath turns supported adult recommendations from the 2026 multisociety dyslipidemia guideline into an interactive educational workflow. It is a software project under review, not a clinically validated prescribing system. Independent qualified clinical review is pending."
+      ],
+      "links": [
+        {
+          "label": "Launch the educational tool",
+          "url": "/tools/lipidpath"
+        },
+        {
+          "label": "Source guideline",
+          "url": "https://doi.org/10.1161/CIR.0000000000001423"
+        }
+      ]
+    },
+    {
+      "id": "architecture",
+      "title": "A deterministic engine with a visible source trail",
+      "paragraphs": [
+        "Pure TypeScript rules evaluate eligibility, simultaneous indications, contraindication review, missing data and laboratory values separately from React. Structured results connect each decision to an original evidence summary, recommendation number, evidence grade and journal page.",
+        "The guided interface includes a keyboard-accessible expandable pathway, measured-versus-target comparisons and an evidence explorer. Static prerendering and route-based code splitting fit the existing GitHub Pages architecture."
+      ],
+      "flow": {
+        "title": "From inputs to explainable output",
+        "description": "Original design; no source guideline figure is reproduced.",
+        "steps": [
+          {
+            "title": "Check applicability",
+            "text": "Validate clinical facts and stop unsupported presentations."
+          },
+          {
+            "title": "Evaluate pathways",
+            "text": "Preserve concurrent indications and evidence references."
+          },
+          {
+            "title": "Inspect reasoning",
+            "text": "Compare goals, expand decision facts and review source limitations."
+          }
+        ]
+      }
+    },
+    {
+      "id": "privacy",
+      "title": "Clinical inputs stay in memory",
+      "paragraphs": [
+        "No account or patient identifiers are requested. Inputs are not written to URLs, browser storage, analytics or a backend. Reset or reload clears the assessment. The authoritative PREVENT calculator opens separately without receiving the entered data.",
+        "The software does not claim HIPAA compliance, ACC/AHA endorsement or institutional certification. The copyrighted source PDF, tables, figures and organizational marks are not redistributed."
+      ]
+    },
+    {
+      "id": "validation",
+      "title": "Software verification and clinical review are separate",
+      "paragraphs": [
+        "Automated scenarios exercise numerical boundaries, eligibility, competing indications, missing values and review-required states. Browser checks cover the guided workflow, hydration, privacy, responsive layout and accessibility. Detailed validation records accompany the implementation.",
+        "The core release supports adult prevention, severe LDL elevation, diabetes age 40\u201375, eligible CAC interpretation, triglyceride assessment, Lp(a), apoB and selected CKD/HIV considerations. Complex populations and detailed medication rechallenge are deferred. PREVENT uses a confirmed manual result from the official AHA tool; no equation is approximated.",
+        "Qualified independent clinical review remains a release requirement. No development history, adoption or medical-review credentials are implied."
+      ],
+      "links": [
+        {
+          "label": "Implementation and review documentation",
+          "url": "https://github.com/simpyll/simpyll/blob/main/docs/projects/LIPIDPATH.md"
+        }
+      ]
+    }
+  ]
+}
