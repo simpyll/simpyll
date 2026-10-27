@@ -103,3 +103,15 @@ test('native request pins the validated address and closes the response without 
     assert.deepEqual(selected,{address:'8.8.8.8',family:4}); assert.equal(destroyed,true)
   } finally { https.request = original }
 })
+
+test('CLI suppresses malformed source details in logs', async () => {
+  const { mkdtemp, mkdir, writeFile, rm } = await import('node:fs/promises')
+  const { tmpdir } = await import('node:os'); const { join, resolve } = await import('node:path'); const { spawnSync } = await import('node:child_process')
+  const root = await mkdtemp(join(tmpdir(), 'links-error-')), cli = resolve('scripts/external-links/run.mjs')
+  try {
+    await mkdir(join(root,'src/content/blog'),{recursive:true})
+    await writeFile(join(root,'src/content/blog/article.mdx'), '<Broken secret="private-draft-secret">')
+    const result = spawnSync(process.execPath, [cli], {cwd:root,encoding:'utf8'})
+    assert.notEqual(result.status,0); assert.doesNotMatch(result.stderr + result.stdout, /private-draft-secret/)
+  } finally { await rm(root,{recursive:true,force:true}) }
+})

@@ -64,6 +64,11 @@ await writeFile(resolve(output, 'issue.json'), JSON.stringify({ actionable: find
 return { report, actionable: findings.length > 0, count: results.length }
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
-  const result = await run()
-  console.log(`Checked ${result.count} links; ${result.actionable ? 'persistent findings found' : 'no persistent findings'}. See artifact report.`)
+  try {
+    const result = await run()
+    console.log(`Checked ${result.count} links; ${result.actionable ? 'persistent findings found' : 'no persistent findings'}. See artifact report.`)
+  } catch {
+    console.error('External link monitoring failed. Review public content, state and configuration locally; details are withheld from logs.')
+    process.exitCode = 1
+  }
 }
