@@ -49,7 +49,10 @@ export function evaluate(p: Profile): Result {
   else if(p.ldl!==undefined&&p.ldl>=190) r.observations.push({code:'possible-severe-ldl',certainty:'possible',evidence:['severe-causes']})
   if(p.diabetes===true) r.observations.push({code:'diabetes',certainty:'possible',evidence:[p.multipleDiabetesRisks===true?'diabetes-risk':'diabetes'],treatmentDiscussion:safeDiscussion&&p.age!==undefined&&p.age>=40&&p.age<=75&&p.ascvd===false&&p.severeHistory===false&&!documentedSevere&&p.ldl!==undefined&&p.ldl<190&&p.multipleDiabetesRisks!==undefined})
   if(p.tg!==undefined&&p.tg>=150) r.observations.push({code:'triglycerides',certainty:'possible',evidence:['tg-lifestyle']})
+  if((p.cac??0)>0||p.incidentalCac==='mild'||p.incidentalCac==='moderate-severe') r.observations.push({code:'cac',certainty:'possible',evidence:['cac-mild','cac-moderate']})
+  if(p.lpa!==undefined&&p.lpaUnit!==undefined&&p.lpa>=(p.lpaUnit==='mg/dL'?50:125)) r.observations.push({code:'lpa',certainty:'possible',evidence:['lpa']})
   const partial=()=>{
+    if(p.ascvd===false&&p.cac!==undefined&&p.cac>0&&p.cac<100&&p.cacPercentile===undefined) need(true,'Standardized CAC percentile for CAC 1–99')
     // An established ASCVD classification can be assessed independently of
     // unrelated missing answers, but only after the shared scope/safety guard.
     if(safeDiscussion&&p.ascvd===true&&p.majorEvents!==undefined&&p.highRiskConditions!==undefined&&p.ckd===false&&p.fh==='none'&&p.severeHistory===false&&(p.baselineLdl??0)<190&&p.ldl!==undefined&&p.ldl<190) {

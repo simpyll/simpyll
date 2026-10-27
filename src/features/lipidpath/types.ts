@@ -65,7 +65,7 @@ export interface Finding {
   evidence: string[]
 }
 export interface PathwayObservation {
-  code: 'ascvd' | 'severe-ldl' | 'possible-severe-ldl' | 'diabetes' | 'triglycerides'
+  code: 'ascvd' | 'severe-ldl' | 'possible-severe-ldl' | 'diabetes' | 'triglycerides' | 'cac' | 'lpa'
   certainty: 'established-finding' | 'possible'
   evidence: string[]
   treatmentDiscussion?: boolean

@@ -139,3 +139,11 @@ test('partial ASCVD goal is withheld if an overlapping stricter indication is un
     assert.equal(evaluate({...p,...change}).goals.length,0,JSON.stringify(change))
   }
 })
+
+test('partial CAC and Lp(a) observations do not fabricate their pathways',()=>{
+  const r=evaluate({age:50,ascvd:false,cac:25,lpa:125,lpaUnit:'nmol/L'})
+  assert.ok(r.observations.some(o=>o.code==='cac'))
+  assert.ok(r.observations.some(o=>o.code==='lpa'))
+  assert.ok(r.missing.includes('Standardized CAC percentile for CAC 1–99'))
+  assert.equal(r.goals.length,0)
+})
