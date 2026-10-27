@@ -57,6 +57,7 @@ test('public LipidPath calculates a fictional profile, retains inputs and resets
   await page.goto('/tools/lipidpath/')
   const field = (label: string) => page.getByLabel(label, { exact: true })
   await field('Age (years)').fill('50')
+  await page.getByText('Additional health and safety details', { exact: true }).click()
   await field('Current reproductive context').selectOption('none')
   for (const label of ['Established clinical ASCVD?', 'Diabetes?', 'History of untreated LDL-C ≥190 mg/dL?', 'Established CKD stage 3 or higher?', 'Living with HIV?', 'Complex care requiring individual review?']) {
     await field(label).selectOption('false')
@@ -65,6 +66,7 @@ test('public LipidPath calculates a fictional profile, retains inputs and resets
   await field('Contraindications and drug interactions reviewed?').selectOption('true')
   await page.getByRole('button', { name: 'Continue', exact: true }).click()
   await field('Current LDL-C (mg/dL)').fill('120')
+  await page.getByText('More laboratory results (optional)', { exact: true }).click()
   await field('Total cholesterol (optional) (mg/dL)').fill('220')
   await field('HDL-C (optional) (mg/dL)').fill('50')
   await expect(field('Current LDL-C (mg/dL)')).toHaveValue('120')
