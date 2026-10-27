@@ -94,7 +94,7 @@ export function Embed({ url, title }: { url: string; title: string }) {
     <p><strong>{label}</strong></p>
     {approved ? <>
       <p>Loading this content contacts {approved.provider}, which may collect information about you.</p>
-      <button className="article-embed-load" type="button" onClick={() => setActive(true)} aria-label={`Load ${label} from ${approved.provider}`}>{active ? `${approved.provider} content loaded` : `Load ${approved.provider} content`}</button>
+      <button className="article-embed-load" type="button" onClick={() => setActive(true)}>{`Load ${label} from ${approved.provider}`}</button>
       {active && <iframe className="article-embed-frame" src={approved.src} title={label} sandbox="allow-scripts allow-same-origin allow-presentation" referrerPolicy="strict-origin-when-cross-origin" loading="lazy" allowFullScreen />}
     </> : <p>This provider is not supported for inline viewing.</p>}
     <p><a href={safe} target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer">Open original content <span className="sr-only">(opens in a new tab)</span> ↗</a></p>
