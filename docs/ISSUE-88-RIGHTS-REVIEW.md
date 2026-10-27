@@ -1,10 +1,10 @@
-# Issue 88: preliminary rights review
+# Issue 88: licensing implementation and remaining asset review
 
-Baseline: main 670f7375f184ecf1d4219c93d5da8d3e08afc1bb, October 26, 2026. This is an incomplete review, not a license grant or a legal conclusion.
+Historical asset-review baseline: main 670f7375f184ecf1d4219c93d5da8d3e08afc1bb, October 26, 2026. Updated October 27, 2026: the approved MIT software license is implemented in root LICENSE, package metadata, README, LICENSING.md, contributor terms and public Terms of Use. Copyright notice: David Becker, 2026. This implementation does not establish third-party asset provenance.
 
 ## Findings
 
-- Missing: root LICENSE and package license declaration; source license approved by owner is MIT. The copyright notice identity still requires explicit owner confirmation. Repository creation was in 2026.
+- Implemented: canonical MIT source license, matching package/lockfile metadata and explicit editorial/media exclusions. The owner approved MIT and authorized implementation.
 - Existing: public terms distinguish code, articles, images and third-party material and state that public visibility is not a reuse license; docs/LEGAL.md tracks issue 88. Do not replace these without reconciling their purpose.
 - Existing: article metadata identifies David Becker as an author in at least one article; that alone does not establish ownership of all software.
 - Editorial text: owner directs all rights reserved for original articles unless a work explicitly states otherwise. An individual exception requires the relevant rights holder's explicit authorization; citations and links do not grant reproduction rights.
@@ -16,6 +16,13 @@ Baseline: main 670f7375f184ecf1d4219c93d5da8d3e08afc1bb, October 26, 2026. This 
 - Inter is a dependency in package.json; license text and redistribution notices need verification against the installed package and authoritative upstream. No determination for the remaining dependency tree has been made.
 - The Notion publisher can bring external content and media into a public repository; publication status, citation or attribution is not evidence of rights. Review each item before publication.
 
-## Remaining work
+## Remaining asset provenance work
 
-Confirm the copyright identity; audit the full asset and dependency inventories and existing article licenses; implement canonical MIT text with a precise scope explanation, package metadata, contributor terms, public policy and attribution; add targeted tests and run the complete validation and CI. Document unresolved permissions and avoid closing issue 88 until reviewed. Related: #70, #79, #82, #89.
+The software-license implementation is complete. Review provenance/permission and
+required attribution for the asset categories listed above; record verified
+sources and item-specific terms, or resolve uncertain material with the owner.
+No asset was removed, relicensed or represented as cleared by this change.
+The Inter dependency observation above is historical: the unused font dependency
+was removed in #173; check current lockfile/build before reviewing shipped fonts.
+Current dependency metadata is maintained under #82. Do not repeat the completed
+MIT selection or software implementation. Related: #70, #79, #82, #89.

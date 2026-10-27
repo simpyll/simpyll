@@ -113,3 +113,7 @@ Cortex has not been modified.
 - **Milestone not created / board not updated:** connector lacks milestone/Projects capabilities, milestone reads were rejected as unsupported, and connected browser initialization failed. The requested milestone is defined here as **Simpyll v1.0 — Production Stabilization & Handoff**, with membership #184, #67, #133, #88, #43. No creation, assignment or board update is claimed.
 - Main required-check settings, provider accounts, live draft preview, real YouTube playback, assistive technologies and physical devices remain unverified. Labels provide confirmed issue-level deferred separation; they do not prove Project-board field changes.
 - Do not close an issue from a PR title or passing build alone. Recheck current main, remaining acceptance, workflow results and relevant live evidence after each merge.
+
+## Licensing implementation update — October 27, 2026
+
+The `fix/88-source-license` PR implements the already-approved MIT software license, package/lockfile metadata, contributor terms and explicit editorial/media exclusions. Review and merge that implementation; do not select a license again. #88's remaining asset-provenance acceptance is separate and is not established by the MIT grant.

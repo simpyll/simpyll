@@ -110,3 +110,9 @@ See the [design system](docs/DESIGN-SYSTEM.md) for tokens, component conventions
 See [unified discovery](docs/DISCOVERY.md) for combined URL search, taxonomy filters, sorting and prerender behavior.
 
 Legal/transparency architecture, data inventory and approval blockers: [docs/LEGAL.md](docs/LEGAL.md). All new policy documents remain drafts pending owner review.
+
+## License
+
+Original Simpyll software is copyright © 2026 David Becker and licensed under
+the [MIT License](LICENSE). Article prose, branding, media and third-party
+materials have separate rights; see [licensing and content boundaries](LICENSING.md).
