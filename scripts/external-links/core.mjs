@@ -66,7 +66,7 @@ export async function resolvePublic(hostname, resolver = dnsLookup) {
 export function requestOnce(url, address, method, timeout = 10000) {
   return new Promise((resolve, reject) => {
     const u = new URL(url), request = (u.protocol === 'https:' ? https : http).request(u, {
-      method, agent: false, timeout, headers: { 'User-Agent': 'Simpyll-Link-Monitor/1.0 (+https://simpyll.com)', Accept: '*/*' },
+      method, agent: false, family: address.family, timeout, headers: { 'User-Agent': 'Simpyll-Link-Monitor/1.0 (+https://simpyll.com)', Accept: '*/*' },
       lookup: (_host, _options, callback) => callback(null, address.address, address.family),
     }, response => {
       clearTimeout(deadline)

@@ -84,3 +84,22 @@ test('issue workflow creates only when needed, updates one bot issue, and reject
     actual = await execute([bot,bot],true); assert.notEqual(actual.result.status,0); assert.equal(actual.calls.length,1)
   } finally { await rm(dir,{recursive:true,force:true}) }
 })
+
+test('native request pins the validated address and closes the response without consuming a body', async () => {
+  const https = (await import('node:https')).default
+  const { EventEmitter } = await import('node:events')
+  const { requestOnce } = await import('./external-links/core.mjs')
+  const original = https.request; let destroyed = false, selected
+  try {
+    https.request = (url, options, respond) => {
+      assert.equal(url.hostname, 'example.com'); assert.equal(options.family, 4)
+      options.lookup('example.com', {}, (_error, address, family) => { selected = {address,family} })
+      const request = new EventEmitter()
+      request.end = () => queueMicrotask(() => respond({statusCode:200, headers:{}, destroy() { destroyed = true }}))
+      request.destroy = error => request.emit('error', error)
+      return request
+    }
+    assert.equal((await requestOnce('https://example.com/', {address:'8.8.8.8',family:4}, 'HEAD', 100)).status, 200)
+    assert.deepEqual(selected,{address:'8.8.8.8',family:4}); assert.equal(destroyed,true)
+  } finally { https.request = original }
+})
