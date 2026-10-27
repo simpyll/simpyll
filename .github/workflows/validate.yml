@@ -43,6 +43,22 @@ jobs:
         run: node --test scripts/ci-workflows.test.mjs scripts/projects.test.mjs scripts/validate-content.test.mjs
       - name: Check high and critical vulnerabilities
         run: npm audit --audit-level=high
+      - name: Record artifact revision
+        if: github.event_name != 'pull_request'
+        run: git rev-parse HEAD > ci-revision.txt
+      - name: Share build for scheduled and manual checks
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: validated-build
+          retention-days: 1
+          include-hidden-files: true
+          path: |
+            ci-revision.txt
+            dist/
+            dist-server/
+            src/generated/
+            public/images/optimized/
 
   # Pull requests run the focused critical browser gate; scheduled, weekly and
   # manual full-matrix dispatches keep the exhaustive seven-project inventory.
