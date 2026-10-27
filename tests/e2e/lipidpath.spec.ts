@@ -9,7 +9,7 @@ async function coreProfile(page:Page) {
   await choose(page,'Contraindications and drug interactions reviewed?','true')
 }
 test('guided primary-prevention result, trace, privacy and reset',async({page},info)=>{
-  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message))
+  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error'&&/hydration|hydrated|server.rendered|#418/i.test(m.text()))errors.push(m.text())})
   const calls:string[]=[];page.on('request',r=>calls.push(r.url()))
   await page.goto('/tools/lipidpath');await ready(page)
   await expect(page.getByRole('heading',{name:/LipidPath/})).toBeVisible()
@@ -29,7 +29,7 @@ test('guided primary-prevention result, trace, privacy and reset',async({page},i
   await expect(page.getByText('Intermediate 10-year ASCVD risk:',{exact:true})).toBeVisible()
   await expect(page.getByText('below 100 mg/dL',{exact:true})).toBeVisible()
   await expect(page.getByRole('region',{name:'Pathway branch diagram'}).getByText('Triggered branch',{exact:true})).toHaveCount(1)
-  await page.getByText('Manual PREVENT-ASCVD result',{exact:false}).click()
+  await page.getByRole('region',{name:'Interactive decision pathway'}).locator('summary').filter({hasText:'Manual PREVENT-ASCVD result'}).click()
   await expect(page.getByText(/User-confirmed official ASCVD outcome/)).toBeVisible()
   await scan(page,info,'lipidpath-result')
   await expect(page).toHaveURL(/\/tools\/lipidpath$/)
@@ -69,7 +69,7 @@ test('keyboard, light theme, evidence explorer and responsive layout',async({pag
   await page.screenshot({path:info.outputPath('lipidpath-explorer.png'),fullPage:true})
 })
 test('portfolio links launch tool and prerendered route hydrates on navigation',async({page})=>{
-  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message))
+  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error'&&/hydration|hydrated|server.rendered|#418/i.test(m.text()))errors.push(m.text())})
   await page.goto('/projects/lipidpath');await ready(page)
   await expect(page.getByRole('heading',{level:1})).toContainText('LipidPath')
   await page.getByRole('link',{name:'Launch the educational tool',exact:true}).click()

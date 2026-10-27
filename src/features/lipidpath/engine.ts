@@ -14,6 +14,8 @@ export function validate(p: Profile): string[] {
   const options: Partial<Record<keyof Profile, string[]>>={sex:['female','male'], reproductive:['none','pregnant','planning','lactating'],fh:['none','hefh','hofh','unknown'],lpaUnit:['mg/dL','nmol/L'],incidentalCac:['none','mild','moderate-severe'],statin:['none','low','moderate','high']}
   for(const [key,values] of Object.entries(options)) if(p[key as keyof Profile]!==undefined&&!values.includes(p[key as keyof Profile] as string)) errors.push(`${key}: select a supported value.`)
   for(const key of ['ascvd','diabetes','multipleDiabetesRisks','severeHistory','additionalRisks','ckd','dialysis','hiv','stableArt','complexCare','safetyReviewed','smoking','strongFamilyHistory','fasting','persistentTg','dietTrial','fcs','avoidTherapy','riskConfirmed','maxTolerated','adherent','ezetimibe','pcsk9','bempedoic','inclisiran','muscleSymptoms','severeMuscleSymptoms'] as const) if(p[key]!==undefined&&typeof p[key]!=='boolean') errors.push(`${key}: select yes or no.`)
+  if(p.cacPercentile!==undefined&&p.cac===undefined) errors.push('Enter the CAC score associated with the standardized percentile before interpreting either pathway.')
+  if(p.cac===0&&(p.cacPercentile??0)>=75) errors.push('CAC zero and a high standardized percentile require reconciliation before interpretation.')
   if(p.total!==undefined&&p.hdl!==undefined&&p.hdl>p.total) errors.push('HDL-C cannot exceed total cholesterol.')
   if(p.ldl!==undefined&&nonHdl(p.total,p.hdl)!==undefined&&p.ldl>nonHdl(p.total,p.hdl)!+1) errors.push('LDL-C exceeds non-HDL-C; verify results from the same sample.')
   if(p.ascvd===false&&(p.majorEvents??0)>0) errors.push('Major ASCVD events conflict with no established ASCVD.')

@@ -25,12 +25,12 @@ Boundary expected results were transcribed from recommendation text/figures, not
 
 ## Software commands and observations
 
-- `node --test scripts/lipidpath.test.mjs`: 115 passing cases.
+- `node --test scripts/lipidpath.test.mjs`: 116 passing cases.
 - `npm run lint`: passes.
 - `npm run build`: passes, including TypeScript, static prerender, asset budgets and SEO audit (0 errors; 7 pre-existing editorial warnings).
-- Isolated regression run: 519 tests pass; clean production-build/recovery fixtures: 2 tests pass. Seven additional targeted clinical tests also pass (115 clinical cases total).
+- Isolated regression run: 519 tests pass; clean production-build/recovery fixtures: 2 tests pass. Eight additional targeted clinical tests also pass (116 clinical cases total).
 - Initial broad concurrent Node invocation conflicted with shared build-output fixture tests; rerun isolated/sequential checks for reliable results, do not treat that attempt as passed.
-- Local Playwright browser installation failed: the download returned an invalid/truncated archive. Browser suites are committed and run by the existing pinned CI container. Local browser, axe and visual checks are **not claimed passed**. Initial CI build/performance checks passed; the rich-MDX fixture exposed a 373-byte shared-bundle overrun. Optional theme-transition code is now deferred on interaction, preserving the budget. Browser traces also identified wrapped select labels whose text included option content; controls now use unique explicit label associations and programmatically associated hints, covered by a static accessibility contract test. Final browser/fixture CI outcomes belong in the PR and final handoff.
+- Local Playwright browser installation failed: the download returned an invalid/truncated archive. Browser suites are committed and run by the existing pinned CI container. Local browser, axe and visual checks are **not claimed passed**. Initial CI build/performance checks passed; the rich-MDX fixture exposed a 373-byte shared-bundle overrun. Optional theme-transition code is now deferred on interaction, preserving the budget. Browser traces also identified wrapped select labels whose text included option content; controls now use unique explicit label associations and programmatically associated hints, covered by a static accessibility contract test. Authored-label IDs remain identical across full-document SSR and root hydration; React tree-derived IDs were unsuitable for this existing wrapper architecture. Browser tests also capture hydration console errors. Final browser/fixture CI outcomes belong in the PR and final handoff.
 
 ## Browser verification contract
 

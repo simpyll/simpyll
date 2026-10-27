@@ -1,4 +1,4 @@
-import { cloneElement, isValidElement, useId, useRef, useState, type ReactNode } from 'react'
+import { cloneElement, isValidElement, useRef, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { SEO } from '../../components/SEO'
 import { preventEligible } from './eligibility'
@@ -11,8 +11,10 @@ const steps=['Profile','Laboratory results','Current therapy','Risk assessment',
 const enhancerLabels=['Premature ASCVD in a parent or sibling (male <55, female <65)','Higher-risk ancestry (e.g., South Asian or Filipino)','Chronic inflammatory disease','Premature menopause or adverse pregnancy outcomes','Persistently elevated atherogenic lipids','Elevated hsCRP on repeat testing']
 function EvidenceLinks({ids}:{ids:string[]}) { return <span className="lp-evidence-links">{[...new Set(ids)].map(id=><a key={id} href={`#evidence-${id}`}>§{evidenceById[id]?.section} R{evidenceById[id]?.recommendation}</a>)}</span> }
 function Field({label,children,hint}:{label:string;children:ReactNode;hint?:string}) {
-  const descriptionId=useId()
-  const controlId=descriptionId+'-control'
+  // IDs derive only from authored labels, so document SSR and root hydration
+  // agree despite their different wrapper trees. No clinical values enter IDs.
+  const controlId='lp-field-'+label.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')
+  const descriptionId=controlId+'-help'
   const control=isValidElement<{id?:string;'aria-describedby'?:string}>(children)?cloneElement(children,{id:controlId,'aria-describedby':hint?descriptionId:undefined}):children
   return <div className="lp-field"><label htmlFor={controlId}>{label}</label>{control}{hint&&<p id={descriptionId} className="lp-hint">{hint}</p>}</div>
 }
