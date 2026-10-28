@@ -7,7 +7,7 @@ import { validateProjects, getCaseStudyPath } from '../src/projects/schema.ts'
 import { generateProjects } from './generate-projects.mjs'
 const base = JSON.parse(await readFile('content/projects.json','utf8'))[0]
 test('publication and canonical destination are independent of workflow stage', () => {
-  for (const workflowStage of ['ideas','on-deck','in-progress','shipped','archived']) {
+  for (const workflowStage of ['ideas','on-deck','in-progress','on-hold','shipped','archived']) {
     assert.equal(getCaseStudyPath({...base,workflowStage}),'/projects/simpyll')
   }
   assert.equal(getCaseStudyPath({...base,slug:'second-unique'}),'/projects/second-unique')

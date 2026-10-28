@@ -68,7 +68,7 @@ export async function inventory(root = process.cwd()) {
     '## Publication and project lifecycle', '',
     `- Existing but unpublished article identities: ${registry.filter(a => a.status !== 'published').length}. This is a repository audit, not an inspection of private Notion drafts.`,
     '- Published case studies: Simpyll, AI Engineering, Simpyll Pulse. A published case study is not proof of a completed application.',
-    ...['in-progress','shipped','on-deck','ideas','archived'].map(stage => `- ${stage}: ${projects.filter(p => p.workflowStage === stage).map(p => `${p.title} (${p.lifecycleStatus})`).join('; ') || 'None'}.`), '',
+    ...['in-progress','on-hold','shipped','on-deck','ideas','archived'].map(stage => `- ${stage}: ${projects.filter(p => p.workflowStage === stage).map(p => `${p.title} (${p.lifecycleStatus})`).join('; ') || 'None'}.`), '',
     'No released healthcare application is evidenced by the registry. RNtoNP’s external site link does not establish that its proposed database is live. Proposed editorial opportunities are in [the content roadmap](healthcare-content-roadmap.md); they are not published coverage.', '',
     '## Discovery and publishing audit', '',
     '- Home retains its approved “From bedside to build” hero. Proposed healthcare-first primary copy is held for owner review in the taxonomy document.',

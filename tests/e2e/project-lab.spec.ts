@@ -6,8 +6,8 @@ test('board inventory, discovery, URL history, and grid share one collection', a
   page.on('pageerror', e => errors.push(e.message))
   await page.goto('/projects')
   await expect(page.getByRole('button', { name: 'Board', exact: true })).toHaveAttribute('aria-pressed', 'true')
-  await expect(page.locator('.lab-column')).toHaveCount(5)
-  await expect(page.locator('[data-stage=in-progress] [data-project]')).toHaveCount(3)
+  await expect(page.locator('.lab-column')).toHaveCount(6)
+  await expect(page.locator('[data-stage=in-progress] [data-project]')).toHaveCount(2)
   await expect(page.locator('[data-stage=on-deck] [data-project]')).toHaveCount(2)
   await expect(page.locator('[data-stage=shipped] [data-project]')).toHaveCount(1)
   if (isMobile) await page.getByLabel('Viewing stage').selectOption('ideas')
@@ -26,7 +26,7 @@ test('board inventory, discovery, URL history, and grid share one collection', a
   await page.getByRole('button', { name: 'Reset filters' }).click()
   await expect(page.locator('.lab-grid [data-project]')).toHaveCount(23)
   await page.getByLabel('Lifecycle', {exact: true}).selectOption('active')
-  await expect(page.locator('.lab-grid [data-project]')).toHaveCount(4)
+  await expect(page.locator('.lab-grid [data-project]')).toHaveCount(3)
   await page.getByRole('button', { name: 'Reset filters' }).click()
   await page.getByLabel('Project type', {exact: true}).selectOption('Healthcare Education')
   await expect(page.locator('.lab-grid [data-project]')).toHaveCount(7)
@@ -53,7 +53,7 @@ for (const theme of ['light','dark'] as const) test(`board ${theme}: accessibili
   await page.evaluate(() => scrollTo(0,0))
   expect((await new AxeBuilder({page}).analyze()).violations).toEqual([])
   if (isMobile) {
-    for (const id of ['ideas','on-deck','in-progress','shipped','archived']) {
+    for (const id of ['ideas','on-deck','in-progress','on-hold','shipped','archived']) {
       await page.getByLabel('Viewing stage').selectOption(id)
       await expect(page.locator(`[data-stage="${id}"]`)).toBeVisible()
     }
@@ -99,3 +99,21 @@ test('projects prerender contains inventory and canonical without JavaScript',as
   await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href','https://simpyll.com/projects')
   expect(errors).toEqual([])
  })
+
+test('On Hold keeps AI Engineering discoverable across board, grid and reload', async ({page, isMobile}) => {
+  await page.goto('/projects')
+  if (isMobile) await page.getByLabel('Viewing stage').selectOption('on-hold')
+  const held = page.locator('[data-stage="on-hold"]')
+  await expect(held.getByRole('heading', {name:'On Hold', exact:true})).toBeVisible()
+  await expect(held.locator('[data-project="ai-engineering"]')).toBeVisible()
+  await expect(held.locator('.project-status dd')).toHaveText(['On Hold','Paused'])
+  await expect(page.locator('[data-stage="in-progress"] [data-project="ai-engineering"]')).toHaveCount(0)
+  await page.getByLabel('Workflow stage', {exact:true}).selectOption('on-hold')
+  await expect(page.getByRole('status')).toContainText('1 project')
+  await page.getByRole('button', {name:'Grid', exact:true}).click()
+  await page.reload()
+  await expect(page.getByLabel('Workflow stage', {exact:true})).toHaveValue('on-hold')
+  await expect(page.locator('.lab-grid [data-project]')).toHaveCount(1)
+  await page.getByRole('link', {name:'View Case Study for AI Engineering', exact:true}).click()
+  await expect(page.locator('.case-metadata .project-status dd')).toHaveText(['On Hold','Paused'])
+})

@@ -1,5 +1,5 @@
 // This module is shared by Node 24 build tooling and TypeScript consumers.
-export const workflowStages = { ideas: 'Ideas', 'on-deck': 'On Deck', 'in-progress': 'In Progress', shipped: 'Shipped', archived: 'Archived' } as const
+export const workflowStages = { ideas: 'Ideas', 'on-deck': 'On Deck', 'in-progress': 'In Progress', 'on-hold': 'On Hold', shipped: 'Shipped', archived: 'Archived' } as const
 export const lifecycleStatuses = { planned: 'Planned', active: 'Active', maintained: 'Maintained', paused: 'Paused', retired: 'Retired' } as const
 export type WorkflowStage = keyof typeof workflowStages
 export type LifecycleStatus = keyof typeof lifecycleStatuses

@@ -151,7 +151,7 @@ presentation using the shared labels above. No GitHub metrics/API is introduced.
 ## Project Lab (`/projects`)
 
 The shared `workflowStage` is required: `ideas`, `on-deck`, `in-progress`,
-`shipped`, `archived`, in that display order. Move a card by editing that field
+`on-hold`, `shipped`, `archived`, in that display order. Move a card by editing that field
 in its one authoritative JSON record. `lifecycleStatus` is separately required:
 `planned`, `active`, `maintained`, `paused`, `retired`. A live site can remain
 In Progress. The old mixed `status` field has been removed; do not reintroduce it.
@@ -159,7 +159,7 @@ In Progress. The old mixed `status` field has been removed; do not reintroduce i
 (nonnegative integer, currently informational) are optional. Edit the milestone
 in the same record. No dates, progress metrics or release availability are inferred.
 
-The default read-only Board groups public records into five columns. Desktop
+The default read-only Board groups public records into six columns. Desktop
 uses a keyboard-focusable horizontal scroll region with readable minimum column
 widths. Mobile selects a single stage (initially In Progress); all columns remain
 in server HTML. No-JavaScript CSS shows every stage and the remaining Ideas.
@@ -300,11 +300,22 @@ The Hub explains the distinction; publication remains separate on detail pages.
 For a new project, assign both canonical IDs in its JSON record. To change status,
 edit those fields there only; do not copy labels into page or editorial data.
 Future published case studies inherit the record automatically. Publishing a case
-study never marks a project shipped or changes its lifecycle. This change preserves
-all existing assignments (including In Progress / Active for Simpyll and AI Engineering).
+study never marks a project shipped or changes its lifecycle. Simpyll remains In Progress / Active. At the owner’s request, AI Engineering is
+On Hold / Paused.
 
 `npm run validate:projects` rejects missing/unsupported values and unrecognized
 fields before emitting the public manifest; a failure removes stale generated
 output. TypeScript rejects unsupported component values and label overrides.
 Status tests cover every canonical value, invalid inputs and registry-derived
 markup across surfaces. No runtime fallback masks invalid authoring data.
+
+## Pausing and resuming projects (#201)
+
+Edit `content/projects.json`, the project source (not Notion): set `workflowStage`
+to `on-hold` to place a started project in the On Hold column next to In Progress.
+Use `lifecycleStatus: "paused"` when ongoing work is paused. Neither field requires
+a restart date or triggers automatic resumption or archival. To resume, set
+`workflowStage` to `in-progress` and, when appropriate, lifecycle to `active`.
+Keep the same record, ID, slug, links and case study. Run `npm run validate:projects`
+and the normal build/publish workflow. Board/grid, mobile selection, filters, counts,
+featured cards and case-study metadata all derive their labels from the shared registry.

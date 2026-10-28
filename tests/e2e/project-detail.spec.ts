@@ -53,6 +53,7 @@ for (const theme of ['light','dark'] as const) test(`AI Engineering ${theme}: di
  }
  await page.screenshot({path:testInfo.outputPath(`ai-engineering-${theme}.png`),fullPage:true})
  await page.getByRole('navigation', { name: 'Breadcrumb', exact: true }).getByRole('link', { name: 'Projects', exact: true }).click()
+ await page.getByLabel('Viewing stage').isVisible().then(async visible => { if (visible) await page.getByLabel('Viewing stage').selectOption('on-hold') })
  await page.getByRole('link',{name:'View Case Study for AI Engineering',exact:true}).click()
  await expect(page.locator('h1')).toHaveText('AI Engineering.')
  expect(errors).toEqual([])
