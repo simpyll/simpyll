@@ -6,11 +6,11 @@ const data = JSON.parse(await readFile('content/projects.json','utf8'))
 test('owner assignments, honest destinations, and deterministic inventory',()=>{
  const {projects,errors}=validateProjects(data)
  assert.deepEqual(errors,[])
- assert.equal(projects.length,23)
- assert.deepEqual(projects.filter(p=>p.workflowStage==='in-progress').map(p=>p.id),['simpyll','lipidpath'])
+ assert.equal(projects.length,24)
+ assert.deepEqual(projects.filter(p=>p.workflowStage==='in-progress').map(p=>p.id),['simpyll','cortex'])
  assert.deepEqual(projects.filter(p=>p.workflowStage==='on-deck').map(p=>p.id),['rntonp-database','medical-calculators'])
  assert.equal(projects.filter(p=>p.workflowStage==='ideas').length,17)
- assert.equal(projects.filter(p=>['shipped','archived'].includes(p.workflowStage)).length,1)
+ assert.equal(projects.filter(p=>['shipped','archived'].includes(p.workflowStage)).length,2)
  assert.equal(projects.find(p=>p.id==='ai-engineering').links[0].url,'https://github.com/simpyll/ai-engineering-learning')
  assert.deepEqual(projects.flatMap(p=>p.links.map(l=>l.url)),['https://simpyll.com/','https://github.com/simpyll/simpyll','/blog/the-art-of-reading-code','https://github.com/simpyll/ai-engineering-learning','/blog/001-python-fundamentals','https://rntonp.com/','/pulse','https://github.com/simpyll/simpyll','/tools/lipidpath','https://github.com/simpyll/simpyll/blob/main/docs/projects/LIPIDPATH.md'])
  assert.deepEqual(createProjectSelectors(projects.toReversed()).getPublicProjects(),projects)
@@ -26,7 +26,7 @@ test('stage and lifecycle validate independently; hidden records stay hidden',()
   assert.ok(validateProjects(invalid).errors.length)
  }
  const privateRecord={...data[0],id:'private-test',slug:'private-test',visibility:'private'}
- assert.equal(createProjectSelectors(validateProjects([...data,privateRecord]).projects).getPublicProjects().length,23)
+ assert.equal(createProjectSelectors(validateProjects([...data,privateRecord]).projects).getPublicProjects().length,24)
 })
 
 test('all canonical workflow/lifecycle values are independent and require canonical labels', async () => {
@@ -74,4 +74,18 @@ test('On Hold pause/resume preserves project identity and content', () => {
   const {workflowStage: _oldStage, lifecycleStatus: _oldLife, ...before} = original
   assert.deepEqual(content, before)
  }
+})
+
+test('Cortex is an in-progress public case study and LipidPath is shipped', async () => {
+ const {parseHTML}=await import('linkedom')
+ const hub=parseHTML(await readFile('dist/projects/index.html','utf8')).document
+ assert.ok(hub.querySelector('[data-stage="in-progress"] [data-project="cortex"] a[href="/projects/cortex"]'))
+ assert.ok(hub.querySelector('[data-stage="shipped"] [data-project="lipidpath"]'))
+ const cortex=parseHTML(await readFile('dist/projects/cortex/index.html','utf8')).document
+ assert.equal(cortex.querySelector('h1').textContent,'Cortex.')
+ assert.equal(cortex.querySelector('link[rel="canonical"]').getAttribute('href'),'https://simpyll.com/projects/cortex')
+ assert.match(cortex.querySelector('main').textContent,/research and architecture/)
+ assert.match(cortex.querySelector('main').textContent,/rather than released capabilities/)
+ assert.ok((await readFile('dist/sitemap.xml','utf8')).includes('https://simpyll.com/projects/cortex'))
+ assert.match(await readFile('dist/projects/lipidpath/index.html','utf8'),/Independent qualified clinical review is pending/)
 })

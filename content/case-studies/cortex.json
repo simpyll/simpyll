@@ -1,0 +1,74 @@
+{
+  "sections": [
+    {
+      "id": "overview",
+      "title": "Keep the knowledge when the agent changes",
+      "paragraphs": [
+        "Cortex is a local-first, cost-aware memory and orchestration project for AI agents. It explores how project knowledge can persist across tools and sessions, so developers spend less time repeating context and recovering interrupted work.",
+        "The project is In Progress, with current work focused on research and architecture. Shared memory, agent coordination and cost-aware routing are development goals rather than released capabilities."
+      ]
+    },
+    {
+      "id": "problem",
+      "title": "Repeated context is repeated work",
+      "paragraphs": [
+        "AI-assisted development often spreads requirements, architectural decisions and lessons across separate conversations and tools. Changing agents or starting a new session can mean reconstructing the same background and revisiting approaches that already failed.",
+        "Cortex aims to make that knowledge inspectable and reusable while keeping task progress, verification evidence and resource use connected. Simpyll is the planned first case-study environment; its normal publishing and operation remain independent of Cortex."
+      ]
+    },
+    {
+      "id": "approach",
+      "title": "A local foundation before orchestration",
+      "paragraphs": [
+        "The proposed foundation uses local storage and inspectable project notes, with a scriptable CLI and an approachable dashboard sharing task state and permission boundaries. Technology and integration choices remain subject to validation.",
+        "Development is intended to proceed from a tested local foundation to persistent memory, agent handoffs, cost optimization and observability. Provider integrations, retrieval tools and model routing will be evaluated before adoption."
+      ],
+      "flow": {
+        "title": "The proposed development workflow",
+        "description": "A target workflow for future implementation, not a demonstration of a working system.",
+        "steps": [
+          {
+            "title": "Retrieve context",
+            "text": "Select relevant project knowledge with sources and revision context."
+          },
+          {
+            "title": "Coordinate work",
+            "text": "Carry task state and explicit handoffs across supported agents."
+          },
+          {
+            "title": "Verify the result",
+            "text": "Run checks and prepare a reviewable change with evidence."
+          },
+          {
+            "title": "Measure and retain",
+            "text": "Record resource use, outcomes and lessons for the next task."
+          }
+        ]
+      }
+    },
+    {
+      "id": "measurement",
+      "title": "Optimize for verified outcomes",
+      "paragraphs": [
+        "The intended primary measure is cost per verified successful task. Token consumption, retries, elapsed time and human intervention matter alongside whether the result meets its acceptance criteria.",
+        "No cost savings or performance improvements are claimed yet. Future comparisons need comparable tasks, documented environments and a clear distinction between measured provider usage and estimates."
+      ]
+    },
+    {
+      "id": "control",
+      "title": "Local-first with explicit boundaries",
+      "paragraphs": [
+        "The design prioritizes local ownership of durable knowledge, portable formats and explicit control over what reaches an external provider. Credentials and private project memory do not belong in public repositories or telemetry.",
+        "Planned execution controls include task permissions, budget limits, checkpoints and human approval for consequential actions. These are design requirements to validate, not completed security guarantees."
+      ]
+    },
+    {
+      "id": "current-focus",
+      "title": "Current focus: research and architecture",
+      "paragraphs": [
+        "Current work centers on evaluating existing components, validating supported agent integrations and deciding what to build or reuse. Architecture and user journeys need review before application implementation.",
+        "The first implementation milestone is a reliable local foundation with configuration, diagnostics and tests. Persistent shared memory, multi-agent execution, routing and dashboards will require their own implementation and verification."
+      ]
+    }
+  ]
+}

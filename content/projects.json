@@ -81,7 +81,7 @@
   {
     "id": "rntonp-database",
     "slug": "rntonp-database",
-    "title": "RNtoNP \u2014 NP School Database",
+    "title": "RNtoNP — NP School Database",
     "summary": "A planned searchable, continuously maintained database to compare nurse practitioner programs, tuition, degree pathways, and program characteristics.",
     "projectType": "Data Platform / Healthcare Education",
     "workflowStage": "on-deck",
@@ -450,7 +450,7 @@
     "title": "LipidPath",
     "summary": "An educational dyslipidemia guideline explorer with deterministic adult pathways, transparent evidence and explicit clinical limits.",
     "projectType": "Clinical Informatics / Educational Tool",
-    "workflowStage": "in-progress",
+    "workflowStage": "shipped",
     "lifecycleStatus": "active",
     "visibility": "public",
     "technologies": [
@@ -480,6 +480,29 @@
     },
     "subtitle": "Explainable guideline pathways, with uncertainty made visible.",
     "seoDescription": "How LipidPath maps the 2026 dyslipidemia guideline into an educational rule engine with clinical source traceability, privacy and explicit limits.",
-    "nextMilestone": "Independent qualified clinical review before deployment"
+    "nextMilestone": "Independent qualified clinical review"
+  },
+  {
+    "id": "cortex",
+    "slug": "cortex",
+    "title": "Cortex",
+    "summary": "A local-first AI engineering project exploring persistent memory, agent coordination and the cost of verified work.",
+    "projectType": "AI Infrastructure / Developer Tool",
+    "workflowStage": "in-progress",
+    "lifecycleStatus": "active",
+    "visibility": "public",
+    "technologies": [],
+    "links": [],
+    "featured": {
+      "enabled": false,
+      "order": 24
+    },
+    "order": 24,
+    "caseStudy": {
+      "contentKey": "cortex"
+    },
+    "subtitle": "Persistent knowledge. Coordinated agents. Measurable work.",
+    "seoDescription": "Explore Cortex, an in-progress local-first AI memory and orchestration project focused on shared context, developer control and cost per verified task.",
+    "nextMilestone": "Validate the architecture and approve the first implementation scope"
   }
 ]
