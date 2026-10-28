@@ -119,7 +119,7 @@
 
 .lab-board {
   display:grid;
-  grid-template-columns:repeat(5,minmax(260px,1fr));
+  grid-template-columns:repeat(6,minmax(260px,1fr));
   gap:1rem;
   overflow-x:auto;
   align-items:start;
@@ -167,6 +167,10 @@
 
 [data-stage=in-progress] .lab-dot {
   background:#60a5fa
+}
+
+[data-stage=on-hold] .lab-dot {
+  background:#d8a344
 }
 
 [data-stage=shipped] .lab-dot {

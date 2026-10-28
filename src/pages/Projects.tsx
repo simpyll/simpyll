@@ -62,7 +62,7 @@ export function Projects() {
           <button className="lab-reset" disabled={!active} onClick={() => setParams(view === 'grid' ? { view: 'grid' } : {}, { preventScrollReset: true })}>Reset filters</button>
         </div>
       </section>
-      <div className="lab-result-line"><p role="status" aria-live="polite" aria-atomic="true">{results.length} project{results.length === 1 ? '' : 's'}{active ? ' match your filters' : ' · A public, read-only roadmap'}</p>{view === 'board' && <span className="lab-scroll-hint">Scroll the board to explore all five stages →</span>}</div>
+      <div className="lab-result-line"><p role="status" aria-live="polite" aria-atomic="true">{results.length} project{results.length === 1 ? '' : 's'}{active ? ' match your filters' : ' · A public, read-only roadmap'}</p>{view === 'board' && <span className="lab-scroll-hint">Scroll the board to explore all {stages.length} stages →</span>}</div>
       {view === 'board' ? <>
         <label className="lab-mobile-selector" htmlFor="mobile-stage">Viewing stage<select id="mobile-stage" aria-label="Viewing stage" value={selectedStage} onChange={e => { setMobileStage(e.target.value); if (stage) change('stage', e.target.value) }}>{stages.map(([id,label]) => <option key={id} value={id}>{label} ({results.filter(p => p.workflowStage === id).length})</option>)}</select></label>
         <div className="lab-board" role="region" aria-label="Project workflow board" tabIndex={0}>

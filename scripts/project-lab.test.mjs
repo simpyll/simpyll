@@ -7,7 +7,7 @@ test('owner assignments, honest destinations, and deterministic inventory',()=>{
  const {projects,errors}=validateProjects(data)
  assert.deepEqual(errors,[])
  assert.equal(projects.length,23)
- assert.deepEqual(projects.filter(p=>p.workflowStage==='in-progress').map(p=>p.id),['simpyll','ai-engineering','lipidpath'])
+ assert.deepEqual(projects.filter(p=>p.workflowStage==='in-progress').map(p=>p.id),['simpyll','lipidpath'])
  assert.deepEqual(projects.filter(p=>p.workflowStage==='on-deck').map(p=>p.id),['rntonp-database','medical-calculators'])
  assert.equal(projects.filter(p=>p.workflowStage==='ideas').length,17)
  assert.equal(projects.filter(p=>['shipped','archived'].includes(p.workflowStage)).length,1)
@@ -31,7 +31,7 @@ test('stage and lifecycle validate independently; hidden records stay hidden',()
 
 test('all canonical workflow/lifecycle values are independent and require canonical labels', async () => {
  const {workflowStages,lifecycleStatuses}=await import('../src/projects/schema.ts')
- assert.deepEqual(Object.values(workflowStages),['Ideas','On Deck','In Progress','Shipped','Archived'])
+ assert.deepEqual(Object.values(workflowStages),['Ideas','On Deck','In Progress','On Hold','Shipped','Archived'])
  assert.deepEqual(Object.values(lifecycleStatuses),['Planned','Active','Maintained','Paused','Retired'])
  for(const workflowStage of Object.keys(workflowStages)) for(const lifecycleStatus of Object.keys(lifecycleStatuses)) {
   const result=validateProjects([{...data[0],workflowStage,lifecycleStatus}])
@@ -60,5 +60,18 @@ test('static Home, Hub and every case study share registry status without public
  for(const p of data.filter(p=>p.visibility==='public')) {
   assertStatus(hub.querySelector(`[data-project="${p.id}"] .project-status`),p)
   if(p.caseStudy) assertStatus((await doc(`dist/projects/${p.slug}/index.html`)).querySelector('.case-metadata .project-status'),p)
+ }
+})
+
+test('On Hold pause/resume preserves project identity and content', () => {
+ const original = data.find(p => p.id === 'ai-engineering')
+ assert.equal(original.workflowStage, 'on-hold')
+ assert.equal(original.lifecycleStatus, 'paused')
+ for (const [workflowStage, lifecycleStatus] of [['in-progress','active'], ['on-hold','paused']]) {
+  const changed = {...original, workflowStage, lifecycleStatus}
+  assert.deepEqual(validateProjects([changed]).errors, [])
+  const {workflowStage: _stage, lifecycleStatus: _life, ...content} = changed
+  const {workflowStage: _oldStage, lifecycleStatus: _oldLife, ...before} = original
+  assert.deepEqual(content, before)
  }
 })

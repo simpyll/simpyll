@@ -12,8 +12,8 @@ test('AI Engineering retains identity and publishes factual, navigable static co
  assert.equal(matches.length,1)
  const p = matches[0]
  assert.equal(p.slug,'ai-engineering')
- assert.equal(p.workflowStage,'in-progress')
- assert.equal(p.lifecycleStatus,'active')
+ assert.equal(p.workflowStage,'on-hold')
+ assert.equal(p.lifecycleStatus,'paused')
  assert.equal(p.visibility,'public')
  assert.equal(p.featured.enabled,true)
  assert.deepEqual(p.technologies,[])
