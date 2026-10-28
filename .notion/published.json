@@ -46,10 +46,10 @@
     }
   },
   "files": {
-    "src/content/blog/starting-over-without-starting-from-zero.mdx": "f6a24f9a75766dbcf0bef566bb855be1c12f830ef81154abf902e1ebd0f2e874",
+    "src/content/blog/starting-over-without-starting-from-zero.mdx": "9e46dbeba5f1f14423d1bcf4302e7d7c6a3700ebda96490f83956d9e7f83ba85",
     "src/content/blog/a-hospital-is-the-most-complicated-computer-ive-ever-used.mdx": "05b160fa511ac113ce0f70f62306ec2c17f48921d511735243fa6a74ce399e41",
-    "src/content/blog/why-simpyll.mdx": "aea7fb40df15c52a569330e27569fb4aa8c24b399a007efcd0c8132fe2c92632",
-    "src/content/blog/can-clinical-guidelines-be-converted-into-code.mdx": "7d971a805940d9bb701521a232ddf19583fcc645a41a5f24e94b68815d2c4b1b",
+    "src/content/blog/why-simpyll.mdx": "ea5cbbeea1bef3cabfa5dd00fb1f0ecb2f79ae5fc85fc31cfea05c5ab9de7eab",
+    "src/content/blog/can-clinical-guidelines-be-converted-into-code.mdx": "13ee8ed8b57b4d3e1517e526bc459a73d5da92cb58ba32acc47a01452d2be74f",
     "public/images/notion/3ffb3577d26a80e9b57fc08460c29516/publishing-test-image-01-ff804a5635dd.png": "ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25",
     "public/images/notion/3ffb3577d26a80e9b57fc08460c29516/ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25.png": "ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25"
   }
