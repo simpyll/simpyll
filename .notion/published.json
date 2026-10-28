@@ -14,7 +14,8 @@
       "history": [],
       "redirectFrom": [],
       "status": "published",
-      "assets": {}
+      "assets": {},
+      "sourceRevision": "94332eb3e7339a36f34ab6f1de1961bad308c72e77830fa1b6010aa98d094278"
     },
     "402b3577d26a804cbe45c6ce88398aa3": {
       "slug": "a-hospital-is-the-most-complicated-computer-ive-ever-used",
@@ -22,7 +23,8 @@
       "history": [],
       "redirectFrom": [],
       "status": "published",
-      "assets": {}
+      "assets": {},
+      "sourceRevision": "965a8913ac2579b7a013abe715a4cef592b97312c1ab7e3d928dccc0e6d2332f"
     },
     "403b3577d26a801eb8cde1e5aeef1347": {
       "slug": "why-simpyll",
@@ -30,13 +32,24 @@
       "history": [],
       "redirectFrom": [],
       "status": "published",
-      "assets": {}
+      "assets": {},
+      "sourceRevision": "c6db5aa4ab382a6afea87a568157a553b998720b3ac9ece467049b3b851066b5"
+    },
+    "406b3577d26a80669a53c35a47bef708": {
+      "slug": "can-clinical-guidelines-be-converted-into-code",
+      "date": "2026-10-26",
+      "history": [],
+      "redirectFrom": [],
+      "status": "published",
+      "assets": {},
+      "sourceRevision": "32410f6ce60076de6ca70be6fb924588c04021d5a8ea4ab0c98919367d246d01"
     }
   },
   "files": {
     "src/content/blog/starting-over-without-starting-from-zero.mdx": "f6a24f9a75766dbcf0bef566bb855be1c12f830ef81154abf902e1ebd0f2e874",
     "src/content/blog/a-hospital-is-the-most-complicated-computer-ive-ever-used.mdx": "05b160fa511ac113ce0f70f62306ec2c17f48921d511735243fa6a74ce399e41",
     "src/content/blog/why-simpyll.mdx": "aea7fb40df15c52a569330e27569fb4aa8c24b399a007efcd0c8132fe2c92632",
+    "src/content/blog/can-clinical-guidelines-be-converted-into-code.mdx": "7d971a805940d9bb701521a232ddf19583fcc645a41a5f24e94b68815d2c4b1b",
     "public/images/notion/3ffb3577d26a80e9b57fc08460c29516/publishing-test-image-01-ff804a5635dd.png": "ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25",
     "public/images/notion/3ffb3577d26a80e9b57fc08460c29516/ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25.png": "ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25"
   }

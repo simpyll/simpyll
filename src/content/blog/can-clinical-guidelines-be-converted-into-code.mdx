@@ -1,0 +1,390 @@
+export const metadata = {
+  title: "Can Clinical Guidelines Be Converted Into Code? The Challenges of Algorithmic Medicine",
+  description: "Medicine is full of algorithms. Software is built on them. But translating a clinical recommendation into executable code reveals something fundamental about bo",
+  slug: "can-clinical-guidelines-be-converted-into-code",
+  date: "2026-10-26",
+  category: "Healthcare",
+  author: "David Becker",
+  tags: ["Algorithmic Medicine","Clinical Decision Support","Clinical Informatics","Dyslipidemia","Evidence-Based Medicine","Healthcare Technology","Medical Algorithms","software engineering"],
+  articleId: "notion:406b3577d26a80669a53c35a47bef708",
+}
+
+<h2>{"Can Clinical Guidelines Be Converted Into Code? The Challenges of Algorithmic Medicine"}</h2>
+<p><em>{"Medicine is full of algorithms. Software is built on them. But translating a clinical recommendation into executable code reveals something fundamental about both disciplines: knowing what a rule says is not the same as knowing when that rule applies."}</em></p>
+<p>{"A 54-year-old patient arrives for a routine primary care appointment. His LDL cholesterol is 168 mg/dL. He has hypertension, no known atherosclerotic cardiovascular disease (ASCVD), and a family history of premature myocardial infarction."}</p>
+<p>{"Should he receive a statin?"}</p>
+<p>{"A clinician might consider his age, calculated cardiovascular risk, family history, blood pressure, laboratory results, preferences, and several other variables before discussing treatment."}</p>
+<p>{"A programmer might initially see a simpler problem:"}</p>
+<pre><code className="language-plaintext">{"if (patient.ldl \u003e= 160) {\n  recommend(\"Start a statin\");\n}"}</code></pre>
+<p>{"Four lines of code. One condition. One recommendation."}</p>
+<p>{"And potentially a serious misrepresentation of clinical guidance."}</p>
+<p>{"The problem is not that the code is syntactically incorrect. It does exactly what it was designed to do."}</p>
+<p>{"The problem is that the clinical reasoning has been reduced to something much narrower than the evidence actually supports."}</p>
+<p>{"This is the central challenge of algorithmic medicine: "}<strong>{"a clinical recommendation is not automatically an "}</strong><strong><code>{"if/else"}</code></strong><strong>{" statement."}</strong></p>
+<p>{"As healthcare increasingly incorporates electronic health records, clinical decision-support systems, automated risk calculators, and artificial intelligence, translating medical knowledge into executable logic has become an important engineering problem."}</p>
+<p>{"The 2026 American College of Cardiology (ACC) and American Heart Association (AHA) multisociety guideline on the management of dyslipidemia provides a useful case study. It contains risk categories, laboratory thresholds, treatment recommendations, clinical exceptions, and decision pathways that appear ideal for computational implementation."}</p>
+<p>{"Yet the closer we examine those recommendations, the more complicated the translation becomes."}</p>
+<p>{"The challenge is not simply writing code that follows a guideline."}</p>
+<p>{"It is writing code that understands the boundaries of the guideline."}</p>
+<h3>{"1. Clinical Guidelines and Computer Algorithms Are Different Kinds of Knowledge"}</h3>
+<p>{"A clinical practice guideline is an evidence-based document intended to inform professional judgment."}</p>
+<p>{"It synthesizes research, evaluates evidence quality, identifies populations likely to benefit from interventions, and communicates recommendations for clinical practice."}</p>
+<p>{"A software algorithm operates differently."}</p>
+<p>{"A deterministic program evaluates explicitly defined inputs and follows rules established by its developer. For the same inputs and program version, it should produce the same outputs."}</p>
+<p>{"That difference matters."}</p>
+<p>{"Consider three possible statements:"}</p>
+<ol>
+<li>{"Treatment is recommended."}</li>
+<li>{"Treatment is reasonable."}</li>
+<li>{"Treatment may be considered."}</li>
+</ol>
+<p>{"These statements are not interchangeable."}</p>
+<p>{"In cardiovascular guidelines, recommendations are often assigned a Class of Recommendation (COR) and Level of Evidence (LOE). The class communicates the strength or nature of the recommendation, while the evidence level describes the supporting scientific evidence."}</p>
+<p>{"For example, Class I generally identifies an intervention that is recommended or indicated. Class IIa identifies an intervention that is reasonable, while Class IIb describes one that may be considered. Class III recommendations can identify interventions that provide no benefit or cause harm."}</p>
+<p>{"Now consider this implementation:"}</p>
+<pre><code className="language-plaintext">{"type Recommendation = \"treat\" | \"do-not-treat\";"}</code></pre>
+<p>{"This representation has already discarded critical information."}</p>
+<p>{"It cannot distinguish a strongly recommended intervention from one that is reasonable after individualized discussion. It has no way to capture uncertainty, contraindications, incomplete evidence, or the need for shared decision-making."}</p>
+<p>{"A better model must preserve the distinctions:"}</p>
+<pre><code className="language-plaintext">{"type RecommendationClass =\n  | \"I\"\n  | \"IIa\"\n  | \"IIb\"\n  | \"III_NO_BENEFIT\"\n  | \"III_HARM\";\n\ntype EvidenceLevel =\n  | \"A\"\n  | \"B-R\"\n  | \"B-NR\"\n  | \"C-LD\"\n  | \"C-EO\";\n\ntype ClinicalRecommendation = {\n  recommendationClass: RecommendationClass;\n  evidenceLevel: EvidenceLevel;\n  intervention: string;\n  rationale: string;\n  sourceReference: string;\n};"}</code></pre>
+<p>{"This is still a simplified model, but it represents a crucial shift."}</p>
+<p>{"Instead of asking only, \"What should the computer tell the clinician to do?\" we begin asking, \"What exactly does the evidence support, and how should that support be represented?\""}</p>
+<p>{"Clinical guidelines contain not only instructions, but also "}<em>{"degrees of certainty and authority"}</em>{"."}</p>
+<p>{"An accurate implementation must preserve both."}</p>
+<h3>{"2. The First Trap: Converting a Threshold Into a Universal Rule"}</h3>
+<p>{"The 2026 dyslipidemia guideline uses the AHA's PREVENT-ASCVD risk equations to help guide primary-prevention decisions in appropriate adults."}</p>
+<p>{"For eligible patients, estimated 10-year ASCVD risk is categorized as:"}</p>
+<table><thead><tr><th scope="col">{"Risk category"}</th><th scope="col">{"10-year PREVENT-ASCVD risk"}</th></tr></thead><tbody><tr><td>{"Low"}</td><td>{"Less than 3%"}</td></tr><tr><td>{"Borderline"}</td><td>{"3% to less than 5%"}</td></tr><tr><td>{"Intermediate"}</td><td>{"5% to less than 10%"}</td></tr><tr><td>{"High"}</td><td>{"10% or greater"}</td></tr></tbody></table>
+<p>{"These thresholds look like an ideal programming exercise."}</p>
+<pre><code className="language-plaintext">{"function classifyRisk(risk: number): string {\n  if (risk \u003c 3) return \"Low\";\n  if (risk \u003c 5) return \"Borderline\";\n  if (risk \u003c 10) return \"Intermediate\";\n  return \"High\";\n}"}</code></pre>
+<p>{"Within its assumed input domain, this function correctly categorizes the numerical risk estimates."}</p>
+<p>{"But even this elementary example conceals several assumptions."}</p>
+<p>{"What if the risk is negative?"}</p>
+<p>{"What if the value is "}<code>{"NaN"}</code>{"?"}</p>
+<p>{"What if the patient is outside the validated population?"}</p>
+<p>{"What if the number represents 30-year rather than 10-year risk?"}</p>
+<p>{"What if the patient already has ASCVD, making a primary-prevention risk classification the wrong decision pathway?"}</p>
+<p>{"The function cannot answer any of those questions."}</p>
+<p>{"A more defensible implementation begins with validation."}</p>
+<pre><code className="language-plaintext">{"type RiskCategory =\n  | \"low\"\n  | \"borderline\"\n  | \"intermediate\"\n  | \"high\";\n\ntype RiskResult =\n  | {\n      status: \"valid\";\n      category: RiskCategory;\n      riskPercent: number;\n    }\n  | {\n      status: \"invalid\";\n      reason: string;\n    };\n\nfunction classifyRisk(\n  riskPercent: number\n): RiskResult {\n  if (\n    !Number.isFinite(riskPercent) ||\n    riskPercent \u003c 0 ||\n    riskPercent \u003e 100\n  ) {\n    return {\n      status: \"invalid\",\n      reason: \"Risk must be between 0 and 100%.\"\n    };\n  }\n\n  const category: RiskCategory =\n    riskPercent \u003c 3\n      ? \"low\"\n      : riskPercent \u003c 5\n        ? \"borderline\"\n        : riskPercent \u003c 10\n          ? \"intermediate\"\n          : \"high\";\n\n  return {\n    status: \"valid\",\n    category,\n    riskPercent\n  };\n}"}</code></pre>
+<p>{"This version is safer, but it introduces another important distinction."}</p>
+<p><strong>{"A mathematically valid number is not necessarily a clinically valid risk estimate."}</strong></p>
+<p>{"Before interpreting PREVENT-ASCVD, the application must verify that the correct equation, prediction horizon, patient population, and input measurements were used."}</p>
+<p>{"A valid 6.2% estimate obtained from the wrong model is not clinically interchangeable with a properly calculated 6.2% PREVENT-ASCVD risk."}</p>
+<p>{"The official PREVENT equations also contain coefficients and model-specific requirements. They cannot be faithfully implemented by inventing a simplified formula that happens to return a plausible percentage."}</p>
+<p>{"In clinical software, provenance is part of correctness."}</p>
+<h3>{"3. The Second Trap: Choosing the Wrong Decision Pathway"}</h3>
+<p>{"Suppose our application accepts these patient characteristics:"}</p>
+<pre><code className="language-plaintext">{"const patient = {\n  age: 58,\n  ldl: 142,\n  hasASCVD: true,\n  hasDiabetes: true,\n  hasCKD: false,\n  preventRisk: 8.4\n};"}</code></pre>
+<p>{"An inexperienced implementation might immediately classify the patient as having intermediate 10-year cardiovascular risk."}</p>
+<pre><code className="language-plaintext">{"const category = classifyRisk(\n  patient.preventRisk\n);"}</code></pre>
+<p>{"But this patient already has established ASCVD."}</p>
+<p>{"The primary-prevention risk classification is not the appropriate basis for selecting the secondary-prevention treatment pathway."}</p>
+<p>{"The error is more serious than using an imperfect risk estimate. The application has selected the wrong clinical question."}</p>
+<p>{"This suggests that clinical decision support needs an explicit routing stage before applying individual recommendations."}</p>
+<pre><code className="language-plaintext">{"type ClinicalPathway =\n  | \"secondary-prevention\"\n  | \"severe-hypercholesterolemia\"\n  | \"primary-prevention\"\n  | \"requires-review\";\n\ntype Patient = {\n  hasASCVD: boolean | null;\n  ldl: number | null;\n  hasFamilialHypercholesterolemia: boolean | null;\n};\n\nfunction selectPathway(\n  patient: Patient\n): ClinicalPathway {\n  if (patient.hasASCVD === true) {\n    return \"secondary-prevention\";\n  }\n\n  if (patient.hasASCVD === null) {\n    return \"requires-review\";\n  }\n\n  if (patient.ldl === null) {\n    return \"requires-review\";\n  }\n\n  if (patient.ldl \u003e= 190) {\n    return \"severe-hypercholesterolemia\";\n  }\n\n  if (patient.hasFamilialHypercholesterolemia === true) {\n    return \"requires-review\";\n  }\n\n  return \"primary-prevention\";\n}"}</code></pre>
+<p>{"This example demonstrates pathway selection, not complete guideline implementation. A real system would also require age eligibility, special-population pathways, laboratory validation, and more detailed clinical criteria."}</p>
+<p>{"There is also a subtle architectural problem: "}<strong>{"patients do not always belong to only one clinically meaningful category."}</strong></p>
+<p>{"A patient can simultaneously have established ASCVD, diabetes, chronic kidney disease, elevated lipoprotein(a), and statin intolerance."}</p>
+<p>{"Assigning a single label may obscure important overlapping recommendations."}</p>
+<p>{"Instead of treating pathway selection as the entire assessment, a more capable system evaluates multiple applicable rules."}</p>
+<pre><code className="language-plaintext">{"type ClinicalIndication =\n  | \"established-ascvd\"\n  | \"diabetes\"\n  | \"chronic-kidney-disease\"\n  | \"severe-hypercholesterolemia\"\n  | \"elevated-lpa\"\n  | \"statin-intolerance\";\n\nfunction identifyIndications(\n  patient: {\n    hasASCVD: boolean;\n    hasDiabetes: boolean;\n    hasCKD: boolean;\n    ldl: number;\n    elevatedLpa: boolean;\n    statinIntolerant: boolean;\n  }\n): ClinicalIndication[] {\n  const indications: ClinicalIndication[] = [];\n\n  if (patient.hasASCVD) {\n    indications.push(\"established-ascvd\");\n  }\n\n  if (patient.hasDiabetes) {\n    indications.push(\"diabetes\");\n  }\n\n  if (patient.hasCKD) {\n    indications.push(\"chronic-kidney-disease\");\n  }\n\n  if (patient.ldl \u003e= 190) {\n    indications.push(\"severe-hypercholesterolemia\");\n  }\n\n  if (patient.elevatedLpa) {\n    indications.push(\"elevated-lpa\");\n  }\n\n  if (patient.statinIntolerant) {\n    indications.push(\"statin-intolerance\");\n  }\n\n  return indications;\n}"}</code></pre>
+<p>{"The output might be:"}</p>
+<pre><code className="language-plaintext">{"{\n  \"indications\": [\n    \"established-ascvd\",\n    \"diabetes\",\n    \"chronic-kidney-disease\",\n    \"elevated-lpa\"\n  ]\n}"}</code></pre>
+<p>{"The system now recognizes overlapping clinical features instead of forcing them into a single category."}</p>
+<p>{"Importantly, this list is not itself a list of treatment orders. Each indication still requires its own eligibility criteria and interpretation."}</p>
+<p>{"The next challenge is determining which recommendations apply together, which modify one another, and which need additional clinical review."}</p>
+<h3>{"4. The Third Trap: Confusing Missing Information With a Negative Finding"}</h3>
+<p>{"One of the most dangerous assumptions in software is that missing information can be treated as false."}</p>
+<p>{"Consider:"}</p>
+<pre><code className="language-plaintext">{"const patient = {\n  hasASCVD: false,\n  hasDiabetes: false,\n  isPregnant: false\n};"}</code></pre>
+<p>{"Where did these values come from?"}</p>
+<p>{"Were the conditions explicitly assessed and ruled out?"}</p>
+<p>{"Or did the developer initialize every field as "}<code>{"false"}</code>{" because the application needed default values?"}</p>
+<p>{"Those are entirely different situations."}</p>
+<p>{"In an electronic health record, the absence of a diagnosis code does not reliably establish the absence of a disease. Likewise, an unrecorded pregnancy status is not equivalent to confirmation that pregnancy is impossible or absent."}</p>
+<p>{"Clinical logic often requires at least three states:"}</p>
+<pre><code className="language-plaintext">{"type ClinicalBoolean =\n  | true\n  | false\n  | null;"}</code></pre>
+<p>{"Here, "}<code>{"null"}</code>{" means unknown or not yet established."}</p>
+<p>{"Consider the difference:"}</p>
+<pre><code className="language-plaintext">{"const patientA = {\n  hasASCVD: false\n};\n\nconst patientB = {\n  hasASCVD: null\n};"}</code></pre>
+<p>{"Patient A has explicitly documented absence of ASCVD."}</p>
+<p>{"Patient B has insufficient information to establish ASCVD status."}</p>
+<p>{"A robust clinical engine should not treat both patients identically."}</p>
+<pre><code className="language-plaintext">{"type Assessment =\n  | {\n      status: \"ready\";\n    }\n  | {\n      status: \"missing-data\";\n      missingFields: string[];\n    };\n\nfunction validateAssessment(\n  patient: {\n    age: number | null;\n    hasASCVD: ClinicalBoolean;\n    ldl: number | null;\n  }\n): Assessment {\n  const missingFields: string[] = [];\n\n  if (patient.age === null) {\n    missingFields.push(\"age\");\n  }\n\n  if (patient.hasASCVD === null) {\n    missingFields.push(\"ASCVD history\");\n  }\n\n  if (patient.ldl === null) {\n    missingFields.push(\"LDL cholesterol\");\n  }\n\n  if (missingFields.length \u003e 0) {\n    return {\n      status: \"missing-data\",\n      missingFields\n    };\n  }\n\n  return {\n    status: \"ready\"\n  };\n}"}</code></pre>
+<p>{"This may seem like ordinary input validation, but it reflects a deeper principle."}</p>
+<p><strong>{"In clinical software, uncertainty must be represented as data rather than silently eliminated."}</strong></p>
+<p>{"An application that cannot complete an assessment should say so."}</p>
+<p>{"For example:"}</p>
+<blockquote><p>{"Unable to determine the applicable lipid-management pathway because ASCVD history has not been established. Confirm clinical history before interpreting primary-prevention risk."}</p></blockquote>
+<p>{"That is a more trustworthy result than confidently providing a recommendation based on an assumption the user never authorized."}</p>
+<h3>{"5. The Fourth Trap: Multiple Guidelines Can Apply Simultaneously"}</h3>
+<p>{"Clinical recommendations rarely exist in isolation."}</p>
+<p>{"Consider a hypothetical 63-year-old patient with type 2 diabetes, stage 3 chronic kidney disease, LDL-C of 132 mg/dL, and no documented ASCVD."}</p>
+<p>{"The 2026 dyslipidemia guideline provides specific recommendations for several higher-risk primary-prevention populations, including appropriate adults with diabetes or chronic kidney disease."}</p>
+<p>{"A naive decision tree might evaluate only the first matching condition:"}</p>
+<pre><code className="language-plaintext">{"if (patient.hasDiabetes) {\n  return diabetesRecommendation;\n} else if (patient.hasCKD) {\n  return ckdRecommendation;\n} else {\n  return generalPreventionRecommendation;\n}"}</code></pre>
+<p>{"This is the wrong structure if the purpose is to identify every clinically relevant indication."}</p>
+<p>{"The "}<code>{"else if"}</code>{" statement makes the branches mutually exclusive."}</p>
+<p>{"The patient has diabetes, so the CKD branch never executes."}</p>
+<p>{"The developer has accidentally encoded the assumption that diabetes and CKD cannot matter simultaneously."}</p>
+<p>{"A rule engine is better suited to independent evaluations."}</p>
+<pre><code className="language-plaintext">{"type RuleMatch = {\n  ruleId: string;\n  reason: string;\n};\n\ntype Rule = {\n  id: string;\n  applies: (patient: ClinicalProfile) =\u003e boolean;\n  reason: string;\n};\n\ntype ClinicalProfile = {\n  hasDiabetes: boolean;\n  hasCKD: boolean;\n  hasASCVD: boolean;\n};\n\nconst rules: Rule[] = [\n  {\n    id: \"ASCVD_PATHWAY\",\n    applies: p =\u003e p.hasASCVD,\n    reason: \"Established ASCVD is documented.\"\n  },\n  {\n    id: \"DIABETES_PATHWAY\",\n    applies: p =\u003e p.hasDiabetes,\n    reason: \"Diabetes is documented.\"\n  },\n  {\n    id: \"CKD_PATHWAY\",\n    applies: p =\u003e p.hasCKD,\n    reason: \"Chronic kidney disease is documented.\"\n  }\n];\n\nfunction evaluateRules(\n  patient: ClinicalProfile\n): RuleMatch[] {\n  return rules\n    .filter(rule =\u003e rule.applies(patient))\n    .map(rule =\u003e ({\n      ruleId: rule.id,\n      reason: rule.reason\n    }));\n}"}</code></pre>
+<p>{"For the hypothetical patient, the engine identifies both diabetes and CKD as relevant considerations."}</p>
+<p>{"What happens next is the important part."}</p>
+<p>{"The system should not simply collect all matching treatment suggestions and present them as equally applicable instructions."}</p>
+<p>{"It must evaluate the eligibility boundaries of each recommendation, determine whether one pathway modifies another, and preserve any unresolved questions."}</p>
+<p>{"Sometimes two rules are compatible."}</p>
+<p>{"Sometimes one is more specific."}</p>
+<p>{"Sometimes an exception modifies an otherwise applicable recommendation."}</p>
+<p>{"And sometimes the clinical guideline does not supply enough information for software to automatically resolve the situation."}</p>
+<p>{"A safe engine needs a way to represent that last possibility."}</p>
+<pre><code className="language-plaintext">{"type DecisionStatus =\n  | \"supported\"\n  | \"conditional\"\n  | \"needs-review\"\n  | \"insufficient-data\"\n  | \"not-applicable\";\n\ntype Decision = {\n  status: DecisionStatus;\n  applicableRules: string[];\n  explanation: string;\n};"}</code></pre>
+<p>{"A system that always returns a definitive answer is not necessarily more intelligent."}</p>
+<p>{"It may simply be incapable of acknowledging uncertainty."}</p>
+<h3>{"6. The Fifth Trap: Clinical Exceptions Are Not Edge Cases"}</h3>
+<p>{"Software engineers often think of edge cases as unusual inputs that require special handling."}</p>
+<p>{"In medicine, exceptions are frequently central to safe decision-making."}</p>
+<p>{"Consider a hypothetical patient whose lipid profile and risk factors otherwise support consideration of cholesterol-lowering medication."}</p>
+<p>{"The patient is also pregnant, planning pregnancy, or breastfeeding."}</p>
+<p>{"Now the application must incorporate medication-specific reproductive safety, treatment timing, relevant exceptions, and individualized clinical review."}</p>
+<p>{"The general lipid-management pathway cannot operate as though these facts do not exist."}</p>
+<p>{"An unsafe implementation might look like this:"}</p>
+<pre><code className="language-plaintext">{"if (patient.ldl \u003e= treatmentThreshold) {\n  recommend(\"Initiate therapy\");\n}"}</code></pre>
+<p>{"A safer architecture introduces a separate safety evaluation."}</p>
+<pre><code className="language-plaintext">{"type SafetyFlag = {\n  code: string;\n  severity: \"review\" | \"critical\";\n  message: string;\n};\n\ntype ReproductiveStatus =\n  | \"pregnant\"\n  | \"planning-pregnancy\"\n  | \"lactating\"\n  | \"none\"\n  | \"unknown\"\n  | \"not-applicable\";\n\nfunction evaluateSafety(\n  status: ReproductiveStatus\n): SafetyFlag[] {\n  if (\n    status === \"pregnant\" ||\n    status === \"planning-pregnancy\" ||\n    status === \"lactating\"\n  ) {\n    return [{\n      code: \"REPRODUCTIVE_REVIEW\",\n      severity: \"review\",\n      message:\n        \"Medication-specific reproductive safety review required.\"\n    }];\n  }\n\n  if (status === \"unknown\") {\n    return [{\n      code: \"REPRODUCTIVE_STATUS_UNKNOWN\",\n      severity: \"review\",\n      message:\n        \"Clarify relevant reproductive status before medication guidance.\"\n    }];\n  }\n\n  return [];\n}"}</code></pre>
+<p>{"This does not itself determine which treatments are appropriate. It identifies circumstances requiring an additional layer of clinical evaluation."}</p>
+<p>{"That distinction matters."}</p>
+<p>{"A safety flag should not be mistaken for a clinical contraindication unless the supporting evidence specifically establishes one."}</p>
+<p>{"Likewise, the absence of a safety flag does not prove that treatment is safe."}</p>
+<p>{"This is why production clinical systems need structured contraindication data, medication-specific rules, current prescribing information, and clinician oversight rather than a handful of universal exceptions."}</p>
+<p>{"The larger lesson is that exceptional circumstances must be considered during system design, not appended after the primary algorithm is finished."}</p>
+<h3>{"7. Shared Decision-Making Cannot Be Reduced to a Boolean"}</h3>
+<p>{"One of the most interesting challenges arises when clinical recommendations explicitly depend on patient preferences."}</p>
+<p>{"Imagine a patient with a 10-year PREVENT-ASCVD risk of 4.1%."}</p>
+<p>{"Under the 2026 dyslipidemia guideline, this falls within the borderline-risk category. After consideration of relevant clinical factors, statin therapy may be reasonable within the applicable recommendation pathway."}</p>
+<p>{"The guideline does not imply that every patient with a 4.1% estimate must automatically receive an identical prescription."}</p>
+<p>{"A patient may place substantial value on reducing lifetime cardiovascular risk."}</p>
+<p>{"Another may be particularly concerned about adverse effects, treatment burden, or medication costs."}</p>
+<p>{"A third may want additional risk clarification before deciding."}</p>
+<p>{"All three may make different decisions after an informed clinical discussion."}</p>
+<p>{"Software can identify the applicable recommendation. It cannot legitimately manufacture the patient's preferences."}</p>
+<p>{"Consider this simplistic approach:"}</p>
+<pre><code className="language-plaintext">{"if (risk \u003e= 3) {\n  recommendStatin = true;\n}"}</code></pre>
+<p>{"This converts an area of clinical judgment into a universal command."}</p>
+<p>{"A better model separates evidence-based eligibility from patient decisions."}</p>
+<pre><code className="language-plaintext">{"type PatientPreference =\n  | \"favors-treatment\"\n  | \"favors-lifestyle-first\"\n  | \"requests-more-information\"\n  | \"undecided\"\n  | \"not-discussed\";\n\ntype SharedDecision = {\n  clinicalOption: string;\n  guidelineSupport: string;\n  patientPreference: PatientPreference;\n  discussionCompleted: boolean;\n};"}</code></pre>
+<p>{"The application could then generate an educational summary such as:"}</p>
+<pre><code className="language-plaintext">{"{\n  \"riskCategory\": \"borderline\",\n  \"clinicalOption\": \"Discuss moderate-intensity statin therapy\",\n  \"guidelineSupport\": \"Conditional recommendation\",\n  \"patientPreference\": \"requests-more-information\",\n  \"discussionCompleted\": false\n}"}</code></pre>
+<p>{"Notice what this system does not do."}</p>
+<p>{"It does not interpret an undecided patient as having declined therapy."}</p>
+<p>{"It does not interpret a patient's willingness to take medication as proof that the medication is indicated."}</p>
+<p>{"And it does not treat the guideline's evidence assessment as a replacement for the patient's informed preferences."}</p>
+<p>{"Shared decision-making is not a checkbox that magically converts uncertainty into certainty."}</p>
+<p>{"It is a clinical process involving evidence, values, context, and communication."}</p>
+<p>{"The appropriate role of software is to support that process, not impersonate it."}</p>
+<h3>{"8. Risk Calculators Are Models, Not Oracles"}</h3>
+<p>{"The 2026 guideline's adoption of PREVENT-ASCVD provides another important lesson for software development."}</p>
+<p>{"Risk calculators produce estimates."}</p>
+<p>{"They do not observe the patient's future."}</p>
+<p>{"The distinction becomes especially important when a numerical prediction is presented with apparent precision."}</p>
+<p>{"Imagine an application displaying:"}</p>
+<pre><code className="language-plaintext">{"10-year ASCVD risk: 7.4%"}</code></pre>
+<p>{"The number may be calculated correctly, but the user still needs to know what it represents."}</p>
+<p>{"Which outcome is being predicted?"}</p>
+<p>{"Which time horizon is being used?"}</p>
+<p>{"Was the calculation performed using the appropriate PREVENT equation?"}</p>
+<p>{"Were all inputs validated?"}</p>
+<p>{"Does the patient fall within the model's intended population?"}</p>
+<p>{"What clinically relevant risk factors are not captured by that model?"}</p>
+<p>{"A robust application should represent these properties explicitly."}</p>
+<pre><code className="language-plaintext">{"type RiskEstimate = {\n  model: \"AHA_PREVENT\";\n  modelVersion: string;\n  outcome: \"ASCVD\";\n  horizonYears: 10 | 30;\n  estimatedRiskPercent: number;\n  calculatedAt: string;\n  inputValidationPassed: boolean;\n};"}</code></pre>
+<p>{"Even this structure should only be populated after an actual validated calculation."}</p>
+<p>{"A developer should never substitute another equation or invent coefficients merely because a complete implementation is difficult."}</p>
+<p>{"When a validated calculation is unavailable, the application can return:"}</p>
+<pre><code className="language-plaintext">{"type RiskCalculationResult =\n  | {\n      status: \"calculated\";\n      estimate: RiskEstimate;\n    }\n  | {\n      status: \"unavailable\";\n      reason: string;\n    };"}</code></pre>
+<p>{"The system may direct the user to the official "}<a href={"https://professional.heart.org/en/guidelines-and-statements/prevent-calculator"}>{"AHA PREVENT calculator"}</a>{" rather than manufacture a result."}</p>
+<p>{"The same reasoning applies to optional testing."}</p>
+<p>{"Coronary artery calcium (CAC), lipoprotein(a), and apolipoprotein B (ApoB) can contribute additional information in relevant clinical situations."}</p>
+<p>{"But the availability of additional data does not mean every value should automatically trigger a new treatment command."}</p>
+<p>{"Risk-enhancing findings may refine a decision, alter the interpretation of estimated risk, or prompt discussion."}</p>
+<p>{"A useful distinction for clinical software is:"}</p>
+<pre><code className="language-plaintext">{"type ClinicalFindingRole =\n  | \"establishes-indication\"\n  | \"modifies-risk-assessment\"\n  | \"informs-treatment-goal\"\n  | \"requires-follow-up\"\n  | \"context-only\";"}</code></pre>
+<p>{"A patient's elevated lipoprotein(a), for example, should not be treated as though it were simply another numerical input that can be substituted for LDL-C."}</p>
+<p>{"Different biomarkers measure different clinical properties. Their units, thresholds, and interpretations are not universally interchangeable."}</p>
+<p>{"The software must respect those differences."}</p>
+<h3>{"9. Clinical Logic Should Be Explainable and Traceable"}</h3>
+<p>{"Traditional software tests often ask one question:"}</p>
+<p>{"Did the function return the expected value?"}</p>
+<p>{"For clinical decision support, that is necessary but insufficient."}</p>
+<p>{"We also need to know why the result was returned."}</p>
+<p>{"Suppose an application identifies an LDL-C goal for a patient in a particular secondary-prevention category."}</p>
+<p>{"The result should explain which clinical pathway was selected, which patient characteristics made that pathway applicable, which guideline recommendation supports the goal, and whether any information remains unresolved."}</p>
+<p>{"A useful design separates the output from the reasoning that produced it."}</p>
+<pre><code className="language-plaintext">{"type RuleTrace = {\n  ruleId: string;\n  matched: boolean;\n  explanation: string;\n  sourceReference: string;\n};\n\ntype ClinicalResult = {\n  guidelineVersion: string;\n  pathway: string;\n  status: DecisionStatus;\n  recommendations: ClinicalRecommendation[];\n  missingInformation: string[];\n  safetyFlags: SafetyFlag[];\n  reasoning: RuleTrace[];\n};"}</code></pre>
+<p>{"A hypothetical result might resemble:"}</p>
+<pre><code className="language-plaintext">{"{\n  \"guidelineVersion\": \"ACC/AHA Dyslipidemia 2026\",\n  \"pathway\": \"secondary-prevention\",\n  \"status\": \"needs-review\",\n  \"recommendations\": [],\n  \"missingInformation\": [\n    \"Very-high-risk ASCVD classification\",\n    \"Current lipid-lowering therapy\",\n    \"Medication tolerance\"\n  ],\n  \"safetyFlags\": [],\n  \"reasoning\": [\n    {\n      \"ruleId\": \"ASCVD_HISTORY\",\n      \"matched\": true,\n      \"explanation\": \"Established ASCVD is documented.\",\n      \"sourceReference\": \"2026 dyslipidemia guideline\"\n    }\n  ]\n}"}</code></pre>
+<p>{"The example deliberately avoids issuing a final treatment recommendation."}</p>
+<p>{"The correct secondary-prevention target depends on additional risk classification and clinical information."}</p>
+<p>{"In the 2026 guideline, very-high-risk secondary-prevention patients have an LDL-C goal below 55 mg/dL and non-HDL-C goal below 85 mg/dL, while other secondary-prevention patients may have different applicable targets."}</p>
+<p>{"The software should establish the appropriate category before presenting a target as patient-specific."}</p>
+<p>{"A transparent system makes this visible."}</p>
+<p>{"It should be possible to trace the result backward:"}</p>
+<p><strong>{"Output → matched rule → qualifying patient information → guideline recommendation → supporting evidence."}</strong></p>
+<p>{"This traceability makes the software easier to audit, test, update, and challenge."}</p>
+<p>{"More importantly, it gives clinicians a reason to trust the result without requiring them to trust the program blindly."}</p>
+<h3>{"10. A Better Architecture for Guideline-Based Software"}</h3>
+<p>{"As the examples become more complicated, an architectural pattern begins to emerge."}</p>
+<p>{"Clinical logic should not be scattered throughout interface components."}</p>
+<p>{"For example, this is difficult to maintain:"}</p>
+<pre><code className="language-plaintext">{"function ResultsPage({ patient }) {\n  return (\n    \u003cdiv\u003e\n      {patient.ldl \u003e= 190\n        ? \"Recommend treatment\"\n        : \"Evaluate risk\"}\n    \u003c/div\u003e\n  );\n}"}</code></pre>
+<p>{"Not only is the clinical logic embedded directly in the presentation layer, but the message oversimplifies what should happen next."}</p>
+<p>{"A more maintainable approach separates the system into distinct responsibilities."}</p>
+<pre><code className="language-plaintext">{"Clinical Decision-Support Application\n│\n├── Input Layer\n│   ├── Patient Characteristics\n│   ├── Laboratory Measurements\n│   ├── Existing Treatment\n│   └── Patient Preferences\n│\n├── Validation Layer\n│   ├── Missing Data\n│   ├── Unit Validation\n│   ├── Physiologic Plausibility\n│   └── Model Eligibility\n│\n├── Clinical Logic Layer\n│   ├── Pathway Selection\n│   ├── Risk Assessment\n│   ├── Rule Evaluation\n│   ├── Exception Handling\n│   └── Conflict Detection\n│\n├── Evidence Layer\n│   ├── Guideline Version\n│   ├── Recommendation Metadata\n│   ├── Source References\n│   └── Rule Traceability\n│\n└── Presentation Layer\n    ├── Clinical Summary\n    ├── Applicable Recommendations\n    ├── Unresolved Questions\n    ├── Shared Decision Support\n    └── Evidence Explanation"}</code></pre>
+<p>{"The user interface becomes responsible for collecting and displaying information."}</p>
+<p>{"The clinical engine becomes responsible for structured rule evaluation."}</p>
+<p>{"The evidence registry becomes responsible for documenting where each implemented recommendation came from."}</p>
+<p>{"This separation makes testing substantially easier."}</p>
+<p>{"It also limits the risk that a harmless interface change will accidentally modify a clinical threshold."}</p>
+<h4>{"A clinical rule registry"}</h4>
+<p>{"Instead of hardcoding every recommendation inside one enormous function, each rule can be expressed as a structured object."}</p>
+<pre><code className="language-plaintext">{"type GuidelineRule = {\n  id: string;\n  version: string;\n  source: {\n    guideline: string;\n    section: string;\n    recommendationClass?: RecommendationClass;\n    evidenceLevel?: EvidenceLevel;\n    url: string;\n  };\n  requiredInputs: string[];\n  evaluate: (\n    patient: ClinicalProfile\n  ) =\u003e {\n    applies: boolean;\n    explanation: string;\n  };\n};"}</code></pre>
+<p>{"Here is an illustrative example that identifies the presence of established ASCVD."}</p>
+<pre><code className="language-plaintext">{"const ascThereIsDiseaseRule: GuidelineRule = {\n  id: \"ASCVD_HISTORY_CHECK\",\n  version: \"1.0.0\",\n  source: {\n    guideline: \"ACC/AHA Dyslipidemia 2026\",\n    section: \"Secondary prevention\",\n    url: \"https://doi.org/10.1161/CIR.0000000000001423\"\n  },\n  requiredInputs: [\"hasASCVD\"],\n  evaluate: patient =\u003e ({\n    applies: patient.hasASCVD === true,\n    explanation:\n      patient.hasASCVD === true\n        ? \"Established ASCVD requires secondary-prevention assessment.\"\n        : \"This rule did not establish secondary-prevention eligibility.\"\n  })\n};"}</code></pre>
+<p>{"This rule is a pathway-identification example, not an implementation of a specific graded treatment recommendation. A real guideline registry would map treatment rules to their exact recommendation identifiers, evidence grades, eligibility criteria, and relevant exceptions."}</p>
+<p>{"The rule engine can then be versioned and tested independently of the React interface."}</p>
+<p>{"That matters because clinical guidelines change."}</p>
+<p>{"A future recommendation may modify a threshold, eligibility criterion, treatment goal, or drug-specific consideration."}</p>
+<p>{"When clinical logic is scattered across dozens of interface components, updating it becomes difficult and potentially unsafe."}</p>
+<p>{"When rules are structured, independently tested, and linked to evidence, changes can be reviewed systematically."}</p>
+<h3>{"11. Testing Clinical Software Requires More Than Unit Tests"}</h3>
+<p>{"Suppose our risk-classification function contains this statement:"}</p>
+<pre><code className="language-plaintext">{"if (risk \u003c 5) return \"borderline\";"}</code></pre>
+<p>{"A minor change accidentally introduces an incorrect boundary:"}</p>
+<pre><code className="language-plaintext">{"if (risk \u003c= 5) return \"borderline\";"}</code></pre>
+<p>{"The program still compiles."}</p>
+<p>{"Most inputs still produce exactly the same answer."}</p>
+<p>{"But a risk estimate of precisely 5% now falls into the wrong category."}</p>
+<p>{"Boundary conditions matter in medicine because guideline thresholds often determine which recommendation becomes applicable."}</p>
+<p>{"Automated testing should explicitly target these boundaries."}</p>
+<pre><code className="language-plaintext">{"import { describe, expect, it } from \"vitest\";\n\ndescribe(\"PREVENT risk classification\", () =\u003e {\n  it.each([\n    [2.9, \"low\"],\n    [3.0, \"borderline\"],\n    [4.9, \"borderline\"],\n    [5.0, \"intermediate\"],\n    [9.9, \"intermediate\"],\n    [10.0, \"high\"]\n  ])(\n    \"classifies %s%% as %s\",\n    (risk, expected) =\u003e {\n      const result = classifyRisk(risk);\n\n      expect(result.status).toBe(\"valid\");\n\n      if (result.status === \"valid\") {\n        expect(result.category).toBe(expected);\n      }\n    }\n  );\n});"}</code></pre>
+<p>{"But threshold tests are only the beginning."}</p>
+<p>{"A guideline-derived decision engine also needs scenarios designed to reveal clinically meaningful failures."}</p>
+<p>{"Consider these examples:"}</p>
+<table><thead><tr><th scope="col">{"Clinical scenario"}</th><th scope="col">{"Expected system behavior"}</th></tr></thead><tbody><tr><td>{"Established ASCVD"}</td><td>{"Select secondary-prevention assessment"}</td></tr><tr><td>{"Missing ASCVD history"}</td><td>{"Request clarification rather than assume absence"}</td></tr><tr><td>{"Diabetes and CKD coexist"}</td><td>{"Identify both applicable considerations"}</td></tr><tr><td>{"Risk exactly 5%"}</td><td>{"Classify as intermediate, when PREVENT classification is appropriate"}</td></tr><tr><td>{"Pregnancy-related concern"}</td><td>{"Flag medication-specific safety review"}</td></tr><tr><td>{"Unknown baseline LDL-C"}</td><td>{"Do not invent percentage LDL-C reduction"}</td></tr><tr><td>{"Patient outside model eligibility"}</td><td>{"Do not generate an unsupported PREVENT estimate"}</td></tr><tr><td>{"Conflicting or unresolved guidance"}</td><td>{"Return a transparent review status"}</td></tr></tbody></table>
+<p>{"These tests should be derived from validated clinical requirements, not from whatever the current implementation happens to produce."}</p>
+<p>{"There is an important difference between testing that code behaves consistently and validating that code implements medicine correctly."}</p>
+<p>{"A broken algorithm can pass every unit test if the developer wrote the tests around an incorrect interpretation of the guideline."}</p>
+<p>{"For that reason, the process must include clinical review, independent reference scenarios, source verification, and regression testing after guideline updates."}</p>
+<h4>{"Testing percentage LDL-C reduction"}</h4>
+<p>{"Even apparently simple calculations require explicit data rules."}</p>
+<pre><code className="language-plaintext">{"function calculateLDLReduction(\n  baseline: number | null,\n  current: number | null\n): number | null {\n  if (\n    baseline === null ||\n    current === null ||\n    !Number.isFinite(baseline) ||\n    !Number.isFinite(current) ||\n    baseline \u003c= 0 ||\n    current \u003c 0\n  ) {\n    return null;\n  }\n\n  return (\n    ((baseline - current) / baseline) * 100\n  );\n}"}</code></pre>
+<p>{"This function does not invent a baseline measurement."}</p>
+<p>{"It also does not automatically interpret the result as treatment success. Clinical interpretation still depends on the reliability and timing of measurements, treatment context, and applicable goals."}</p>
+<p>{"This is an example of a broader engineering principle:"}</p>
+<p><strong>{"Every clinical calculation should define what it knows, what it assumes, and when it must decline to calculate."}</strong></p>
+<h3>{"12. Where Does Artificial Intelligence Fit?"}</h3>
+<p>{"So far, the examples have used deterministic rules rather than machine learning or large language models."}</p>
+<p>{"There is a reason for that."}</p>
+<p>{"Many important clinical tasks require reproducibility and exact application of defined criteria."}</p>
+<p>{"A validated risk equation should not change its output because a language model happens to phrase its reasoning differently."}</p>
+<p>{"A laboratory threshold should not be approximated by generated prose."}</p>
+<p>{"A contraindication should not disappear because a probabilistic model overlooked it."}</p>
+<p>{"Large language models can be useful in clinical knowledge systems, but their role must be carefully defined."}</p>
+<p>{"For example, an AI component might assist with:"}</p>
+<ul>
+<li>{"Explaining guideline terminology in plain language."}</li>
+<li>{"Summarizing the clinical factors identified by a validated rule engine."}</li>
+<li>{"Helping users navigate long documents and discover relevant sections."}</li>
+<li>{"Drafting educational explanations from verified structured results."}</li>
+</ul>
+<p>{"It should not be trusted to invent missing clinical values, calculate an undocumented version of PREVENT, or independently decide that contradictory recommendations have been resolved."}</p>
+<p>{"One possible architecture is:"}</p>
+<pre><code className="language-plaintext">{"Patient Information\n       │\n       ▼\nValidated Input Schema\n       │\n       ▼\nDeterministic Clinical Engine\n       │\n       ▼\nStructured Clinical Result\n       │\n       ├── Applicable Rules\n       ├── Missing Information\n       ├── Safety Flags\n       ├── Evidence References\n       └── Unresolved Decisions\n       │\n       ▼\nOptional AI Explanation Layer\n       │\n       ▼\nClinician-Reviewable Summary"}</code></pre>
+<p>{"The AI layer explains validated findings rather than originating unsupported medical conclusions."}</p>
+<p>{"Even then, generated explanations require safeguards. They should be checked against the structured output, preserve uncertainty, and avoid adding new treatment recommendations."}</p>
+<p>{"This hybrid architecture combines the strengths of different technologies."}</p>
+<p>{"Deterministic software handles calculations and explicit conditions."}</p>
+<p>{"Structured evidence provides traceability."}</p>
+<p>{"AI can help communicate complicated information."}</p>
+<p>{"Clinicians retain responsibility for interpreting the results in the patient's actual clinical context."}</p>
+<p>{"The goal is not to make AI sound like an authoritative physician."}</p>
+<p>{"The goal is to make evidence-based information more accessible without concealing how conclusions were reached."}</p>
+<h3>{"13. The Most Important Output Might Be \"I Don't Know\""}</h3>
+<p>{"Most consumer applications are designed to produce an answer."}</p>
+<p>{"Clinical software sometimes needs to do the opposite."}</p>
+<p>{"It should be able to determine that available information does not support an answer."}</p>
+<p>{"Consider this result:"}</p>
+<pre><code className="language-plaintext">{"type ClinicalEngineOutput =\n  | {\n      status: \"completed\";\n      result: ClinicalResult;\n    }\n  | {\n      status: \"needs-more-information\";\n      missingFields: string[];\n    }\n  | {\n      status: \"requires-clinical-review\";\n      issues: string[];\n    }\n  | {\n      status: \"unsupported\";\n      reason: string;\n    };"}</code></pre>
+<p>{"This type forces developers to account for situations where the engine cannot responsibly provide a definitive recommendation."}</p>
+<p>{"A result might say:"}</p>
+<blockquote><p>{"The available information supports consideration of lipid-lowering therapy, but the appropriate treatment pathway cannot be finalized because additional ASCVD risk classification and medication-tolerance information are required."}</p></blockquote>
+<p>{"Or:"}</p>
+<blockquote><p>{"The patient falls outside the validated population for this risk model. No risk estimate was generated."}</p></blockquote>
+<p>{"Or:"}</p>
+<blockquote><p>{"Multiple guideline pathways may apply. Further clinical review is required to determine which recommendation governs the treatment decision."}</p></blockquote>
+<p>{"These are not software failures."}</p>
+<p>{"They are examples of a system operating within its defined limits."}</p>
+<p>{"In clinical decision support, declining to make an unsupported inference is a feature."}</p>
+<p>{"It demonstrates that the software recognizes the difference between an answer it can calculate and a decision it cannot legitimately make."}</p>
+<h3>{"14. Turning Clinical Guidelines Into Code Is a Knowledge-Engineering Problem"}</h3>
+<p>{"The deeper challenge of algorithmic medicine is not programming syntax."}</p>
+<p>{"It is knowledge representation."}</p>
+<p>{"To transform a clinical guideline into executable software, a developer must translate prose into explicit structures while preserving its meaning."}</p>
+<p>{"A statement that appears straightforward on paper may depend on:"}</p>
+<ul>
+<li>{"The population for whom the evidence applies."}</li>
+<li>{"The definitions of the clinical conditions involved."}</li>
+<li>{"The strength and certainty of the recommendation."}</li>
+<li>{"Other conditions that modify its applicability."}</li>
+<li>{"Data that may be missing, uncertain, or unreliable."}</li>
+<li>{"Decisions that depend on patient values."}</li>
+<li>{"Exceptions and contraindications."}</li>
+<li>{"The version of the guideline being implemented."}</li>
+</ul>
+<p>{"A simple algorithm might represent medicine as:"}</p>
+<pre><code className="language-plaintext">{"const recommendation =\n  condition ? treatmentA : treatmentB;"}</code></pre>
+<p>{"A more faithful representation looks something like this:"}</p>
+<pre><code className="language-plaintext">{"function evaluateClinicalGuidance(\n  patient: PatientProfile\n): ClinicalEngineOutput {\n  const validation = validatePatient(patient);\n\n  if (!validation.valid) {\n    return {\n      status: \"needs-more-information\",\n      missingFields: validation.missingFields\n    };\n  }\n\n  const safety = evaluateSafetyFactors(patient);\n\n  if (safety.requiresReview) {\n    return {\n      status: \"requires-clinical-review\",\n      issues: safety.issues\n    };\n  }\n\n  const pathways = identifyApplicablePathways(patient);\n  const rules = evaluateApplicableRules(\n    patient,\n    pathways\n  );\n\n  if (rules.hasUnresolvedConflict) {\n    return {\n      status: \"requires-clinical-review\",\n      issues: rules.conflicts\n    };\n  }\n\n  if (!rules.hasSufficientEvidence) {\n    return {\n      status: \"unsupported\",\n      reason:\n        \"No validated recommendation can be established.\"\n    };\n  }\n\n  return {\n    status: \"completed\",\n    result: buildClinicalResult(rules)\n  };\n}"}</code></pre>
+<p>{"This is an architectural sketch, not a validated clinical implementation. The helper functions would require independent definitions, clinical review, evidence mapping, and testing before real-world use."}</p>
+<p>{"But the structure demonstrates the essential design philosophy."}</p>
+<p>{"The engine validates before interpreting."}</p>
+<p>{"It evaluates safety and applicability before presenting recommendations."}</p>
+<p>{"It permits multiple relevant rules."}</p>
+<p>{"It represents unresolved conflicts."}</p>
+<p>{"And it can decline to provide an answer."}</p>
+<p>{"These characteristics are more important than the number of conditions the software can evaluate."}</p>
+<h3>{"15. Building LipidPath: An Experiment in Executable Clinical Knowledge"}</h3>
+<p>{"These questions are particularly relevant to a project I am developing for Simpyll: "}<strong>{"LipidPath"}</strong>{", an interactive, educational clinical decision-support application based on the 2026 ACC/AHA multisociety dyslipidemia guideline."}</p>
+<p>{"The concept is straightforward: allow users to enter relevant clinical characteristics, follow applicable dyslipidemia management pathways, and examine the evidence supporting the results."}</p>
+<p>{"The engineering challenge is considerably more interesting."}</p>
+<p>{"LipidPath needs to distinguish primary from secondary prevention, evaluate overlapping indications, apply risk models only to eligible patients, interpret laboratory measurements appropriately, and communicate the limits of available information."}</p>
+<p>{"It also needs to distinguish strong recommendations from conditional ones."}</p>
+<p>{"A guideline explorer can display a recommendation and its supporting evidence."}</p>
+<p>{"An executable decision engine must first establish whether that recommendation actually applies."}</p>
+<p>{"Those are different responsibilities."}</p>
+<p>{"The project therefore provides an opportunity to explore clinical informatics and software engineering together: translating evidence into structured rules, building transparent decision traces, validating boundary conditions, and designing an interface that makes complex medical information understandable."}</p>
+<p>{"The intended result is not an autonomous prescribing system."}</p>
+<p>{"It is an educational tool demonstrating how guideline-based clinical decision support can be designed, tested, and explained."}</p>
+<p>{"More broadly, LipidPath is an experiment in answering a difficult question:"}</p>
+<p>{"Can we make clinical guidelines computationally useful without stripping away the context that makes them clinically meaningful?"}</p>
+<p>{"I believe the answer is yes, but only if we treat the translation as an exercise in preserving knowledge rather than merely automating decisions."}</p>
+<h3>{"Conclusion: Executable Medicine Needs More Than Executable Rules"}</h3>
+<p>{"A clinical guideline is not a computer program waiting to be typed into an editor."}</p>
+<p>{"It is a structured interpretation of scientific evidence intended to guide decisions in circumstances that are often incomplete, uncertain, and individualized."}</p>
+<p>{"Converting that knowledge into software requires much more than implementing thresholds and conditional branches."}</p>
+<p>{"We must preserve recommendation strength, evidence quality, patient eligibility, exceptions, overlapping indications, and the uncertainty inherent in clinical practice."}</p>
+<p>{"We must distinguish a calculated risk from a clinical decision."}</p>
+<p>{"We must design systems that can explain their outputs and identify their limitations."}</p>
+<p>{"And we must acknowledge that some decisions cannot be reduced to code without losing something essential."}</p>
+<p>{"The most valuable clinical software is not necessarily the software that makes the most decisions."}</p>
+<p>{"It is the software that helps clinicians and patients make better-informed decisions, using transparent, validated, and appropriately limited computational tools."}</p>
+<p>{"A good clinical algorithm should know when a rule applies."}</p>
+<p><strong>{"A trustworthy clinical algorithm should also know when it doesn't."}</strong></p>
+<hr />
+<h3>{"References"}</h3>
+<p>{"American Heart Association. (2026). "}<em>{"The American Heart Association PREVENT online calculator"}</em>{". "}<a href={"https://professional.heart.org/en/guidelines-and-statements/prevent-calculator"}>{"https://professional.heart.org/en/guidelines-and-statements/prevent-calculator"}</a></p>
+<p>{"American Heart Association. (2026, March 13). "}<em>{"Top things to know: 2026 guideline on the management of dyslipidemia"}</em>{". "}<a href={"https://professional.heart.org/en/science-news/2026-guideline-on-the-management-of-dyslipidemia/top-things-to-know"}>{"https://professional.heart.org/en/science-news/2026-guideline-on-the-management-of-dyslipidemia/top-things-to-know"}</a></p>
+<p>{"Blumenthal, R. S., Morris, P. B., Gaudino, M., et al. (2026). 2026 ACC/AHA/AACVPR/ABC/ACPM/ADA/AGS/APhA/ASPC/NLA/PCNA guideline on the management of dyslipidemia: A report of the American College of Cardiology/American Heart Association Joint Committee on Clinical Practice Guidelines. "}<em>{"Circulation, 153"}</em>{"(17), e1154–e1276. "}<a href={"https://doi.org/10.1161/CIR.0000000000001423"}>{"https://doi.org/10.1161/CIR.0000000000001423"}</a></p>
+<hr />
+<p><em>{"Clinical and engineering note: The TypeScript examples in this article are simplified illustrations of software design principles, not validated implementations of the ACC/AHA guideline. They are not intended for clinical diagnosis, treatment selection, or prescribing. Any production clinical decision-support application requires complete source mapping, independent clinical validation, appropriate safety review, and ongoing maintenance. This article and the LipidPath project are independent educational work and are not endorsed or certified by the ACC or AHA."}</em></p>
