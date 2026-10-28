@@ -94,8 +94,13 @@ closed for manual reconciliation. No repetitive comments are posted. The inciden
 body refreshes on lifecycle/category/assignment changes or daily; exact last-check
 state is retained in the ledger on each run.
 
-Successful full remote revision verification closes a transfer incident. A new
-failure after recovery gets a fresh grace and reopens the **same issue**, incrementing
+Successful full remote revision verification closes a transfer incident. A complete
+health inventory cannot clear the independent watchdog's observation or grace;
+only the watchdog's explicit successful heartbeat evidence resolves that key.
+GitHub metadata failure preserves existing deployment/system incidents even if
+Notion inventory succeeds. Stale, wrong-run, malformed or absent artifacts become
+sanitized reader-failure observations, rather than bypassing the durable writer.
+A new failure after recovery gets a fresh grace and reopens the **same issue**, incrementing
 its occurrence. A complete withdrawal of eligibility is separately explained.
 Deployment/verification failures remain distinct system incidents; closing a
 transfer incident does not claim website publication. A no-op publisher does not
@@ -134,6 +139,15 @@ notification delivery. Verify the real article's ordinary publisher content SHA,
 exact release deployment and live body/discovery, then a second unchanged sync.
 Keep #199 open until these outcomes are recorded. #67's owner closure does not
 establish those outcomes. See the dated audit for precise access blockers.
+
+October 28 follow-up: #204 is merged. Scheduled watchdog run 40694154938 created
+bot-authored ledger #205; its authorized retry updated the same observation without
+resetting grace or creating a duplicate. The health workflow still had zero runs
+at inspection. Publisher 40706393159 transferred content commit `cf23007bbcb5` and
+deployed it; later release `95b45685d863` contains it and the intended article is
+live with matching body/discovery evidence. Full bot incident lifecycle, actual
+owner delivery, isolated growth browsers and subsequent unchanged sync remain
+unaccepted. See [the follow-up audit](audits/simpyll-publishing-incidents-followup-2026-10-28.md).
 
 ## Rollback
 

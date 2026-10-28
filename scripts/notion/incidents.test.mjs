@@ -6,7 +6,7 @@ import { join } from 'node:path'
 import { compile } from '@mdx-js/mdx'
 import { synchronize, sourceRevision } from './publisher.mjs'
 import { fixture, ROOT, SOURCE, PAGE, page, block, rt } from './fixtures/api.mjs'
-import { digest, incidentKey, reconcileArticles, transition, validateReport, updateIncidents, LEDGER, parseLedger, renderIncident, addHealth, monitorWatchdog } from './incidents.mjs'
+import { digest, incidentKey, reconcileArticles, transition, validateReport, updateIncidents, LEDGER, parseLedger, renderIncident, addHealth, monitorWatchdog, writerReport } from './incidents.mjs'
 const key = incidentKey(SOURCE, PAGE), revision = digest('expected revision'), H = 3600000, at = Date.parse('2026-10-28T12:00Z')
 const report = (time = at, articles = [{ key, revision, state: 'missing', category: 'unknown' }], complete = true) => ({ version: 1, at: time, complete, articles, systems: [], run: 123, lastSuccess: null })
 async function setup(t) {
@@ -83,11 +83,50 @@ test('deployment-only failures stay actionable after verified article transfer',
   assert.equal(Object.values(state)[0].category, 'deployment')
   assert.equal(Object.values(state)[0].active, true)
 })
+test('healthy article inventory cannot clear watchdog grace; only its own heartbeat recovers it', async () => {
+  const missing = await monitorWatchdog(async () => { throw new Error('unavailable') }, { now: at, run: 123 })
+  const watchdog = missing.systems[0].key
+  let state = transition({}, missing)
+  state = transition(state, report(at + 5 * H, []))
+  assert.equal(state[watchdog].active, true)
+  state = transition(state, { ...missing, at: at + 6 * H })
+  assert.equal(state[watchdog].due, true)
+  assert.equal(state[watchdog].first, at)
+  state = transition(state, { ...missing, at: at + 7 * H, systems: [{ ...missing.systems[0], state: 'verified' }] })
+  assert.equal(state[watchdog].active, false)
+  assert.equal(state[watchdog].resolution, 'system-evidence-recovered')
+})
+test('Notion inventory success with unavailable GitHub metadata preserves deployment incidents', () => {
+  const failed = report(at, [])
+  addHealth(failed, { checks: [{ check: 'Content deployment', status: 'Action Required', details: '' }] })
+  let state = transition({}, failed)
+  const deployment = Object.keys(state)[0]
+  const unknown = report(at + H, [])
+  addHealth(unknown, { checks: [{ check: 'GitHub metadata', status: 'Unknown', details: '' }] })
+  state = transition(state, unknown)
+  assert.equal(state[deployment].active, true)
+  const recovered = report(at + 2 * H, [])
+  addHealth(recovered, { checks: [{ check: 'Content deployment', status: 'Healthy', details: '' }] })
+  state = transition(state, recovered)
+  assert.equal(state[deployment].active, false)
+  assert.equal(state[deployment].resolution, 'system-evidence-recovered')
+})
 test('public boundary rejects injected fields, private IDs/URLs/errors and unsafe enum values', () => {
   for (const value of [{ ...report(), title: 'PRIVATE' }, report(at, [{ key, revision, state: 'missing', category: 'private error' }]), report(at, [{ key: PAGE, revision, state: 'missing', category: 'unknown' }])]) assert.throws(() => validateReport(value))
   const state = transition({}, report()); const body = renderIncident(key, state[key], report(), 'simpyll/simpyll', 6)
   assert.doesNotMatch(body, new RegExp(`${PAGE}|${SOURCE}|notion.so|PRIVATE|signature=`))
   assert.match(body, /Website deployment.*separate/)
+})
+test('missing, malformed, stale and wrong-run artifacts produce system evidence instead of suppressing the writer', () => {
+  for (const value of [undefined, { private: 'payload' }, report(at - 2 * H), report(at + 2 * H), { ...report(), run: 999 }]) {
+    const result = writerReport(value, { now: at, run: 123 })
+    assert.equal(result.complete, false)
+    assert.deepEqual(result.articles, [])
+    assert.equal(result.systems[0].state, 'missing')
+    assert.equal(result.systems[0].category, 'monitor-evidence')
+    assert.doesNotMatch(JSON.stringify(result), /private|payload/)
+  }
+  assert.deepEqual(writerReport(report(), { now: at, run: 123 }), report())
 })
 function fakeGithub() {
   const issues = [], calls = []; let failCreate = false, failPatch = false
