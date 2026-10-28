@@ -49,6 +49,8 @@ jobs:
         run: node --test scripts/lipidpath.test.mjs scripts/lipidpath-ui.test.mjs
       - name: Verify workflow, project and publishing contracts
         run: node --test scripts/ci-workflows.test.mjs scripts/projects.test.mjs scripts/validate-content.test.mjs
+      - name: Verify offline SEO regression contracts
+        run: npm run test:seo
       - name: Check high and critical vulnerabilities
         run: npm audit --audit-level=high
       - name: Record artifact revision
