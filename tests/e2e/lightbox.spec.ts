@@ -1,0 +1,180 @@
+import { test, expect, type Page } from '@playwright/test'
+import process from 'node:process'
+import { scan, visibleFocus } from './helpers/accessibility'
+
+const route = '/blog/rich-content-fixture/'
+const opener = 'Enlarge image: Gallery diagram one'
+const position = (page: Page) => page.getByRole('status', { name: 'Image position' })
+
+test.describe('isolated article galleries', () => {
+  test.skip(!process.env.RICH_FIXTURE, 'Runs only in the isolated rich-content build; fixtures are never published')
+  test.beforeEach(async ({ page }) => {
+    await page.route('https://example.com/**', route => route.abort())
+    await page.goto(route)
+  })
+
+  test('keyboard opening, containment, inert background, boundaries and focus/scroll return', async ({ page }, info) => {
+    const errors: string[] = []
+    page.on('pageerror', error => errors.push(error.message))
+    const open = page.getByRole('button', { name: opener, exact: true })
+    await open.scrollIntoViewIfNeeded()
+    await open.focus()
+    await visibleFocus(open)
+    const before = await page.evaluate(() => scrollY)
+    await page.keyboard.press('Enter')
+    const dialog = page.getByRole('dialog', { name: 'Enlarged image' })
+    const close = dialog.getByRole('button', { name: 'Close enlarged image' })
+    await expect(close).toBeFocused()
+    await expect(position(page)).toContainText('Image 1 of 2: Gallery diagram one')
+    await expect(dialog.getByRole('img')).toHaveAttribute('alt', 'Gallery diagram one')
+    await expect(dialog).toContainText('First diagram: shared publishing paths.')
+    await expect(dialog.getByRole('button', { name: 'Previous image' })).toBeDisabled()
+    for (const key of ['Shift+Tab', ...Array(14).fill('Tab')]) {
+      await page.keyboard.press(key)
+      expect(await page.evaluate(() => !!document.activeElement?.closest('dialog'))).toBe(true)
+    }
+    await page.locator('main').evaluate(el => (el as HTMLElement).focus())
+    expect(await page.evaluate(() => !!document.activeElement?.closest('dialog'))).toBe(true)
+    await close.focus()
+    await page.keyboard.press('ArrowRight')
+    await expect(position(page)).toContainText('Image 2 of 2: Gallery diagram two')
+    await expect(dialog.getByRole('button', { name: 'Next image' })).toBeDisabled()
+    await expect(dialog.getByRole('region', { name: 'Image caption' })).toContainText('Second diagram')
+    await page.keyboard.press('ArrowRight')
+    await expect(position(page)).toContainText('Image 2 of 2')
+    await page.keyboard.press('ArrowLeft')
+    await expect(position(page)).toContainText('Image 1 of 2')
+    await scan(page, info, 'gallery-keyboard')
+    await page.keyboard.press('Escape')
+    await expect(dialog).toHaveCount(0)
+    await expect(open).toBeFocused()
+    await expect.poll(() => page.evaluate(() => scrollY)).toBeCloseTo(before, 0)
+    expect(await page.evaluate(() => document.body.style.position)).toBe('')
+    await page.keyboard.press('Space')
+    await expect(close).toBeFocused()
+    await close.click()
+    await expect(open).toBeFocused()
+    expect(errors).toEqual([])
+  })
+
+  for (const theme of ['light', 'dark'] as const) {
+    test(`captioned gallery, zoom/pan, ${theme}, 200% reflow and orientation`, async ({ page }, info) => {
+      await page.evaluate(theme => document.documentElement.dataset.theme = theme, theme)
+      await page.getByRole('button', { name: opener, exact: true }).click()
+      const dialog = page.getByRole('dialog')
+      const zoom = dialog.getByRole('button', { name: 'Zoom in', exact: true })
+      await expect(zoom).toBeEnabled()
+      await page.screenshot({ path: info.outputPath(`gallery-${theme}.png`) })
+      await zoom.click(); await zoom.click()
+      await expect(dialog).toContainText('300%')
+      const pan = dialog.getByRole('region', { name: /Enlarged image; scroll/ })
+      await pan.focus()
+      await page.keyboard.press('ArrowRight')
+      await expect.poll(() => pan.evaluate(el => el.scrollLeft)).toBeGreaterThan(0)
+      await expect(position(page)).toContainText('Image 1 of 2')
+      await page.screenshot({ path: info.outputPath(`zoom-${theme}.png`) })
+      await dialog.getByRole('button', { name: 'Reset image zoom' }).click()
+      await expect(pan).toHaveAttribute('data-zoomed', 'false')
+      await expect.poll(() => pan.evaluate(el => el.scrollLeft)).toBe(0)
+      await scan(page, info, `gallery-${theme}`)
+      await page.setViewportSize({ width: 320, height: 568 })
+      await page.evaluate(() => { document.documentElement.style.fontSize = '200%' })
+      expect(await dialog.evaluate(el => el.scrollWidth <= el.clientWidth + 1)).toBe(true)
+      const close = dialog.getByRole('button', { name: 'Close enlarged image' })
+      await close.focus(); await visibleFocus(close)
+      await page.setViewportSize({ width: 740, height: 360 })
+      await close.focus(); await visibleFocus(close)
+      await page.keyboard.press('Escape')
+      expect(await page.evaluate(() => document.body.style.position)).toBe('')
+    })
+  }
+
+  test('linked/interactive/opted-out figures, single images, separate groups and route cleanup', async ({ page }) => {
+    for (const alt of ['Linked diagram', 'Interactive diagram', 'Disclosure diagram', 'Opted out diagram']) {
+      await expect(page.getByRole('button', { name: `Enlarge image: ${alt}`, exact: true })).toHaveCount(0)
+    }
+    await expect(page.locator('a button, button button, summary button')).toHaveCount(0)
+    await expect(page.getByRole('link').filter({ has: page.getByAltText('Linked diagram') })).toHaveAttribute('href', '/images/rich-fixture.svg')
+    await page.getByRole('button', { name: 'Enlarge image: Separate diagram', exact: true }).click()
+    await expect(position(page)).toContainText('Image 1 of 1')
+    await expect(page.getByRole('navigation', { name: 'Image gallery' })).toHaveCount(0)
+    await page.keyboard.press('ArrowRight')
+    await expect(position(page)).toContainText('Image 1 of 1')
+    await page.keyboard.press('Escape')
+    await page.getByRole('button', { name: 'Enlarge image: Shared renderer illustration', exact: true }).click()
+    await expect(position(page)).toContainText('Image 1 of 1')
+    await expect(page.getByRole('region', { name: 'Image caption' })).toHaveText('Notion caption')
+    await page.keyboard.press('Escape')
+    await page.getByRole('button', { name: opener, exact: true }).click()
+    await page.evaluate(() => { history.pushState({}, '', '/blog/'); dispatchEvent(new PopStateEvent('popstate')) })
+    await expect(page.getByRole('dialog')).toHaveCount(0)
+    expect(await page.evaluate(() => document.body.style.position)).toBe('')
+  })
+
+  test('loading/failure leave close and original fallback available', async ({ page }) => {
+    await page.route('**/images/rich-fixture.svg?failure', route => route.fulfill({ status: 404, body: 'missing' }))
+    await page.getByRole('button', { name: 'Enlarge image: Unavailable diagram', exact: true }).click()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByRole('alert')).toContainText('Image could not load')
+    await expect(dialog.getByRole('link', { name: 'Open original image (new tab)' })).toHaveAttribute('href', '/images/rich-fixture.svg?failure')
+    await expect(dialog.getByRole('button', { name: 'Zoom in', exact: true })).toBeDisabled()
+    await dialog.getByRole('button', { name: 'Close enlarged image' }).click()
+    let release!: () => void
+    const held = new Promise<void>(resolve => { release = resolve })
+    await page.route('**/images/rich-fixture.svg?slow', async route => { await held; await route.continue() })
+    await page.getByAltText('Gallery diagram one', { exact: true }).evaluate(el => { (el as HTMLImageElement).src = '/images/rich-fixture.svg?slow' })
+    await page.getByRole('button', { name: opener, exact: true }).click()
+    await expect(dialog.getByText('Loading image…', { exact: true })).toBeVisible()
+    await expect(dialog.getByRole('button', { name: 'Close enlarged image' })).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(dialog).toHaveCount(0)
+    release()
+  })
+
+  test('swipe at fit size; vertical gestures, pinch and zoom retain scrolling', async ({ page }) => {
+    await page.getByRole('button', { name: opener, exact: true }).click()
+    const pan = page.locator('.image-pan')
+    const swipe = async (dx: number, dy: number) => {
+      await pan.dispatchEvent('pointerdown', { pointerId: 1, isPrimary: true, pointerType: 'touch', clientX: 200, clientY: 200 })
+      await pan.dispatchEvent('pointerup', { pointerId: 1, isPrimary: true, pointerType: 'touch', clientX: 200 + dx, clientY: 200 + dy })
+    }
+    await swipe(-100, 120)
+    await expect(position(page)).toContainText('Image 1 of 2')
+    await swipe(-100, 0)
+    await expect(position(page)).toContainText('Image 2 of 2')
+    await swipe(100, 0)
+    await expect(position(page)).toContainText('Image 1 of 2')
+    await pan.dispatchEvent('pointerdown', { pointerId: 1, isPrimary: true, pointerType: 'touch', clientX: 200, clientY: 200 })
+    await pan.dispatchEvent('touchstart', { touches: [{ identifier: 1, clientX: 200, clientY: 200 }, { identifier: 2, clientX: 220, clientY: 200 }] })
+    await pan.dispatchEvent('pointerup', { pointerId: 1, isPrimary: true, pointerType: 'touch', clientX: 50, clientY: 200 })
+    await expect(position(page)).toContainText('Image 1 of 2')
+    await pan.dispatchEvent('touchend', { touches: [] })
+    await page.getByRole('button', { name: 'Zoom in', exact: true }).click()
+    await swipe(-100, 0)
+    await expect(position(page)).toContainText('Image 1 of 2')
+    // CSSOM canonicalizes pan-x pan-y pinch-zoom to manipulation.
+    await expect(pan).toHaveCSS('touch-action', 'manipulation')
+  })
+
+  test('direct visits and reload hydrate without runtime/console errors', async ({ page }) => {
+    const errors: string[] = []
+    page.on('pageerror', error => errors.push(error.message))
+    page.on('console', message => { if (message.type() === 'error' && !message.text().includes('Failed to load resource')) errors.push(message.text()) })
+    await page.goto(route)
+    await expect(page.getByRole('button', { name: opener, exact: true })).toBeVisible()
+    await page.reload()
+    await expect(page.getByRole('button', { name: opener, exact: true })).toBeVisible()
+    expect(errors).toEqual([])
+  })
+
+  test('no-JavaScript keeps plain figures, captions and ordinary links', async ({ browser, baseURL }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false, baseURL })
+    const page = await context.newPage()
+    await page.goto(route)
+    await expect(page.getByAltText('Gallery diagram one')).toBeVisible()
+    await expect(page.locator('figcaption').filter({ hasText: 'First diagram:' })).toBeVisible()
+    await expect(page.locator('.article-image-open')).toHaveCount(0)
+    await expect(page.getByRole('link').filter({ has: page.getByAltText('Linked diagram') })).toHaveAttribute('href', '/images/rich-fixture.svg')
+    await context.close()
+  })
+})

@@ -113,7 +113,7 @@ These are encoded file sizes, not measured production LCP/CLS or full-page
 network savings. Actual transfer depends on browser choice and display density.
 Real-device visual review, production LCP/CLS comparison and live Notion
 acceptance remain necessary. No performance score or clinical fidelity is claimed.
-Lightbox/gallery remains #59.
+See the enlargement/gallery contract below.
 
 Missing local references fail content validation; malformed/oversized raster
 assets fail image generation with a source path. For a missing generated URL,
@@ -127,3 +127,56 @@ The URL-safety removal policy takes precedence over compatibility retention for
 unpublished Notion pages: their source media can remain in Git, but it is omitted
 from the public image manifest and deployment artifact. Stale transformation
 cache files are also removed from the artifact. See [slug history](REDIRECTS.md).
+
+## Enlarged images and galleries (#59)
+
+Descriptive article images gain an adjacent **Enlarge image** button after MDX
+hydration. Empty-alt decoration, linked images, images inside interactive controls
+and ancestors with `data-lightbox="off"` stay static. Existing links retain their
+ordinary destination. No nested links or buttons are introduced. The original
+picture, responsive sources, dimensions, lazy-loading overrides and captions remain
+visible without JavaScript; no dead enlargement controls appear in static HTML.
+
+Ungrouped images open individually. Explicit repository-authored MDX galleries use
+the existing registry:
+
+```mdx
+<Gallery label="Deployment diagrams">
+
+<Figure src="/images/diagram-a.png" alt="Describe the first diagram"
+  caption="Explain the first diagram." />
+
+<Figure src="/images/diagram-b.png" alt="Describe the second diagram"
+  caption="Explain the second diagram." />
+
+</Gallery>
+```
+
+Only eligible images in the nearest Gallery participate, in article order.
+Boundaries never wrap or cross groups. One-image galleries have no navigation.
+Notion's existing native figure/img/figcaption output uses the same enhancement,
+with individual views by default. No new Notion property, importer migration,
+adjacency inference or publisher-owned MDX rewrite is introduced. Caption text is
+preserved in the dialog; rich formatting and caption links remain in the article.
+
+Enter/Space opens; Escape or Close restores the originating button and scroll.
+The native modal top layer makes background content inert; explicit Tab wrapping
+contains focus. Outside clicks do not dismiss. Previous/Next and unmodified
+Left/Right outside the pan viewport select images. Arrows inside the viewport
+retain native scrolling. Zoom in/out scales 100–400%; Reset returns to fit.
+Scroll, touch pan or mouse drag explores zoomed detail. A horizontal one-finger
+swipe at fit size navigates; vertical gestures and multi-touch do not. Browser
+pinch zoom remains available. Controls and long captions scroll within the viewport.
+The overlay uses existing theme/focus tokens and introduces no motion.
+
+Dialog code/styles load on demand. Responsive picture sources are reused with
+viewport/zoom-aware sizes; article load does not force full-resolution downloads.
+Loading and failure are announced, with Close and a separate original-image link
+always available. Route changes clean up the modal and scroll lock. Original media
+URLs, article identity, eligibility, ownership and bodies are unchanged.
+
+`node --test scripts/rich-content.test.mjs` builds isolated manual and converter-
+generated Notion fixtures and runs `lightbox.spec.ts`, rich-content and print
+journeys. Screenshots/axe evidence are retained under `artifacts/rich-content/`.
+The fixture never enters the production corpus. Fast PR CI skips browser jobs;
+full browser acceptance is required separately before merge.

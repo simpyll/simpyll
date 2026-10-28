@@ -1,3 +1,4 @@
+import { ArticleImages } from '../components/mdx/ArticleLightbox'
 import { Suspense } from 'react'
 import { articleElement } from '../lib/article-loader'
 import { RelatedProjects } from '../components/RelatedProjects'
@@ -80,7 +81,7 @@ export function BlogPost() {
 
             {post.headings.length > 1 && <div className="toc-mobile-slot"><ArticleToc key={post.slug} headings={post.headings} /></div>}
             <div className="prose article-content mt-12 max-w-none">
-              <Suspense fallback={<p role="status">Loading article…</p>}><MDXProvider components={mdxComponents}>{articleElement(post.slug)}</MDXProvider></Suspense>
+              <Suspense fallback={<p role="status">Loading article…</p>}><ArticleImages key={post.slug}><MDXProvider components={mdxComponents}>{articleElement(post.slug)}</MDXProvider></ArticleImages></Suspense>
             </div>
 
             <ArticleEditorialHistory metadata={metadata} />
