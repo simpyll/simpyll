@@ -1,3 +1,4 @@
+import { generateSocialCards } from './social-cards.mjs'
 import { projectHead } from './performance/route-assets.mjs'
 import { readFileSync } from 'node:fs'
 const policyRoutes = JSON.parse(readFileSync(new URL('../src/content/policies.json', import.meta.url), 'utf8')).map(({ slug }) => `/${slug}`)
@@ -16,6 +17,7 @@ const blogDirectory = join(root, 'src/content/blog')
 const serverEntry = join(root, 'dist-server/entry-server.js')
 
 async function prerender() {
+  await generateSocialCards(root)
   await removeInactiveMedia(root)
   const { render, getSiteUrl, siteConfig } = await import(pathToFileURL(serverEntry).href)
   const template = await readFile(

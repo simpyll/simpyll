@@ -6,6 +6,10 @@ type SEOProps = {
   title: string
   description: string
   path?: string
+  imageType?: string
+  imageAlt?: string
+  imageWidth?: number
+  imageHeight?: number
   image?: string
   type?: 'website' | 'article'
   robots?: string
@@ -17,6 +21,10 @@ export function SEO({
   description,
   path = '/',
   image,
+  imageType,
+  imageAlt,
+  imageWidth,
+  imageHeight,
   type = 'website',
   noindex = false,
   robots,
@@ -56,6 +64,12 @@ export function SEO({
       {imageUrl && (
         <meta property="og:image" content={imageUrl} />
       )}
+
+      {imageAlt && <meta property="og:image:alt" content={imageAlt} />}
+      {imageWidth && <meta property="og:image:width" content={String(imageWidth)} />}
+      {imageHeight && <meta property="og:image:height" content={String(imageHeight)} />}
+      {imageType && <meta property="og:image:type" content={imageType} />}
+      {imageAlt && <meta name="twitter:image:alt" content={imageAlt} />}
 
       <meta
         name="twitter:card"
