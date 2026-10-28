@@ -3,7 +3,7 @@
 ## Current scheduling and dependency update — October 27, 2026
 
 - #184 is closed as not planned; #43 is deferred by owner decision. Neither is a prerequisite for #82.
-- #82 remediation proposes React Router 7.18.4 and a scoped typography parser override; audits report zero findings on the proposed branch. Merge and final browser validation remain outstanding. See `docs/DEPENDENCY-MAINTENANCE.md`.
+- #82 update (October 28): remediation merged in #196; clean-install full and production audits on main `37b3b97`, revalidated at `4d0265a`, report zero vulnerabilities. No further dependency upgrade is needed. Full browser/visual acceptance remains outstanding after local browser crashes/download and host-library failures; owner must inspect the existing full manual matrix and representative layouts before closure. The scoped parser override remains an owner maintenance item. See `docs/audits/simpyll-dependency-acceptance-2026-10-28.md`.
 - MIT source licensing was implemented in #195; separate asset-provenance work is not complete.
 
 ## A. Project mission
