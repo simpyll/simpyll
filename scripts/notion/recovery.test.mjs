@@ -119,7 +119,7 @@ test('monthly workflow is isolated, read-only and independent of publisher/audit
   assert.match(workflow, /contents: read/); assert.match(workflow, /persist-credentials: false/)
   assert.doesNotMatch(workflow, /secrets\.|contents: write|pages:|git push|npm run build|workflow_call/)
   assert.match(await readFile('.github/workflows/notion-publish.yml', 'utf8'), /cron: '\*\/15 \* \* \* \*'/)
-  assert.match(await readFile('.github/workflows/publishing-health.yml', 'utf8'), /cron: '37 9 \* \* 0'/)
+  assert.match(await readFile('.github/workflows/publishing-health.yml', 'utf8'), /cron: '37 \* \* \* \*'/)
 })
 
 test('full snapshot removes newer owned articles while preserving manual files and configuration', async t => {

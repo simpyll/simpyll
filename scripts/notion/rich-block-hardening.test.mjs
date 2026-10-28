@@ -94,7 +94,7 @@ test('privacy boundaries reject original and referenced synced blocks, subpages 
     for (const has_children of [false, true]) {
       let calls = 0
       await assert.rejects(readBlocks(async () => {
-        calls++; return { results: [block(type, 'PRIVATE TITLE', { has_children, synced_block: { synced_from: { block_id: PAGE } } })] }
+        calls++; return { has_more: false, results: [block(type, 'PRIVATE TITLE', { has_children, synced_block: { synced_from: { block_id: PAGE } } })] }
       }, ROOT), error => {
         assert.match(error.message, /privacy boundary/); assert.doesNotMatch(error.message, /PRIVATE TITLE/); return true
       })
@@ -105,7 +105,7 @@ test('privacy boundaries reject original and referenced synced blocks, subpages 
 
 test('cycles, excessive recursion and aggregate block counts fail with bounded API calls', async () => {
   let calls = 0
-  await assert.rejects(readBlocks(async () => { calls++; return { results: [block('paragraph', 'cycle', { id: ROOT, has_children: true })] } }, ROOT), /cycle/)
+  await assert.rejects(readBlocks(async () => { calls++; return { has_more: false, results: [block('paragraph', 'cycle', { id: ROOT, has_children: true })] } }, ROOT), /cycle/)
   assert.equal(calls, 1)
   const cyclic = block('paragraph', 'cycle'); cyclic.children = [cyclic]
   await assert.rejects(convertBlocks([cyclic]), /cycle/)
@@ -114,11 +114,11 @@ test('cycles, excessive recursion and aggregate block counts fail with bounded A
   await assert.rejects(convertBlocks([nested]), /nesting limit/)
   const many = Array.from({ length: 10_001 }, () => block('paragraph', 'x'))
   await assert.rejects(convertBlocks(many), /block.*limit/)
-  await assert.rejects(readBlocks(async () => ({ results: many }), ROOT), /limit/)
+  await assert.rejects(readBlocks(async () => ({ has_more: false, results: many }), ROOT), /limit/)
   let index = 1
-  await assert.rejects(readBlocks(async () => ({ results: [block('toggle', 'x', { id: (++index).toString(16).padStart(32, '0'), has_children: true })] }), ROOT), /nesting limit/)
+  await assert.rejects(readBlocks(async () => ({ has_more: false, results: [block('toggle', 'x', { id: (++index).toString(16).padStart(32, '0'), has_children: true })] }), ROOT), /nesting limit/)
   let batch = 0
-  await assert.rejects(readBlocks(async () => ({ results: batch++ === 0
+  await assert.rejects(readBlocks(async () => ({ has_more: false, results: batch++ === 0
     ? [block('paragraph', 'nested', { has_children: true }), ...many.slice(0, 5000)] : many.slice(0, 5000) }), ROOT), /block.*limit/)
 })
 

@@ -12,8 +12,8 @@ try {
     },
   })
   console.log(`Notion sync: ${result.articles} published articles; ${result.changed ? 'changes detected' : 'unchanged'}${process.argv.includes('--dry-run') ? ' (read-only)' : ''}.`)
-} catch (error) {
+} catch {
   // Compiler errors can contain article excerpts; do not print them or API payloads.
-  console.error(error.name === 'VFileMessage' ? 'Notion sync failed: MDX validation error.' : `Notion sync failed: ${error.message}`)
+  console.error('Notion sync failed: source access, conversion, ownership or content validation failed. Inspect sanitized stage evidence and retry on trusted main.');
   process.exitCode = 1
 }

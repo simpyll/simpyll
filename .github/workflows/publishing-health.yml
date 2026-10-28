@@ -1,28 +1,81 @@
-name: Weekly Notion publishing audit
+name: Notion publishing health and incidents
 on:
   schedule:
-    - cron: '37 9 * * 0'
+    - cron: '37 * * * *'
   workflow_dispatch:
 permissions:
   contents: read
   actions: read
   deployments: read
 concurrency:
-  group: weekly-publishing-health
+  group: publishing-incident-writer
   cancel-in-progress: false
 jobs:
   audit:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+          ref: main
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '24'
       - name: Audit publishing metadata
+        id: health
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: node scripts/publishing-health.mjs
+      - run: npm ci
+      - name: Observe eligible revisions on remote main (read only)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          NOTION_API_TOKEN: ${{ secrets.NOTION_API_TOKEN }}
+          NOTION_PAGE_ID: ${{ secrets.NOTION_PAGE_ID }}
+        run: node scripts/publishing-incidents.mjs
+      - name: Upload allowlisted operational evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: publishing-incident-observation
+          path: /tmp/publishing-incidents.json
+          if-no-files-found: warn
+          retention-days: 2
+      - name: Preserve metadata audit result
+        if: always() && steps.health.outcome == 'failure'
+        run: exit 1
+
+  incidents:
+    needs: audit
+    if: always() && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          ref: main
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        continue-on-error: true
+        with:
+          name: publishing-incident-observation
+          path: /tmp
+      - name: Reconcile durable incident issues
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PUBLISHING_GRACE_HOURS: ${{ vars.PUBLISHING_GRACE_HOURS || '6' }}
+        run: node scripts/publishing-incidents.mjs --write
+      - name: Preserve reader failure visibility
+        if: needs.audit.result != 'success'
+        run: exit 1

@@ -121,13 +121,15 @@ test('permission, rate limit, server, network and JSON errors never leak respons
     assert.equal((await audit(githubClient({ repository: 'simpyll/simpyll', token: 'SECRET', fetcher }), now)).status, 'Unknown')
   }
 })
-test('workflow stays weekly, read-only and dependency free; tests join existing validation', () => {
+test('health observation and narrowly scoped issue writing stay main-only; tests join existing validation', () => {
   const workflow = readFileSync('.github/workflows/publishing-health.yml', 'utf8')
-  assert.match(workflow, /37 9 \* \* 0/)
+  assert.match(workflow, /37 \* \* \* \*/)
   assert.match(workflow, /workflow_dispatch:/)
   assert.match(workflow, /actions: read/)
   assert.match(workflow, /deployments: read/)
-  assert.doesNotMatch(workflow, /npm ci|npm run build|playwright|secrets\.|write|pull_request_target/)
+  assert.doesNotMatch(workflow, /npm run build|playwright|pull_request_target/)
+  assert.doesNotMatch(workflow.split('  incidents:')[1], /secrets\./)
+  assert.match(workflow, /issues: write/)
   assert.match(readFileSync('.github/workflows/notion-publish.yml', 'utf8'), /cron: '\*\/15 \* \* \* \*'/)
   assert.match(readFileSync('.github/workflows/validate.yml', 'utf8'), /node --test scripts\/publishing-health.test.mjs/)
 })

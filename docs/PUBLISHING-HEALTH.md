@@ -1,19 +1,155 @@
-# Weekly Notion publishing health
+# Notion publishing health and incidents
 
-The **Weekly Notion publishing audit** runs Sundays at **09:37 UTC**
-(`37 9 * * 0`) and supports **Actions → Weekly Notion publishing audit → Run
-workflow → main**. Open the run's Summary for its native job summary. It installs
-no dependencies, reads only GitHub metadata, and does not build, publish, download
-artifacts, read Notion, probe pages, or require a new secret. Its concurrency group
-is independent of Pages and the publisher. The existing `*/15 * * * *` publisher
-schedule and production availability workflow are unchanged.
+The **Notion publishing health and incidents** workflow runs hourly at minute 37
+(`37 * * * *`) and manually on **main**. It extends the former weekly metadata
+audit; it does not replace the publisher. The publisher's nominal 15-minute cron
+is unchanged. GitHub cron is best effort, not a 15-minute service guarantee.
+Observed October 28 publisher executions were several hours apart.
+
+The read job fetches main without persisted Git credentials, installs existing
+locked dependencies, reads GitHub metadata and uses the existing Notion publisher
+in read-only planning mode. Only this main-only job receives existing Notion
+secrets. It never builds or writes generated content. Its two-day artifact contains
+strictly validated operational enums, opaque SHA-256 keys/revision digests,
+numeric timestamps and a workflow run number. No source ID, title, body, slug,
+media URL or provider/compiler error is serialized.
+
+The separate issue writer has `contents:read` and `issues:write`, receives no Notion
+credentials and consumes only this run's artifact (maximum age one hour). Missing
+or invalid evidence produces a system incident, never inferred missing articles.
+An audit failure still fails the workflow after evidence upload and issue writing.
+No PR event, `pull_request_target`, feature-branch publication or external service
+is involved.
+
+The existing six-hour **Production availability** workflow independently checks
+the health workflow's active state and last successful heartbeat. Its separate
+Notion-free watchdog shares this same issue writer, ledger and concurrency group.
+It cannot hide behind a failed publisher or disabled health workflow. If all
+GitHub Actions or both independent schedules stop, GitHub cannot run an alert;
+inspect Actions notifications and manually dispatch after service recovery.
+
+## Article revision and transfer evidence
+
+Publication gates remain the original source discovered from `NOTION_PAGE_ID`,
+exact `Published` status, not archived/trashed, required metadata, unique ownership,
+conversion/media/content validation and the production build. Published Date is
+metadata, **not a scheduling gate**; existing dates stay immutable. Notion's own
+web-publish switch is not Simpyll's status gate.
+
+The version-1 manifest gains optional `sourceRevision`: a canonical SHA-256 digest
+of stable page identity, provider revision and allowlisted publishing properties.
+Old manifests remain readable; the next ordinary successful publisher run adds
+revision evidence without rewriting article bodies or changing identity/dates.
+A technical source edit may now create a manifest-only revision commit; the next
+unchanged synchronization is a no-op. Media signatures and unrelated properties
+are excluded from this fingerprint.
+
+A full dry plan compares the expected article and owned-media digests with the
+fetched **remote main checkout**, its ownership manifest and source revision.
+The incident's expected revision digest combines source evidence and planned
+output digests, so body changes are detected even with unchanged source timestamps.
+Local writes, a dry run, local commits or rejected pushes cannot prove transfer.
+No new content is committed by this monitor. Old records without revision evidence
+remain pending until normal publishing establishes it; no arbitrary main edits.
+
+Complete query pagination is required before observing articles. Discovery/query
+failure leaves prior article incidents unresolved and creates system evidence
+instead. Conversion failures preserve known missing/outdated expectations. An
+intact old output with matching provider fingerprint is **unknown** when the full
+plan fails; it cannot close a pending incident. A complete inventory may retire an
+expectation when status changes, archive/trash or intentional unpublishing removes
+eligibility; its resolution explicitly says eligibility was withdrawn, not that
+content transferred.
+
+## Grace, durable state and lifecycle
+
+`PUBLISHING_GRACE_HOURS` is a repository variable, default **6**, allowed **1–168**.
+An article must remain pending for that long from its first complete observation.
+Edits during an unresolved incident update the expected revision without resetting
+the delay. Healthy observations reset a transient pending incident. Source/system
+errors also require sustained observation for this grace, on top of the metadata
+thresholds below. The watchdog treats a disabled monitor or no successful health
+run within six hours as missing evidence, then applies the same grace. Its six-hour
+cadence and GitHub schedule delays mean notification is not an exact deadline.
+
+One operational issue beginning with `simpyll-publishing-ledger:v1` holds only
+allowlisted opaque state, including first/last observation, expected revision,
+category, occurrence and resolution. Do not edit/delete it. Clean checkouts do not
+reset state. The JSON is bounded below GitHub's issue-body limit; capacity or
+malformed state fails visibly for manual archival instead of dropping incidents.
+
+After the threshold, one issue per opaque article/system key is created and
+assigned to the verified individual repository owner `simpyll` (GitHub ID 8688524),
+after checking assignment eligibility. A repository transfer requires an explicit
+owner-policy review. Only owner/bot-authored issue markers are trusted. Listing
+uses paginated issue API results rather than eventually indexed search.
+
+Both workflows use `publishing-incident-writer`, with cancellation disabled for
+writing. This serialization is required: GitHub issues have no atomic unique-key
+constraint. Never run a second manual writer outside that concurrency contract.
+State saves before incident creation. An ambiguous POST response is not retried;
+the next serialized run recovers the marker from GitHub. Partial PATCH failures
+fail the run and retry the same issue next time. Duplicate trusted markers fail
+closed for manual reconciliation. No repetitive comments are posted. The incident
+body refreshes on lifecycle/category/assignment changes or daily; exact last-check
+state is retained in the ledger on each run.
+
+Successful full remote revision verification closes a transfer incident. A new
+failure after recovery gets a fresh grace and reopens the **same issue**, incrementing
+its occurrence. A complete withdrawal of eligibility is separately explained.
+Deployment/verification failures remain distinct system incidents; closing a
+transfer incident does not claim website publication. A no-op publisher does not
+redeploy a previously committed revision.
+
+Fixed categories are `notion-access-query`, `eligibility-configuration`,
+`conversion-content-media`, `build-budget`, `commit-push`, `deployment`,
+`execution-stalled`, `monitor-evidence`, and `unknown`. Build/push categories use
+allowlisted latest workflow stage evidence, not causal claims about every page;
+post-import validation can also fail for reasons other than budgets. Raw errors
+are never included. Missing/stalled/cancelled scheduling ultimately escalates
+through stale success/schedule evidence; cancellation alone is not proof of failure.
+
+## Owner notification and controlled acceptance
+
+Assignment is verified independently of delivery. The owner must enable GitHub
+notifications for **Participating and @mentions** (including assigned issues),
+choose email and/or mobile push in notification settings, and ensure this repo is
+not ignored. For broader system visibility, watch Actions failures and issue
+activity. Do not change settings silently or assume self-authored assignments
+send the same notifications as `github-actions[bot]`.
+
+[Controlled issue #203](https://github.com/simpyll/simpyll/issues/203) used one
+non-sensitive manual connector issue and this implementation's deterministic
+state/render functions: assignment, reread with zero comments, simulated recovery,
+recurrence on the same issue and final closure succeeded. It did **not** run the
+unmerged automatic writer or validate real remote revision recovery. A focused
+connected-inbox search found no matching email; bot-origin email/push delivery is
+still unaccepted. Offline tests cover actual writer transport failures and state
+semantics. Do not publish synthetic content or intentionally fail production.
+
+After review/merge, run this workflow on main and verify its ledger/artifact and
+permissions, then exercise a bounded controlled fixture through the trusted writer
+under the same concurrency contract. Inspect bot assignment and actual owner
+notification delivery. Verify the real article's ordinary publisher content SHA,
+exact release deployment and live body/discovery, then a second unchanged sync.
+Keep #199 open until these outcomes are recorded. #67's owner closure does not
+establish those outcomes. See the dated audit for precise access blockers.
+
+## Rollback
+
+Revert workflow/script changes through a reviewed PR; disable only new incident
+steps if immediate containment is needed. Preserve the opaque ledger and incident
+issues so re-enabling does not reset grace/deduplication. Never delete legitimate
+published MDX/media or roll main content back to remove the optional revision field.
+Older publisher/recovery readers accept the optional field. No budget/gate rollback
+is needed because no budgets or publication gates change.
 
 ## Evidence and thresholds
 
 | Status | Meaning |
 |---|---|
 | Healthy | Recent scheduled sync job succeeded, and available deployment evidence is consistent. |
-| Warning | Sync/schedule is over 6 hours old, an isolated failure remains, deployment is pending, or a workflow has been pending over an hour. No failure notification. |
+| Warning | Sync/schedule is over 6 hours old, an isolated failure remains, deployment is pending, or a workflow has been pending over an hour. The metadata report itself does not send a notification; the sustained incident writer above handles escalation. |
 | Action Required | Success/schedule is over 24 hours old; at least three unrecovered sync failures span at least one hour; a deployment/verification failure remains over one hour; or a manifest commit remains undeployed over six hours. Audit exits 1. |
 | Unknown | Missing history, missing successful Pages/verification evidence, incomplete jobs, malformed API data, network errors, permission errors or rate limits prevent verification. Audit exits 1; this is a verification failure, not proof of a publishing outage. |
 
@@ -64,22 +200,18 @@ audit itself can also be delayed/skipped; manual dispatch is the fallback.
 
 The summary is produced on every completed audit, including API failures, without
 publishing API payloads, job names, commit messages, inputs or article contents.
-Confirmed actionable failures and Unknown verification failures fail this weekly
+Confirmed actionable failures and Unknown verification failures fail this hourly
 workflow. GitHub's native Actions notifications can surface that failure; no
 email delivery is guaranteed. In your GitHub account **Settings → Notifications →
 System → Actions**, enable email notifications and optionally failed workflows
 only. Check the selected email address and repository subscription settings.
-No email API, webhook, weekly issue, healthy-run comment or per-sync alert is
-introduced. Existing publisher/deployment notification settings remain yours to
-control. A checkout/runner failure before the script starts may prevent a report;
-inspect the job logs in that case.
-
-[Issue #199](https://github.com/simpyll/simpyll/issues/199) owns automatic
-article-level incident issues, durable eligible-revision detection, deduplication,
-owner assignment and actual notification-route acceptance. Those notifications
-are not activated by filing the issue or by this report. #67 remains open until
-its recovery/live acceptance and the explicitly delegated failure-visibility
-acceptance in #199 are met.
+No email API, webhook or external notification service is introduced. The
+sustained incident writer described above creates assigned GitHub issues; it
+adds no healthy-run comments or per-sync notifications. A checkout/runner failure
+can prevent a report; the independent availability watchdog checks monitor
+freshness. #199 remains open for hosted lifecycle and notification acceptance.
+#67 was owner-closed after #202 merged; that closure does not establish actual
+article transfer/deployment/no-op recovery. Record unmet acceptance in #199/#89.
 
 ## Manual recovery
 
@@ -107,7 +239,7 @@ acceptance in #199 are met.
    deployment or manually deploy current main. A no-op publisher will not redeploy.
    Confirm the deployed SHA includes the content commit and public verification
    succeeds; allow queue/build/propagation time before declaring another outage.
-7. Run the weekly audit manually on main to verify recovery. If the failure was
+7. Run the health workflow manually on main to verify recovery. If the failure was
    schedule staleness, a manual publisher does not reset that signal: wait for a
    scheduled sync to succeed and confirm the publisher schedule is enabled.
 8. For DNS, HTTPS, missing routes or public availability, use
