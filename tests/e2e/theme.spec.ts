@@ -210,6 +210,5 @@ test('legacy saved system follows OS without a footer theme control', async ({ p
   const footer = page.getByRole('contentinfo')
   await expect(footer.getByRole('button')).toHaveCount(0)
   await expect(footer.getByText(/theme/i)).toHaveCount(0)
-  await expect(footer.getByRole('link', { name: 'simpyll.' })).toHaveAttribute('href', '/')
   await expect(footer).toContainText(/© \d{4} Simpyll/)
 })

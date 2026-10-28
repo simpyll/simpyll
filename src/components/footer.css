@@ -1,10 +1,10 @@
-.site-footer { display: grid; gap: 1.75rem; padding-block: 2.5rem; align-items: start; }
-.footer-socials { display: flex; gap: .5rem; margin-top: .5rem; margin-left: -.75rem; }
-.footer-socials a { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; color: var(--ui-muted); border-radius: .5rem; }
-.footer-socials a:hover, .footer-contribution:hover { color: var(--ui-accent); }
-.footer-contribution { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; width: fit-content; max-width: 100%; }
-.footer-copyright { line-height: 1.6; }
-@media (min-width: 640px) { .site-footer { grid-template-columns: 1fr 1fr; gap: 1.5rem 3rem; } .footer-connect { grid-column: 2; grid-row: 1 / span 2; } .footer-copyright { grid-column: 1 / -1; border-top: 1px solid var(--ui-outline); padding-top: 1.5rem; } }
-@media (min-width: 960px) { .site-footer { grid-template-columns: 1fr 1fr auto; } .footer-connect { grid-row: 1; } .footer-contribution { grid-column: 3; } }
-
-.footer-legal { grid-column: 1 / -1; }
+.site-footer { display: grid; gap: 2rem; padding-block: 2.5rem; align-items: start; }
+.footer-socials { display: flex; gap: .5rem; margin-top: .5rem; }
+.footer-socials a { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; color: var(--ui-muted); border-radius: .5rem; }
+.footer-socials a:hover, .footer-socials a:focus-visible, .footer-contribution:hover { color: var(--ui-accent); }
+.footer-icon-label { position: absolute; top: 100%; left: 0; width: max-content; padding: .125rem .25rem; border-radius: .25rem; background: var(--ui-canvas); color: var(--ui-foreground); font-size: .75rem; line-height: 1.5; visibility: hidden; }
+.footer-socials a:hover .footer-icon-label, .footer-socials a:focus-visible .footer-icon-label { visibility: visible; }
+.footer-contribution { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; width: fit-content; max-width: 100%; margin-top: 1.5rem; }
+.footer-legal ul { display: flex; flex-direction: column; margin-top: .5rem; }
+.footer-copyright { grid-column: 1 / -1; border-top: 1px solid var(--ui-outline); padding-top: 1.5rem; text-align: center; line-height: 1.6; }
+@media (min-width: 640px) { .site-footer { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 3rem; } }
