@@ -55,10 +55,26 @@ function ImageView({ slide, navigate }: { slide: Slide; navigate: (delta: number
   const [zoom, setZoom] = useState(1)
   const [state, setState] = useState<'loading' | 'loaded' | 'error'>('loading')
   const pan = useRef<HTMLDivElement>(null)
+  const [viewport, setViewport] = useState({ width: 0, height: 0 })
   const img = useRef<HTMLImageElement>(null)
   const gesture = useRef<{ x: number; y: number; left: number; top: number; id: number } | null>(null)
   const touches = useRef(0)
   const sources = [...(slide.image.closest('picture')?.querySelectorAll('source') ?? [])]
+  useEffect(() => {
+    const element = pan.current!
+    const observer = new ResizeObserver(() => setViewport({ width: element.clientWidth, height: element.clientHeight }))
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [])
+  useEffect(() => {
+    const element = pan.current!
+    element.scrollTo({ left: (element.scrollWidth - element.clientWidth) / 2, top: (element.scrollHeight - element.clientHeight) / 2, behavior: 'instant' })
+  }, [zoom])
+  const ratio = slide.image.naturalWidth / slide.image.naturalHeight || 1
+  const fittedWidth = Math.min(viewport.width, viewport.height * ratio)
+  const fittedHeight = fittedWidth / ratio
+  const responsiveSize = viewport.width ? `${Math.ceil(fittedWidth * zoom)}px` : slide.image.sizes || '(max-width: 800px) calc(100vw - 32px), 768px'
+  const canvas = viewport.width ? { width: Math.max(viewport.width, fittedWidth * zoom), height: Math.max(viewport.height, fittedHeight * zoom) } : { width: '100%', height: '100%' }
   useEffect(() => { if (img.current?.complete) setState(img.current.naturalWidth ? 'loaded' : 'error') }, [])
   return <>
     <div className="image-dialog-tools" role="group" aria-label="Image zoom"><button type="button" aria-label="Zoom in" disabled={zoom >= 4 || state !== 'loaded'} onClick={() => setZoom(value => Math.min(4, value + 1))}>Zoom in</button><button type="button" aria-label="Zoom out" disabled={zoom <= 1} onClick={() => setZoom(value => Math.max(1, value - 1))}>Zoom out</button><button type="button" aria-label="Reset image zoom" onClick={() => { setZoom(1); pan.current?.scrollTo(0, 0) }}>Reset</button><span>{zoom * 100}%</span><a href={slide.image.dataset.originalSrc ?? slide.image.src} target="_blank" rel="noopener noreferrer">Open original image (new tab)</a></div>
@@ -79,8 +95,8 @@ function ImageView({ slide, navigate }: { slide: Slide; navigate: (delta: number
       const dx = event.clientX - start.x, dy = event.clientY - start.y
       if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 2) navigate(dx < 0 ? 1 : -1)
     }}>
-      <div className="image-zoom-canvas" style={{ width: `${zoom * 100}%`, height: `${zoom * 100}%` }}>
-        <picture>{sources.map((source, i) => <source key={i} type={source.type} srcSet={source.srcset} sizes={`${zoom * 100}vw`} />)}<img ref={img} src={slide.image.src} srcSet={slide.image.srcset || undefined} sizes={`${zoom * 100}vw`} alt={slide.image.alt} draggable={false} onLoad={() => setState('loaded')} onError={() => setState('error')} /></picture>
+      <div className="image-zoom-canvas" style={canvas}>
+        <picture>{sources.map((source, i) => <source key={i} type={source.type} srcSet={source.srcset} sizes={responsiveSize} />)}<img ref={img} src={slide.image.src} srcSet={slide.image.srcset || undefined} sizes={responsiveSize} alt={slide.image.alt} draggable={false} onLoad={() => setState('loaded')} onError={() => setState('error')} /></picture>
       </div>
     </div>
     {slide.caption && <p className="image-dialog-caption" tabIndex={0} role="region" aria-label="Image caption">{slide.caption}</p>}

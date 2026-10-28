@@ -55,7 +55,8 @@ test('rich MDX fixture compiles, prerenders and hydrates through both publishing
   assert.match(html, /href="https:\/\/youtu.be\/abcdefghijk"/)
   assert.match(html, /Load Example video from YouTube/)
   try {
-    await exec(resolve('node_modules/.bin/playwright'), ['test', 'rich-content.spec.ts', 'article-print.spec.ts', 'lightbox.spec.ts', '--project=desktop-chromium', '--project=mobile-chromium', '--workers=2'], { cwd: root, env: { ...process.env, RICH_FIXTURE: '1' }, maxBuffer: 3e6 })
+    const browserRun = await exec(resolve('node_modules/.bin/playwright'), ['test', 'rich-content.spec.ts', 'article-print.spec.ts', 'lightbox.spec.ts', '--project=desktop-chromium', '--project=mobile-chromium', '--project=desktop-webkit', '--project=mobile-webkit', '--workers=2'], { cwd: root, env: { ...process.env, RICH_FIXTURE: '1' }, maxBuffer: 3e6 })
+    process.stdout.write(browserRun.stdout)
   } catch (error) {
     await cp(join(root, 'test-results'), 'artifacts/rich-content', { recursive: true }).catch(() => {})
     await cp(join(root, 'playwright-report'), 'artifacts/rich-content/report', { recursive: true }).catch(() => {})

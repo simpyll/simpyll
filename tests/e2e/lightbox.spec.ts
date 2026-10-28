@@ -164,7 +164,7 @@ test.describe('isolated article galleries', () => {
     await swipe(-100, 0)
     await expect(position(page)).toContainText('Image 1 of 2')
     // CSSOM canonicalizes pan-x pan-y pinch-zoom to manipulation.
-    await expect(pan).toHaveCSS('touch-action', 'manipulation')
+    expect(['manipulation', 'pan-x pan-y pinch-zoom']).toContain(await pan.evaluate(el => getComputedStyle(el).touchAction))
   })
 
   test('direct visits and reload hydrate without runtime/console errors', async ({ page }) => {

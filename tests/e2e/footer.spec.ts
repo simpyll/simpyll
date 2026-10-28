@@ -136,6 +136,9 @@ for (const theme of ['light', 'dark'] as const) {
         await footer.screenshot({ path: screenshot })
         await info.attach('footer layout', { path: screenshot, contentType: 'image/png' })
         const contact = footer.getByRole('link', { name: 'Contact', exact: true })
+        // Enter the footer from the final article/page control; article length
+        // must not exhaust a fixed global tab-count before this footer journey.
+        await page.locator('main a[href], main button:not(:disabled), main summary, main [tabindex="0"]').last().focus()
         await tabTo(page, contact)
         await expect(contact.locator('.footer-icon-label')).toBeVisible()
         // From Contact, traverse the actual remaining footer controls in DOM order.

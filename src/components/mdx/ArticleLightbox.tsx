@@ -13,10 +13,19 @@ export function ArticleImages({ children }: { children: ReactNode }) {
   useEffect(() => {
     const container = root.current!
     const controls = new Map<HTMLImageElement, HTMLButtonElement>()
+    let stylesReady = false, stylesLoading = false, disposed = false
     const enhance = () => {
       for (const image of container.querySelectorAll<HTMLImageElement>('img')) {
         if (controls.has(image) || !image.alt.trim() || image.closest(interactive)) continue
-        if (!controls.size) void import('./image-controls.css')
+        if (!stylesReady) {
+          if (!stylesLoading) {
+            stylesLoading = true
+            // Publish controls only once their print behavior is ready. A failed
+            // optional enhancement leaves the original image and link intact.
+            import('./image-controls.css').then(() => { stylesReady = true; if (!disposed) enhance() }).catch(() => {})
+          }
+          continue
+        }
         const origin = document.createElement('button')
         origin.type = 'button'
         origin.className = 'article-image-open ui-button ui-button--secondary'
@@ -37,7 +46,7 @@ export function ArticleImages({ children }: { children: ReactNode }) {
     enhance()
     const observer = new MutationObserver(enhance)
     observer.observe(container, { childList: true, subtree: true })
-    return () => { observer.disconnect(); controls.forEach(button => button.remove()) }
+    return () => { disposed = true; observer.disconnect(); controls.forEach(button => button.remove()) }
   }, [])
   return <div ref={root}>{children}{selection && createPortal(<Suspense fallback={<p role="status">Opening enlarged image…</p>}><ImageDialog selection={selection} onClose={() => setSelection(null)} /></Suspense>, document.body)}</div>
 }

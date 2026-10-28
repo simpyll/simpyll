@@ -1,1 +1,2 @@
+.article-image-open { display: block; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
 @media print { .article-image-open { display: none !important; } }

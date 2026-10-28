@@ -27,3 +27,23 @@ test('responsive article images work without JavaScript', async ({ browser, base
   await expect(image).toBeVisible()
   await context.close()
 })
+
+test('enlargement reuses responsive candidates and requests the fitted size', async ({ page }) => {
+  const errors: string[] = []
+  page.on('pageerror', error => errors.push(error.message))
+  await page.goto('/blog/the-art-of-reading-code/')
+  const inline = page.locator('article figure picture img').first()
+  const alt = await inline.getAttribute('alt')
+  const sources = await inline.locator('..').locator('source').evaluateAll(elements => elements.map(el => el.getAttribute('srcset')))
+  await page.getByRole('button', { name: `Enlarge image: ${alt}`, exact: true }).click()
+  const dialog = page.getByRole('dialog')
+  const enlarged = dialog.getByRole('img')
+  await expect.poll(() => enlarged.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true)
+  expect(await dialog.locator('source').evaluateAll(elements => elements.map(el => el.getAttribute('srcset')))).toEqual(sources)
+  await expect(enlarged).toHaveAttribute('sizes', /\d+px/)
+  expect(await enlarged.evaluate((el: HTMLImageElement) => el.currentSrc)).toMatch(/\/images\/optimized\/.+\.(avif|webp)$/)
+  const original = await inline.getAttribute('data-original-src')
+  await expect(dialog.getByRole('link', { name: 'Open original image (new tab)' })).toHaveAttribute('href', original!)
+  await page.keyboard.press('Escape')
+  expect(errors).toEqual([])
+})

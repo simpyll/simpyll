@@ -23,7 +23,7 @@ test('public schema rejects unexpected fields recursively, malformed dates, coun
  }
 })
 test('public editorial vocabulary is allowed while private diagnostic keys remain rejected',()=>{
- const source=article('public-vocabulary')
+ const source=article('a')
  source.metadata.tags=['evidence-based medicine']
  source.metadata.title='Evidence and remediation in software'
  const snapshot=projectPublic(audit,[source],'2026-10-25')
