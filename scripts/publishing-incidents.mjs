@@ -1,7 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import { compile } from '@mdx-js/mdx'
 import { notionClient } from './notion/publisher.mjs'
-import { addHealth, digest, monitorWatchdog, graceHours, reconcileArticles, updateIncidents, validateReport } from './notion/incidents.mjs'
+import { addHealth, monitorWatchdog, graceHours, reconcileArticles, updateIncidents, writerReport } from './notion/incidents.mjs'
 import { audit, githubClient } from './publishing-health.mjs'
 
 const repository = process.env.GITHUB_REPOSITORY
@@ -18,12 +18,8 @@ try {
       return response.status === 204 ? null : response.json()
     }
     let report
-    try { report = process.argv.includes('--watchdog') ? await monitorWatchdog(read, { run: Number(process.env.GITHUB_RUN_ID) }) : validateReport(JSON.parse(await readFile(path, 'utf8'))) } catch {
-      // Reader failure cannot silently suppress the independent system incident.
-      const key = digest('simpyll-monitor-reader-failure')
-      report = { version: 1, at: Date.now(), complete: false, articles: [], systems: [{ key, revision: key, state: 'missing', category: 'monitor-evidence' }], run: Number(process.env.GITHUB_RUN_ID), lastSuccess: null }
-    }
-    if (Math.abs(Date.now() - report.at) > 3600000 || report.run !== Number(process.env.GITHUB_RUN_ID)) throw new Error('Stale report')
+    try { report = process.argv.includes('--watchdog') ? await monitorWatchdog(read, { run: Number(process.env.GITHUB_RUN_ID) }) : JSON.parse(await readFile(path, 'utf8')) } catch { /* Missing evidence is handled by the same public boundary below. */ }
+    report = writerReport(report, { run: Number(process.env.GITHUB_RUN_ID) })
     await updateIncidents({ api, repository, report, hours: graceHours(process.env.PUBLISHING_GRACE_HOURS ?? 6) })
     console.log('Publishing incident state reconciled. Delivery acceptance is separate.')
     if (report.systems.some(row => row.state === 'missing')) process.exitCode = 1

@@ -12,6 +12,9 @@ export const DEFAULT_GRACE_HOURS = 6
 export const LEDGER = '<!-- simpyll-publishing-ledger:v1 -->'
 const marker = key => `<!-- simpyll-publishing-incident:v1:${key} -->`
 const system = name => digest(`simpyll-system-v1:${name}`)
+const watchdogKey = digest('simpyll-monitor-reader-failure')
+const healthChecks = ['GitHub metadata', 'Last successful Notion sync', 'Recent synchronization failures', 'Publishing schedule', 'Latest successful Pages deployment', 'Content deployment', 'Post-deploy verification evidence', 'Unresolved deployment / verification problems', 'Pending workflow executions']
+const explicitRecovery = new Set([watchdogKey, ...healthChecks.map(system)])
 const finite = value => Number.isFinite(value) && value >= 0
 const hash = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value)
 const exact = (value, keys) => value && typeof value === 'object' && Object.keys(value).every(key => keys.includes(key))
@@ -26,6 +29,17 @@ export function validateReport(value) {
     keys.add(row.key)
   }
   return value
+}
+
+export function writerReport(value, { now = Date.now(), run }) {
+  try {
+    validateReport(value)
+    if (Math.abs(now - value.at) > 3600000 || value.run !== run) throw new Error('Stale report')
+    return value
+  } catch {
+    // Invalid, stale or wrong-run evidence is a reader failure, never recovery.
+    return validateReport({ version: 1, at: now, complete: false, articles: [], systems: [{ key: watchdogKey, revision: watchdogKey, state: 'missing', category: 'monitor-evidence' }], run, lastSuccess: null })
+  }
 }
 
 // Same conversion, gates, ownership, media and content validation as publishing.
@@ -83,10 +97,13 @@ export function addHealth(report, health) {
   for (const row of report.articles) if (row.state !== 'verified' && row.category === 'unknown') row.category = failure
   report.lastSuccess = health.checks.find(row => row.check === 'Last successful Notion sync')?.details.match(/^([^;]+);/)?.[1]
   report.lastSuccess = Number.isFinite(Date.parse(report.lastSuccess)) ? Date.parse(report.lastSuccess) : null
-  for (const row of health.checks.filter(row => ['Action Required', 'Unknown'].includes(row.status))) {
-    const deployment = /deployment|Pages|deploy verification/i.test(row.check)
-    const category = deployment ? 'deployment' : /schedule|Pending/.test(row.check) ? 'execution-stalled' : 'monitor-evidence'
-    report.systems.push({ key: system(row.check), revision: system(row.check), state: 'missing', category })
+  const unavailable = health.checks.some(row => row.check === 'GitHub metadata' && row.status === 'Unknown')
+  for (const check of healthChecks) {
+    const row = health.checks.find(row => row.check === check)
+    const deployment = /deployment|Pages|deploy verification/i.test(check)
+    const category = deployment ? 'deployment' : /schedule|Pending/.test(check) ? 'execution-stalled' : 'monitor-evidence'
+    const state = row && ['Action Required', 'Unknown'].includes(row.status) ? 'missing' : unavailable ? 'unknown' : 'verified'
+    report.systems.push({ key: system(check), revision: system(check), state, category })
   }
   return validateReport(report)
 }
@@ -114,7 +131,7 @@ export function transition(previous, report, hours = DEFAULT_GRACE_HOURS) {
   }
   // Only a complete eligible inventory may withdraw a transfer expectation.
   // System recovery requires a complete, healthy read too.
-  if (report.complete) for (const [key, entry] of Object.entries(state)) if (entry.active && !seen.has(key)) Object.assign(entry, { active: false, resolution: 'eligibility-withdrawn-or-system-recovered', checked: report.at })
+  if (report.complete) for (const [key, entry] of Object.entries(state)) if (entry.active && !seen.has(key) && !explicitRecovery.has(key)) Object.assign(entry, { active: false, resolution: 'eligibility-withdrawn-or-system-recovered', checked: report.at })
   return state
 }
 
@@ -180,7 +197,7 @@ export async function updateIncidents({ api, repository, report, hours = DEFAULT
 // Availability workflow is the independent watchdog for this monitor. It shares
 // the same issue writer/ledger and concurrency group, never Notion credentials.
 export async function monitorWatchdog(get, { now = Date.now(), run }) {
-  const key = digest('simpyll-monitor-reader-failure')
+  const key = watchdogKey
   let state = 'missing'
   try {
     const workflow = await get('actions/workflows/publishing-health.yml')
