@@ -1,3 +1,4 @@
+import { normalizeTags } from '../../src/lib/tags.mjs'
 import { buildSeries, validateSeries } from '../../src/lib/series.mjs'
 import { manifest } from './manifest.mjs'
 import { approvedEmbed } from '../../src/lib/embeds.mjs'
@@ -368,7 +369,7 @@ export function metadataFor(page, previous, blocks) {
   const seriesId = plain(p['Series ID']?.rich_text).trim(), seriesTitle = plain(p['Series Title']?.rich_text).trim(), seriesOrder = p['Series Order']?.number
   const series = seriesId || seriesTitle || seriesOrder != null ? { id: seriesId, title: seriesTitle, order: seriesOrder } : undefined
   validateSeries(series)
-  return normalizeEditorial({ title, description, slug, date, ...editorial, ...(series ? { series } : {}), category: p.Category?.select?.name || p.Category?.multi_select?.[0]?.name || plain(p.Category?.rich_text) || 'Journal', author: 'David Becker', tags: (p.Tags?.multi_select ?? []).map(t => t.name).sort() })
+  return normalizeEditorial({ title, description, slug, date, ...editorial, ...(series ? { series } : {}), category: p.Category?.select?.name || p.Category?.multi_select?.[0]?.name || plain(p.Category?.rich_text) || 'Journal', author: 'David Becker', tags: normalizeTags((p.Tags?.multi_select ?? []).map(t => t.name)) })
 }
 const canonical = value => Array.isArray(value) ? value.map(canonical) : value && typeof value === 'object' ? Object.fromEntries(Object.keys(value).sort().map(key => [key, canonical(value[key])])) : value
 export const sourceRevision = page => hash(JSON.stringify(canonical({ id: id(page.id), edited: page.last_edited_time ?? null, properties: Object.fromEntries(['Name', 'Status', 'Slug', 'Category', 'Tags', 'Published Date', 'Updated Date', 'Revision Notes', 'Corrections', 'Series ID', 'Series Title', 'Series Order', 'Redirect From'].filter(key => page.properties?.[key] !== undefined).map(key => [key, page.properties[key]])) })))

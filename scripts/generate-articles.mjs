@@ -1,3 +1,4 @@
+import { normalizeTags } from '../src/lib/tags.mjs'
 import { buildSeries } from '../src/lib/series.mjs'
 import { compile } from '@mdx-js/mdx'
 import remarkGfm from 'remark-gfm'
@@ -22,6 +23,7 @@ for (const file of (await readdir(directory)).filter(f => f.endsWith('.mdx')).so
     }
   }
   if (!exports.metadata || !exports.headings || !exports.readingTimeMinutes) throw new Error(`Missing article metadata: ${file}`)
+  exports.metadata.tags = normalizeTags(exports.metadata.tags ?? [])
   articles.push({ slug: file.slice(0, -4), sourcePath: `${directory}/${file}`, ...exports })
 }
 await writeFile('src/generated/articles.json', JSON.stringify(articles) + '\n')

@@ -1,3 +1,4 @@
+import { normalizeTags } from './tags.mjs'
 import { normalizeEditorial } from './editorial.mjs'
 import type { EditorialMetadata } from './editorial.mjs'
 import related from '../generated/related-articles.json' with { type: 'json' }
@@ -32,7 +33,7 @@ export type BlogPost = {
 
 export const posts: BlogPost[] = articles.map(article => ({
   ...article,
-  metadata: normalizeEditorial(article.metadata as BlogPostMetadata),
+  metadata: normalizeEditorial({ ...article.metadata, tags: normalizeTags(article.metadata.tags) } as BlogPostMetadata),
   headings: article.headings as ArticleHeading[],
 })).sort((a, b) => new Date(b.metadata.date).getTime() - new Date(a.metadata.date).getTime())
 
