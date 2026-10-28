@@ -1,0 +1,1070 @@
+[
+  {
+    "id": 40711517672,
+    "url": "https://github.com/simpyll/simpyll/actions/runs/40711517672",
+    "sha": "face40f2982ea5d8ba50acbe78be5f294b78e415",
+    "event": "pull_request",
+    "attempt": 1,
+    "created_at": "2026-10-28T15:00:11Z",
+    "initial_queue_seconds": 3,
+    "execution_span_seconds": 83,
+    "wall_seconds": 86,
+    "jobs": [
+      {
+        "id": 122897764481,
+        "name": "build",
+        "runner": "GitHub Actions 1000002211",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "seconds": 78,
+        "steps": [
+          {
+            "name": "Set up job",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+            "seconds": 3,
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npm ci",
+            "seconds": 9,
+            "conclusion": "success"
+          },
+          {
+            "name": "Restore image transformations",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Build and validate production output",
+            "seconds": 20,
+            "conclusion": "success"
+          },
+          {
+            "name": "Lint",
+            "seconds": 7,
+            "conclusion": "success"
+          },
+          {
+            "name": "Fast deterministic regression suites",
+            "seconds": 25,
+            "conclusion": "success"
+          },
+          {
+            "name": "Inventory dependency license metadata",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify dependency maintenance and publishing health contracts",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify LipidPath clinical scenarios and source traceability",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify workflow, project and publishing contracts",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify offline SEO regression contracts",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Check high and critical vulnerabilities",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Record artifact revision",
+            "seconds": 0,
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Share build for scheduled and manual checks",
+            "seconds": 0,
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Post Restore image transformations",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "seconds": 0,
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 122898586510,
+        "name": "validate",
+        "runner": "GitHub Actions 1000002212",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "seconds": 3,
+        "steps": [
+          {
+            "name": "Set up job",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Require every validation tier",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "seconds": 0,
+            "conclusion": "success"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 40711056936,
+    "url": "https://github.com/simpyll/simpyll/actions/runs/40711056936",
+    "sha": "944dce6bba1c10713c04f07cc6fa0fe9b61adf88",
+    "event": "pull_request",
+    "attempt": 1,
+    "created_at": "2026-10-28T14:57:22Z",
+    "initial_queue_seconds": 2,
+    "execution_span_seconds": 73,
+    "wall_seconds": 75,
+    "jobs": [
+      {
+        "id": 122896126742,
+        "name": "build",
+        "runner": "GitHub Actions 1000002209",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "seconds": 68,
+        "steps": [
+          {
+            "name": "Set up job",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+            "seconds": 3,
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npm ci",
+            "seconds": 7,
+            "conclusion": "success"
+          },
+          {
+            "name": "Restore image transformations",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Build and validate production output",
+            "seconds": 17,
+            "conclusion": "success"
+          },
+          {
+            "name": "Lint",
+            "seconds": 6,
+            "conclusion": "success"
+          },
+          {
+            "name": "Fast deterministic regression suites",
+            "seconds": 22,
+            "conclusion": "success"
+          },
+          {
+            "name": "Inventory dependency license metadata",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify dependency maintenance and publishing health contracts",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify LipidPath clinical scenarios and source traceability",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify workflow, project and publishing contracts",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify offline SEO regression contracts",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Check high and critical vulnerabilities",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Record artifact revision",
+            "seconds": 0,
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Share build for scheduled and manual checks",
+            "seconds": 0,
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Post Restore image transformations",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "seconds": 0,
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 122896811412,
+        "name": "validate",
+        "runner": "GitHub Actions 1000002210",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "seconds": 3,
+        "steps": [
+          {
+            "name": "Set up job",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Require every validation tier",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "seconds": 0,
+            "conclusion": "success"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 40709191271,
+    "url": "https://github.com/simpyll/simpyll/actions/runs/40709191271",
+    "sha": "974e7973028431f5d4615d1857f9e215062c8b35",
+    "event": "pull_request",
+    "attempt": 1,
+    "created_at": "2026-10-28T14:46:05Z",
+    "initial_queue_seconds": 3,
+    "execution_span_seconds": 66,
+    "wall_seconds": 69,
+    "jobs": [
+      {
+        "id": 122889480691,
+        "name": "build",
+        "runner": "GitHub Actions 1000002203",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "seconds": 60,
+        "steps": [
+          {
+            "name": "Set up job",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+            "seconds": 6,
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npm ci",
+            "seconds": 5,
+            "conclusion": "success"
+          },
+          {
+            "name": "Restore image transformations",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Build and validate production output",
+            "seconds": 14,
+            "conclusion": "success"
+          },
+          {
+            "name": "Lint",
+            "seconds": 5,
+            "conclusion": "success"
+          },
+          {
+            "name": "Fast deterministic regression suites",
+            "seconds": 21,
+            "conclusion": "success"
+          },
+          {
+            "name": "Inventory dependency license metadata",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify dependency maintenance and publishing health contracts",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify LipidPath clinical scenarios and source traceability",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify workflow, project and publishing contracts",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify offline SEO regression contracts",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Check high and critical vulnerabilities",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Record artifact revision",
+            "seconds": 0,
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Share build for scheduled and manual checks",
+            "seconds": 0,
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Post Restore image transformations",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "seconds": 0,
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 122890095934,
+        "name": "validate",
+        "runner": "GitHub Actions 1000002204",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "seconds": 4,
+        "steps": [
+          {
+            "name": "Set up job",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Require every validation tier",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "seconds": 0,
+            "conclusion": "success"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 40714592587,
+    "url": "https://github.com/simpyll/simpyll/actions/runs/40714592587",
+    "sha": "3a789f087babacc2690075660d9f6f6175a1a599",
+    "event": "push",
+    "attempt": 1,
+    "created_at": "2026-10-28T15:18:24Z",
+    "initial_queue_seconds": 3,
+    "execution_span_seconds": 134,
+    "wall_seconds": 137,
+    "jobs": [
+      {
+        "id": 122908702301,
+        "name": "build",
+        "runner": "GitHub Actions 1000002217",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "seconds": 31,
+        "steps": [
+          {
+            "name": "Set up job",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Check out repository",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Reject revisions outside main",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Record checked-out deployment identity",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Set up Node.js",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Configure GitHub Pages",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "seconds": 5,
+            "conclusion": "success"
+          },
+          {
+            "name": "Restore image transformations",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Build and prerender site",
+            "seconds": 13,
+            "conclusion": "success"
+          },
+          {
+            "name": "Preserve release manifest",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Upload Pages artifact",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Restore image transformations",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Set up Node.js",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Check out repository",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "seconds": 0,
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 122909037857,
+        "name": "deploy",
+        "runner": "GitHub Actions 1000002218",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "seconds": 51,
+        "steps": [
+          {
+            "name": "Set up job",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Deploy to GitHub Pages",
+            "seconds": 47,
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "seconds": 0,
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 122909596163,
+        "name": "verify",
+        "runner": "GitHub Actions 1000002219",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "seconds": 46,
+        "steps": [
+          {
+            "name": "Set up job",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Check out repository",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Set up Node.js",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "seconds": 5,
+            "conclusion": "success"
+          },
+          {
+            "name": "Download release manifest",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify public HTTP content",
+            "seconds": 5,
+            "conclusion": "success"
+          },
+          {
+            "name": "Install Chromium",
+            "seconds": 21,
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify production browser hydration",
+            "seconds": 5,
+            "conclusion": "success"
+          },
+          {
+            "name": "Report verification outcome",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Preserve production diagnostics",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Install Chromium",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Set up Node.js",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Check out repository",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "seconds": 0,
+            "conclusion": "success"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 40711846234,
+    "url": "https://github.com/simpyll/simpyll/actions/runs/40711846234",
+    "sha": "1e1c00c82cb28ad1626773c26e7728111330bfdf",
+    "event": "push",
+    "attempt": 1,
+    "created_at": "2026-10-28T15:02:04Z",
+    "initial_queue_seconds": 3,
+    "execution_span_seconds": 107,
+    "wall_seconds": 110,
+    "jobs": [
+      {
+        "id": 122898910059,
+        "name": "build",
+        "runner": "GitHub Actions 1000002214",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "seconds": 48,
+        "steps": [
+          {
+            "name": "Set up job",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Check out repository",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Reject revisions outside main",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Record checked-out deployment identity",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Set up Node.js",
+            "seconds": 4,
+            "conclusion": "success"
+          },
+          {
+            "name": "Configure GitHub Pages",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "seconds": 8,
+            "conclusion": "success"
+          },
+          {
+            "name": "Restore image transformations",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Build and prerender site",
+            "seconds": 20,
+            "conclusion": "success"
+          },
+          {
+            "name": "Preserve release manifest",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Upload Pages artifact",
+            "seconds": 3,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Restore image transformations",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Set up Node.js",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Check out repository",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "seconds": 0,
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 122899404493,
+        "name": "deploy",
+        "runner": "GitHub Actions 1000002215",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "seconds": 10,
+        "steps": [
+          {
+            "name": "Set up job",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Deploy to GitHub Pages",
+            "seconds": 7,
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "seconds": 0,
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 122899534862,
+        "name": "verify",
+        "runner": "GitHub Actions 1000002216",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "seconds": 43,
+        "steps": [
+          {
+            "name": "Set up job",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Check out repository",
+            "seconds": 3,
+            "conclusion": "success"
+          },
+          {
+            "name": "Set up Node.js",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "seconds": 5,
+            "conclusion": "success"
+          },
+          {
+            "name": "Download release manifest",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify public HTTP content",
+            "seconds": 5,
+            "conclusion": "success"
+          },
+          {
+            "name": "Install Chromium",
+            "seconds": 18,
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify production browser hydration",
+            "seconds": 5,
+            "conclusion": "success"
+          },
+          {
+            "name": "Report verification outcome",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Preserve production diagnostics",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Install Chromium",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Set up Node.js",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Check out repository",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "seconds": 0,
+            "conclusion": "success"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 40709487965,
+    "url": "https://github.com/simpyll/simpyll/actions/runs/40709487965",
+    "sha": "3c9d9782bf16c83bf0b91b1d997aa5b0360b7b38",
+    "event": "push",
+    "attempt": 1,
+    "created_at": "2026-10-28T14:47:53Z",
+    "initial_queue_seconds": 3,
+    "execution_span_seconds": 92,
+    "wall_seconds": 95,
+    "jobs": [
+      {
+        "id": 122890537857,
+        "name": "build",
+        "runner": "GitHub Actions 1000002205",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "seconds": 38,
+        "steps": [
+          {
+            "name": "Set up job",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Check out repository",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Reject revisions outside main",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Record checked-out deployment identity",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Set up Node.js",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Configure GitHub Pages",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "seconds": 8,
+            "conclusion": "success"
+          },
+          {
+            "name": "Restore image transformations",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Build and prerender site",
+            "seconds": 19,
+            "conclusion": "success"
+          },
+          {
+            "name": "Preserve release manifest",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Upload Pages artifact",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Restore image transformations",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Set up Node.js",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Check out repository",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "seconds": 0,
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 122890937184,
+        "name": "deploy",
+        "runner": "GitHub Actions 1000002207",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "seconds": 9,
+        "steps": [
+          {
+            "name": "Set up job",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Deploy to GitHub Pages",
+            "seconds": 7,
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "seconds": 0,
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 122891071640,
+        "name": "verify",
+        "runner": "GitHub Actions 1000002208",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "seconds": 38,
+        "steps": [
+          {
+            "name": "Set up job",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Check out repository",
+            "seconds": 1,
+            "conclusion": "success"
+          },
+          {
+            "name": "Set up Node.js",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "seconds": 5,
+            "conclusion": "success"
+          },
+          {
+            "name": "Download release manifest",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify public HTTP content",
+            "seconds": 5,
+            "conclusion": "success"
+          },
+          {
+            "name": "Install Chromium",
+            "seconds": 13,
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify production browser hydration",
+            "seconds": 6,
+            "conclusion": "success"
+          },
+          {
+            "name": "Report verification outcome",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Preserve production diagnostics",
+            "seconds": 2,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Install Chromium",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Set up Node.js",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Check out repository",
+            "seconds": 0,
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "seconds": 0,
+            "conclusion": "success"
+          }
+        ]
+      }
+    ]
+  }
+]

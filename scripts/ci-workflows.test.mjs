@@ -19,6 +19,9 @@ test('required validate gate fails closed on build failures and other non-skippe
   }).status
 
   assert.equal(run([['build', 'success'], ['browser', 'skipped'], ['fixtures', 'skipped']]), 0)
+  assert.notEqual(run([]), 0)
+  assert.notEqual(run([['build', 'success']]), 0)
+  assert.notEqual(run([['build', 'success'], ['browser', 'success'], ['fixtures', 'success']], 'push'), 0)
   for (const bad of ['failure', 'cancelled', 'skipped']) {
     assert.notEqual(run([['build', bad], ['browser', 'skipped'], ['fixtures', 'skipped']]), 0)
   }
@@ -82,4 +85,43 @@ test('production deployment builds once, preserves manifest and verifies publish
   assert.doesNotMatch(beforeVerify, /run: npm run test:e2e:built/)
   assert.doesNotMatch(beforeVerify, /run: npm run test:notion:build/)
   assert.doesNotMatch(beforeVerify, /uses: \.\/\.github\/actions\/browsers/)
+})
+
+test('artifact consumers reject missing, malformed and mismatched release identity', async t => {
+  const { mkdtemp, mkdir, writeFile, rm } = await import('node:fs/promises')
+  const { tmpdir } = await import('node:os')
+  const { join } = await import('node:path')
+  const root = await mkdtemp(join(tmpdir(), 'ci-artifact-'))
+  t.after(() => rm(root, { recursive: true, force: true }))
+  const commands = [...pr.matchAll(/node --input-type=module -e '([^']+)'/g)].map(match => match[1])
+  assert.equal(commands.length, 3, 'browser, fixtures and performance all verify embedded release identity')
+  await mkdir(join(root, 'dist'))
+  const sha = 'a'.repeat(40)
+  await writeFile(join(root, 'ci-revision.txt'), sha + '\n')
+  for (const command of commands) {
+    const run = () => spawnSync(process.execPath, ['--input-type=module', '-e', command], { cwd: root }).status
+    for (const content of ['{}', '{broken', JSON.stringify({ sha: 'b'.repeat(40) })]) {
+      await writeFile(join(root, 'dist/deployment.json'), content)
+      assert.notEqual(run(), 0)
+    }
+    await rm(join(root, 'dist/deployment.json'))
+    assert.notEqual(run(), 0)
+    await writeFile(join(root, 'dist/deployment.json'), JSON.stringify({ sha }))
+    assert.equal(run(), 0)
+  }
+})
+
+test('PR trust boundary and active full shards cannot silently lose required work', () => {
+  assert.doesNotMatch(pr, /pull_request_target|paths-ignore:|\n\s+paths:|continue-on-error:/)
+  assert.doesNotMatch(pr, /secrets\.|contents: write|pages: write|id-token: write/)
+  assert.match(pr, /permissions:\n  contents: read/)
+  assert.match(pr, /persist-credentials: false/)
+  assert.match(pr, /matrix:\n        shard: \[1, 2, 3\]/)
+  assert.doesNotMatch(pr, /matrix.mode/)
+  assert.match(pr, /cancel-in-progress: true/)
+  assert.match(deploy, /group: pages\n  cancel-in-progress: false/)
+  assert.match(deploy, /ref: \$\{\{ inputs.ref \|\| github.sha \}\}/)
+  assert.match(deploy, /SMOKE_EXPECTED_SHA: \$\{\{ needs.build.outputs.revision \}\}/)
+  // Artifact download defaults to this run; no privileged workflow_run bridge.
+  assert.doesNotMatch(pr + deploy, /workflow_run:|run-id:|repository:.*head/)
 })
