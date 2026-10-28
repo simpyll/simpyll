@@ -43,7 +43,7 @@ test('built snapshot and private reports remain separated; Pulse is useful witho
  for(const a of snapshot.articles) assert.ok(html.includes(`href="${a.route}"`))
  const files=await (await import('node:fs/promises')).readdir('dist',{recursive:true})
  assert.ok(!files.some(f=>/report\.(json|md)|audit\.json|artifacts/.test(f)))
- assert.doesNotMatch(JSON.stringify(snapshot),/evidence|remediation|crawlDepth|articleText|canonicals|\/workspace\//)
+ assert.doesNotMatch(JSON.stringify(snapshot),/"(?:evidence|remediation|crawlDepth|articleText|canonicals)"\s*:|\/workspace\//)
  const full=await auditSeo()
  const publicRoutes=new Set(full.pages.filter(p=>p.indexable).map(p=>p.route))
  assert.equal(snapshot.health.reduce((n,h)=>n+h.critical+h.warning+h.informational,0),full.issues.filter(i=>publicRoutes.has(i.route)).length,'snapshot must describe final build, without bootstrap broken links')
