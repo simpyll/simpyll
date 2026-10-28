@@ -1,6 +1,6 @@
 .image-dialog button, .image-dialog-tools a { min-height: 44px; padding: .5rem .75rem; border: 1px solid var(--ui-control-outline); border-radius: .5rem; background: var(--ui-surface); color: var(--ui-foreground); font: inherit; cursor: pointer; }
 .image-dialog button:disabled { opacity: .5; cursor: default; }
-.image-dialog :focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 3px; }
+.image-dialog :focus { outline: 2px solid var(--ui-focus); outline-offset: 3px; }
 .image-dialog { position: fixed; inset: 0; margin: auto; padding: 0; width: min(96vw, 90rem); max-width: 100%; height: 96dvh; max-height: 100dvh; border: 1px solid var(--ui-control-outline); border-radius: .75rem; background: var(--ui-canvas); color: var(--ui-foreground); overflow: auto; overscroll-behavior: contain; }
 .image-dialog::backdrop { background: rgb(0 0 0 / .8); }
 .image-dialog-shell { min-height: 100%; display: flex; flex-direction: column; gap: .75rem; padding: 1rem; }

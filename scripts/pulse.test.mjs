@@ -22,6 +22,20 @@ test('public schema rejects unexpected fields recursively, malformed dates, coun
   const copy=structuredClone(original);mutate(copy);assert.throws(()=>validatePublic(copy))
  }
 })
+test('public editorial vocabulary is allowed while private diagnostic keys remain rejected',()=>{
+ const source=article('public-vocabulary')
+ source.metadata.tags=['evidence-based medicine']
+ source.metadata.title='Evidence and remediation in software'
+ const snapshot=projectPublic(audit,[source],'2026-10-25')
+ validatePublic(snapshot)
+ assert.deepEqual(snapshot.articles[0].tags,['evidence-based medicine'])
+ assert.equal(snapshot.articles[0].title,source.metadata.title)
+ for(const key of ['evidence','remediation','crawlDepth','articleText','canonicals']) {
+  const copy=structuredClone(snapshot)
+  copy.articles[0][key]='private diagnostic'
+  assert.throws(()=>validatePublic(copy))
+ }
+})
 test('private findings have stable identifiers, severity, evidence, remediation and baseline comparison',()=>{
  const before=privateReport(audit)
  assert.equal(before.findings[0].severity,'critical')
@@ -43,7 +57,7 @@ test('built snapshot and private reports remain separated; Pulse is useful witho
  for(const a of snapshot.articles) assert.ok(html.includes(`href="${a.route}"`))
  const files=await (await import('node:fs/promises')).readdir('dist',{recursive:true})
  assert.ok(!files.some(f=>/report\.(json|md)|audit\.json|artifacts/.test(f)))
- assert.doesNotMatch(JSON.stringify(snapshot),/evidence|remediation|crawlDepth|articleText|canonicals|\/workspace\//)
+ assert.doesNotMatch(JSON.stringify(snapshot),/"(?:evidence|remediation|crawlDepth|articleText|canonicals)"\s*:|\/workspace\//)
  const full=await auditSeo()
  const publicRoutes=new Set(full.pages.filter(p=>p.indexable).map(p=>p.route))
  assert.equal(snapshot.health.reduce((n,h)=>n+h.critical+h.warning+h.informational,0),full.issues.filter(i=>publicRoutes.has(i.route)).length,'snapshot must describe final build, without bootstrap broken links')
