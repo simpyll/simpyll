@@ -33,8 +33,10 @@
 ## Validation tiers and cold-start workflows
 
 - `npm run test:unit` regenerates cheap project/redirect/search artifacts and runs
-  26 deterministic Node files without a production build or browser. The audit
-  baseline is 378 tests in about 20 seconds locally, not a hosted-time guarantee.
+  the explicit deterministic Node inventory without a production build or browser.
+  `npm run test:built` runs built-output and supporting suites after production
+  build; `scripts/ci-inventory.test.mjs` rejects unassigned new Node tests. Counts
+  and local runtimes are revision-dependent, not hosted-time guarantees.
   Real project, preview and recovery build fixtures run separately, sequentially
   in the scheduled/manual fixture job. Do not run a snapshot/isolation fixture
   concurrently with generation in the same workspace.
@@ -49,7 +51,8 @@
   the exhaustive browser inventory before every deploy.
 - For behavior-affecting UI changes, run `npm run build && npm run test:e2e:built`
   locally or obtain the full manual CI result at the final revision before merge.
-  A fast PR result does not certify browser behavior or accessibility. Required
+  A fast PR result does not certify browser behavior or accessibility. #82 owns
+  the eventual stabilized-revision full regression, shared with #133. Required
   branch protection must be verified through authorized GitHub settings access.
 - `test:e2e:pr` remains an available local focused inventory; current normal PR CI
   does not invoke it. See docs/CI.md for the actual event-to-check mapping.
@@ -57,3 +60,7 @@
   `hmr: false` does not stop the standalone WebSocket port 24678, causing parallel
   Node tests to collide. Playwright listing/imports can require a prior build
   because some specs consume dist/deployment.json.
+
+- Current #133 audit, measured timing samples, workflow inventory and owner actions:
+  `docs/ci/133-acceptance-2026-10-28.md`. Do not infer required-check enforcement
+  from the existence or success of `validate`.

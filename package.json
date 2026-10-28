@@ -57,7 +57,8 @@
     "validate:analytics": "node scripts/analytics/validate.mjs",
     "audit:topics": "node scripts/topical-inventory.mjs",
     "preview:notion": "node scripts/notion/preview.mjs",
-    "generate:articles": "node scripts/generate-articles.mjs"
+    "generate:articles": "node scripts/generate-articles.mjs",
+    "test:built": "node --test scripts/ai-engineering.test.mjs scripts/analytics/core.test.mjs scripts/analytics/dashboard.test.mjs scripts/analytics/refresh.test.mjs scripts/analytics/tracker.test.mjs scripts/article-adjacency.test.mjs scripts/article-toc.test.mjs scripts/breadcrumbs.test.mjs scripts/case-study.test.mjs scripts/images/images.test.mjs scripts/performance/budgets.test.mjs scripts/prerender.test.mjs scripts/profile.test.mjs scripts/project-lab.test.mjs scripts/pulse.test.mjs scripts/reading-time.test.mjs scripts/related-articles.test.mjs scripts/rss.test.mjs scripts/smoke/core.test.mjs scripts/smoke/runner.test.mjs scripts/topics.test.mjs scripts/ci-inventory.test.mjs"
   },
   "dependencies": {
     "@mdx-js/react": "^3.1.1",
