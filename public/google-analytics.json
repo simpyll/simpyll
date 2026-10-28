@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "searchConsole": {
     "status": "ok",
-    "updated": "2026-10-27",
+    "updated": "2026-10-28",
     "timezone": "America/Los_Angeles",
     "days": []
   },
   "ga4": {
     "status": "ok",
-    "updated": "2026-10-27",
+    "updated": "2026-10-28",
     "timezone": "America/Chicago",
     "days": []
   }
