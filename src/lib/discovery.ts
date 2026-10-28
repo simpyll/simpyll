@@ -1,10 +1,11 @@
+import { tagId } from './tags.mjs'
 import { normalize, prepareSearch, type SearchDocument } from './search.ts'
 
 export type DiscoveryState = { q: string; categories: string[]; tags: string[]; sort: 'newest' | 'oldest' | 'relevance' }
 export type DiscoveryRecord = SearchDocument & { id: string; type: string; url: string; date: string }
 export const defaultState: DiscoveryState = { q: '', categories: [], tags: [], sort: 'newest' }
 // Keep punctuation meaningful: C++, C# and C must remain distinct taxonomy IDs.
-export const taxonomyId = (value: string) => value.normalize('NFKC').trim().replace(/\s+/gu, ' ').toLowerCase()
+export const taxonomyId = tagId
 const query = (value: string) => value.normalize('NFKC').trim().replace(/\s+/gu, ' ').slice(0, 160)
 const filters = (values: string[]) => [...new Set(values.map(taxonomyId).filter(Boolean))].sort()
 export function parseDiscovery(params: URLSearchParams): DiscoveryState {
@@ -32,9 +33,15 @@ export function taxonomy(records: SearchDocument[], field: 'category' | 'tags') 
   const labels = new Map<string, string>()
   for (const record of records) for (const label of field === 'tags' ? record.tags : [record.category]) {
     const id = taxonomyId(label)
-    if (id && !labels.has(id)) labels.set(id, label.trim())
+    if (id && !labels.has(id)) labels.set(id, field === 'tags' ? tagId(label) : label.trim())
   }
-  return [...labels].sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0).map(([id, label]) => ({ id, label }))
+  const counts = new Map<string, Set<string>>()
+  for (const record of records) for (const value of field === 'tags' ? record.tags : [record.category]) {
+    const id = taxonomyId(value)
+    if (!counts.has(id)) counts.set(id, new Set())
+    counts.get(id)!.add(record.id ?? record.slug)
+  }
+  return [...labels].sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0).map(([id, label]) => ({ id, label, count: counts.get(id)?.size ?? 0 }))
 }
 const dateValue = (date: string) => Number.isFinite(Date.parse(date)) ? Date.parse(date) : 0
 export function prepareDiscovery(records: DiscoveryRecord[]) {

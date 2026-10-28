@@ -1,8 +1,9 @@
+import { normalizeTags } from './tags.mjs'
 export type SearchDocument = { readingTimeMinutes?: number; slug: string; title: string; description: string; category: string; tags: string[]; body: string; id?: string; type?: string; url?: string; date?: string }
 export const normalize = (text: string) => text.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim()
 export function prepareSearch<T extends SearchDocument>(documents: T[], limit = 8) {
   const unique = [...new Map(documents.map(document => [document.slug, document])).values()]
-  const entries = unique.map(document => ({ document, fields: [document.title, [document.category, ...document.tags].join(' '), document.description, document.body].map(normalize) })).map(entry => ({ ...entry, words: entry.fields.map(field => field.split(' ')) }))
+  const entries = unique.map(document => ({ document, fields: [document.title, [document.category, ...normalizeTags(document.tags)].join(' '), document.description, document.body].map(normalize) })).map(entry => ({ ...entry, words: entry.fields.map(field => field.split(' ')) }))
   return (query: string) => {
     const normalized = normalize(query)
     if (!normalized) return []

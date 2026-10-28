@@ -1,3 +1,4 @@
+import { normalizeTags } from '../src/lib/tags.mjs'
 import { readingTime } from './reading-time.mjs'
 import remarkGfm from 'remark-gfm'
 import { compile } from '@mdx-js/mdx'
@@ -42,7 +43,7 @@ export async function searchDocument(source, slug) {
   }
   visit(tree)
   return { readingTimeMinutes: readingTime(tree), slug, title: metadata.title, description: metadata.description ?? '', category: metadata.category ?? '',
-    tags: metadata.tags ?? [], date: metadata.date ?? '', id: typeof metadata.articleId === 'string' && metadata.articleId ? metadata.articleId : `blog:${slug}`, type: 'blog', url: `/blog/${slug}`, body: prose.join(' ').replace(/\s+/gu, ' ').trim() }
+    tags: normalizeTags(metadata.tags ?? []), date: metadata.date ?? '', id: typeof metadata.articleId === 'string' && metadata.articleId ? metadata.articleId : `blog:${slug}`, type: 'blog', url: `/blog/${slug}`, body: prose.join(' ').replace(/\s+/gu, ' ').trim() }
 }
 
 export async function generateSearch(root = process.cwd()) {
