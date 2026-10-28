@@ -319,3 +319,11 @@ a restart date or triggers automatic resumption or archival. To resume, set
 Keep the same record, ID, slug, links and case study. Run `npm run validate:projects`
 and the normal build/publish workflow. Board/grid, mobile selection, filters, counts,
 featured cards and case-study metadata all derive their labels from the shared registry.
+
+## Portfolio update — October 28, 2026
+
+At the owner’s request, LipidPath is Shipped / Active. Its educational scope and
+pending independent clinical review remain explicit. Cortex is In Progress / Active
+with a public `/projects/cortex` case study describing research, proposed architecture
+and planned capabilities. No implementation stack, working integration or cost saving
+is claimed. The page contains no private repository links or internal research details.
