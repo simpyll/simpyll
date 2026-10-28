@@ -49,6 +49,12 @@ as if it were a private field. It now matches private diagnostic keys, retaining
 workspace-path rejection and strict recursive schema validation. A regression case
 allows ordinary editorial vocabulary and still rejects every prohibited key.
 
+The broader reading journey also exposed a TOC sampler holding an empty heading
+list when an article body arrived after client navigation. Measurement now
+refreshes heading nodes before computing positions, preserving active-section
+tracking for deferred MDX. Existing cross-browser reading journeys cover this
+regression.
+
 ## Evidence and outstanding acceptance
 
 The representative lossless screenshots are in `docs/screenshots/lightbox/`.
