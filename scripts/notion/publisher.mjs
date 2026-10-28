@@ -61,7 +61,7 @@ export async function paginate(api, path, body) {
     const response = body
       ? await api(path, { ...body, page_size: 100, ...(cursor ? { start_cursor: cursor } : {}) })
       : await api(`${path}?${query}`)
-    if (!Array.isArray(response.results)) throw new Error('Invalid paginated Notion response')
+    if (!Array.isArray(response.results) || typeof response.has_more !== 'boolean') throw new Error('Invalid paginated Notion response')
     if (results.length + response.results.length > 10000) throw new Error('Notion pagination block/result limit exceeded')
     results.push(...response.results)
     if (!response.has_more) break
@@ -370,6 +370,9 @@ export function metadataFor(page, previous, blocks) {
   validateSeries(series)
   return normalizeEditorial({ title, description, slug, date, ...editorial, ...(series ? { series } : {}), category: p.Category?.select?.name || p.Category?.multi_select?.[0]?.name || plain(p.Category?.rich_text) || 'Journal', author: 'David Becker', tags: (p.Tags?.multi_select ?? []).map(t => t.name).sort() })
 }
+const canonical = value => Array.isArray(value) ? value.map(canonical) : value && typeof value === 'object' ? Object.fromEntries(Object.keys(value).sort().map(key => [key, canonical(value[key])])) : value
+export const sourceRevision = page => hash(JSON.stringify(canonical({ id: id(page.id), edited: page.last_edited_time ?? null, properties: Object.fromEntries(['Name', 'Status', 'Slug', 'Category', 'Tags', 'Published Date', 'Updated Date', 'Revision Notes', 'Corrections', 'Series ID', 'Series Title', 'Series Order', 'Redirect From'].filter(key => page.properties?.[key] !== undefined).map(key => [key, page.properties[key]])) })))
+export const publishable = page => !page.in_trash && !page.archived && (page.properties?.Status?.status?.name ?? page.properties?.Status?.select?.name) === 'Published'
 const manifestPath = '.notion/published.json'
 async function readOptional(path) {
   try { return await readFile(path) } catch (error) { if (error.code === 'ENOENT') return null; throw error }
@@ -377,7 +380,7 @@ async function readOptional(path) {
 
 
 // Build a complete plan before touching disk. Any API/conversion/collision error aborts it.
-export async function synchronize({ root, api, pageId, imageDownloader = downloadImage, validate = async () => {} , dryRun = false }) {
+export async function synchronize({ root, api, pageId, imageDownloader = downloadImage, validate = async () => {} , dryRun = false, observe = () => {}, planned = () => {}, stage = () => {} }) {
   const oldBytes = await readOptional(join(root, manifestPath))
   const old = oldBytes ? manifest(oldBytes) : { version: 1, articles: {}, files: {} }
   if (old.version !== 1 || !old.files || !old.articles) throw new Error('Invalid publisher manifest')
@@ -386,18 +389,24 @@ export async function synchronize({ root, api, pageId, imageDownloader = downloa
     const bytes = await readOptional(join(root, path))
     if (bytes && hash(bytes) !== digest) throw new Error('Generated file was manually changed; restore it before syncing')
   }
+  stage('notion-access-query')
   const source = await discoverSource(api, pageId)
   const sourceId = id(source.id)
+  stage('eligibility-configuration')
   if (old.sourceId && old.sourceId !== sourceId) throw new Error('Blog data source changed; review manifest before migrating')
   const seriesArticles = []
+  stage('notion-access-query')
   const pages = await paginate(api, `data_sources/${sourceId}/query`, { filter: { property: 'Status', [source.properties.Status.type]: { equals: 'Published' } } })
+  await observe({ sourceId, pages: pages.filter(publishable) })
   const next = { version: 1, sourceId, articles: Object.fromEntries(Object.entries(old.articles).map(([key, article]) => [key, { slug: article.slug, date: article.date, history: article.history ?? [], status: 'unpublished' }])), files: {} }, files = new Map(), slugs = new Set(), seenPages = new Set()
   for (const page of pages.sort((a, b) => id(a.id).localeCompare(id(b.id)))) {
     if (page.in_trash || page.archived || (page.properties?.Status?.status?.name ?? page.properties?.Status?.select?.name) !== 'Published') continue
     const pageKey = id(page.id)
     if (seenPages.has(pageKey)) throw new Error('Duplicate Notion page in query')
     seenPages.add(pageKey)
+    stage('notion-access-query')
     const blocks = await readBlocks(api, pageKey)
+    stage('eligibility-configuration')
     const metadata = metadataFor(page, old.articles[pageKey], blocks)
     if (slugs.has(metadata.slug)) throw new Error('Duplicate published slug; assign distinct Slug values')
     slugs.add(metadata.slug)
@@ -408,6 +417,7 @@ export async function synchronize({ root, api, pageId, imageDownloader = downloa
     const redirectFrom = aliasesText ? aliasesText.split(',').map(value => normalizeSlug(value.trim())) : []
     const assets = {}
     let imageSequence = 0
+    stage('conversion-content-media')
     const content = await convertBlocks(blocks, async block => {
       imageSequence++
       const image = block.image
@@ -435,8 +445,9 @@ export async function synchronize({ root, api, pageId, imageDownloader = downloa
     const mdx = `export const metadata = {\n${fields}\n}\n\n${content}\n`
     await validate(mdx)
     files.set(`src/content/blog/${metadata.slug}.mdx`, Buffer.from(mdx))
-    next.articles[pageKey] = { slug: metadata.slug, date: metadata.date, history, redirectFrom, status: 'published', assets }
+    next.articles[pageKey] = { slug: metadata.slug, date: metadata.date, history, redirectFrom, status: 'published', assets, sourceRevision: sourceRevision(page) }
   }
+  stage('eligibility-configuration')
   const hasGit = await lstat(join(root, '.git')).then(() => true).catch(error => { if (error.code === 'ENOENT') return false; throw error })
   const gitHistory = hasGit ? await manualHistory(root) : new Map()
   const claims = Object.entries(next.articles).map(([key, article]) => ({ id: `notion:${key}`, slug: article.slug, status: article.status, aliases: [...(article.history ?? []), ...(article.redirectFrom ?? [])] }))
@@ -460,6 +471,7 @@ export async function synchronize({ root, api, pageId, imageDownloader = downloa
     if (!(path in old.files) && await readOptional(join(root, path))) throw new Error('Generated path collides with an unrelated file')
     next.files[path] = hash(bytes)
   }
+  planned({ manifest: next, files })
   if (!oldBytes && !files.size) return { changed: false, articles: 0 }
   files.set(manifestPath, Buffer.from(JSON.stringify(next, null, 2) + '\n'))
   const writes = [], deletes = Object.keys(old.files).filter(path => !files.has(path))

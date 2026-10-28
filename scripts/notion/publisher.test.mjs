@@ -216,8 +216,10 @@ test('technical edits do not revise dates; explicit editorial metadata is determ
   const before = await snapshot(root)
   const technical = page({ last_edited_time: '2026-10-25T12:00:00Z' })
   technical.properties['Published Date'].date.start = '2026-10-25'
+  assert.equal((await sync({ api: fixture({ pages: [technical] }).api })).changed, true)
+  const technicalSnapshot = await snapshot(root)
+  assert.equal(technicalSnapshot['/src/content/blog/notion-fixture.mdx'], before['/src/content/blog/notion-fixture.mdx'])
   assert.equal((await sync({ api: fixture({ pages: [technical] }).api })).changed, false)
-  assert.deepEqual(await snapshot(root), before)
   technical.properties['Updated Date'] = { type: 'date', date: { start: '2026-10-25' } }
   technical.properties['Revision Notes'] = { type: 'rich_text', rich_text: [rt(JSON.stringify([{ date: '2026-10-25', description: 'Updated examples.' }]))] }
   technical.properties.Corrections = { type: 'rich_text', rich_text: [rt(JSON.stringify([{ date: '2026-10-24', description: 'Corrected the explanation.', id: 'explanation' }]))] }
@@ -231,11 +233,13 @@ test('technical edits do not revise dates; explicit editorial metadata is determ
   assert.equal(metadata.revisions[0].description, 'Updated examples.')
   const after = await snapshot(root)
   technical.last_edited_time = '2026-10-26T12:00:00Z'
+  assert.equal((await sync({ api: fixture({ pages: [technical] }).api })).changed, true)
+  assert.equal((await snapshot(root))['/src/content/blog/notion-fixture.mdx'], after['/src/content/blog/notion-fixture.mdx'])
   assert.equal((await sync({ api: fixture({ pages: [technical] }).api })).changed, false)
-  assert.deepEqual(await snapshot(root), after)
+  const revisionSnapshot = await snapshot(root)
   technical.properties.Corrections.rich_text = [rt('{invalid')]
   await assert.rejects(sync({ api: fixture({ pages: [technical] }).api }), /Corrections must contain a JSON array/)
-  assert.deepEqual(await snapshot(root), after)
+  assert.deepEqual(await snapshot(root), revisionSnapshot)
 })
 test('optional Notion editorial fields fail clearly for invalid shapes, dates and property types', () => {
   const p = page()

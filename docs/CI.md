@@ -103,3 +103,14 @@ The PR critical path was build → validate; #193's build job took 58 s, includi
 Current full regression remains **unverified** at the stabilization revision. The GitHub connector has no workflow dispatch capability. A local Playwright browser install returned truncated 0 MiB archives from the CDN, preventing browser and fixture execution. Run Actions → Validate Simpyll → Run workflow on the stabilization branch with full matrix selected; inspect all three active browser shards, fixtures, aggregate and advisory performance, recording exact SHA and outcome. The inactive critical matrix entries are not evidence of browser execution.
 
 The #193 publishing change is merged, but no post-merge live publishing success was established. Keep #67 open until its operational check succeeds; do not publish a test article for acceptance. Neither CI nor this record constitutes independent clinical or manual accessibility approval.
+
+## Publishing incident monitoring
+
+`publishing-health.yml` now runs hourly/manual on trusted main. Its read-only
+Notion planning job and Notion-free issue writer extend the existing metadata
+audit. The existing six-hour availability workflow independently watches the
+monitor heartbeat using the same serialized writer. No PR receives Notion secrets
+or issue-write credentials. Incident tests run in `test:unit` and `test:notion`;
+fast PR CI still does not run growth build fixtures or browsers. See
+[PUBLISHING-HEALTH.md](PUBLISHING-HEALTH.md) for grace, durable state, notification
+acceptance and rollback.
