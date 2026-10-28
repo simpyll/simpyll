@@ -9,6 +9,7 @@ import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 import { remarkRichContent } from './scripts/remark-rich-content.mjs'
 import { remarkHeadingIds } from './scripts/remark-heading-ids.mjs'
+import { articleTextChunks, articleTextChunkName } from './scripts/article-text-chunks.mjs'
 
 import { load, remarkInternalLinks } from './scripts/internal-links/repository.mjs'
 const internalLinks = await load()
@@ -43,7 +44,7 @@ function prerenderedRoutes(): Plugin {
 export default defineConfig({
   // The custom domain serves this site at its origin, not under /simpyll/.
   base: '/',
-  build: { manifest: true },
+  build: { manifest: true, rolldownOptions: { output: { codeSplitting: { groups: [{ name: articleTextChunkName, debugName: 'article-prose' }] } } } },
   define: {
     // Keep cached HTML and its client bundle consistent across New Year.
     'import.meta.env.BUILD_YEAR': JSON.stringify(new Date().getUTCFullYear()),
@@ -58,6 +59,7 @@ export default defineConfig({
     },
     prerenderedRoutes(),
     { enforce: 'pre', ...mdx({ providerImportSource: '@mdx-js/react', remarkPlugins: [remarkGfm, remarkInternalLinks(internalLinks), remarkReadingTime, remarkHeadingIds, remarkRichContent], rehypePlugins: [[rehypeHighlight, { detect: false, ignoreMissing: true }]] }) },
+    articleTextChunks(),
     react(),
     tailwindcss(),
   ],

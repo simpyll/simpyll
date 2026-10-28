@@ -18,6 +18,7 @@ test('clean local clone recovers committed damage and completes production build
   await git(['config', 'user.email', 'recovery@example.invalid'])
   // Exercise the implementation under test, including changes not yet committed.
   await cp('scripts', join(root, 'scripts'), { recursive: true })
+  await cp('vite.config.ts', join(root, 'vite.config.ts'))
   // Keep this recovery fixture focused on content/build correctness. Full-size
   // large raster encoding is covered by the separate production build gate.
   for (const p of await readdir(join(root, 'public'), { recursive: true })) {

@@ -27,6 +27,25 @@ test('recent sync and successful no-op are healthy without weekly content', () =
 test('failed sync followed by recovery is healthy', () => {
   assert.equal(evaluate(fixture([run(), run(1, 'failure', 2)]), now).status, 'Healthy')
 })
+test('stage evidence distinguishes import, validation, push and no-op without leaking step names', () => {
+  for (const [validation, commit, conclusion, expected] of [
+    ['failure', 'skipped', 'failure', /validation failed before commit/],
+    ['success', 'failure', 'failure', /Commit\/push stage failed/],
+    ['success', 'success', 'success', /deployment separately/],
+    ['skipped', 'skipped', 'success', /No content commit was needed/],
+  ]) {
+    const publisher = run(0.1, conclusion)
+    publisher.jobs[0].steps = [
+      { name: 'Read Published articles and validate MDX', conclusion: 'success' },
+      { name: 'Validate updated site before committing', conclusion: validation },
+      { name: 'Commit only publisher-owned changes', conclusion: commit },
+      { name: 'PRIVATE_UNPUBLISHED_TITLE', conclusion: 'failure' },
+    ]
+    const report = evaluate(fixture([publisher]), now)
+    assert.match(report.checks.find(row => row.check === 'Latest publisher stage evidence').details, expected)
+    assert.doesNotMatch(render(report, 'simpyll/simpyll'), /PRIVATE_UNPUBLISHED_TITLE/)
+  }
+})
 test('single recent failure warns; three over an hour escalate', () => {
   assert.equal(evaluate(fixture([run(0.2, 'failure'), run(1, 'success', 2)]), now).status, 'Warning')
   assert.equal(evaluate(fixture([run(0.1, 'failure'), run(0.8, 'failure', 2), run(1.5, 'failure', 3), run(2, 'success', 4)]), now).status, 'Action Required')
