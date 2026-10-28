@@ -133,3 +133,33 @@ test('discovery embeds the same public index once, with useful no-JS results and
   assert.match(html, /Search the journal/)
   assert.doesNotMatch(await readFile('dist/sitemap.xml', 'utf8'), /explore\?/) 
 })
+
+test('footer preserves semantic utilities, contextual actions and final copyright', async () => {
+  const { parseHTML } = await import('linkedom')
+  for (const [route, label, destination] of [
+    ['', 'Edit this page on GitHub', '/edit/main/src/pages/Home.tsx'],
+    ['blog/hello-world/', 'Edit this article on GitHub', '/edit/main/src/content/blog/hello-world.mdx'],
+    ['blog/why-simpyll/', 'Suggest an edit to this article on GitHub', '/issues/new?'],
+    ['404.html', 'Suggest an edit on GitHub', '/issues/new?'],
+  ]) {
+    const { document } = parseHTML(await readFile(route === '404.html' ? 'dist/404.html' : `dist/${route}index.html`, 'utf8'))
+    const footer = document.querySelector('footer')
+    assert.ok(footer)
+    assert.equal(footer.querySelector('a[href="/"]'), null)
+    const icons = [...footer.querySelectorAll('.footer-socials li a')]
+    assert.deepEqual(icons.map(a => a.getAttribute('aria-label')), ['Contact', 'GitHub', 'LinkedIn', 'X (Twitter)'])
+    assert.equal(icons[0].getAttribute('href'), '/contact')
+    assert.equal(icons[0].getAttribute('target'), null)
+    for (const icon of icons) assert.equal(icon.querySelector('svg').getAttribute('aria-hidden'), 'true')
+    const links = [...footer.querySelectorAll('nav[aria-label="Legal and transparency"] ul li a')]
+    assert.deepEqual(links.map(a => a.textContent), ['Privacy', 'Terms', 'Disclaimers', 'Accessibility', 'Editorial Standards'])
+    assert.deepEqual(links.map(a => a.getAttribute('href')), ['/privacy', '/terms', '/disclaimers', '/accessibility', '/editorial-standards'])
+    const contribution = footer.querySelector('.footer-connect .footer-contribution')
+    assert.equal(contribution.textContent.trim(), `${label} ↗`)
+    assert.ok(contribution.getAttribute('href').includes(destination))
+    const copyright = footer.querySelector('.site-footer').lastElementChild
+    assert.ok(copyright.classList.contains('footer-copyright'))
+    assert.match(copyright.textContent, /© \d{4} Simpyll\. All rights reserved\./)
+    assert.equal(footer.querySelector('button'), null)
+  }
+})

@@ -23,18 +23,17 @@ export function Footer() {
     <footer className="border-t border-outline bg-canvas">
       <Container>
         <div className="site-footer">
-          <a href="/" className="font-display text-xl font-semibold tracking-display text-foreground">simpyll<span className="text-accent">.</span></a>
           <div className="footer-connect">
             <h2 className="text-sm font-medium text-muted">Let's Connect</h2>
-            <div className="footer-socials">
-              {socials.map(social => <a key={social.name} href={social.url} aria-label={social.name} target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d={social.path} /></svg></a>)}
-            </div>
-            <Link className="text-sm text-muted underline underline-offset-4" to="/contact">Contact</Link>
+            <ul className="footer-socials" aria-label="Connect">
+              <li><Link to="/contact" aria-label="Contact"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M3 3h18a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm0 2v1l9 6 9-6V5H3Zm18 3.4-9 6-9-6V19h18V8.4Z" /></svg><span className="footer-icon-label" aria-hidden="true">Contact</span></Link></li>
+              {socials.map(social => <li key={social.name}><a href={social.url} aria-label={social.name} target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d={social.path} /></svg><span className="footer-icon-label" aria-hidden="true">{social.name}</span></a></li>)}
+            </ul>
+            <a className="footer-contribution text-sm text-muted underline underline-offset-4" href={contribution.href} target="_blank" rel="noopener noreferrer">{contribution.label} <span aria-hidden="true">↗</span></a>
           </div>
-          <a className="footer-contribution text-sm text-muted" href={contribution.href} target="_blank" rel="noopener noreferrer">{contribution.label} <span aria-hidden="true">↗</span></a>
           <nav aria-label="Legal and transparency" className="footer-legal">
             <h2 className="text-sm font-medium text-muted">Legal &amp; Transparency</h2>
-            <ul className="flex flex-wrap gap-x-5">{[['privacy', 'Privacy'], ['terms', 'Terms'], ['disclaimers', 'Disclaimers'], ['accessibility', 'Accessibility'], ['editorial-standards', 'Editorial Standards']].map(([slug, title]) => <li key={slug}><Link className="inline-flex min-h-11 items-center text-sm text-muted underline underline-offset-4" to={`/${slug}`}>{title}</Link></li>)}</ul>
+            <ul>{[['privacy', 'Privacy'], ['terms', 'Terms'], ['disclaimers', 'Disclaimers'], ['accessibility', 'Accessibility'], ['editorial-standards', 'Editorial Standards']].map(([slug, title]) => <li key={slug}><Link className="inline-flex min-h-11 items-center text-sm text-muted underline underline-offset-4" to={`/${slug}`}>{title}</Link></li>)}</ul>
           </nav>
           <p className="footer-copyright text-xs text-subtle">© {import.meta.env.BUILD_YEAR} Simpyll. All rights reserved.</p>
         </div>
