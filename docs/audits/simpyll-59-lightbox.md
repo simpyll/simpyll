@@ -54,7 +54,7 @@ allows ordinary editorial vocabulary and still rejects every prohibited key.
 The representative lossless screenshots are in `docs/screenshots/lightbox/`.
 The rich-content harness builds temporary manual and actual converter-generated
 fixtures, then runs the new lightbox cases plus existing rich-content and print
-journeys on desktop/mobile Chromium and WebKit. Normal browser runs intentionally
+journeys on desktop/mobile Chromium and WebKit, plus desktop Firefox. Normal browser runs intentionally
 skip fixture-only routes; the isolated harness executes them instead.
 
 Final published-head commands, counts, CI checkout identity, actual browser results
