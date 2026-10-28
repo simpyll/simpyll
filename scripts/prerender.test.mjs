@@ -140,9 +140,9 @@ test('footer preserves semantic utilities, contextual actions and final copyrigh
     ['', 'Edit this page on GitHub', '/edit/main/src/pages/Home.tsx'],
     ['blog/hello-world/', 'Edit this article on GitHub', '/edit/main/src/content/blog/hello-world.mdx'],
     ['blog/why-simpyll/', 'Suggest an edit to this article on GitHub', '/issues/new?'],
-    ['404/', 'Suggest an edit on GitHub', '/issues/new?'],
+    ['404.html', 'Suggest an edit on GitHub', '/issues/new?'],
   ]) {
-    const { document } = parseHTML(await readFile(`dist/${route}index.html`, 'utf8'))
+    const { document } = parseHTML(await readFile(route === '404.html' ? 'dist/404.html' : `dist/${route}index.html`, 'utf8'))
     const footer = document.querySelector('footer')
     assert.ok(footer)
     assert.equal(footer.querySelector('a[href="/"]'), null)
