@@ -4,10 +4,10 @@
 
 ## Publish from Notion (including mobile)
 
-The publisher is implemented but **live Notion → simpyll.com verification is
-still pending**. Review and merge the integration PR before enabling production
-runs. This implementation does not publish anything from feature branches or
-pull requests.
+The publisher runs on main. Successful historical transfers do not establish
+that a particular waiting article has transferred or deployed. Check each stage
+using [publishing health](PUBLISHING-HEALTH.md). Feature branches and pull
+requests cannot publish.
 
 ### One-time setup after review
 
@@ -51,6 +51,11 @@ pull requests.
    **Published Date**. Slugs must be 1–100 lowercase ASCII letters/digits with
    single hyphens between words. Use a distinct slug for each article.
 4. Set **Status = Published** when it is ready for the public.
+   This exact database status is the publication gate; Notion's own **Publish
+   to web** feature and a separate checkbox are not gates in this implementation.
+   Archived/trashed pages are excluded. **Published Date** supplies metadata,
+   not a scheduler: future dates do not defer a Published article. Do not set
+   Published until the article is ready to transfer immediately.
 5. Wait for the next scheduled run and Pages deployment, then open
    `https://simpyll.com/blog/<slug>/`. The cron is `*/15 * * * *`; GitHub may
    delay or skip scheduled jobs, so this is approximate, not a 15-minute SLA.
@@ -129,16 +134,18 @@ on main; an unchanged sync intentionally does not redeploy.
 - `npm run sync:notion -- --dry-run`: optional read-only real-API check with
   the two secrets supplied securely as environment variables.
 
-PR validation uses no secrets and cannot deploy. To accept production after
-review: publish a non-sensitive test article with an uploaded image, run the
-publisher on main with dry_run **unchecked**, confirm its content commit and
-successful Pages deployment, and verify the actual HTML, metadata and image at
-`https://simpyll.com/blog/<slug>/`. Edit that page and confirm the same URL
-updates. Run sync again unchanged and confirm no commit/deployment. Finally,
-change the test article to Draft and verify its route is removed after the next
-successful deploy. Record the run links and live URL before calling the
-integration end-to-end verified. Repository secrets cannot be read back for
-local testing, and a fixture build is not proof of a live Notion publication.
+PR validation uses no secrets and cannot deploy. After review and merge, use
+an owner-intended article that already satisfies publication gates. First inspect
+all eligible changes so a retry does not publish unexpected content. A dry-run
+compiles MDX but does **not** prove the changed production build passes. Run the
+publisher on main with dry_run **unchecked**, confirm the content commit and
+exact-revision Pages deployment, then verify the intended article revision,
+canonical URL, RSS and sitemap on the live site. Run sync again unchanged and
+confirm no content commit/deployment. Do not publish synthetic articles or change
+editorial eligibility for acceptance; unpublish and ownership cases use isolated
+fixtures. Record run links and release SHA before calling the integration
+end-to-end verified. Repository secrets cannot be read back for local testing,
+and a fixture build is not proof of a live Notion publication.
 
 References: [Notion data-source migration](https://developers.notion.com/guides/get-started/upgrade-guide-2025-09-03),
 [Notion 2026-03-11 changes](https://developers.notion.com/guides/get-started/upgrade-guide-2026-03-11),

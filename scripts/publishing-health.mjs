@@ -41,6 +41,23 @@ export function evaluate(data, now = Date.now()) {
     latest ? `Last scheduled execution ${latest.created_at}; approximately every 15 minutes, with 6h warning / 24h escalation grace. Manual runs do not reset this clock.` : 'No scheduled execution available.', latest ? [latest] : [])
   const manual = runs.find(run => run.event === 'workflow_dispatch')
   add('Most recent publishing execution', 'Informational', runs[0] ? `${runs[0].created_at}; ${runs[0].event}; ${runs[0].status}/${runs[0].conclusion ?? 'pending'}. Manual runs may be read-only${manual ? ` (latest ${manual.created_at})` : ''}.` : 'Unavailable.', runs.slice(0, 1))
+  const job = runs[0] && syncJob(runs[0])
+  const steps = job?.steps ?? []
+  const stage = name => steps.find(step => step.name === name)?.conclusion
+  const imported = stage('Read Published articles and validate MDX')
+  const validated = stage('Validate updated site before committing')
+  const committed = stage('Commit only publisher-owned changes')
+  let evidence = 'Stage metadata unavailable; inspect the sync job. A green run does not prove a specific article revision transferred.'
+  if (imported === 'failure') evidence = 'Notion read/conversion/MDX validation failed; no successful reconciliation is established.'
+  else if (imported === 'success') {
+    evidence = 'Notion read/conversion/MDX validation succeeded.'
+    if (validated === 'failure') evidence += ' Post-import site validation failed before commit; imported changes were not transferred.'
+    else if (committed === 'failure') evidence += ' Commit/push stage failed; verify remote content identity before retrying.'
+    else if (committed === 'success') evidence += ' Commit/push stage succeeded; verify the resulting content SHA and deployment separately.'
+    else if (job.conclusion === 'success' && validated === 'skipped' && committed === 'skipped') evidence += ' No content commit was needed (or this was a read-only manual run); no new deployment is established.'
+    else evidence += ' Content transfer is not yet established.'
+  }
+  add('Latest publisher stage evidence', 'Informational', evidence, runs.slice(0, 1))
   add('Last content-changing sync', 'Informational', data.content ? `${data.content.date}; ${data.content.sha}. Latest commit touching the publisher manifest; attribution to a sync is not guaranteed.` : 'Unavailable in bounded history; new articles are not required.')
   const deployment = data.deployment
   add('Latest successful Pages deployment', deployment ? 'Healthy' : 'Unknown', deployment ? `${deployment.date}; deployed ${deployment.sha}. Pages success alone does not prove public propagation.` : 'No successful Pages deployment could be verified.')

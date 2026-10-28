@@ -30,6 +30,13 @@ an actionable alert. Cancelled/superseded runs alone do not escalate. Manual
 publisher runs may be read-only (the default); they are shown but do not reset
 the scheduled-success clock. No new article per week is required.
 
+The latest publisher stage evidence uses fixed step names to distinguish a
+successful Notion read/conversion/MDX compile, failed post-import site validation,
+failed commit/push, successful commit/push stage, and successful no-op/read-only
+execution. Missing stage metadata stays explicit. A commit-stage success still
+requires checking its content SHA: stage metadata is not article-level revision
+evidence, and a no-op never proves that an intended article was eligible.
+
 Sync timestamps come from job `completed_at`; execution timestamps come from
 run `created_at`. Run checkout SHAs may predate a publisher's new commit. The
 latest commit touching `.notion/published.json` is therefore reported separately
@@ -66,6 +73,13 @@ No email API, webhook, weekly issue, healthy-run comment or per-sync alert is
 introduced. Existing publisher/deployment notification settings remain yours to
 control. A checkout/runner failure before the script starts may prevent a report;
 inspect the job logs in that case.
+
+[Issue #199](https://github.com/simpyll/simpyll/issues/199) owns automatic
+article-level incident issues, durable eligible-revision detection, deduplication,
+owner assignment and actual notification-route acceptance. Those notifications
+are not activated by filing the issue or by this report. #67 remains open until
+its recovery/live acceptance and the explicitly delegated failure-visibility
+acceptance in #199 are met.
 
 ## Manual recovery
 
@@ -113,3 +127,16 @@ and a securely supplied `GITHUB_TOKEN` granting contents/actions/deployments rea
 ### Budget failure after import
 
 In the publisher's **sync** job, distinguish the import step from **Validate updated site before committing**. A failure in the latter (including `BUDGET FAILED`) is a failed synchronization even if the import step succeeded; no content commit or downstream deploy should be reported. Inspect the named failing budget and asset report, then reproduce with an isolated synthetic article and the production build. Do not raise budgets or publish a test article to clear the error. Correct the build, merge the reviewed change, and allow the normal authorized schedule to retry; confirm the resulting content commit and exact-revision deploy, followed by an unchanged no-op run. If the push was rejected, start a fresh run against current main rather than force-pushing. If the content commit exists but deployment failed, use the deployment recovery steps above.
+
+PR #193 separated metadata and route bodies, resolving shared-entry growth.
+A long individual body can still exceed the deferred-chunk budget. The build
+now extracts long compiled MDX string literals into static prose-data imports,
+targeting 8 KB source groups once extracted prose exceeds 16 KB. Rendering and
+escaping are unchanged; all data imports preload with that article and remain
+included in route/page and individual asset budgets. This does not permit
+unlimited article growth: a single huge literal, markup-heavy body, growing
+metadata or total page weight can still fail. Do not exempt article chunks from
+auditing. `node --test scripts/notion-growth.test.mjs` checks the two original
+growth cases, reproduces the post-193 single-chunk failure with a larger synthetic
+case, checks all corrected builds/no-op imports, and runs focused desktop/mobile
+hydration/navigation checks in the isolated site. It requires installed Chromium.
