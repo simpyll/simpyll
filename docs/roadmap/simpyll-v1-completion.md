@@ -1,5 +1,6 @@
 # Simpyll v1.0 — Production Stabilization & Handoff
 
+- Owner scheduling decision — October 28: move #82's remaining full browser/visual acceptance to the **last stabilization task**, after all other selected project work and immediately before final project sign-off. Keep #82 open; refresh the dependency audit and run the full regression/visual checks against that final revision. Existing dependency monitoring and security gates continue throughout.
 ## Current scheduling and dependency update — October 27, 2026
 
 - #184 is closed as not planned; #43 is deferred by owner decision. Neither is a prerequisite for #82.
@@ -36,6 +37,8 @@ None established. No verified outage, critical vulnerability or specific clinica
 4. [#88](https://github.com/simpyll/simpyll/issues/88) — finish approved MIT source-only licensing and deployed asset/content boundaries. Effort M. Owner rights/copyright decisions; can be prepared in parallel with publishing.
 5. [#43](https://github.com/simpyll/simpyll/issues/43) — bounded manual accessibility acceptance and serious-barrier fixes. Effort S. Depends on final core behavior and current automated matrix.
 
+6. [#82](https://github.com/simpyll/simpyll/issues/82) — **Very last task before project sign-off:** refresh full/production dependency audits and complete full browser/fixture and representative visual acceptance on the final project revision, after all other selected work. Remediation is already merged and the latest audits are clean; keep the issue open until final evidence is recorded.
+
 Only these five P1 issues belong in the completion milestone. Do not add optional features to fill a phase.
 
 ## F. Deferred improvements
@@ -45,7 +48,6 @@ All entries below are explicitly nonblocking and labeled `status:deferred`. The 
 - [#152](https://github.com/simpyll/simpyll/issues/152) — Context-Aware Internal Linking — Conservative Build-Time Suggestions & Editorial Approval. Optional: configure protected signing and verify one public non-sensitive approved link end to end; keep registry empty/manual links until then.
 - [#111](https://github.com/simpyll/simpyll/issues/111) — Implement bidirectional Notion ↔ GitHub article synchronization with conflict protection. Explicitly deferred beyond v1; no Cortex transition dependency. Select only for demonstrated reader need and a sustainable maintenance plan.
 - [#87](https://github.com/simpyll/simpyll/issues/87) — Track article/source freshness and review dates for clinical technology content. Explicitly deferred beyond v1; no Cortex transition dependency. Select only for demonstrated reader need and a sustainable maintenance plan.
-- [#82](https://github.com/simpyll/simpyll/issues/82) — Triage and remediate documented moderate dependency advisories. Reassess current advisory exposure and prepare only compatible, separately tested remediation. This is maintenance, not an automatic major-version upgrade.
 - [#74](https://github.com/simpyll/simpyll/issues/74) — Protect users and content when rendering third-party embeds. Optional: record one real-provider playback/privacy/network/mobile check without weakening sandbox; otherwise retain link fallback. Canonical home for #2 residual acceptance.
 - [#71](https://github.com/simpyll/simpyll/issues/71) — Build a structured learning journal and milestone tracker. Explicitly deferred beyond v1; no Cortex transition dependency. Select only for demonstrated reader need and a sustainable maintenance plan.
 - [#64](https://github.com/simpyll/simpyll/issues/64) — Add secure draft preview workflow for unpublished Notion posts. Optional: verify one owner-authorized non-sensitive Draft/Ready preview and cleanup; do not rebuild preview or publish private fixtures.
