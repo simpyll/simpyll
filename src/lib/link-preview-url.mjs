@@ -1,9 +1,10 @@
 /** Resolve metadata only; never rewrite the anchor's query, fragment or destination. */
 export function previewRoute(href, current, base, canonicalOrigin, records, aliases) {
-  if (!href || href.startsWith('#') || /[\\\s]/u.test(href) || /%2f|%5c|%25/i.test(href)) return undefined
+  if (!href || href.startsWith('#') || /[\\\s]/u.test(href)) return undefined
   try {
     const url = new URL(href, current)
     if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password || ![new URL(current).origin, new URL(canonicalOrigin).origin].includes(url.origin)) return undefined
+    if (/%2f|%5c|%25/i.test(url.pathname)) return undefined
     const prefix = '/' + base.replace(/^\/+|\/+$/g, '')
     let path = decodeURIComponent(url.pathname)
     if (prefix !== '/') {

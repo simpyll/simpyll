@@ -17,7 +17,7 @@ test('public metadata projection excludes withdrawn/draft/private data and optio
 test('URL resolution supports aliases, queries, fragments and base paths without rewriting links', () => {
   const records = { '/blog/new': {}, '/projects/example': {} }, aliases = { old: 'new', deleted: 'missing' }
   const resolve = (href, base = '/') => previewRoute(href, `https://local.test${base}blog/source`, base, 'https://simpyll.com', records, aliases)
-  for (const href of ['/blog/new', '/blog/new/?q=1#heading', '/blog/old', '/blog/%6eew', 'https://simpyll.com/blog/old#section', 'https://local.test/blog/new', 'new']) assert.equal(resolve(href), '/blog/new', href)
+  for (const href of ['/blog/new', '/blog/new/?q=1#heading', '/blog/new?q=%2F%25#%2F', '/blog/old', '/blog/%6eew', 'https://simpyll.com/blog/old#section', 'https://local.test/blog/new', 'new']) assert.equal(resolve(href), '/blog/new', href)
   assert.equal(resolve('/projects/example'), '/projects/example')
   assert.equal(resolve('/site/blog/old?x#y', '/site/'), '/blog/new')
   assert.equal(resolve('https://simpyll.com/site/projects/example', '/site/'), '/projects/example')
