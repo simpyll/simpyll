@@ -1,3 +1,4 @@
+import { LinkPreviews } from './components/LinkPreviews'
 import { LipidPathRoute } from './features/lipidpath/route'
 import { Analytics } from './analytics/Analytics'
 import { PulseRoute } from './pulse/route'
@@ -36,6 +37,7 @@ export function AppContent() {
       <Header />
       <Analytics />
       <RouteNavigation />
+      <LinkPreviews />
 
       <ErrorBoundary key={pathname} scope="route">
         <Routes>

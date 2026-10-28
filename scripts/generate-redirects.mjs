@@ -1,3 +1,4 @@
+import { generateLinkPreviews } from './link-previews.mjs'
 import { readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { generateRedirects, collectArticles, readMetadata } from './redirects.mjs'
@@ -23,3 +24,5 @@ const related = createRelatedArticles(articles)
 await writeFile('src/generated/related-articles.json', JSON.stringify(Object.fromEntries(articles.map(article =>
   [article.metadata.articleId, related(article.metadata.articleId).map(post => post.metadata.articleId)]
 )), null, 2) + '\n')
+
+await generateLinkPreviews()
