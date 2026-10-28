@@ -180,7 +180,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
   const articles = await collectArticles(process.cwd(), { history: new Map() })
   for (const article of articles.filter(a => a.status === 'published')) article.metadata = await readMetadata(await readFile(`src/content/blog/${article.slug}.mdx`, 'utf8'))
   const policies = JSON.parse(await readFile('src/content/policies.json', 'utf8'))
-  const expectedRoutes = ['/', '/about', '/contact', '/blog', '/explore', '/projects', '/pulse', '/tools/lipidpath', ...policies.map(p => `/${p.slug}`), ...await caseStudyRoutes(), ...articles.filter(a => a.status === 'published').map(a => `/blog/${a.slug}`)]
+  const series = JSON.parse(await readFile('src/generated/series.json', 'utf8'))
+  const expectedRoutes = [...series.map(item => `/series/${item.id}`), '/' , '/about', '/contact', '/blog', '/explore', '/projects', '/pulse', '/tools/lipidpath', ...policies.map(p => `/${p.slug}`), ...await caseStudyRoutes(), ...articles.filter(a => a.status === 'published').map(a => `/blog/${a.slug}`)]
   const result = await auditSeo({ expectedRoutes, articles })
   const output = process.argv[2] ?? 'artifacts/seo/audit.json'
   await mkdir(resolve(output, '..'), { recursive: true })

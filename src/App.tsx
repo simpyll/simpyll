@@ -19,6 +19,7 @@ import { Contact } from './pages/Contact'
 import { Home } from './pages/Home'
 import { Blog } from './pages/Blog'
 import { NotFound } from './pages/NotFound'
+import { SeriesPage } from './pages/SeriesPage'
 import { BlogPost } from './pages/BlogPost'
 import { useEffect } from 'react'
 
@@ -47,6 +48,7 @@ export function AppContent() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/blog" element={<Blog />} />
+          <Route path="/series/:id" element={<SeriesPage />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           {policyLinks.map(({ slug }) => <Route key={slug} path={`/${slug}`} element={<Policy slug={slug} />} />)}
           <Route path="*" element={<NotFound />} />

@@ -3,9 +3,13 @@ import type { EditorialMetadata } from './editorial.mjs'
 import related from '../generated/related-articles.json' with { type: 'json' }
 import navigation from '../generated/article-navigation.json' with { type: 'json' }
 
+import seriesRecords from '../generated/series.json' with { type: 'json' }
+import type { SeriesMetadata, SeriesRecord } from './series.mjs'
+
 import articles from '../generated/articles.json' with { type: 'json' }
 
 export type BlogPostMetadata = EditorialMetadata & {
+  series?: SeriesMetadata
   articleId?: string
   redirectFrom?: string[]
   status?: 'published'
@@ -51,4 +55,11 @@ export function getRelatedArticles(id: string): BlogPost[] {
     const post = postsById.get(id)
     return post ? [post] : []
   })
+}
+
+export const series = seriesRecords as SeriesRecord[]
+export function getSeries(id: string) {
+  const record = series.find(item => item.id === id)
+  if (!record) return undefined
+  return { ...record, installments: record.installments.map(item => ({ ...item, post: postsById.get(item.articleId)! })) }
 }

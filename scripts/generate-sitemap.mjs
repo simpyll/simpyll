@@ -60,7 +60,9 @@ async function generateSitemap() {
       })
   )
 
+  const series = JSON.parse(await readFile(join(root, 'src/generated/series.json'), 'utf8'))
   const pages = [
+    ...series.map(item => ({ path: `/series/${item.id}` })),
     ...policyRoutes.map(path => ({ path })),
     { path: '/' },
     { path: '/blog' },

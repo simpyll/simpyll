@@ -1,3 +1,4 @@
+import { buildSeries, validateSeries } from '../src/lib/series.mjs'
 import { caseStudyRoutes } from './project-routes.mjs'
 import { editorialErrors } from '../src/lib/editorial.mjs'
 import { readFileSync } from 'node:fs'
@@ -70,7 +71,9 @@ export async function validateContent({ root = process.cwd() } = {}) {
   try { redirects = JSON.parse(await readFile(join(root, 'src/generated/redirects.json'), 'utf8')) } catch (error) { if (error.code !== 'ENOENT') throw error }
   let projectRoutes = []
   try { projectRoutes = await caseStudyRoutes(root) } catch (error) { if (error.code !== 'ENOENT') throw error }
-  const routes = new Set([...policyRoutes, '/', '/blog', '/about', '/explore', '/projects', ...projectRoutes, ...articles.map(article => `/blog/${article.slug}`)])
+  let series = []
+  try { series = JSON.parse(await readFile(join(root, 'src/generated/series.json'), 'utf8')) } catch (error) { if (error.code !== 'ENOENT') throw error }
+  const routes = new Set([...series.map(item => `/series/${item.id}`), ...policyRoutes, '/', '/blog', '/about', '/explore', '/projects', ...projectRoutes, ...articles.map(article => `/blog/${article.slug}`)])
   for (const article of articles) {
     const report = (message, node, target = errors) => {
       const position = node?.position?.start
@@ -96,6 +99,8 @@ export async function validateContent({ root = process.cwd() } = {}) {
         if (typeof metadata[field] !== 'string' || !metadata[field].trim()) report(`metadata.${field} must be a non-empty string`)
       }
       for (const error of editorialErrors(metadata)) report(error)
+      validateSeries(metadata.series)
+      article.metadata = metadata
       if (!Array.isArray(metadata.tags) || metadata.tags.some(tag => typeof tag !== 'string' || !tag.trim())) report('metadata.tags must be an array of non-empty strings (an empty array is allowed)')
       if (metadata.status !== undefined && metadata.status !== 'published' || metadata.draft === true || metadata.published === false) report('Private manual MDX must be moved outside src/content/blog; this directory is public-only')
       if (metadata.slug !== undefined && metadata.slug !== article.slug) report(`metadata.slug must match filename slug "${article.slug}"`)
@@ -151,6 +156,7 @@ export async function validateContent({ root = process.cwd() } = {}) {
       } catch (error) { report(`${error.message} (destination: ${JSON.stringify(value.replace(/(https?:\/\/)[^/@]+@/gi, '$1[redacted]@'))})`, node) }
     }
   }
+  try { buildSeries(articles.filter(article => article.metadata)) } catch (error) { errors.push(`Series validation: ${error.message}`) }
   return { errors, warnings, count: articles.length }
 }
 

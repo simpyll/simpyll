@@ -123,3 +123,7 @@ Cortex has not been modified.
 ## Licensing implementation update — October 27, 2026
 
 The `fix/88-source-license` PR implements the already-approved MIT software license, package/lockfile metadata, contributor terms and explicit editorial/media exclusions. Review and merge that implementation; do not select a license again. #88's remaining asset-provenance acceptance is separate and is not established by the MIT grant.
+
+## Owner-selected article series (#60)
+
+The owner selected the previously deferred article-series feature. The implementation is proposed in the associated PR; it remains subject to final validation and merge. It does not reactivate #43, #55, or #184 and does not create a Cortex handoff blocker.

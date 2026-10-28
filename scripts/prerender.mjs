@@ -35,7 +35,8 @@ async function prerender() {
     .filter((file) => file.endsWith('.mdx'))
     .map((file) => `/blog/${file.replace(/\.mdx$/, '')}`)
 
-  const routes = [...policyRoutes, '/', '/blog', '/about', '/contact', '/explore', '/projects', '/tools/lipidpath', ...blogRoutes, ...await caseStudyRoutes()]
+  const series = JSON.parse(await readFile(join(root, 'src/generated/series.json'), 'utf8'))
+  const routes = [...series.map(item => `/series/${item.id}`), ...policyRoutes, '/', '/blog', '/about', '/contact', '/explore', '/projects', '/tools/lipidpath', ...blogRoutes, ...await caseStudyRoutes()]
 
   for (const route of routes) {
     const pageHtml = (await render(route)).replace('<head>', `<head>${templateHead}${projectHead(clientManifest, route)}`)

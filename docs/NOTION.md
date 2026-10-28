@@ -356,3 +356,15 @@ may retain rendered content until closed. Local users with your account or root
 access are within the trust boundary. The build can be slower and require more
 disk space than the public dev server because it copies dependencies and performs
 the full production build.
+
+### Optional article series
+
+To place a published article in a series, add optional Notion properties **Series ID** (text), **Series Title** (text), and **Series Order** (number). Set all three or leave all three empty. The ID is a stable lowercase, hyphen-separated identifier; the title must match exactly across its articles; the order is a unique positive integer. The existing Published status and privacy gates still apply. Missing properties or empty values leave an article outside a series. Invalid or incomplete values fail synchronization or validation.
+
+For repository-authored MDX, add this to the existing literal metadata object:
+
+```js
+series: { id: 'ai-engineering', title: 'AI Engineering', order: 5 },
+```
+
+Installments are sorted by this explicit order, not publication date. Gaps are allowed. A reader sees both the authored installment number and the position among currently published articles. `/series/<series-id>` lists only published installments; adding an article requires no navigation edits. Renames retain the stable article ID and resolve to the current slug. Withdrawing an article removes it from the list, and withdrawing every installment removes the index. Changing a series ID changes its index URL, so treat the ID as stable. Duplicate positions and conflicting titles are errors. No series metadata is written back to Notion.
