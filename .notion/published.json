@@ -51,15 +51,15 @@
       "redirectFrom": [],
       "status": "published",
       "assets": {},
-      "sourceRevision": "e5d2edc58f7e8a8aa3ed62195462f87e7bf67f101d92a03db36db995538f84ad"
+      "sourceRevision": "c072203eafc2aff678e7c77ce0194ddab9116d5e97c0efd421317f6120cadcd2"
     }
   },
   "files": {
     "src/content/blog/starting-over-without-starting-from-zero.mdx": "9e46dbeba5f1f14423d1bcf4302e7d7c6a3700ebda96490f83956d9e7f83ba85",
     "src/content/blog/a-hospital-is-the-most-complicated-computer-ive-ever-used.mdx": "05b160fa511ac113ce0f70f62306ec2c17f48921d511735243fa6a74ce399e41",
     "src/content/blog/why-simpyll.mdx": "ea5cbbeea1bef3cabfa5dd00fb1f0ecb2f79ae5fc85fc31cfea05c5ab9de7eab",
-    "src/content/blog/can-clinical-guidelines-be-converted-into-code.mdx": "13ee8ed8b57b4d3e1517e526bc459a73d5da92cb58ba32acc47a01452d2be74f",
-    "src/content/blog/ai-is-already-in-healthcare.mdx": "9da04a5fde0584ba0c2bb882ec17c4491866e240c6ddd7b5eba8c836a52e5376",
+    "src/content/blog/can-clinical-guidelines-be-converted-into-code.mdx": "2d3d33897f15f2d43fd9d8cf06f2f0fc1a9dddb598deaf4d4d09c937a199cfa9",
+    "src/content/blog/ai-is-already-in-healthcare.mdx": "4c351d1cc256c198c2a7d63f05b1ffce04afff9f9299b9d3094e72fcb9f3cd99",
     "public/images/notion/3ffb3577d26a80e9b57fc08460c29516/publishing-test-image-01-ff804a5635dd.png": "ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25",
     "public/images/notion/3ffb3577d26a80e9b57fc08460c29516/ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25.png": "ff804a5635ddb28e44f41caa135908da496b2431896b9474da6310d519457f25"
   }
