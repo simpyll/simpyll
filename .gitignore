@@ -53,3 +53,4 @@ artifacts/
 
 /src/generated/articles.json
 /src/generated/series.json
+/src/generated/link-previews.json
