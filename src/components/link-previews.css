@@ -1,0 +1,6 @@
+.link-preview { position: fixed; z-index: 80; box-sizing: border-box; width: min(20rem, calc(100vw - 1rem)); max-width: calc(100vw - 1rem); max-height: calc(100dvh - 1rem); overflow: auto; overflow-wrap: anywhere; padding: .75rem; border: 1px solid var(--ui-control-outline); border-radius: .5rem; background: var(--ui-surface); color: var(--ui-foreground); box-shadow: 0 4px 16px rgb(0 0 0 / .18); font-size: .875rem; line-height: 1.5; }
+.link-preview strong { display: block; font-size: 1rem; }
+.link-preview p { margin: .375rem 0 0; }
+.link-preview-type { color: var(--ui-muted); }
+.link-preview img { width: 100%; max-height: 7rem; object-fit: contain; margin-bottom: .5rem; }
+@media print { .link-preview { display: none; } }
