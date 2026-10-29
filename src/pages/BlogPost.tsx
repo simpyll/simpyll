@@ -67,10 +67,6 @@ export function BlogPost() {
                 {metadata.title}
               </h1>
 
-              <p className="mt-6 text-lg leading-relaxed text-muted">
-                {metadata.description}
-              </p>
-
               <div className="article-metadata mt-10 flex flex-wrap items-center gap-4 border-b border-outline pb-10 text-sm text-subtle">
                 <span>{metadata.author}</span>
                 <span aria-hidden="true">·</span>

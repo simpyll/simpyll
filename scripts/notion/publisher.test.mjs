@@ -310,3 +310,16 @@ test('incomplete manifest identities and conflicting aliases abort before API ca
     assert.deepEqual(await snapshot(root), before)
   }
 })
+
+test('automatic descriptions truncate at complete words within 160 characters', () => {
+  const opening = "Artificial intelligence is entering hospitals, clinics, and clinical workflows. But between the promises of automation and the realities of patient care, there's a more interesting question."
+  const description = metadataFor(page(), null, [block('paragraph', opening)]).description
+  assert.equal(description, "Artificial intelligence is entering hospitals, clinics, and clinical workflows. But between the promises of automation and the realities of patient care…")
+  assert.ok(description.length <= 160)
+  assert.equal(metadataFor(page(), null, [block('paragraph', '  Complete   short paragraph. ')]).description, 'Complete short paragraph.')
+  const explicit = page()
+  explicit.properties.Description = { rich_text: [rt('Authored description.')] }
+  assert.equal(metadataFor(explicit, null, [block('paragraph', opening)]).description, 'Authored description.')
+  assert.equal(metadataFor(page(), null, []).description, 'Notion fixture article')
+  assert.equal(metadataFor(page(), null, [block('paragraph', 'x'.repeat(200))]).description, '…')
+})

@@ -90,8 +90,8 @@ matrix for examples and [image processing](IMAGES.md) for download limits.
 
 Missing optional fields have deterministic defaults: title-based slug (then
 preserved on later runs), previously saved date or page creation date,
-`Journal` category, empty tags, and the first paragraph (up to 160 characters)
-as description, falling back to title. Author is `David Becker`. Name is
+`Journal` category, empty tags, and the first paragraph (up to 160 characters, truncated at a complete word
+with an ellipsis when needed) as description, falling back to title. Author is `David Becker`. Name is
 required. Invalid dates/slugs and duplicate slugs fail the entire run without
 committing; fix the Notion properties and retry.
 
@@ -375,3 +375,14 @@ series: { id: 'ai-engineering', title: 'AI Engineering', order: 5 },
 ```
 
 Installments are sorted by this explicit order, not publication date. Gaps are allowed. A reader sees both the authored installment number and the position among currently published articles. `/series/<series-id>` lists only published installments; adding an article requires no navigation edits. Renames retain the stable article ID and resolve to the current slug. Withdrawing an article removes it from the list, and withdrawing every installment removes the index. Changing a series ID changes its index URL, so treat the ID as stable. Duplicate positions and conflicting titles are errors. No series metadata is written back to Notion.
+
+### Article descriptions and introductions
+
+`description` is discovery metadata used in listings, search, RSS and SEO/social
+metadata. Article detail headers do not display it: the complete opening belongs
+in the MDX body. There is no separate authored subtitle/standfirst field.
+When Description is empty, the publisher derives a description from the first
+paragraph, normalizes whitespace and truncates at a complete word within 160
+characters including an ellipsis. Explicit Description values remain authored.
+Existing imported metadata is refreshed by ordinary synchronization; this UI fix
+requires no article edits, Notion changes or content migration.

@@ -29,3 +29,25 @@ for (const javaScriptEnabled of [true, false]) {
     })
   })
 }
+
+for (const slug of ['ai-is-already-in-healthcare', 'hello-world']) {
+  test(`article opening appears once after hydration: ${slug}`, async ({ page }) => {
+    const errors: string[] = []
+    page.on('pageerror', error => errors.push(error.message))
+    await page.goto(`/blog/${slug}`)
+    const body = page.locator('.article-content')
+    await expect(body.locator('p').first()).toBeVisible()
+    const opening = await body.locator('p').first().innerText()
+    const headerText = await page.locator('article.print-article').evaluate(article => {
+      const clone = article.cloneNode(true) as HTMLElement
+      let node = clone.querySelector('.article-content')
+      while (node) { const next = node.nextElementSibling; node.remove(); node = next }
+      return clone.textContent
+    })
+    expect(headerText).not.toContain(opening)
+    const description = await page.locator('meta[name="description"]').getAttribute('content')
+    expect(headerText).not.toContain(description)
+    await expect(page.locator('.article-metadata')).toContainText('David Becker')
+    expect(errors).toEqual([])
+  })
+}
