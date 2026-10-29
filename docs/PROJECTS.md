@@ -139,7 +139,7 @@ The schema also exports `ProjectInput` for typed tooling before link normalizati
 No network fetching or runtime validation is needed in the homepage. Client and
 SSR share the same generated public manifest, preventing hydration drift.
 
-The Project Lab archive uses `getPublicProjects()` for both Board and Grid.
+The Project Lab builds both its Board and Grid from public projects, excluding records marked Archived. Archived records remain valid in the project registry but are omitted from this page.
 #27 can associate an MDX narrative by stable project ID and optional
 `caseStudy.contentKey`, deriving title/summary/workflow/lifecycle/SEO from this metadata rather
 than repeating it in frontmatter. That association asserts available content, not
@@ -159,7 +159,7 @@ In Progress. The old mixed `status` field has been removed; do not reintroduce i
 (nonnegative integer, currently informational) are optional. Edit the milestone
 in the same record. No dates, progress metrics or release availability are inferred.
 
-The default read-only Board groups public records into six columns. Desktop
+The default read-only Board groups visible public records into five columns; Archived records are omitted from the page. Desktop
 uses a keyboard-focusable horizontal scroll region with readable minimum column
 widths. Mobile selects a single stage (initially In Progress); all columns remain
 in server HTML. No-JavaScript CSS shows every stage and the remaining Ideas.
@@ -191,7 +191,7 @@ break ties. Draft/private records are excluded from the generated client manifes
 | On Deck | Selected for upcoming development |
 | In Progress | Currently receiving active work |
 | Shipped | A released, publicly accessible deliverable |
-| Archived | Retired, discontinued, or intentionally set aside |
+| Archived | Retired, discontinued, or intentionally set aside; omitted from the public Projects page |
 
 Lifecycle describes maintenance independently: Planned has not started; Active
 receives ongoing work; Maintained receives upkeep; Paused is temporarily stopped;

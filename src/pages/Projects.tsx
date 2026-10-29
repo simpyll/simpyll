@@ -5,8 +5,8 @@ import { SEO } from '../components/SEO'
 import { getCaseStudyPath, getPublicProjects, technologies, workflowStages, lifecycleStatuses, type Project } from '../projects'
 import './projects.css'
 
-const projects = getPublicProjects()
-const stages = Object.entries(workflowStages)
+const projects = getPublicProjects().filter(p => p.workflowStage !== 'archived')
+const stages = Object.entries(workflowStages).filter(([id]) => id !== 'archived')
 const types = [...new Set(projects.map(p => p.projectType).filter(Boolean))].sort() as string[]
 const usedTechnologies = Object.entries(technologies).filter(([id]) => projects.some(p => p.technologies.includes(id as keyof typeof technologies)))
 const subscribe = () => () => {}

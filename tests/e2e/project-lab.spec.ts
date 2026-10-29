@@ -6,7 +6,10 @@ test('board inventory, discovery, URL history, and grid share one collection', a
   page.on('pageerror', e => errors.push(e.message))
   await page.goto('/projects')
   await expect(page.getByRole('button', { name: 'Board', exact: true })).toHaveAttribute('aria-pressed', 'true')
-  await expect(page.locator('.lab-column')).toHaveCount(6)
+  await expect(page.locator('.lab-column')).toHaveCount(5)
+  await expect(page.getByLabel('Workflow stage').locator('option[value="archived"]')).toHaveCount(0)
+  await expect(page.getByLabel('Viewing stage').locator('option[value="archived"]')).toHaveCount(0)
+  await expect(page.locator('.lab-column[data-stage="archived"]')).toHaveCount(0)
   await expect(page.locator('[data-stage=in-progress] [data-project]')).toHaveCount(2)
   await expect(page.locator('[data-stage=on-deck] [data-project]')).toHaveCount(2)
   await expect(page.locator('[data-stage=shipped] [data-project]')).toHaveCount(2)
@@ -53,7 +56,7 @@ for (const theme of ['light','dark'] as const) test(`board ${theme}: accessibili
   await page.evaluate(() => scrollTo(0,0))
   expect((await new AxeBuilder({page}).analyze()).violations).toEqual([])
   if (isMobile) {
-    for (const id of ['ideas','on-deck','in-progress','on-hold','shipped','archived']) {
+    for (const id of ['ideas','on-deck','in-progress','on-hold','shipped']) {
       await page.getByLabel('Viewing stage').selectOption(id)
       await expect(page.locator(`[data-stage="${id}"]`)).toBeVisible()
     }
