@@ -7,7 +7,7 @@ The October 28 owner selection in roadmap #89 supersedes #59's historical
 features in that order. Content work remains later and #82 remains the last
 project-wide acceptance gate. This feature has not been merged or deployed.
 
-Audited main `31c0649f2b955cc5e235e6759252f43de40a7b42`, AGENTS.md, #59 and
+Audited initial main `31c0649f2b955cc5e235e6759252f43de40a7b42`, AGENTS.md, #59 and
 its empty discussion, #89 and owner direction, current open PRs (none matching),
 merged responsive-image foundation #108, MDX/image/Notion authoring contracts,
 image tests, the rich-content isolated build and browser/accessibility helpers.
@@ -78,3 +78,11 @@ Firefox 157 starts but its content process crashes when this host refuses
 The available GitHub Actions browser remains signed out, and the GitHub connector
 has rerun/read tools but no workflow-dispatch operation. Owner-run full manual CI
 is therefore still needed for acceptance the local host cannot establish.
+
+## Current-main reconciliation
+
+Main advanced to `7bb6505cf14f21d0fe4a7ca3beb4ae6ad65dffaf` while this
+work was underway. Integrate it without rebuilding the separately merged #214
+article-sharing work or changing synchronized content. Resolve only the shared
+BlogPost imports and browser-suite selection so both features retain their tests.
+Final-head verification supersedes earlier branch snapshots.

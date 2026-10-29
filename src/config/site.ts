@@ -9,5 +9,7 @@ export const siteConfig = {
 } as const
 
 export function getSiteUrl(path = '/') {
-  return new URL(path, siteConfig.url).toString()
+  if (/^https?:\/\//.test(path)) return new URL(path).toString()
+  const base = import.meta.env.BASE_URL
+  return new URL(`${base}${path.replace(/^\//, '')}`, siteConfig.url).toString()
 }

@@ -1,4 +1,6 @@
 import { ArticleImages } from '../components/mdx/ArticleLightbox'
+import { ArticleShare } from '../components/ArticleShare'
+import { socialCard, socialCardWidth, socialCardHeight } from '../lib/social-card.mjs'
 import { Suspense } from 'react'
 import { articleElement } from '../lib/article-loader'
 import { RelatedProjects } from '../components/RelatedProjects'
@@ -41,6 +43,11 @@ export function BlogPost() {
         description={metadata.description}
         path={`/blog/${post.slug}`}
         type="article"
+        image={socialCard(post.slug)}
+        imageAlt={metadata.title}
+        imageType="image/png"
+        imageWidth={socialCardWidth}
+        imageHeight={socialCardHeight}
       />
 
       <ArticleSchema post={post} />
@@ -76,6 +83,7 @@ export function BlogPost() {
                 <span aria-hidden="true">·</span>
                 <span>{post.readingTimeMinutes} min read</span>
               </div>
+              <ArticleShare key={post.slug} title={metadata.title} url={getSiteUrl(`/blog/${post.slug}`)} />
               <p className="print-attribution">{siteConfig.name} · <a href={getSiteUrl(`/blog/${post.slug}`)}>{getSiteUrl(`/blog/${post.slug}`)}</a></p>
             </Reveal>
 
