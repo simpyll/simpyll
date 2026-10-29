@@ -1,10 +1,10 @@
 .site-footer { display: grid; gap: 2rem; padding-block: 2.5rem; align-items: start; }
 .footer-socials { display: flex; gap: .5rem; margin-top: .5rem; }
-.footer-socials a { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; color: var(--ui-muted); border-radius: .5rem; }
-.footer-socials a:hover, .footer-socials a:focus-visible, .footer-contribution:hover { color: var(--ui-accent); }
-.footer-icon-label { position: absolute; top: 100%; left: 0; width: max-content; padding: .125rem .25rem; border-radius: .25rem; background: var(--ui-canvas); color: var(--ui-foreground); font-size: .75rem; line-height: 1.5; visibility: hidden; }
-.footer-socials a:hover .footer-icon-label, .footer-socials a:focus-visible .footer-icon-label { visibility: visible; }
+.footer-socials a { position: relative; display: grid; place-items: center; width: 44px; height: 44px; color: var(--ui-muted); border-radius: .5rem; }
+.footer-contribution:hover, .footer-socials a:hover, .footer-socials a:focus-visible { color: var(--ui-accent); }
+.footer-icon-label { position: absolute; top: 100%; left: 50%; translate: -50%; width: max-content; padding: .125rem .25rem; border-radius: .25rem; background: var(--ui-canvas); color: var(--ui-foreground); font-size: .75rem; line-height: 1.5; visibility: hidden; }
+.footer-socials a:is(:hover, :focus-visible) .footer-icon-label { visibility: visible; }
 .footer-contribution { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; width: fit-content; max-width: 100%; margin-top: 1.5rem; }
-.footer-legal ul { display: flex; flex-direction: column; margin-top: .5rem; }
+.footer-legal ul { display: grid; margin-top: .5rem; }
 .footer-copyright { grid-column: 1 / -1; border-top: 1px solid var(--ui-outline); padding-top: 1.5rem; text-align: center; line-height: 1.6; }
-@media (min-width: 640px) { .site-footer { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 3rem; } }
+@media (min-width: 640px) { .site-footer { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 3rem; } }

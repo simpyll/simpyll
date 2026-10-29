@@ -40,7 +40,7 @@ Callout variants: `note`, `tip`, `information`, `warning`, `important`. Every
 variant has a text label, with neutral complementary semantics rather than an
 interrupting alert. Figures accept rich captions; provide meaningful alternative
 text (empty alt only for decoration) and known dimensions to reserve image space.
-Existing Notion figure/img/figcaption output is preserved. Lightboxes remain #59.
+Existing Notion figure/img/figcaption output is preserved. Enlargement and explicit `<Gallery>` boundaries follow the [shared image contract](IMAGES.md#enlarged-images-and-galleries-59).
 Native details/summary also work. Tabs were omitted: stacked examples and native
 disclosures are sufficient here and avoid extra keyboard and client state costs.
 

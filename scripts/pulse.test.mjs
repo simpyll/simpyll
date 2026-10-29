@@ -22,6 +22,20 @@ test('public schema rejects unexpected fields recursively, malformed dates, coun
   const copy=structuredClone(original);mutate(copy);assert.throws(()=>validatePublic(copy))
  }
 })
+test('public editorial vocabulary is allowed while private diagnostic keys remain rejected',()=>{
+ const source=article('a')
+ source.metadata.tags=['evidence-based medicine']
+ source.metadata.title='Evidence and remediation in software'
+ const snapshot=projectPublic(audit,[source],'2026-10-25')
+ validatePublic(snapshot)
+ assert.deepEqual(snapshot.articles[0].tags,['evidence-based medicine'])
+ assert.equal(snapshot.articles[0].title,source.metadata.title)
+ for(const key of ['evidence','remediation','crawlDepth','articleText','canonicals']) {
+  const copy=structuredClone(snapshot)
+  copy.articles[0][key]='private diagnostic'
+  assert.throws(()=>validatePublic(copy))
+ }
+})
 test('private findings have stable identifiers, severity, evidence, remediation and baseline comparison',()=>{
  const before=privateReport(audit)
  assert.equal(before.findings[0].severity,'critical')

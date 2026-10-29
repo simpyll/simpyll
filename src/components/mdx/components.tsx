@@ -68,10 +68,10 @@ export function ArticleImage({ src, alt = '', loading = 'eager', decoding = 'asy
   const safe = safeContentUrl(src, true)
   if (!safe) return <span>{alt || 'Image unavailable'}</span>
   const entry = images[safe.split(/[?#]/)[0]]
-  if (!entry?.variants.length) return <img width={entry?.width} height={entry?.height} {...props} src={safe} alt={alt} loading={loading} decoding={decoding} />
+  if (!entry?.variants.length) return <img data-original-src={safe} width={entry?.width} height={entry?.height} {...props} src={safe} alt={alt} loading={loading} decoding={decoding} />
   const set = (format: string) => entry.variants.filter(v => v.format === format).map(v => `${v.src} ${v.width}w`).join(', ')
   const fallback = entry.variants.filter(v => v.format === 'png').at(-1)!
-  return <picture>{['avif', 'webp'].map(format => set(format) ? <source key={format} type={`image/${format}`} srcSet={set(format)} sizes={sizes} /> : null)}<img {...props} src={fallback.src} srcSet={set('png')} sizes={sizes} width={entry.width} height={entry.height} alt={alt} loading={loading} decoding={decoding} /></picture>
+  return <picture>{['avif', 'webp'].map(format => set(format) ? <source key={format} type={`image/${format}`} srcSet={set(format)} sizes={sizes} /> : null)}<img {...props} data-original-src={safe} src={fallback.src} srcSet={set('png')} sizes={sizes} width={entry.width} height={entry.height} alt={alt} loading={loading} decoding={decoding} /></picture>
 }
 export function SemanticFigure(props: ComponentProps<'figure'>) { return <figure {...props} /> }
 export function Caption(props: ComponentProps<'figcaption'>) { return <figcaption {...props} /> }
@@ -99,4 +99,9 @@ export function Embed({ url, title }: { url: string; title: string }) {
     </> : <p>This provider is not supported for inline viewing.</p>}
     <p><a href={safe} target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer">Open original content <span className="sr-only">(opens in a new tab)</span> ↗</a></p>
   </aside>
+}
+
+/** Explicit boundary; ungrouped descriptive images open individually. */
+export function Gallery({ children, label = "Image gallery" }: { children?: ReactNode; label?: string }) {
+  return <div data-image-gallery="" role="group" aria-label={label}>{children}</div>
 }

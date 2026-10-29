@@ -1,0 +1,22 @@
+.image-dialog button, .image-dialog-tools a { min-height: 44px; padding: .5rem .75rem; border: 1px solid var(--ui-control-outline); border-radius: .5rem; background: var(--ui-surface); color: var(--ui-foreground); font: inherit; cursor: pointer; }
+.image-dialog button:disabled { opacity: .5; cursor: default; }
+.image-dialog :focus { outline: 2px solid var(--ui-focus); outline-offset: 3px; }
+.image-dialog { position: fixed; inset: 0; margin: auto; padding: 0; width: min(96vw, 90rem); max-width: 100%; height: 96dvh; max-height: 100dvh; border: 1px solid var(--ui-control-outline); border-radius: .75rem; background: var(--ui-canvas); color: var(--ui-foreground); overflow: auto; overscroll-behavior: contain; }
+.image-dialog::backdrop { background: rgb(0 0 0 / .8); }
+.image-dialog-shell { min-height: 100%; display: flex; flex-direction: column; gap: .75rem; padding: 1rem; }
+.image-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: .5rem; position: sticky; top: 0; z-index: 1; background: var(--ui-canvas); }
+.image-dialog-header h2 { min-width: 0; overflow-wrap: anywhere; font-size: 1.125rem; font-weight: 600; }
+.image-dialog-header button { flex-shrink: 0; }
+.image-dialog-hint { color: var(--ui-muted); font-size: .875rem; }
+.image-dialog-tools, .image-dialog-footer nav { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.image-dialog-tools > * { max-width: 100%; overflow-wrap: anywhere; }
+.image-dialog-tools a { text-decoration: underline; }
+.image-dialog-caption, .image-dialog-footer p { overflow-wrap: anywhere; margin: 0; }
+.image-dialog-caption { max-height: 20dvh; overflow: auto; }
+.image-dialog-footer { display: grid; gap: .5rem; }
+.image-pan { width: 100%; min-width: 0; flex: 1 0 auto; height: 45dvh; min-height: 8rem; overflow: auto; overscroll-behavior: contain; touch-action: pan-y pinch-zoom; }
+.image-pan[data-zoomed="true"] { touch-action: pan-x pan-y pinch-zoom; cursor: grab; }
+.image-zoom-canvas { min-width: 100%; min-height: 100%; }
+.image-zoom-canvas picture { display: block; width: 100%; height: 100%; }
+.image-zoom-canvas img { display: block; width: 100%; height: 100%; object-fit: contain; max-width: none; }
+@media print { .image-dialog { display: none !important; } }

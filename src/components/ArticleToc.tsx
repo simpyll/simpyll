@@ -7,12 +7,15 @@ export function ArticleToc({ headings }: { headings: ArticleHeading[] }) {
   const root = useRef<HTMLElement>(null)
 
   useEffect(() => {
-    const elements = headings.map(h => document.getElementById(h.id)).filter((h): h is HTMLElement => !!h)
+    let elements: HTMLElement[] = []
     let selected: string | undefined = headings[0]?.id
     let frame = 0
     let positions: number[] = []
     let clearance = 112
     const measure = () => {
+      // Article bodies can arrive after this effect during client navigation.
+      // Refresh the heading nodes whenever the loaded article changes size.
+      elements = headings.map(h => document.getElementById(h.id)).filter((h): h is HTMLElement => !!h)
       clearance = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--navigation-clearance')) || 112
       positions = elements.map(heading => heading.getBoundingClientRect().top + scrollY)
       schedule()

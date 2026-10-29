@@ -156,3 +156,29 @@ https://example.com/this/is/a/very/long/unbroken/path/abcdefghijklmnopqrstuvwxyz
 </Callout>
 
 <Embed url="https://youtu.be/abcdefghijk" title="Example video" />
+
+## Image gallery acceptance
+
+<Gallery label="Synthetic diagram gallery">
+
+<Figure src="/images/rich-fixture.svg" alt="Gallery diagram one" caption="First diagram: shared publishing paths." />
+
+<figure><img src="/images/rich-fixture.svg" alt="Gallery diagram two" /><figcaption>Second diagram from native markup. This isolated long caption explains a detailed diagram while keeping reader controls reachable. It is intentionally long to test scrolling, keyboard reading and narrow layouts. It adds no claims to any published article. Readers should be able to read all of this text, return to the image, and close the dialog without losing their place. Gallery boundaries remain explicit and image descriptions remain separate from the visible caption.</figcaption></figure>
+
+</Gallery>
+
+<Gallery label="Separate gallery">
+<Figure src="/images/rich-fixture.svg" alt="Separate diagram" caption="This gallery is separate." />
+</Gallery>
+
+<a href="/images/rich-fixture.svg"><img src="/images/rich-fixture.svg" alt="Linked diagram" /></a>
+
+<button type="button" style={{maxWidth: "100%"}}><img src="/images/rich-fixture.svg" alt="Interactive diagram" /></button>
+
+<details><summary><img src="/images/rich-fixture.svg" alt="Disclosure diagram" /></summary>Details stay usable.</details>
+
+<Figure src="/images/rich-fixture.svg" alt="" caption="Decorative image stays static." />
+
+<div data-lightbox="off"><Figure src="/images/rich-fixture.svg" alt="Opted out diagram" /></div>
+
+<Figure src="/images/rich-fixture.svg?failure" alt="Unavailable diagram" caption="A synthetic failure fixture." />
