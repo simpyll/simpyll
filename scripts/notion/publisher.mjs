@@ -343,6 +343,19 @@ export async function downloadImage(value, fetcher = fetch, wait = sleep) {
 }
 
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+// Descriptions are discovery metadata, not an article standfirst.
+function automaticDescription(text) {
+  const normalized = text.replace(/\s+/g, ' ').trim()
+  if (normalized.length <= 160) return normalized
+  const words = normalized.split(' ')
+  let excerpt = ''
+  for (const word of words) {
+    if (`${excerpt}${excerpt ? ' ' : ''}${word}`.length > 159) break
+    excerpt += `${excerpt ? ' ' : ''}${word}`
+  }
+  // A single oversized token cannot fit without splitting a word.
+  return `${excerpt.replace(/[,:;.!?\-–—'’"“”]+$/u, '').trimEnd()}…`
+}
 export function metadataFor(page, previous, blocks) {
   const p = page.properties ?? {}, title = plain(p.Name?.title).trim()
   if (!title) throw new Error('Published article requires Name')
@@ -351,7 +364,7 @@ export function metadataFor(page, previous, blocks) {
   if (!slugPattern.test(slug) || slug.length > 100) throw new Error('Slug must be 1–100 lowercase letters/digits separated by hyphens')
   const date = (previous?.date || p['Published Date']?.date?.start || page.created_time || '').slice(0, 10)
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !Number.isFinite(Date.parse(date)) || new Date(date).toISOString().slice(0, 10) !== date) throw new Error('Invalid Published Date')
-  const description = plain(p.Description?.rich_text).trim() || plain(blocks.find(b => b.type === 'paragraph')?.paragraph.rich_text).replace(/\s+/g, ' ').trim().slice(0, 160) || title
+  const description = plain(p.Description?.rich_text).trim() || automaticDescription(plain(blocks.find(b => b.type === 'paragraph')?.paragraph.rich_text)) || title
   const editorial = {}
   const updated = p['Updated Date']
   if (updated && updated.type !== 'date') throw new Error('Updated Date must be a Notion date property')

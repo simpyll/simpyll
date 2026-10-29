@@ -163,3 +163,26 @@ test('footer preserves semantic utilities, contextual actions and final copyrigh
     assert.equal(footer.querySelector('button'), null)
   }
 })
+
+test('all article introductions occur only in the body while discovery descriptions survive', async () => {
+  const { parseHTML } = await import('linkedom')
+  const { readdir } = await import('node:fs/promises')
+  let checked = 0
+  for (const slug of await readdir('dist/blog')) {
+    if (slug.includes('.')) continue
+    const { document } = parseHTML(await readFile(`dist/blog/${slug}/index.html`, 'utf8'))
+    const article = document.querySelector('article.print-article')
+    if (!article) continue
+    const content = article.querySelector('.article-content')
+    const opening = content.querySelector('p')?.textContent.trim()
+    assert.ok(opening, slug)
+    const beforeBody = article.textContent.split(content.textContent)[0]
+    assert.ok(!beforeBody.includes(opening), `${slug}: no repeated opening before body`)
+    const description = document.querySelector('meta[name="description"]').getAttribute('content')
+    assert.ok(description, slug)
+    assert.ok(!beforeBody.includes(description), `${slug}: discovery description is not a standfirst`)
+    assert.equal(document.querySelector('meta[property="og:description"]').getAttribute('content'), description)
+    checked++
+  }
+  assert.ok(checked >= 8, 'checks manual and imported articles')
+})
