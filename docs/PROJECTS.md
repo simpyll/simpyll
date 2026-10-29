@@ -139,7 +139,7 @@ The schema also exports `ProjectInput` for typed tooling before link normalizati
 No network fetching or runtime validation is needed in the homepage. Client and
 SSR share the same generated public manifest, preventing hydration drift.
 
-The Project Lab uses public projects except records marked Archived for both Board and Grid. Archived records remain valid in the project registry but do not appear on the public Projects page.
+The Project Lab builds both its Board and Grid from public projects, excluding records marked Archived. Archived records remain valid in the project registry but are omitted from this page.
 #27 can associate an MDX narrative by stable project ID and optional
 `caseStudy.contentKey`, deriving title/summary/workflow/lifecycle/SEO from this metadata rather
 than repeating it in frontmatter. That association asserts available content, not
