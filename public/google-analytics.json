@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "searchConsole": {
     "status": "ok",
-    "updated": "2026-11-01",
+    "updated": "2026-11-02",
     "timezone": "America/Los_Angeles",
     "days": [
       {
@@ -28,12 +28,18 @@
         "clicks": 4,
         "impressions": 22,
         "position": 5.090909090909091
+      },
+      {
+        "date": "2026-10-29",
+        "clicks": 0,
+        "impressions": 11,
+        "position": 6.7272727272727275
       }
     ]
   },
   "ga4": {
     "status": "ok",
-    "updated": "2026-11-01",
+    "updated": "2026-11-02",
     "timezone": "America/Chicago",
     "days": []
   }
