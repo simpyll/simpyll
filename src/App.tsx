@@ -14,6 +14,7 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import { RouteNavigation } from './navigation/RouteNavigation'
 import { Header } from './components/Header'
 import { Footer } from './components/Footer'
+import { BackToTop } from './components/BackToTop'
 
 import { AboutPage } from './pages/About'
 import { Contact } from './pages/Contact'
@@ -58,6 +59,7 @@ export function AppContent() {
       </ErrorBoundary>
 
       <Footer />
+      <BackToTop />
     </>
   )
 }
