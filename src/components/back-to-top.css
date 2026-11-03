@@ -1,0 +1,4 @@
+.back-to-top { position: fixed; z-index: 20; right: max(1rem, env(safe-area-inset-right)); bottom: max(1rem, env(safe-area-inset-bottom)); cursor: pointer; }
+.back-to-top[hidden] { display: none; }
+body:has(dialog[open]) .back-to-top { visibility: hidden; }
+@media print { .back-to-top { display: none; } }
