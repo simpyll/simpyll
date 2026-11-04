@@ -2,11 +2,12 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { mkdtemp, mkdir, writeFile, readFile, rm, cp } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
+import { execFileSync } from 'node:child_process'
 import { join } from 'node:path'
 import { compile } from '@mdx-js/mdx'
 import { synchronize, sourceRevision } from './publisher.mjs'
 import { fixture, ROOT, SOURCE, PAGE, page, block, rt } from './fixtures/api.mjs'
-import { digest, incidentKey, reconcileArticles, transition, validateReport, updateIncidents, LEDGER, parseLedger, renderIncident, addHealth, monitorWatchdog, writerReport } from './incidents.mjs'
+import { digest, incidentKey, reconcileArticles, transition, validateReport, updateIncidents, LEDGER, parseLedger, renderIncident, addHealth, monitorWatchdog, writerReport, observationSummary } from './incidents.mjs'
 const key = incidentKey(SOURCE, PAGE), revision = digest('expected revision'), H = 3600000, at = Date.parse('2026-10-28T12:00Z')
 const report = (time = at, articles = [{ key, revision, state: 'missing', category: 'unknown' }], complete = true) => ({ version: 1, at: time, complete, articles, systems: [], run: 123, lastSuccess: null })
 async function setup(t) {
@@ -40,6 +41,39 @@ test('failed push: local generated result never substitutes for remote snapshot'
   const local = root + '-local'; t.after(() => rm(local, { recursive: true, force: true })); await cp(root, local, { recursive: true })
   await synchronize({ ...opts, root: local })
   assert.equal((await reconcileArticles(opts)).articles[0].state, 'missing')
+})
+test('shallow Actions checkout reproduces monitor failure; full history verifies unchanged transfer and resolves the same incident', async t => {
+  const { root, opts } = await setup(t)
+  await synchronize(opts)
+  const git = (...args) => execFileSync('git', args, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim()
+  git('init')
+  git('add', '.')
+  git('-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-m', 'Synthetic published fixture')
+  const shallow = root + '-shallow'
+  t.after(() => rm(shallow, { recursive: true, force: true }))
+  git('clone', '--depth=1', `file://${root}`, shallow)
+  const failed = await reconcileArticles({ ...opts, root: shallow })
+  assert.equal(failed.complete, true)
+  assert.equal(failed.articles[0].state, 'unknown')
+  assert.equal(failed.systems[0].category, 'repository-history')
+  assert.equal(failed.systems[0].state, 'missing')
+  assert.match(observationSummary(failed), /missing systems=1; categories=repository-history.*fetch-depth: 0/)
+  assert.doesNotMatch(observationSummary(failed), new RegExp(`${PAGE}|${SOURCE}|Notion fixture|notion-fixture`))
+  const g = fakeGithub(), options = { api: g.api, repository: 'simpyll/simpyll' }
+  await updateIncidents({ ...options, report: failed })
+  await updateIncidents({ ...options, report: { ...failed, at: at + 6 * H } })
+  assert.equal(g.issues.length, 2)
+  execFileSync('git', ['fetch', '--unshallow'], { cwd: shallow, stdio: 'pipe' })
+  const recovered = await reconcileArticles({ ...opts, root: shallow, now: at + 7 * H })
+  assert.deepEqual(recovered.systems, [])
+  assert.equal(recovered.articles[0].state, 'verified')
+  assert.match(observationSummary(recovered), /missing systems=0; categories=none/)
+  assert.equal((await synchronize({ ...opts, root: shallow, dryRun: true })).changed, false)
+  assert.equal(execFileSync('git', ['status', '--porcelain'], { cwd: shallow, encoding: 'utf8' }), '')
+  await updateIncidents({ ...options, report: recovered })
+  assert.equal(g.issues.length, 2)
+  assert.equal(g.issues[1].state, 'closed')
+  assert.ok(!g.calls.some(call => call.path.includes('comments')))
 })
 test('draft, archived, trashed and intentional unpublish withdraw eligibility; dates are not scheduling gates', async t => {
   const { opts } = await setup(t)
@@ -178,6 +212,9 @@ test('race boundary: serialized workflow writer and trusted-only main jobs witho
   assert.match(yaml, /cron: '37 \* \* \* \*'/)
   assert.doesNotMatch(yaml, /pull_request_target|pull_request:/)
   assert.doesNotMatch(yaml.split('  incidents:')[1], /secrets\./)
+  const readerCheckout = yaml.split('  incidents:')[0].split('- uses: actions/checkout@')[1].split('- uses: actions/setup-node@')[0]
+  assert.match(readerCheckout, /fetch-depth: 0/)
+  assert.match(readerCheckout, /persist-credentials: false/)
 })
 
 test('independent watchdog detects missing, disabled, cancelled/stale monitor and recovers without clearing article incidents', async () => {

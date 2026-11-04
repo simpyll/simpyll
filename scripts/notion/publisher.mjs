@@ -463,7 +463,9 @@ export async function synchronize({ root, api, pageId, imageDownloader = downloa
   }
   stage('eligibility-configuration')
   const hasGit = await lstat(join(root, '.git')).then(() => true).catch(error => { if (error.code === 'ENOENT') return false; throw error })
+  stage('repository-history')
   const gitHistory = hasGit ? await manualHistory(root) : new Map()
+  stage('eligibility-configuration')
   const claims = Object.entries(next.articles).map(([key, article]) => ({ id: `notion:${key}`, slug: article.slug, status: article.status, aliases: [...(article.history ?? []), ...(article.redirectFrom ?? [])] }))
   for (const file of await readdir(join(root, 'src/content/blog'))) {
     const path = `src/content/blog/${file}`
