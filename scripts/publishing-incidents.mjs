@@ -1,7 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import { compile } from '@mdx-js/mdx'
 import { notionClient } from './notion/publisher.mjs'
-import { addHealth, monitorWatchdog, graceHours, reconcileArticles, updateIncidents, writerReport } from './notion/incidents.mjs'
+import { addHealth, monitorWatchdog, graceHours, reconcileArticles, updateIncidents, writerReport, observationSummary } from './notion/incidents.mjs'
 import { audit, githubClient } from './publishing-health.mjs'
 
 const repository = process.env.GITHUB_REPOSITORY
@@ -20,6 +20,7 @@ try {
     let report
     try { report = process.argv.includes('--watchdog') ? await monitorWatchdog(read, { run: Number(process.env.GITHUB_RUN_ID) }) : JSON.parse(await readFile(path, 'utf8')) } catch { /* Missing evidence is handled by the same public boundary below. */ }
     report = writerReport(report, { run: Number(process.env.GITHUB_RUN_ID) })
+    console.log(observationSummary(report))
     await updateIncidents({ api, repository, report, hours: graceHours(process.env.PUBLISHING_GRACE_HOURS ?? 6) })
     console.log('Publishing incident state reconciled. Delivery acceptance is separate.')
     if (report.systems.some(row => row.state === 'missing')) process.exitCode = 1
@@ -27,6 +28,7 @@ try {
     const report = await reconcileArticles({ root: process.cwd(), api: notionClient(process.env.NOTION_API_TOKEN), pageId: process.env.NOTION_PAGE_ID, run: Number(process.env.GITHUB_RUN_ID), validate: mdx => compile(mdx) })
     addHealth(report, await audit(read))
     await writeFile(path, JSON.stringify(report))
+    console.log(observationSummary(report))
     console.log('Sanitized publishing observation recorded; no source details emitted.')
     if (report.systems.some(row => row.state === 'missing')) process.exitCode = 1
   }

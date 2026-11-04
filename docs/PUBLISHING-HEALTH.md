@@ -6,6 +6,10 @@ audit; it does not replace the publisher. The publisher's nominal 15-minute cron
 is unchanged. GitHub cron is best effort, not a 15-minute service guarantee.
 Observed October 28 publisher executions were several hours apart.
 
+Changes to this workflow or its incident reader/writer scripts also trigger a
+check when pushed/merged to **main**, so monitor repairs receive immediate live
+validation without enabling feature-branch access to Notion secrets.
+
 The read job fetches main without persisted Git credentials, installs existing
 locked dependencies, reads GitHub metadata and uses the existing Notion publisher
 in read-only planning mode. Only this main-only job receives existing Notion
@@ -13,6 +17,15 @@ secrets. It never builds or writes generated content. Its two-day artifact conta
 strictly validated operational enums, opaque SHA-256 keys/revision digests,
 numeric timestamps and a workflow run number. No source ID, title, body, slug,
 media URL or provider/compiler error is serialized.
+
+The reader must use `actions/checkout` with `fetch-depth: 0`, matching the ordinary
+publisher: planning validates historical slug ownership even when all articles are
+unchanged. A shallow checkout fails that check after conversion; it is a monitor
+configuration failure, not evidence that Notion access or article transfer failed.
+The fixed `repository-history` category and aggregate log summary identify this
+condition without exposing arbitrary error messages. Fetch full history; never
+bypass ownership validation. The writer still records the failure before exiting
+nonzero; two failed jobs can therefore represent one underlying reader failure.
 
 The separate issue writer has `contents:read` and `issues:write`, receives no Notion
 credentials and consumes only this run's artifact (maximum age one hour). Missing
@@ -106,7 +119,7 @@ Deployment/verification failures remain distinct system incidents; closing a
 transfer incident does not claim website publication. A no-op publisher does not
 redeploy a previously committed revision.
 
-Fixed categories are `notion-access-query`, `eligibility-configuration`,
+Fixed categories are `notion-access-query`, `eligibility-configuration`, `repository-history`,
 `conversion-content-media`, `build-budget`, `commit-push`, `deployment`,
 `execution-stalled`, `monitor-evidence`, and `unknown`. Build/push categories use
 allowlisted latest workflow stage evidence, not causal claims about every page;

@@ -6,7 +6,7 @@ import { manifest } from './manifest.mjs'
 
 export const digest = bytes => createHash('sha256').update(bytes).digest('hex')
 export const incidentKey = (source, page) => digest(`simpyll-publishing-v1:${id(source)}:${id(page)}`)
-export const categories = ['unknown', 'notion-access-query', 'eligibility-configuration', 'conversion-content-media', 'build-budget', 'commit-push', 'deployment', 'execution-stalled', 'monitor-evidence']
+export const categories = ['unknown', 'notion-access-query', 'eligibility-configuration', 'repository-history', 'conversion-content-media', 'build-budget', 'commit-push', 'deployment', 'execution-stalled', 'monitor-evidence']
 export const states = ['missing', 'outdated', 'verified', 'unknown']
 export const DEFAULT_GRACE_HOURS = 6
 export const LEDGER = '<!-- simpyll-publishing-ledger:v1 -->'
@@ -40,6 +40,15 @@ export function writerReport(value, { now = Date.now(), run }) {
     // Invalid, stale or wrong-run evidence is a reader failure, never recovery.
     return validateReport({ version: 1, at: now, complete: false, articles: [], systems: [{ key: watchdogKey, revision: watchdogKey, state: 'missing', category: 'monitor-evidence' }], run, lastSuccess: null })
   }
+}
+
+// Fixed enums and aggregate counts only; never log provider/compiler errors or
+// article identities. The same summary explains reader and writer exit status.
+export function observationSummary(value) {
+  const report = validateReport(value)
+  const missing = report.systems.filter(row => row.state === 'missing')
+  return `Publishing observation: inventory=${report.complete ? 'complete' : 'incomplete'}; articles=${report.articles.length}; missing systems=${missing.length}; categories=${[...new Set(missing.map(row => row.category))].join(',') || 'none'}.` +
+    (missing.some(row => row.category === 'repository-history') ? ' Fetch full Git history (actions/checkout fetch-depth: 0); preserve slug ownership checks.' : '')
 }
 
 // Same conversion, gates, ownership, media and content validation as publishing.
